@@ -114,6 +114,24 @@ export function createScanner(text: string): FollowScanner {
     return (token = SyntaxKind.Unknown);
   }
 
+  function scanLineFeed(): SyntaxKind {
+    pos++;
+    if (text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
+      pos++;
+      lineNumber++;
+      tokenLineStartOffset = pos;
+      return (token = SyntaxKind.LineBreakToken);
+    }
+    return (token = SyntaxKind.Unknown);
+  }
+
+  function scanCarriageReturn(): SyntaxKind {
+    pos++;
+    lineNumber++;
+    tokenLineStartOffset = pos;
+    return (token = SyntaxKind.LineBreakToken);
+  }
+
   function scanNext(): SyntaxKind {
     value = '';
     scanError = ScanError.None;
@@ -141,16 +159,9 @@ export function createScanner(text: string): FollowScanner {
         pos++;
         return (token = SyntaxKind.ColonToken);
       case CharacterCodes.lineFeed:
-        pos++;
-        if (text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
-          pos++;
-          return (token = SyntaxKind.LineBreakToken);
-        } else {
-          return (token = SyntaxKind.Unknown);
-        }
+        return scanLineFeed();
       case CharacterCodes.carriageReturn:
-        pos++;
-        return (token = SyntaxKind.LineBreakToken);
+        return scanCarriageReturn();
       // comments
       case CharacterCodes.slash:
         return scanComment();

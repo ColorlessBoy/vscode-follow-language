@@ -31,3 +31,15 @@ export interface FollowScanner {
   getTokenStartCharacter(): number;
   getTokenError(): ScanError;
 }
+
+export type NodeType = 'keyword' | 'var' | 'prop' | 'axiom' | 'theorem' | 'comment';
+
+export interface Node {
+  readonly type: NodeType;
+  readonly value?: any;
+  readonly offset: number;
+  readonly length: number;
+  readonly colonOffset?: number;
+  readonly parent?: Node;
+  readonly children?: Node[];
+}
