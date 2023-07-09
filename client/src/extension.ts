@@ -1,20 +1,17 @@
 import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
 
-import {
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-  TransportKind
-} from 'vscode-languageclient/node';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
 
-	let config = workspace.getConfiguration('follow');
-	let serverModule: string = context.asAbsolutePath(config.get('executablePath') || path.join('server', 'build', 'server.js'));
+  let config = workspace.getConfiguration('follow');
+  let serverModule: string = context.asAbsolutePath(
+    config.get('executablePath') || path.join('server', 'build', 'server.js'),
+  );
 
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
@@ -27,23 +24,18 @@ export function activate(context: ExtensionContext) {
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: debugOptions
-    }
+      options: debugOptions,
+    },
   };
 
   // Options to control the language client
   let clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [{ scheme: 'file', language: 'follow' }]
+    documentSelector: [{ scheme: 'file', language: 'follow' }],
   };
 
   // Create the language client and start the client.
-  client = new LanguageClient(
-    'follow',
-    'Follow',
-    serverOptions,
-    clientOptions
-  );
+  client = new LanguageClient('follow', 'Follow', serverOptions, clientOptions);
 
   // Start the client. This will also launch the server
   client.start();
