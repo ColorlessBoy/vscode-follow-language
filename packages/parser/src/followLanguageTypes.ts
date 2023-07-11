@@ -32,14 +32,39 @@ export interface FollowScanner {
   getTokenError(): ScanError;
 }
 
-export type NodeType = 'keyword' | 'var' | 'prop' | 'axiom' | 'theorem' | 'comment';
+export type NodeType = 'unknown' | 'keyword' | 'var' | 'prop' | 'axiom' | 'theorem' | 'comment' | 'operater';
 
 export interface Node {
   readonly type: NodeType;
   readonly value?: any;
   readonly offset: number;
   readonly length: number;
-  readonly colonOffset?: number;
   readonly parent?: Node;
   readonly children?: Node[];
+}
+
+export interface FollowScanner {
+  setPosition(pos: number): void;
+  scan(): SyntaxKind;
+  getPosition(): number;
+  getToken(): SyntaxKind;
+  getTokenValue(): string;
+  getTokenOffset(): number;
+  getTokenLength(): number;
+  getTokenStartLine(): number;
+  getTokenStartCharacter(): number;
+  getTokenError(): ScanError;
+}
+
+export interface ParseError {
+  error: ParseErrorCode;
+  offset: number;
+  length: number;
+}
+
+export const enum ParseErrorCode {
+  None = 0,
+  InvalidCharacter = 1,
+  UnexpectedEndOfComment = 2,
+  InvalidSymbol = 3,
 }
