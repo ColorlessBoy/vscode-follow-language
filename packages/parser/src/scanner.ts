@@ -1,11 +1,11 @@
-import { ScanError, SyntaxKind, FollowScanner } from './followLanguageTypes';
+import { ScanError, TokenType, FollowScanner } from './followLanguageTypes';
 
 export function createScanner(text: string): FollowScanner {
   const len = text.length;
   let pos = 0,
     value: string = '',
     tokenOffset = 0,
-    token: SyntaxKind = SyntaxKind.Unknown,
+    token: TokenType = TokenType.Unknown,
     lineNumber = 0,
     lineStartOffset = 0,
     tokenLineStartOffset = 0,
@@ -16,11 +16,11 @@ export function createScanner(text: string): FollowScanner {
     pos = newPosition;
     value = '';
     tokenOffset = 0;
-    token = SyntaxKind.Unknown;
+    token = TokenType.Unknown;
     scanError = ScanError.None;
   }
 
-  function scanWord(code: number): SyntaxKind {
+  function scanWord(code: number): TokenType {
     // word token `[0-9a-zA-Z.]`
     while (pos < len && isValidCharacter(code)) {
       pos++;
@@ -28,39 +28,52 @@ export function createScanner(text: string): FollowScanner {
     }
     if (tokenOffset !== pos) {
       value = text.substring(tokenOffset, pos);
-      return (token = SyntaxKind.WordToken);
+      switch (value) {
+        case 'key':
+          return (token = TokenType.Keyword);
+        case 'var':
+          return (token = TokenType.Var);
+        case 'prop':
+          return (token = TokenType.Prop);
+        case 'axiom':
+          return (token = TokenType.Axiom);
+        case 'thm':
+          return (token = TokenType.Theorem);
+        default:
+          return (token = TokenType.Operator);
+      }
     }
     // some
     value += String.fromCharCode(code);
     pos++;
-    return (token = SyntaxKind.Unknown);
+    return (token = TokenType.Unknown);
   }
 
-  function scanInputProofBlock(): SyntaxKind {
+  function scanInputProofBlock(): TokenType {
     const start = pos - 1;
     // Proof block input `-|`
     if (text.charCodeAt(pos + 1) === CharacterCodes.bar) {
       pos++;
       value = text.substring(start, pos);
-      return (token = SyntaxKind.ProofBlockInputToken);
+      return (token = TokenType.ProofBlockInput);
     }
     value = text.substring(start, pos);
-    return (token = SyntaxKind.Unknown);
+    return (token = TokenType.Unknown);
   }
 
-  function scanOutputProofBlock(): SyntaxKind {
+  function scanOutputProofBlock(): TokenType {
     const start = pos - 1;
     // Proof block output `|-`
     if (text.charCodeAt(pos + 1) === CharacterCodes.minus) {
       pos++;
       value = text.substring(start, pos);
-      return (token = SyntaxKind.ProofBlockOutputToken);
+      return (token = TokenType.ProofBlockOutput);
     }
     value = text.substring(start, pos);
-    return (token = SyntaxKind.Unknown);
+    return (token = TokenType.Unknown);
   }
 
-  function scanComment(): SyntaxKind {
+  function scanComment(): TokenType {
     const start = pos - 1;
     // Single-line comment
     if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
@@ -72,7 +85,7 @@ export function createScanner(text: string): FollowScanner {
         pos++;
       }
       value = text.substring(start, pos);
-      return (token = SyntaxKind.LineCommentToken);
+      return (token = TokenType.LineComment);
     }
 
     // Multi-line comment
@@ -104,35 +117,35 @@ export function createScanner(text: string): FollowScanner {
       }
 
       value = text.substring(start, pos);
-      return (token = SyntaxKind.BlockCommentToken);
+      return (token = TokenType.BlockComment);
     }
 
     // just a single slash
     value += String.fromCharCode(CharacterCodes.slash);
     pos++;
 
-    return (token = SyntaxKind.Unknown);
+    return (token = TokenType.Unknown);
   }
 
-  function scanLineFeed(): SyntaxKind {
+  function scanLineFeed(): TokenType {
     pos++;
     if (text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
       pos++;
       lineNumber++;
       tokenLineStartOffset = pos;
-      return (token = SyntaxKind.LineBreakToken);
+      return (token = TokenType.LineBreak);
     }
-    return (token = SyntaxKind.Unknown);
+    return (token = TokenType.Unknown);
   }
 
-  function scanCarriageReturn(): SyntaxKind {
+  function scanCarriageReturn(): TokenType {
     pos++;
     lineNumber++;
     tokenLineStartOffset = pos;
-    return (token = SyntaxKind.LineBreakToken);
+    return (token = TokenType.LineBreak);
   }
 
-  function scanNext(): SyntaxKind {
+  function scanNext(): TokenType {
     value = '';
     scanError = ScanError.None;
 
@@ -143,7 +156,7 @@ export function createScanner(text: string): FollowScanner {
     if (pos >= len) {
       // at the end
       tokenOffset = len;
-      return (token = SyntaxKind.EOF);
+      return (token = TokenType.EOF);
     }
 
     let code = text.charCodeAt(pos);
@@ -151,13 +164,13 @@ export function createScanner(text: string): FollowScanner {
     switch (code) {
       case CharacterCodes.openBrace:
         pos++;
-        return (token = SyntaxKind.OpenBraceToken);
+        return (token = TokenType.OpenBrace);
       case CharacterCodes.closeBrace:
         pos++;
-        return (token = SyntaxKind.CloseBraceToken);
+        return (token = TokenType.CloseBrace);
       case CharacterCodes.colon:
         pos++;
-        return (token = SyntaxKind.ColonToken);
+        return (token = TokenType.Colon);
       case CharacterCodes.lineFeed:
         return scanLineFeed();
       case CharacterCodes.carriageReturn:

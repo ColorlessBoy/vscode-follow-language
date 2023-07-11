@@ -5,25 +5,30 @@ export const enum ScanError {
   RecurrentBrace = 3,
 }
 
-export const enum SyntaxKind {
-  OpenBraceToken = 1, // {
-  CloseBraceToken = 2, // }
-  ColonToken = 3, // :
-  LineCommentToken = 4, // line comment started with `//`
-  BlockCommentToken = 5, // block comment between `/*` and `*/`
-  WordToken = 6, // Valid words
-  ProofBlockInputToken = 7, // proof block input `-|`
-  ProofBlockOutputToken = 8, // proof block output `|-`
-  LineBreakToken = 9, // `\r?\n`
-  Unknown = 16,
-  EOF = 17,
+export const enum TokenType {
+  OpenBrace, // {
+  CloseBrace, // }
+  Colon, // :
+  LineComment, // line comment started with `//`
+  BlockComment, // block comment between `/*` and `*/`
+  ProofBlockInput, // proof block input `-|`
+  ProofBlockOutput, // proof block output `|-`
+  Keyword, // `key`
+  Var, // `var`
+  Prop, // `prop`
+  Axiom, // `axiom`
+  Theorem, // `thm`
+  Operator, // Valid Operator
+  LineBreak, // `\r?\n`
+  Unknown,
+  EOF,
 }
 
 export interface FollowScanner {
   setPosition(pos: number): void;
-  scan(): SyntaxKind;
+  scan(): TokenType;
   getPosition(): number;
-  getToken(): SyntaxKind;
+  getToken(): TokenType;
   getTokenValue(): string;
   getTokenOffset(): number;
   getTokenLength(): number;
@@ -32,28 +37,28 @@ export interface FollowScanner {
   getTokenError(): ScanError;
 }
 
-export type NodeType = 'unknown' | 'keyword' | 'var' | 'prop' | 'axiom' | 'theorem' | 'comment' | 'operater';
+export const enum NodeType {
+  Keyword,
+  Var,
+  Prop,
+  Axiom,
+  Theorem,
+  Commant,
+  Root,
+  Unknown,
+  OpenBrace,
+}
 
 export interface Node {
   readonly type: NodeType;
-  readonly value?: any;
+  readonly value: any;
   readonly offset: number;
   readonly length: number;
+  readonly children: Node[];
   readonly parent?: Node;
-  readonly children?: Node[];
 }
-
-export interface FollowScanner {
-  setPosition(pos: number): void;
-  scan(): SyntaxKind;
-  getPosition(): number;
-  getToken(): SyntaxKind;
-  getTokenValue(): string;
-  getTokenOffset(): number;
-  getTokenLength(): number;
-  getTokenStartLine(): number;
-  getTokenStartCharacter(): number;
-  getTokenError(): ScanError;
+export interface FollowDocument {
+  roots: Node[];
 }
 
 export interface ParseError {
