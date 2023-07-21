@@ -21,7 +21,7 @@ export function createScanner(text: string): FollowScanner {
   }
 
   function scanWord(code: number): TokenType {
-    // word token `[0-9a-zA-Z.]`
+    // word token `[0-9a-zA-Z.-|]`
     while (pos < len && isValidCharacter(code)) {
       pos++;
       code = text.charCodeAt(pos);
@@ -29,8 +29,10 @@ export function createScanner(text: string): FollowScanner {
     if (tokenOffset !== pos) {
       value = text.substring(tokenOffset, pos);
       switch (value) {
-        case 'key':
-          return (token = TokenType.Keyword);
+        case 'type':
+          return (token = TokenType.Type);
+        case 'const':
+          return (token = TokenType.Const);
         case 'var':
           return (token = TokenType.Var);
         case 'prop':
@@ -39,6 +41,10 @@ export function createScanner(text: string): FollowScanner {
           return (token = TokenType.Axiom);
         case 'thm':
           return (token = TokenType.Theorem);
+        case '-|':
+          return (token = TokenType.ProofBlockInput);
+        case '|-':
+          return (token = TokenType.ProofBlockOutput);
         default:
           return (token = TokenType.Operator);
       }
@@ -46,30 +52,6 @@ export function createScanner(text: string): FollowScanner {
     // some
     value += String.fromCharCode(code);
     pos++;
-    return (token = TokenType.Unknown);
-  }
-
-  function scanInputProofBlock(): TokenType {
-    const start = pos - 1;
-    // Proof block input `-|`
-    if (text.charCodeAt(pos + 1) === CharacterCodes.bar) {
-      pos++;
-      value = text.substring(start, pos);
-      return (token = TokenType.ProofBlockInput);
-    }
-    value = text.substring(start, pos);
-    return (token = TokenType.Unknown);
-  }
-
-  function scanOutputProofBlock(): TokenType {
-    const start = pos - 1;
-    // Proof block output `|-`
-    if (text.charCodeAt(pos + 1) === CharacterCodes.minus) {
-      pos++;
-      value = text.substring(start, pos);
-      return (token = TokenType.ProofBlockOutput);
-    }
-    value = text.substring(start, pos);
     return (token = TokenType.Unknown);
   }
 
@@ -103,7 +85,7 @@ export function createScanner(text: string): FollowScanner {
         }
         pos++;
         if (isLineBreak(ch)) {
-          if (ch === CharacterCodes.carriageReturn && text.charCodeAt(pos) === CharacterCodes.lineFeed) {
+          if (ch === CharacterCodes.lineFeed && text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
             pos++;
           }
           lineNumber++;
@@ -178,13 +160,7 @@ export function createScanner(text: string): FollowScanner {
       // comments
       case CharacterCodes.slash:
         return scanComment();
-      // proof block input `-|`
-      case CharacterCodes.minus:
-        return scanInputProofBlock();
-      // proof block output `|-`
-      case CharacterCodes.bar:
-        return scanOutputProofBlock();
-      // word token `[0-9a-zA-Z.]`
+      // word token `[0-9a-zA-Z.-|]+`
       default:
         return scanWord(code);
     }
@@ -217,7 +193,9 @@ function isValidCharacter(ch: number): boolean {
     (ch >= CharacterCodes._0 && ch <= CharacterCodes._9) ||
     (ch >= CharacterCodes.A && ch <= CharacterCodes.Z) ||
     (ch >= CharacterCodes.a && ch <= CharacterCodes.z) ||
-    ch === CharacterCodes.dot
+    ch === CharacterCodes.dot ||
+    ch === CharacterCodes.vbar ||
+    ch === CharacterCodes.minus
   );
 }
 
@@ -309,6 +287,10 @@ const enum CharacterCodes {
 
   asterisk = 0x2a, // *
   backslash = 0x5c, // \
+  openParen = 0x28, // (
+  openBrace = 0x7b, // {
+  openBracket = 0x5b, // [
+  closeParen = 0x29, // )
   closeBrace = 0x7d, // }
   closeBracket = 0x5d, // ]
   colon = 0x3a, // :
@@ -316,11 +298,9 @@ const enum CharacterCodes {
   dot = 0x2e, // .
   doubleQuote = 0x22, // "
   minus = 0x2d, // -
-  openBrace = 0x7b, // {
-  openBracket = 0x5b, // [
   plus = 0x2b, // +
   slash = 0x2f, // /
-  bar = 0x7c, // |
+  vbar = 0x7c, // |
 
   formFeed = 0x0c, // \f
   tab = 0x09, // \t

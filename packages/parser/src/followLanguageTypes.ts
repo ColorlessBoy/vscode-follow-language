@@ -13,7 +13,8 @@ export const enum TokenType {
   BlockComment, // block comment between `/*` and `*/`
   ProofBlockInput, // proof block input `-|`
   ProofBlockOutput, // proof block output `|-`
-  Keyword, // `key`
+  Type, // `type`
+  Const, // `const`
   Var, // `var`
   Prop, // `prop`
   Axiom, // `axiom`
@@ -38,12 +39,13 @@ export interface FollowScanner {
 }
 
 export const enum NodeType {
-  Keyword,
+  Type,
+  Const,
   Var,
   Prop,
   Axiom,
   Theorem,
-  Commant,
+  Comment,
   Root,
   Unknown,
   OpenBrace,
