@@ -12,12 +12,42 @@ export function createScanner(text: string): FollowScanner {
     prevTokenLineStartOffset = 0,
     scanError: ScanError = ScanError.None;
 
+  const singleCharacterTokenMap = new Map<CharacterCode, TokenType>([
+    [CharacterCode.openBrace, TokenType.OpenBrace],
+    [CharacterCode.closeBrace, TokenType.CloseBrace],
+    [CharacterCode.openBracket, TokenType.OpenBracket],
+    [CharacterCode.closeBracket, TokenType.CloseBracket],
+    [CharacterCode.openParen, TokenType.OpenParen],
+    [CharacterCode.closeParen, TokenType.CloseParen],
+    [CharacterCode.colon, TokenType.Colon],
+  ]);
+
+  const keywordTokenMap = new Map<String, TokenType>([
+    ['type', TokenType.Type],
+    ['const', TokenType.Const],
+    ['var', TokenType.Var],
+    ['prop', TokenType.Prop],
+    ['axiom', TokenType.Axiom],
+    ['thm', TokenType.Theorem],
+    ['-|', TokenType.ProofBlockInput],
+    ['|-', TokenType.ProofBlockOutput]
+  ])
+
+  const ignoreCharacterList: Array<CharacterCode> = [CharacterCode.space, CharacterCode.tab, CharacterCode.formFeed];
+
   function setPosition(newPosition: number) {
     pos = newPosition;
     value = '';
     tokenOffset = 0;
     token = TokenType.Unknown;
     scanError = ScanError.None;
+  }
+
+  function scanSingleCharacterToken(code: number): TokenType {
+    // A singleCharacterToken does not need value, 
+    // because its value is included in its token type.
+    pos++;
+    return token = (singleCharacterTokenMap.get(code) || TokenType.Unknown);
   }
 
   function scanWord(code: number): TokenType {
@@ -28,37 +58,17 @@ export function createScanner(text: string): FollowScanner {
     }
     if (tokenOffset !== pos) {
       value = text.substring(tokenOffset, pos);
-      switch (value) {
-        case 'type':
-          return (token = TokenType.Type);
-        case 'const':
-          return (token = TokenType.Const);
-        case 'var':
-          return (token = TokenType.Var);
-        case 'prop':
-          return (token = TokenType.Prop);
-        case 'axiom':
-          return (token = TokenType.Axiom);
-        case 'thm':
-          return (token = TokenType.Theorem);
-        case '-|':
-          return (token = TokenType.ProofBlockInput);
-        case '|-':
-          return (token = TokenType.ProofBlockOutput);
-        default:
-          return (token = TokenType.Operator);
-      }
+      return token = (keywordTokenMap.get(value) || TokenType.Operator);
     }
-    // some
     value += String.fromCharCode(code);
     pos++;
     return (token = TokenType.Unknown);
   }
 
   function scanComment(): TokenType {
-    const start = pos - 1;
+    const start = pos;
     // Single-line comment
-    if (text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+    if (text.charCodeAt(pos + 1) === CharacterCode.slash) {
       pos += 2;
       while (pos < len) {
         if (isLineBreak(text.charCodeAt(pos))) {
@@ -71,21 +81,21 @@ export function createScanner(text: string): FollowScanner {
     }
 
     // Multi-line comment
-    if (text.charCodeAt(pos + 1) === CharacterCodes.asterisk) {
+    if (text.charCodeAt(pos + 1) === CharacterCode.asterisk) {
       pos += 2;
 
       const safeLength = len - 1; // For lookahead.
       let commentClosed = false;
       while (pos < safeLength) {
         const ch = text.charCodeAt(pos);
-        if (ch === CharacterCodes.asterisk && text.charCodeAt(pos + 1) === CharacterCodes.slash) {
+        if (ch === CharacterCode.asterisk && text.charCodeAt(pos + 1) === CharacterCode.slash) {
           pos += 2;
           commentClosed = true;
           break;
         }
         pos++;
         if (isLineBreak(ch)) {
-          if (ch === CharacterCodes.lineFeed && text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
+          if (ch === CharacterCode.carriageReturn && text.charCodeAt(pos) === CharacterCode.lineFeed) {
             pos++;
           }
           lineNumber++;
@@ -103,15 +113,15 @@ export function createScanner(text: string): FollowScanner {
     }
 
     // just a single slash
-    value += String.fromCharCode(CharacterCodes.slash);
+    value += String.fromCharCode(CharacterCode.slash);
     pos++;
 
     return (token = TokenType.Unknown);
   }
 
-  function scanLineFeed(): TokenType {
+  function scanCarriageReturn(): TokenType {
     pos++;
-    if (text.charCodeAt(pos) === CharacterCodes.carriageReturn) {
+    if (text.charCodeAt(pos) === CharacterCode.lineFeed) {
       pos++;
       lineNumber++;
       tokenLineStartOffset = pos;
@@ -120,16 +130,24 @@ export function createScanner(text: string): FollowScanner {
     return (token = TokenType.Unknown);
   }
 
-  function scanCarriageReturn(): TokenType {
+  function scanLineFeed(): TokenType {
     pos++;
     lineNumber++;
     tokenLineStartOffset = pos;
     return (token = TokenType.LineBreak);
   }
 
+  function skipIgnoreCharacter(): void {
+    while (pos < len && ignoreCharacterList.includes(text.charCodeAt(pos))) {
+      pos++;
+    }
+  }
+
   function scanNext(): TokenType {
     value = '';
     scanError = ScanError.None;
+
+    skipIgnoreCharacter();
 
     tokenOffset = pos;
     lineStartOffset = lineNumber;
@@ -143,26 +161,16 @@ export function createScanner(text: string): FollowScanner {
 
     let code = text.charCodeAt(pos);
 
-    switch (code) {
-      case CharacterCodes.openBrace:
-        pos++;
-        return (token = TokenType.OpenBrace);
-      case CharacterCodes.closeBrace:
-        pos++;
-        return (token = TokenType.CloseBrace);
-      case CharacterCodes.colon:
-        pos++;
-        return (token = TokenType.Colon);
-      case CharacterCodes.lineFeed:
-        return scanLineFeed();
-      case CharacterCodes.carriageReturn:
-        return scanCarriageReturn();
-      // comments
-      case CharacterCodes.slash:
-        return scanComment();
-      // word token `[0-9a-zA-Z.-|]+`
-      default:
-        return scanWord(code);
+    if (singleCharacterTokenMap.has(code)) {
+      return scanSingleCharacterToken(code);
+    } else if (code === CharacterCode.carriageReturn) {
+      return scanCarriageReturn();
+    } else if (code === CharacterCode.lineFeed) {
+      return scanLineFeed();
+    } else if (code === CharacterCode.slash) {
+      return scanComment();
+    } else {
+      return scanWord(code);
     }
   }
 
@@ -181,40 +189,40 @@ export function createScanner(text: string): FollowScanner {
 }
 
 function isWhiteSpace(ch: number): boolean {
-  return ch === CharacterCodes.space || ch === CharacterCodes.tab;
+  return ch === CharacterCode.space || ch === CharacterCode.tab;
 }
 
 function isLineBreak(ch: number): boolean {
-  return ch === CharacterCodes.lineFeed || ch === CharacterCodes.carriageReturn;
+  return ch === CharacterCode.lineFeed || ch === CharacterCode.carriageReturn;
 }
 
 function isValidCharacter(ch: number): boolean {
   return (
-    (ch >= CharacterCodes._0 && ch <= CharacterCodes._9) ||
-    (ch >= CharacterCodes.A && ch <= CharacterCodes.Z) ||
-    (ch >= CharacterCodes.a && ch <= CharacterCodes.z) ||
-    ch === CharacterCodes.dot ||
-    ch === CharacterCodes.vbar ||
-    ch === CharacterCodes.minus
+    (ch >= CharacterCode._0 && ch <= CharacterCode._9) ||
+    (ch >= CharacterCode.A && ch <= CharacterCode.Z) ||
+    (ch >= CharacterCode.a && ch <= CharacterCode.z) ||
+    ch === CharacterCode.dot ||
+    ch === CharacterCode.vbar ||
+    ch === CharacterCode.minus
   );
 }
 
-function isUnknownContentCharacter(code: CharacterCodes) {
+function isUnknownContentCharacter(code: CharacterCode) {
   if (isWhiteSpace(code) || isLineBreak(code)) {
     return false;
   }
   switch (code) {
-    case CharacterCodes.closeBrace:
-    case CharacterCodes.openBrace:
-    case CharacterCodes.colon:
-    case CharacterCodes.slash:
+    case CharacterCode.closeBrace:
+    case CharacterCode.openBrace:
+    case CharacterCode.colon:
+    case CharacterCode.slash:
       return false;
   }
   return true;
 }
 
 // https://github.com/microsoft/node-jsonc-parser.git
-const enum CharacterCodes {
+const enum CharacterCode {
   lineFeed = 0x0a, // \n
   carriageReturn = 0x0d, // \r
 
@@ -287,12 +295,12 @@ const enum CharacterCodes {
 
   asterisk = 0x2a, // *
   backslash = 0x5c, // \
-  openParen = 0x28, // (
   openBrace = 0x7b, // {
-  openBracket = 0x5b, // [
-  closeParen = 0x29, // )
   closeBrace = 0x7d, // }
+  openBracket = 0x5b, // [
   closeBracket = 0x5d, // ]
+  openParen = 0x28, // (
+  closeParen = 0x29, // )
   colon = 0x3a, // :
   comma = 0x2c, // ,
   dot = 0x2e, // .

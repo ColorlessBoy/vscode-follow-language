@@ -6,8 +6,12 @@ export const enum ScanError {
 }
 
 export const enum TokenType {
-  OpenBrace, // {
+  OpenBrace = 1, // {
   CloseBrace, // }
+  OpenBracket, // [
+  CloseBracket, // ]
+  OpenParen, // (
+  CloseParen, // )
   Colon, // :
   LineComment, // line comment started with `//`
   BlockComment, // block comment between `/*` and `*/`
@@ -39,7 +43,7 @@ export interface FollowScanner {
 }
 
 export const enum NodeType {
-  Type,
+  Type = 1,
   Const,
   Var,
   Prop,
