@@ -59,8 +59,8 @@ suite('Follow Scanner', () => {
           {offset: 11, length: 3, line: 0, type: TokenType.Var, content: 'var'},
           {offset: 15, length: 5, line: 0, type: TokenType.Axiom, content: 'axiom'},
           {offset: 21, length: 3, line: 0, type: TokenType.Theorem, content: 'thm'},
-          {offset: 25, length: 2, line: 0, type: TokenType.ProofBlockInput, content: '-|'},
-          {offset: 28, length: 2, line: 0, type: TokenType.ProofBlockOutput, content: '|-'},
+          {offset: 25, length: 2, line: 0, type: TokenType.ProofInput, content: '-|'},
+          {offset: 28, length: 2, line: 0, type: TokenType.ProofOutput, content: '|-'},
           {offset: 31, length: 3, line: 0, type: TokenType.Operator, content: 'imp'}
         ],
       },

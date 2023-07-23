@@ -15,8 +15,8 @@ export const enum TokenType {
   Colon, // :
   LineComment, // line comment started with `//`
   BlockComment, // block comment between `/*` and `*/`
-  ProofBlockInput, // proof block input `-|`
-  ProofBlockOutput, // proof block output `|-`
+  ProofInput, // proof block input `-|`
+  ProofOutput, // proof block output `|-`
   Type, // `type`
   Const, // `const`
   Var, // `var`
@@ -43,12 +43,18 @@ export interface FollowScanner {
 }
 
 export const enum NodeType {
-  Type = 1,
-  Const,
-  Var,
-  Prop,
-  Axiom,
-  Theorem,
+  TypeBlock = 1,
+  ConstBlock,
+  VarBlock,
+  PropBlock,
+  AxiomBlock,
+  TheoremBlock,
+  ProofInput,
+  ProofOutput,
+  ProofOp,
+  Type,
+  Name,
+  Arg,
   Comment,
   Root,
   Unknown,
@@ -75,7 +81,19 @@ export interface ParseError {
 
 export const enum ParseErrorCode {
   None = 0,
-  InvalidCharacter = 1,
-  UnexpectedEndOfComment = 2,
-  InvalidSymbol = 3,
+  TypeBlockNameMissing,
+  ConstBlockTypeMissing,
+  ConstBlockNameMissing,
+  VarBlockTypeMissing,
+  VarBlockNameMissing,
+  PropBlockTypeMissing,
+  PropBlockNameMissing,
+  PropBlockArgMissing,
+  AxiomBlockNameMissing,
+  AxiomBlockArgMissing,
+  AxiomBlockProofOutputMissing,
+  TheoremBlockNameMissing,
+  TheoremBlockArgMissing,
+  TheoremBlockProofOutputMissing,
+  TheoremProofOpMissing
 }

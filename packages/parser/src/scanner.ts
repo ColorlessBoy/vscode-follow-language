@@ -29,8 +29,8 @@ export function createScanner(text: string): FollowScanner {
     ['prop', TokenType.Prop],
     ['axiom', TokenType.Axiom],
     ['thm', TokenType.Theorem],
-    ['-|', TokenType.ProofBlockInput],
-    ['|-', TokenType.ProofBlockOutput]
+    ['-|', TokenType.ProofInput],
+    ['|-', TokenType.ProofOutput]
   ])
 
   const ignoreCharacterList: Array<CharacterCode> = [CharacterCode.space, CharacterCode.tab, CharacterCode.formFeed];
