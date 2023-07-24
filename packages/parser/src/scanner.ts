@@ -62,6 +62,7 @@ export function createScanner(text: string): FollowScanner {
     }
     value += String.fromCharCode(code);
     pos++;
+    scanError = ScanError.UnknownCharacter
     return (token = TokenType.Unknown);
   }
 
@@ -115,7 +116,7 @@ export function createScanner(text: string): FollowScanner {
     // just a single slash
     value += String.fromCharCode(CharacterCode.slash);
     pos++;
-
+    scanError = ScanError.UnknownCharacter
     return (token = TokenType.Unknown);
   }
 
@@ -127,6 +128,7 @@ export function createScanner(text: string): FollowScanner {
       tokenLineStartOffset = pos;
       return (token = TokenType.LineBreak);
     }
+    scanError = ScanError.UnknownCharacter
     return (token = TokenType.Unknown);
   }
 
@@ -205,20 +207,6 @@ function isValidCharacter(ch: number): boolean {
     ch === CharacterCode.vbar ||
     ch === CharacterCode.minus
   );
-}
-
-function isUnknownContentCharacter(code: CharacterCode) {
-  if (isWhiteSpace(code) || isLineBreak(code)) {
-    return false;
-  }
-  switch (code) {
-    case CharacterCode.closeBrace:
-    case CharacterCode.openBrace:
-    case CharacterCode.colon:
-    case CharacterCode.slash:
-      return false;
-  }
-  return true;
 }
 
 // https://github.com/microsoft/node-jsonc-parser.git

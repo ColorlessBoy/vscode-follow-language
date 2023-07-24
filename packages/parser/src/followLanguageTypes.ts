@@ -1,8 +1,7 @@
 export const enum ScanError {
   None = 0,
-  InvalidCharacter = 1,
+  UnknownCharacter = 1,
   UnexpectedEndOfComment = 2,
-  RecurrentBrace = 3,
 }
 
 export const enum TokenType {
@@ -51,35 +50,39 @@ export const enum NodeType {
   TheoremBlock,
   ProofInput,
   ProofOutput,
+  ProofProcess,
   ProofOp,
   Type,
   Name,
   Arg,
-  Comment,
+  LineComment,
+  BlockComment,
   Root,
   Unknown,
-  OpenBrace,
+  TokenError
 }
 
 export interface Node {
-  readonly type: NodeType;
-  readonly value: any;
-  readonly offset: number;
-  readonly length: number;
-  readonly children: Node[];
-  readonly parent?: Node;
+  readonly type: NodeType,
+  readonly value: string,
+  readonly line: number,
+  readonly offset: number,
+  readonly length: number,
+  readonly children: Node[],
+  readonly parent?: Node,
+  readonly error?: ParseError,
+  readonly argsStart?: number,
+  readonly proofInputStart?: number,
+  readonly proofOutputStart?: number,
+  readonly proofProcessStart?: number,
+  readonly comments?: Node[], 
+  readonly errorToken?: Node[]
 }
 export interface FollowDocument {
   roots: Node[];
 }
 
-export interface ParseError {
-  error: ParseErrorCode;
-  offset: number;
-  length: number;
-}
-
-export const enum ParseErrorCode {
+export const enum ParseError {
   None = 0,
   TypeBlockNameMissing,
   ConstBlockTypeMissing,
@@ -88,12 +91,27 @@ export const enum ParseErrorCode {
   VarBlockNameMissing,
   PropBlockTypeMissing,
   PropBlockNameMissing,
+  PropBlockArgColonMissing,
   PropBlockArgMissing,
   AxiomBlockNameMissing,
+  AxiomBlockArgColonMissing,
   AxiomBlockArgMissing,
+  AxiomBlockProofColonMissing,
+  AxiomBlockProofInputOpMissing,
   AxiomBlockProofOutputMissing,
   TheoremBlockNameMissing,
+  TheoremBlockArgColonMissing,
   TheoremBlockArgMissing,
+  TheoremBlockProofColonMissing,
+  TheoremBlockProofInputOpMissing,
   TheoremBlockProofOutputMissing,
-  TheoremProofOpMissing
+  TheoremBlockProofProcessColonMissing,
+  TheoremBlockProofProcessOpMissing,
+  ProofInputOpMissing,
+  ProofOutputMissing,
+  ProofOutputOpMissing,
+  ProofProcessOpMissing,
+  UnknownCharacter,
+  UnexpectedEndOfComment,
+  UnknownTokenError
 }

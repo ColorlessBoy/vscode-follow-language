@@ -5,9 +5,9 @@ import {
   NodeType,
   Node,
   FollowDocument,
-  ParseErrorCode,
+  ParseError,
+  ScanError,
 } from './followLanguageTypes';
-import { Cipher } from 'crypto';
 
 class NodeImpl implements Node {
   constructor(
@@ -18,19 +18,23 @@ class NodeImpl implements Node {
     public length: number,
     public children: NodeImpl[],
     public parent?: NodeImpl,
-    public error?: ParseErrorCode,
+    public error?: ParseError,
     public argsStart?: number,
     public proofInputStart?: number,
     public proofOutputStart?: number,
+    public proofProcessStart?: number,
+    public comments?: NodeImpl[], 
+    public errorToken?: NodeImpl[]
   ) {}
 }
 
 export class FollowParser {
-  public parse(text: string): FollowDocument | undefined {
+  public parse(text: string): FollowDocument {
     const scanner = createScanner(text);
-    const followDocument = new NodeImpl(NodeType.Root, '', 0, 0, 0, [], void 0);
-    let curr = followDocument;
-    let token = scanner.scan();
+    const root = new NodeImpl(NodeType.Root, '', 0, 0, 0, []);
+    let curr = root;
+
+    let token = this.scanUntilValid(scanner, root);
     while (token !== TokenType.EOF) {
       switch (token) {
         case TokenType.Type:
@@ -51,10 +55,14 @@ export class FollowParser {
         case TokenType.Theorem:
           this.parseTheoremBlock(scanner, curr);
           break;
+        default:
+          this.scanUntilValid(scanner, curr);
       }
       token = scanner.getToken();
     }
-    return;
+    return {
+      roots: [root]
+    };
   }
 
   private createNode(scanner: FollowScanner, curr: NodeImpl, nodeType: NodeType) {
@@ -71,134 +79,303 @@ export class FollowParser {
     return child;
   }
 
+  private scanLineComment(scanner: FollowScanner, curr: NodeImpl): boolean {
+    const child = new NodeImpl(
+      NodeType.LineComment,
+      scanner.getTokenValue(),
+      scanner.getTokenStartLine(),
+      scanner.getTokenOffset(),
+      scanner.getTokenLength(),
+      [],
+      curr,
+    );
+    if (curr.comments) {
+      curr.comments.push(child);
+    } else {
+      curr.comments = [child];
+    }
+    return true;
+  }
+
+  private scanBlockComment(scanner: FollowScanner, curr: NodeImpl): boolean {
+    const child = new NodeImpl(
+      NodeType.BlockComment,
+      scanner.getTokenValue(),
+      scanner.getTokenStartLine(),
+      scanner.getTokenOffset(),
+      scanner.getTokenLength(),
+      [],
+      curr,
+    );
+    if (curr.comments) {
+      curr.comments.push(child);
+    } else {
+      curr.comments = [child];
+    }
+    return true;
+  }
+
+  private scanErrorToken(scanner: FollowScanner, curr: NodeImpl, parseError: ParseError): boolean {
+    const child = new NodeImpl(
+      NodeType.TokenError,
+      scanner.getTokenValue(),
+      scanner.getTokenStartLine(),
+      scanner.getTokenOffset(),
+      scanner.getTokenLength(),
+      [],
+      curr,
+    );
+    child.error = parseError;
+    if (curr.errorToken) {
+      curr.errorToken.push(child);
+    } else {
+      curr.comments = [child];
+    }
+    return true
+  }
+
+  private scanUntilValid(scanner: FollowScanner, curr: NodeImpl): TokenType {
+    const ignoreTokenList = [
+      TokenType.OpenBrace,
+      TokenType.CloseBrace,
+      TokenType.OpenBracket,
+      TokenType.CloseBracket,
+      TokenType.OpenParen,
+      TokenType.CloseParen,
+      TokenType.LineBreak
+    ]
+    let token = scanner.scan();
+    let tokenError = scanner.getTokenError();
+    while (tokenError !== ScanError.None
+          || token === TokenType.LineComment 
+          || token === TokenType.BlockComment
+          || ignoreTokenList.includes(token)) {
+      if (tokenError !== ScanError.None) {
+        if (tokenError === ScanError.UnknownCharacter) {
+          this.scanErrorToken(scanner, curr, ParseError.UnknownCharacter);
+        } else if (tokenError === ScanError.UnexpectedEndOfComment) {
+          this.scanErrorToken(scanner, curr, ParseError.UnexpectedEndOfComment);
+        } else {
+          this.scanErrorToken(scanner, curr, ParseError.UnknownTokenError);
+        }
+      } else if (token === TokenType.LineComment) {
+        this.scanLineComment(scanner, curr);
+      } else if (token === TokenType.BlockComment) {
+        this.scanBlockComment(scanner, curr);
+      }
+      token = scanner.scan();
+      tokenError = scanner.getTokenError();
+    }
+    return token;
+  }
+
+
   private scanOperator(scanner: FollowScanner, curr: NodeImpl, nodeType: NodeType): boolean {
+    // Op
     let token = scanner.getToken();
     if (token != TokenType.Operator) {
       return false;
     }
     this.createNode(scanner, curr, nodeType);
-    scanner.scan();
+    this.scanUntilValid(scanner, curr);
     return true;
   }
 
   private scanOperatorSequence(scanner: FollowScanner, curr: NodeImpl, nodeType: NodeType): boolean {
+    // NAME+
     let token = scanner.getToken();
     let cnt = 0;
     while (token === TokenType.Operator) {
       this.createNode(scanner, curr, nodeType);
-      token = scanner.scan();
+      token = this.scanUntilValid(scanner, curr);
       cnt++;
     }
     return cnt > 0;
   }
 
-  private scanBlock(scanner: FollowScanner, curr: NodeImpl, startTokenType: TokenType, nodeType: NodeType): boolean {
+  private scanSingleToken(scanner: FollowScanner, curr: NodeImpl, targetTokenType: TokenType): boolean {
     let token = scanner.getToken();
-    if (token !== startTokenType) {
+    if (token !== targetTokenType) {
       return false;
     }
-    scanner.scan();
-    return this.scanOperatorSequence(scanner, curr, nodeType);
+    this.scanUntilValid(scanner, curr);
+    return true;
+  }
+
+  private scanProofInput(scanner: FollowScanner, curr: NodeImpl): boolean {
+    // [-| OP+]*
+    let token = scanner.getToken();
+    while(token === TokenType.ProofInput) {
+      const child = this.createNode(scanner, curr, NodeType.ProofInput);
+      this.scanUntilValid(scanner, curr);
+      if(!this.scanOperatorSequence(scanner, child, NodeType.ProofOp)) {
+        child.error = ParseError.ProofInputOpMissing;
+        return false;
+      }
+      token = scanner.getToken();
+    }
+    return true;
+  }
+
+  private scanProofOutput(scanner: FollowScanner, curr: NodeImpl): boolean {
+    // |- OP+
+    let token = scanner.getToken();
+    const child = this.createNode(scanner, curr, NodeType.ProofOutput);
+    this.scanUntilValid(scanner, curr);
+    if(token !== TokenType.ProofOutput) {
+      child.error = ParseError.ProofOutputMissing;
+      return false;
+    }
+    if(!this.scanOperatorSequence(scanner, child, NodeType.ProofOp)){
+      child.error = ParseError.ProofOutputOpMissing;
+      return false;
+    }
+    return true;
+  }
+
+  private scanProofProcess(scanner: FollowScanner, curr: NodeImpl): boolean {
+    // OP+
+    const child = new NodeImpl(
+      NodeType.ProofProcess,
+      '',
+      scanner.getTokenStartLine(),
+      scanner.getTokenOffset(),
+      0,
+      [],
+      curr,
+    );
+    curr.children.push(child);
+    if(!this.scanOperatorSequence(scanner, child, NodeType.ProofOp)){
+      child.error = ParseError.ProofProcessOpMissing;
+      return false;
+    }
+    return true;
   }
 
   private parseTypeBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // type [NAME]+
-    scanner.scan();
+    // type NAME+
     const child = this.createNode(scanner, curr, NodeType.TypeBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperatorSequence(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.TypeBlockNameMissing;
+      child.error = ParseError.TypeBlockNameMissing;
     }
   }
 
   private parseConstBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // const TYPE [NAME]+
-    scanner.scan();
+    // const TYPE NAME+
     const child = this.createNode(scanner, curr, NodeType.ConstBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperator(scanner, child, NodeType.Type)) {
-      child.error = ParseErrorCode.ConstBlockTypeMissing;
+      child.error = ParseError.ConstBlockTypeMissing;
       return;
     }
     if (!this.scanOperatorSequence(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.ConstBlockNameMissing;
+      child.error = ParseError.ConstBlockNameMissing;
     }
   }
 
   private parseVarBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // var TYPE [NAME]+
-    scanner.scan();
+    // var TYPE NAME+
     const child = this.createNode(scanner, curr, NodeType.VarBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperator(scanner, child, NodeType.Type)) {
-      child.error = ParseErrorCode.VarBlockTypeMissing;
+      child.error = ParseError.VarBlockTypeMissing;
       return;
     }
     if (!this.scanOperatorSequence(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.VarBlockNameMissing;
+      child.error = ParseError.VarBlockNameMissing;
     }
   }
 
   private parsePropBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // prop TYPE [NAME]+ : [ARG]+
-    scanner.scan();
+    // prop TYPE NAME+ : ARG+
     const child = this.createNode(scanner, curr, NodeType.PropBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperator(scanner, child, NodeType.Type)) {
-      child.error = ParseErrorCode.PropBlockTypeMissing;
+      child.error = ParseError.PropBlockTypeMissing;
       return;
     }
     if (!this.scanOperatorSequence(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.PropBlockNameMissing;
+      child.error = ParseError.PropBlockNameMissing;
       return;
     }
+    if (!this.scanSingleToken(scanner, curr, TokenType.Colon)) {
+      child.error = ParseError.PropBlockArgColonMissing;
+      return
+    }
     child.argsStart = child.children.length;
-    if (!this.scanBlock(scanner, child, TokenType.Colon, NodeType.Arg)) {
-      child.error = ParseErrorCode.PropBlockArgMissing;
+    if (!this.scanOperatorSequence(scanner, child, NodeType.Arg)) {
+      child.error = ParseError.PropBlockArgMissing;
     }
   }
 
   private parseAxiomBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // axiom NAME : [ARG]+ : [INPUT]* OUTPUT
-    scanner.scan();
+    // axiom NAME : ARG* : INPUT* OUTPUT
     const child = this.createNode(scanner, curr, NodeType.AxiomBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperator(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.AxiomBlockNameMissing;
+      child.error = ParseError.AxiomBlockNameMissing;
+      return;
+    }
+    if (!this.scanSingleToken(scanner, child, TokenType.Colon)) {
+      child.error = ParseError.AxiomBlockArgColonMissing;
       return;
     }
     child.argsStart = child.children.length;
-    if (!this.scanBlock(scanner, child, TokenType.Colon, NodeType.Arg)) {
-      child.error = ParseErrorCode.AxiomBlockArgMissing;
+    this.scanOperatorSequence(scanner, child, NodeType.Arg);
+    if (!this.scanSingleToken(scanner, child, TokenType.Colon)) {
+      child.error = ParseError.AxiomBlockProofColonMissing;
       return;
     }
     child.proofInputStart = child.children.length;
-    this.scanBlock(scanner, child, TokenType.ProofInput, NodeType.ProofInput);
-    child.proofOutputStart = child.children.length;
-    if (!this.scanBlock(scanner, child, TokenType.ProofOutput, NodeType.ProofOutput)) {
-      child.error = ParseErrorCode.AxiomBlockProofOutputMissing;
+    if(!this.scanProofInput(scanner, child)) {
+      child.error = ParseError.AxiomBlockProofInputOpMissing;
       return;
     }
+    child.proofOutputStart = child.children.length;
+    if (!this.scanProofOutput(scanner, child)) {
+      child.error = ParseError.AxiomBlockProofOutputMissing;
+      return;
+    }
+    return;
   }
 
   private parseTheoremBlock(scanner: FollowScanner, curr: NodeImpl) {
-    // thm NAME : [ARG]+ : [INPUT]* OUTPUT : [OP]+
-    scanner.scan();
+    // thm NAME : ARG* : INPUT* OUTPUT : OP+
     const child = this.createNode(scanner, curr, NodeType.TheoremBlock);
+    this.scanUntilValid(scanner, curr);
     if (!this.scanOperator(scanner, child, NodeType.Name)) {
-      child.error = ParseErrorCode.TheoremBlockNameMissing;
+      child.error = ParseError.TheoremBlockNameMissing;
+      return;
+    }
+    if (!this.scanSingleToken(scanner, child, TokenType.Colon)) {
+      child.error = ParseError.TheoremBlockArgColonMissing;
       return;
     }
     child.argsStart = child.children.length;
-    if (!this.scanBlock(scanner, child, TokenType.Colon, NodeType.Arg)) {
-      child.error = ParseErrorCode.TheoremBlockArgMissing;
+    this.scanOperatorSequence(scanner, child, NodeType.Arg)
+    if (!this.scanSingleToken(scanner, child, TokenType.Colon)) {
+      child.error = ParseError.TheoremBlockProofColonMissing;
       return;
     }
     child.proofInputStart = child.children.length;
-    this.scanBlock(scanner, child, TokenType.ProofInput, NodeType.ProofInput);
-    child.proofOutputStart = child.children.length;
-    if (!this.scanBlock(scanner, child, TokenType.ProofOutput, NodeType.ProofOutput)) {
-      child.error = ParseErrorCode.TheoremBlockProofOutputMissing;
+    if (!this.scanProofInput(scanner, child)) {
+      child.error = ParseError.TheoremBlockProofInputOpMissing;
       return;
     }
-    if (!this.scanBlock(scanner, child, TokenType.Operator, NodeType.ProofOp)) {
-      child.error = ParseErrorCode.TheoremProofOpMissing;
+    child.proofOutputStart = child.children.length;
+    if (!this.scanProofOutput(scanner, child)) {
+      child.error = ParseError.TheoremBlockProofOutputMissing;
       return;
+    }
+    if (!this.scanSingleToken(scanner, child, TokenType.Colon)) {
+      child.error = ParseError.TheoremBlockProofProcessColonMissing;
+      return;
+    }
+    child.proofProcessStart = child.children.length;
+    if (!this.scanProofProcess(scanner, child)) {
+      child.error = ParseError.TheoremBlockProofProcessOpMissing;
+      return
     }
   }
 }
