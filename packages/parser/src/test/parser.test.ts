@@ -10,8 +10,20 @@ suite('Follow Parser', () => {
     offset: number,
     length: number,
     children: Node[],
+    comments?: Node[]
   }
   function toTestNode(node: Node) : TestNode {
+    if(node.comments) {
+      return {
+        type: node.type,
+        value: node.value,
+        line: node.line,
+        offset: node.offset,
+        length: node.length,
+        children: node.children.map(toTestNode),
+        comments: node.comments.map(toTestNode)
+      }
+    }
     return {
       type: node.type,
       value: node.value,
@@ -147,6 +159,39 @@ suite('Follow Parser', () => {
               ]}
             ]},
           ]
+        }
+      ]
+    );
+  });
+  test('CommentBlock', () => {
+    assertDocument(
+      '//This is a root comment.\nthm thm-1  : w0 w1 : -| w0 |- imp w1 w0 : ax-1\n//This is a proof process comment.',
+      [
+        {
+          type:NodeType.Root, value:'', line:0, offset:0, length:0,
+          children: [
+            {type:NodeType.TheoremBlock, value:'thm', line:1, offset:26, length:3, children:[
+              {type:NodeType.Name, value:'thm-1', line:1, offset:30, length:5, children:[]},
+              {type:NodeType.Arg, value:'w0', line:1, offset:39, length:2, children:[]},
+              {type:NodeType.Arg, value:'w1', line:1, offset:42, length:2, children:[]},
+              {type:NodeType.ProofInput, value:'-|', line:1, offset:47, length:2, children:[
+                {type:NodeType.ProofOp, value:'w0', line:1, offset:50, length:2, children:[]}
+              ]},
+              {type:NodeType.ProofOutput, value:'|-', line:1, offset:53, length:2, children:[
+                {type:NodeType.ProofOp, value:'imp', line:1, offset:56, length:3, children:[]},
+                {type:NodeType.ProofOp, value:'w1', line:1, offset:60, length:2, children:[]},
+                {type:NodeType.ProofOp, value:'w0', line:1, offset:63, length:2, children:[]}
+              ]},
+              {type:NodeType.ProofProcess, value:'', line:1, offset:68, length:0, children:[
+                {type:NodeType.ProofOp, value:'ax-1', line:1, offset:68, length:4, children:[]}
+              ],comments:[
+                {type:NodeType.LineComment, value:'//This is a proof process comment.', line:2, offset:73, length:34, children:[]}
+              ]}
+            ]},
+          ],
+          comments: [
+            {type:NodeType.LineComment, value:'//This is a root comment.', line:0, offset:0, length:25, children:[]}
+          ],
         }
       ]
     );

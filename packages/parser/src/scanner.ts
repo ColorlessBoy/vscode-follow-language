@@ -190,10 +190,6 @@ export function createScanner(text: string): FollowScanner {
   };
 }
 
-function isWhiteSpace(ch: number): boolean {
-  return ch === CharacterCode.space || ch === CharacterCode.tab;
-}
-
 function isLineBreak(ch: number): boolean {
   return ch === CharacterCode.lineFeed || ch === CharacterCode.carriageReturn;
 }
