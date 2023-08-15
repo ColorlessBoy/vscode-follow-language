@@ -5,7 +5,9 @@
   "scripts": {
     "build": "pnpm --stream -r run build",
     "watch": "pnpm --stream -r run watch",
-    "test": "pnpm --stream -r run test"
+    "test": "pnpm --stream -r run test",
+    "antlr4": "pnpm --stream -r run antlr4",
+    "clean": "pnpm --stream -r run clean"
   },
   "keywords": [],
   "author": "Peng Lingwei",

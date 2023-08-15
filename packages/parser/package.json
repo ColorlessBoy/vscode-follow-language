@@ -6,14 +6,25 @@
   "scripts": {
     "build": "tsc -b",
     "watch": "tsc -b -w",
-    "test": "npm run build && mocha --timeout 5000 ./build/test/*.js"
+    "test": "npm run antlr4 && npm run build && mocha",
+    "antlr4-lexer": "antlr4ts ./antlr4/FollowLexer.g4 -visitor -Dlanguage=TypeScript -o ./src",
+    "antlr4-parser": "antlr4ts ./antlr4/FollowParser.g4 -no-listener -no-visitor -Dlanguage=TypeScript -o ./src",
+    "antlr4": "npm run antlr4-lexer && cp ./src/antlr4/FollowLexer.tokens ./antlr4 && npm run antlr4-parser && rimraf ./src/antlr4/*.interp && rimraf ./src/antlr4/*.tokens && rimraf ./antlr4/*.tokens",
+    "antlr4-clean": "rimraf ./antlr4/FollowLexer.tokens && rimraf -rf ./antlr4/.antlr",
+    "clean": "rimraf build && npm run antlr4-clean"
   },
   "keywords": [],
   "author": "Peng Lingwei",
   "license": "ISC",
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.0",
+    "antlr4ts-cli": "0.5.0-alpha.4",
     "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
+    "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "antlr4ts": "0.5.0-alpha.4"
   }
 }

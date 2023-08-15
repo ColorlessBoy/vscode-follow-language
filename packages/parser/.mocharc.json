@@ -1,5 +1,7 @@
 {
   "ui": "tdd",
   "color": true,
-  "timeout": 999999
+  "timeout": 2000,
+  "spec": "./build/test",
+  "recursive": true
 }
