@@ -121,12 +121,12 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 51;
+			this.state = 52;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << FollowParser.KW_TYPE) | (1 << FollowParser.KW_CONST) | (1 << FollowParser.KW_VAR) | (1 << FollowParser.KW_AXIOM) | (1 << FollowParser.KW_THEOREM))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << FollowParser.KW_TYPE) | (1 << FollowParser.KW_CONST) | (1 << FollowParser.KW_VAR) | (1 << FollowParser.KW_PROP) | (1 << FollowParser.KW_AXIOM) | (1 << FollowParser.KW_THEOREM))) !== 0)) {
 				{
-				this.state = 49;
+				this.state = 50;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case FollowParser.KW_TYPE:
@@ -147,15 +147,21 @@ export class FollowParser extends Parser {
 					this.varBlock();
 					}
 					break;
-				case FollowParser.KW_AXIOM:
+				case FollowParser.KW_PROP:
 					{
 					this.state = 47;
+					this.propBlock();
+					}
+					break;
+				case FollowParser.KW_AXIOM:
+					{
+					this.state = 48;
 					this.axiomBlock();
 					}
 					break;
 				case FollowParser.KW_THEOREM:
 					{
-					this.state = 48;
+					this.state = 49;
 					this.theoremBlock();
 					}
 					break;
@@ -163,11 +169,11 @@ export class FollowParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 53;
+				this.state = 54;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 54;
+			this.state = 55;
 			this.match(FollowParser.EOF);
 			}
 		}
@@ -193,19 +199,19 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 56;
+			this.state = 57;
 			this.match(FollowParser.KW_TYPE);
-			this.state = 58;
+			this.state = 59;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 57;
+				this.state = 58;
 				this.typeID();
 				}
 				}
-				this.state = 60;
+				this.state = 61;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === FollowParser.ID);
@@ -233,21 +239,21 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 62;
-			this.match(FollowParser.KW_CONST);
 			this.state = 63;
+			this.match(FollowParser.KW_CONST);
+			this.state = 64;
 			this.typeID();
-			this.state = 65;
+			this.state = 66;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 64;
+				this.state = 65;
 				this.constID();
 				}
 				}
-				this.state = 67;
+				this.state = 68;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === FollowParser.ID);
@@ -275,21 +281,21 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 69;
-			this.match(FollowParser.KW_VAR);
 			this.state = 70;
+			this.match(FollowParser.KW_VAR);
+			this.state = 71;
 			this.typeID();
-			this.state = 72;
+			this.state = 73;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 71;
+				this.state = 72;
 				this.varID();
 				}
 				}
-				this.state = 74;
+				this.state = 75;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === FollowParser.ID);
@@ -316,11 +322,13 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 76;
-			this.match(FollowParser.KW_PROP);
 			this.state = 77;
-			this.propID();
+			this.match(FollowParser.KW_PROP);
 			this.state = 78;
+			this.typeID();
+			this.state = 79;
+			this.propID();
+			this.state = 80;
 			this.paramBlock();
 			}
 		}
@@ -345,13 +353,13 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 80;
-			this.match(FollowParser.KW_AXIOM);
-			this.state = 81;
-			this.axiomID();
 			this.state = 82;
-			this.paramBlock();
+			this.match(FollowParser.KW_AXIOM);
 			this.state = 83;
+			this.axiomID();
+			this.state = 84;
+			this.paramBlock();
+			this.state = 85;
 			this.contentBlock();
 			}
 		}
@@ -376,17 +384,17 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 85;
-			this.match(FollowParser.KW_THEOREM);
-			this.state = 86;
-			this.axiomID();
 			this.state = 87;
-			this.paramBlock();
+			this.match(FollowParser.KW_THEOREM);
 			this.state = 88;
-			this.contentBlock();
+			this.axiomID();
 			this.state = 89;
-			this.match(FollowParser.EQ);
+			this.paramBlock();
 			this.state = 90;
+			this.contentBlock();
+			this.state = 91;
+			this.match(FollowParser.EQ);
+			this.state = 92;
 			this.proofBlock();
 			}
 		}
@@ -412,31 +420,31 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 92;
-			this.match(FollowParser.LPAREN);
-			this.state = 93;
-			this.typeID();
 			this.state = 94;
+			this.match(FollowParser.LPAREN);
+			this.state = 95;
+			this.typeID();
+			this.state = 96;
 			this.argID();
-			this.state = 101;
+			this.state = 103;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === FollowParser.COMMA) {
 				{
 				{
-				this.state = 95;
-				this.match(FollowParser.COMMA);
-				this.state = 96;
-				this.typeID();
 				this.state = 97;
+				this.match(FollowParser.COMMA);
+				this.state = 98;
+				this.typeID();
+				this.state = 99;
 				this.argID();
 				}
 				}
-				this.state = 103;
+				this.state = 105;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 104;
+			this.state = 106;
 			this.match(FollowParser.RPAREN);
 			}
 		}
@@ -462,19 +470,19 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 106;
-			this.match(FollowParser.KW_ASSUME);
 			this.state = 108;
+			this.match(FollowParser.KW_ASSUME);
+			this.state = 110;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 107;
+				this.state = 109;
 				this.assumeID();
 				}
 				}
-				this.state = 110;
+				this.state = 112;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === FollowParser.ID);
@@ -502,19 +510,19 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 112;
-			this.match(FollowParser.KW_TARGET);
 			this.state = 114;
+			this.match(FollowParser.KW_TARGET);
+			this.state = 116;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 113;
+				this.state = 115;
 				this.targetID();
 				}
 				}
-				this.state = 116;
+				this.state = 118;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === FollowParser.ID);
@@ -542,25 +550,25 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 118;
+			this.state = 120;
 			this.match(FollowParser.LBRACE);
-			this.state = 122;
+			this.state = 124;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === FollowParser.KW_ASSUME) {
 				{
 				{
-				this.state = 119;
+				this.state = 121;
 				this.assumeBlock();
 				}
 				}
-				this.state = 124;
+				this.state = 126;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 125;
+			this.state = 127;
 			this.targetBlock();
-			this.state = 126;
+			this.state = 128;
 			this.match(FollowParser.RBRACE);
 			}
 		}
@@ -586,23 +594,23 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 128;
+			this.state = 130;
 			this.match(FollowParser.LBRACE);
-			this.state = 132;
+			this.state = 134;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === FollowParser.ID) {
 				{
 				{
-				this.state = 129;
+				this.state = 131;
 				this.proofID();
 				}
 				}
-				this.state = 134;
+				this.state = 136;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 135;
+			this.state = 137;
 			this.match(FollowParser.RBRACE);
 			}
 		}
@@ -627,7 +635,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 137;
+			this.state = 139;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -652,7 +660,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 139;
+			this.state = 141;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -677,7 +685,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 141;
+			this.state = 143;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -702,7 +710,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 143;
+			this.state = 145;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -727,7 +735,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 145;
+			this.state = 147;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -752,7 +760,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 147;
+			this.state = 149;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -777,7 +785,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 149;
+			this.state = 151;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -802,7 +810,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 151;
+			this.state = 153;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -827,7 +835,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 153;
+			this.state = 155;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -852,7 +860,7 @@ export class FollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 155;
+			this.state = 157;
 			this.match(FollowParser.ID);
 			}
 		}
@@ -872,66 +880,68 @@ export class FollowParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x17\xA0\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x17\xA2\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
 		"\x13\t\x13\x04\x14\t\x14\x04\x15\t\x15\x04\x16\t\x16\x04\x17\t\x17\x03" +
-		"\x02\x03\x02\x03\x02\x03\x02\x03\x02\x07\x024\n\x02\f\x02\x0E\x027\v\x02" +
-		"\x03\x02\x03\x02\x03\x03\x03\x03\x06\x03=\n\x03\r\x03\x0E\x03>\x03\x04" +
-		"\x03\x04\x03\x04\x06\x04D\n\x04\r\x04\x0E\x04E\x03\x05\x03\x05\x03\x05" +
-		"\x06\x05K\n\x05\r\x05\x0E\x05L\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07" +
-		"\x03\x07\x03\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03" +
-		"\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\tf\n\t\f\t\x0E\ti\v\t" +
-		"\x03\t\x03\t\x03\n\x03\n\x06\no\n\n\r\n\x0E\np\x03\v\x03\v\x06\vu\n\v" +
-		"\r\v\x0E\vv\x03\f\x03\f\x07\f{\n\f\f\f\x0E\f~\v\f\x03\f\x03\f\x03\f\x03" +
-		"\r\x03\r\x07\r\x85\n\r\f\r\x0E\r\x88\v\r\x03\r\x03\r\x03\x0E\x03\x0E\x03" +
-		"\x0F\x03\x0F\x03\x10\x03\x10\x03\x11\x03\x11\x03\x12\x03\x12\x03\x13\x03" +
-		"\x13\x03\x14\x03\x14\x03\x15\x03\x15\x03\x16\x03\x16\x03\x17\x03\x17\x03" +
-		"\x17\x02\x02\x02\x18\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02" +
-		"\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02" +
-		"\"\x02$\x02&\x02(\x02*\x02,\x02\x02\x02\x02\x96\x025\x03\x02\x02\x02\x04" +
-		":\x03\x02\x02\x02\x06@\x03\x02\x02\x02\bG\x03\x02\x02\x02\nN\x03\x02\x02" +
-		"\x02\fR\x03\x02\x02\x02\x0EW\x03\x02\x02\x02\x10^\x03\x02\x02\x02\x12" +
-		"l\x03\x02\x02\x02\x14r\x03\x02\x02\x02\x16x\x03\x02\x02\x02\x18\x82\x03" +
-		"\x02\x02\x02\x1A\x8B\x03\x02\x02\x02\x1C\x8D\x03\x02\x02\x02\x1E\x8F\x03" +
-		"\x02\x02\x02 \x91\x03\x02\x02\x02\"\x93\x03\x02\x02\x02$\x95\x03\x02\x02" +
-		"\x02&\x97\x03\x02\x02\x02(\x99\x03\x02\x02\x02*\x9B\x03\x02\x02\x02,\x9D" +
-		"\x03\x02\x02\x02.4\x05\x04\x03\x02/4\x05\x06\x04\x0204\x05\b\x05\x021" +
-		"4\x05\f\x07\x0224\x05\x0E\b\x023.\x03\x02\x02\x023/\x03\x02\x02\x0230" +
-		"\x03\x02\x02\x0231\x03\x02\x02\x0232\x03\x02\x02\x0247\x03\x02\x02\x02" +
-		"53\x03\x02\x02\x0256\x03\x02\x02\x0268\x03\x02\x02\x0275\x03\x02\x02\x02" +
-		"89\x07\x02\x02\x039\x03\x03\x02\x02\x02:<\x07\x0F\x02\x02;=\x05\x1A\x0E" +
-		"\x02<;\x03\x02\x02\x02=>\x03\x02\x02\x02><\x03\x02\x02\x02>?\x03\x02\x02" +
-		"\x02?\x05\x03\x02\x02\x02@A\x07\x10\x02\x02AC\x05\x1A\x0E\x02BD\x05\x1C" +
-		"\x0F\x02CB\x03\x02\x02\x02DE\x03\x02\x02\x02EC\x03\x02\x02\x02EF\x03\x02" +
-		"\x02\x02F\x07\x03\x02\x02\x02GH\x07\x11\x02\x02HJ\x05\x1A\x0E\x02IK\x05" +
-		"\x1E\x10\x02JI\x03\x02\x02\x02KL\x03\x02\x02\x02LJ\x03\x02\x02\x02LM\x03" +
-		"\x02\x02\x02M\t\x03\x02\x02\x02NO\x07\x12\x02\x02OP\x05 \x11\x02PQ\x05" +
-		"\x10\t\x02Q\v\x03\x02\x02\x02RS\x07\x13\x02\x02ST\x05\"\x12\x02TU\x05" +
-		"\x10\t\x02UV\x05\x16\f\x02V\r\x03\x02\x02\x02WX\x07\x14\x02\x02XY\x05" +
-		"\"\x12\x02YZ\x05\x10\t\x02Z[\x05\x16\f\x02[\\\x07\r\x02\x02\\]\x05\x18" +
-		"\r\x02]\x0F\x03\x02\x02\x02^_\x07\v\x02\x02_`\x05\x1A\x0E\x02`g\x05&\x14" +
-		"\x02ab\x07\x0E\x02\x02bc\x05\x1A\x0E\x02cd\x05&\x14\x02df\x03\x02\x02" +
-		"\x02ea\x03\x02\x02\x02fi\x03\x02\x02\x02ge\x03\x02\x02\x02gh\x03\x02\x02" +
-		"\x02hj\x03\x02\x02\x02ig\x03\x02\x02\x02jk\x07\f\x02\x02k\x11\x03\x02" +
-		"\x02\x02ln\x07\x15\x02\x02mo\x05(\x15\x02nm\x03\x02\x02\x02op\x03\x02" +
-		"\x02\x02pn\x03\x02\x02\x02pq\x03\x02\x02\x02q\x13\x03\x02\x02\x02rt\x07" +
-		"\x16\x02\x02su\x05*\x16\x02ts\x03\x02\x02\x02uv\x03\x02\x02\x02vt\x03" +
-		"\x02\x02\x02vw\x03\x02\x02\x02w\x15\x03\x02\x02\x02x|\x07\x07\x02\x02" +
-		"y{\x05\x12\n\x02zy\x03\x02\x02\x02{~\x03\x02\x02\x02|z\x03\x02\x02\x02" +
-		"|}\x03\x02\x02\x02}\x7F\x03\x02\x02\x02~|\x03\x02\x02\x02\x7F\x80\x05" +
-		"\x14\v\x02\x80\x81\x07\b\x02\x02\x81\x17\x03\x02\x02\x02\x82\x86\x07\x07" +
-		"\x02\x02\x83\x85\x05,\x17\x02\x84\x83\x03\x02\x02\x02\x85\x88\x03\x02" +
-		"\x02\x02\x86\x84\x03\x02\x02\x02\x86\x87\x03\x02\x02\x02\x87\x89\x03\x02" +
-		"\x02\x02\x88\x86\x03\x02\x02\x02\x89\x8A\x07\b\x02\x02\x8A\x19\x03\x02" +
-		"\x02\x02\x8B\x8C\x07\x17\x02\x02\x8C\x1B\x03\x02\x02\x02\x8D\x8E\x07\x17" +
-		"\x02\x02\x8E\x1D\x03\x02\x02\x02\x8F\x90\x07\x17\x02\x02\x90\x1F\x03\x02" +
-		"\x02\x02\x91\x92\x07\x17\x02\x02\x92!\x03\x02\x02\x02\x93\x94\x07\x17" +
-		"\x02\x02\x94#\x03\x02\x02\x02\x95\x96\x07\x17\x02\x02\x96%\x03\x02\x02" +
-		"\x02\x97\x98\x07\x17\x02\x02\x98\'\x03\x02\x02\x02\x99\x9A\x07\x17\x02" +
-		"\x02\x9A)\x03\x02\x02\x02\x9B\x9C\x07\x17\x02\x02\x9C+\x03\x02\x02\x02" +
-		"\x9D\x9E\x07\x17\x02\x02\x9E-\x03\x02\x02\x02\f35>ELgpv|\x86";
+		"\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x07\x025\n\x02\f\x02\x0E" +
+		"\x028\v\x02\x03\x02\x03\x02\x03\x03\x03\x03\x06\x03>\n\x03\r\x03\x0E\x03" +
+		"?\x03\x04\x03\x04\x03\x04\x06\x04E\n\x04\r\x04\x0E\x04F\x03\x05\x03\x05" +
+		"\x03\x05\x06\x05L\n\x05\r\x05\x0E\x05M\x03\x06\x03\x06\x03\x06\x03\x06" +
+		"\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x03" +
+		"\b\x03\b\x03\b\x03\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\th" +
+		"\n\t\f\t\x0E\tk\v\t\x03\t\x03\t\x03\n\x03\n\x06\nq\n\n\r\n\x0E\nr\x03" +
+		"\v\x03\v\x06\vw\n\v\r\v\x0E\vx\x03\f\x03\f\x07\f}\n\f\f\f\x0E\f\x80\v" +
+		"\f\x03\f\x03\f\x03\f\x03\r\x03\r\x07\r\x87\n\r\f\r\x0E\r\x8A\v\r\x03\r" +
+		"\x03\r\x03\x0E\x03\x0E\x03\x0F\x03\x0F\x03\x10\x03\x10\x03\x11\x03\x11" +
+		"\x03\x12\x03\x12\x03\x13\x03\x13\x03\x14\x03\x14\x03\x15\x03\x15\x03\x16" +
+		"\x03\x16\x03\x17\x03\x17\x03\x17\x02\x02\x02\x18\x02\x02\x04\x02\x06\x02" +
+		"\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A" +
+		"\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02,\x02\x02\x02\x02\x99" +
+		"\x026\x03\x02\x02\x02\x04;\x03\x02\x02\x02\x06A\x03\x02\x02\x02\bH\x03" +
+		"\x02\x02\x02\nO\x03\x02\x02\x02\fT\x03\x02\x02\x02\x0EY\x03\x02\x02\x02" +
+		"\x10`\x03\x02\x02\x02\x12n\x03\x02\x02\x02\x14t\x03\x02\x02\x02\x16z\x03" +
+		"\x02\x02\x02\x18\x84\x03\x02\x02\x02\x1A\x8D\x03\x02\x02\x02\x1C\x8F\x03" +
+		"\x02\x02\x02\x1E\x91\x03\x02\x02\x02 \x93\x03\x02\x02\x02\"\x95\x03\x02" +
+		"\x02\x02$\x97\x03\x02\x02\x02&\x99\x03\x02\x02\x02(\x9B\x03\x02\x02\x02" +
+		"*\x9D\x03\x02\x02\x02,\x9F\x03\x02\x02\x02.5\x05\x04\x03\x02/5\x05\x06" +
+		"\x04\x0205\x05\b\x05\x0215\x05\n\x06\x0225\x05\f\x07\x0235\x05\x0E\b\x02" +
+		"4.\x03\x02\x02\x024/\x03\x02\x02\x0240\x03\x02\x02\x0241\x03\x02\x02\x02" +
+		"42\x03\x02\x02\x0243\x03\x02\x02\x0258\x03\x02\x02\x0264\x03\x02\x02\x02" +
+		"67\x03\x02\x02\x0279\x03\x02\x02\x0286\x03\x02\x02\x029:\x07\x02\x02\x03" +
+		":\x03\x03\x02\x02\x02;=\x07\x0F\x02\x02<>\x05\x1A\x0E\x02=<\x03\x02\x02" +
+		"\x02>?\x03\x02\x02\x02?=\x03\x02\x02\x02?@\x03\x02\x02\x02@\x05\x03\x02" +
+		"\x02\x02AB\x07\x10\x02\x02BD\x05\x1A\x0E\x02CE\x05\x1C\x0F\x02DC\x03\x02" +
+		"\x02\x02EF\x03\x02\x02\x02FD\x03\x02\x02\x02FG\x03\x02\x02\x02G\x07\x03" +
+		"\x02\x02\x02HI\x07\x11\x02\x02IK\x05\x1A\x0E\x02JL\x05\x1E\x10\x02KJ\x03" +
+		"\x02\x02\x02LM\x03\x02\x02\x02MK\x03\x02\x02\x02MN\x03\x02\x02\x02N\t" +
+		"\x03\x02\x02\x02OP\x07\x12\x02\x02PQ\x05\x1A\x0E\x02QR\x05 \x11\x02RS" +
+		"\x05\x10\t\x02S\v\x03\x02\x02\x02TU\x07\x13\x02\x02UV\x05\"\x12\x02VW" +
+		"\x05\x10\t\x02WX\x05\x16\f\x02X\r\x03\x02\x02\x02YZ\x07\x14\x02\x02Z[" +
+		"\x05\"\x12\x02[\\\x05\x10\t\x02\\]\x05\x16\f\x02]^\x07\r\x02\x02^_\x05" +
+		"\x18\r\x02_\x0F\x03\x02\x02\x02`a\x07\v\x02\x02ab\x05\x1A\x0E\x02bi\x05" +
+		"&\x14\x02cd\x07\x0E\x02\x02de\x05\x1A\x0E\x02ef\x05&\x14\x02fh\x03\x02" +
+		"\x02\x02gc\x03\x02\x02\x02hk\x03\x02\x02\x02ig\x03\x02\x02\x02ij\x03\x02" +
+		"\x02\x02jl\x03\x02\x02\x02ki\x03\x02\x02\x02lm\x07\f\x02\x02m\x11\x03" +
+		"\x02\x02\x02np\x07\x15\x02\x02oq\x05(\x15\x02po\x03\x02\x02\x02qr\x03" +
+		"\x02\x02\x02rp\x03\x02\x02\x02rs\x03\x02\x02\x02s\x13\x03\x02\x02\x02" +
+		"tv\x07\x16\x02\x02uw\x05*\x16\x02vu\x03\x02\x02\x02wx\x03\x02\x02\x02" +
+		"xv\x03\x02\x02\x02xy\x03\x02\x02\x02y\x15\x03\x02\x02\x02z~\x07\x07\x02" +
+		"\x02{}\x05\x12\n\x02|{\x03\x02\x02\x02}\x80\x03\x02\x02\x02~|\x03\x02" +
+		"\x02\x02~\x7F\x03\x02\x02\x02\x7F\x81\x03\x02\x02\x02\x80~\x03\x02\x02" +
+		"\x02\x81\x82\x05\x14\v\x02\x82\x83\x07\b\x02\x02\x83\x17\x03\x02\x02\x02" +
+		"\x84\x88\x07\x07\x02\x02\x85\x87\x05,\x17\x02\x86\x85\x03\x02\x02\x02" +
+		"\x87\x8A\x03\x02\x02\x02\x88\x86\x03\x02\x02\x02\x88\x89\x03\x02\x02\x02" +
+		"\x89\x8B\x03\x02\x02\x02\x8A\x88\x03\x02\x02\x02\x8B\x8C\x07\b\x02\x02" +
+		"\x8C\x19\x03\x02\x02\x02\x8D\x8E\x07\x17\x02\x02\x8E\x1B\x03\x02\x02\x02" +
+		"\x8F\x90\x07\x17\x02\x02\x90\x1D\x03\x02\x02\x02\x91\x92\x07\x17\x02\x02" +
+		"\x92\x1F\x03\x02\x02\x02\x93\x94\x07\x17\x02\x02\x94!\x03\x02\x02\x02" +
+		"\x95\x96\x07\x17\x02\x02\x96#\x03\x02\x02\x02\x97\x98\x07\x17\x02\x02" +
+		"\x98%\x03\x02\x02\x02\x99\x9A\x07\x17\x02\x02\x9A\'\x03\x02\x02\x02\x9B" +
+		"\x9C\x07\x17\x02\x02\x9C)\x03\x02\x02\x02\x9D\x9E\x07\x17\x02\x02\x9E" +
+		"+\x03\x02\x02\x02\x9F\xA0\x07\x17\x02\x02\xA0-\x03\x02\x02\x02\f46?FM" +
+		"irx~\x88";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!FollowParser.__ATN) {
@@ -970,6 +980,15 @@ export class RootContext extends ParserRuleContext {
 			return this.getRuleContexts(VarBlockContext);
 		} else {
 			return this.getRuleContext(i, VarBlockContext);
+		}
+	}
+	public propBlock(): PropBlockContext[];
+	public propBlock(i: number): PropBlockContext;
+	public propBlock(i?: number): PropBlockContext | PropBlockContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(PropBlockContext);
+		} else {
+			return this.getRuleContext(i, PropBlockContext);
 		}
 	}
 	public axiomBlock(): AxiomBlockContext[];
@@ -1063,6 +1082,9 @@ export class VarBlockContext extends ParserRuleContext {
 
 export class PropBlockContext extends ParserRuleContext {
 	public KW_PROP(): TerminalNode { return this.getToken(FollowParser.KW_PROP, 0); }
+	public typeID(): TypeIDContext {
+		return this.getRuleContext(0, TypeIDContext);
+	}
 	public propID(): PropIDContext {
 		return this.getRuleContext(0, PropIDContext);
 	}
