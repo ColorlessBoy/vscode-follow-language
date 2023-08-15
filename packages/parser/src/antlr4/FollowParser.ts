@@ -387,7 +387,7 @@ export class FollowParser extends Parser {
 			this.state = 87;
 			this.match(FollowParser.KW_THEOREM);
 			this.state = 88;
-			this.axiomID();
+			this.theoremID();
 			this.state = 89;
 			this.paramBlock();
 			this.state = 90;
@@ -919,7 +919,7 @@ export class FollowParser extends Parser {
 		"\x03\x02\x02\x02OP\x07\x12\x02\x02PQ\x05\x1A\x0E\x02QR\x05 \x11\x02RS" +
 		"\x05\x10\t\x02S\v\x03\x02\x02\x02TU\x07\x13\x02\x02UV\x05\"\x12\x02VW" +
 		"\x05\x10\t\x02WX\x05\x16\f\x02X\r\x03\x02\x02\x02YZ\x07\x14\x02\x02Z[" +
-		"\x05\"\x12\x02[\\\x05\x10\t\x02\\]\x05\x16\f\x02]^\x07\r\x02\x02^_\x05" +
+		"\x05$\x13\x02[\\\x05\x10\t\x02\\]\x05\x16\f\x02]^\x07\r\x02\x02^_\x05" +
 		"\x18\r\x02_\x0F\x03\x02\x02\x02`a\x07\v\x02\x02ab\x05\x1A\x0E\x02bi\x05" +
 		"&\x14\x02cd\x07\x0E\x02\x02de\x05\x1A\x0E\x02ef\x05&\x14\x02fh\x03\x02" +
 		"\x02\x02gc\x03\x02\x02\x02hk\x03\x02\x02\x02ig\x03\x02\x02\x02ij\x03\x02" +
@@ -1120,8 +1120,8 @@ export class AxiomBlockContext extends ParserRuleContext {
 
 export class TheoremBlockContext extends ParserRuleContext {
 	public KW_THEOREM(): TerminalNode { return this.getToken(FollowParser.KW_THEOREM, 0); }
-	public axiomID(): AxiomIDContext {
-		return this.getRuleContext(0, AxiomIDContext);
+	public theoremID(): TheoremIDContext {
+		return this.getRuleContext(0, TheoremIDContext);
 	}
 	public paramBlock(): ParamBlockContext {
 		return this.getRuleContext(0, ParamBlockContext);

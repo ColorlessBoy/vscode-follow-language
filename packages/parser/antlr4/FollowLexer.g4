@@ -1,6 +1,6 @@
 lexer grammar FollowLexer;
 
-WS: [ t]+ -> skip ;
+WS: [ \t]+ -> skip ;
 NL: ('\r\n' | '\r' | '\n') -> skip ;
 
 LINE_COMMENT : '//' (~[\n])* '\n' -> channel(HIDDEN) ;
