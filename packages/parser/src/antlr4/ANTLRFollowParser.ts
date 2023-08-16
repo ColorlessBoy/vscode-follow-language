@@ -1,4 +1,4 @@
-// Generated from ./antlr4/FollowParser.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from ./antlr4/ANTLRFollowParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -24,7 +24,7 @@ import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
 import * as Utils from "antlr4ts/misc/Utils";
 
 
-export class FollowParser extends Parser {
+export class ANTLRFollowParser extends Parser {
 	public static readonly WS = 1;
 	public static readonly NL = 2;
 	public static readonly LINE_COMMENT = 3;
@@ -87,23 +87,23 @@ export class FollowParser extends Parser {
 		"KW_CONST", "KW_VAR", "KW_PROP", "KW_AXIOM", "KW_THEOREM", "KW_ASSUME", 
 		"KW_TARGET", "ID",
 	];
-	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(FollowParser._LITERAL_NAMES, FollowParser._SYMBOLIC_NAMES, []);
+	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ANTLRFollowParser._LITERAL_NAMES, ANTLRFollowParser._SYMBOLIC_NAMES, []);
 
 	// @Override
 	// @NotNull
 	public get vocabulary(): Vocabulary {
-		return FollowParser.VOCABULARY;
+		return ANTLRFollowParser.VOCABULARY;
 	}
 	// tslint:enable:no-trailing-whitespace
 
 	// @Override
-	public get grammarFileName(): string { return "FollowParser.g4"; }
+	public get grammarFileName(): string { return "ANTLRFollowParser.g4"; }
 
 	// @Override
-	public get ruleNames(): string[] { return FollowParser.ruleNames; }
+	public get ruleNames(): string[] { return ANTLRFollowParser.ruleNames; }
 
 	// @Override
-	public get serializedATN(): string { return FollowParser._serializedATN; }
+	public get serializedATN(): string { return ANTLRFollowParser._serializedATN; }
 
 	protected createFailedPredicateException(predicate?: string, message?: string): FailedPredicateException {
 		return new FailedPredicateException(this, predicate, message);
@@ -111,12 +111,12 @@ export class FollowParser extends Parser {
 
 	constructor(input: TokenStream) {
 		super(input);
-		this._interp = new ParserATNSimulator(FollowParser._ATN, this);
+		this._interp = new ParserATNSimulator(ANTLRFollowParser._ATN, this);
 	}
 	// @RuleVersion(0)
 	public root(): RootContext {
 		let _localctx: RootContext = new RootContext(this._ctx, this.state);
-		this.enterRule(_localctx, 0, FollowParser.RULE_root);
+		this.enterRule(_localctx, 0, ANTLRFollowParser.RULE_root);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
@@ -124,42 +124,42 @@ export class FollowParser extends Parser {
 			this.state = 52;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << FollowParser.KW_TYPE) | (1 << FollowParser.KW_CONST) | (1 << FollowParser.KW_VAR) | (1 << FollowParser.KW_PROP) | (1 << FollowParser.KW_AXIOM) | (1 << FollowParser.KW_THEOREM))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ANTLRFollowParser.KW_TYPE) | (1 << ANTLRFollowParser.KW_CONST) | (1 << ANTLRFollowParser.KW_VAR) | (1 << ANTLRFollowParser.KW_PROP) | (1 << ANTLRFollowParser.KW_AXIOM) | (1 << ANTLRFollowParser.KW_THEOREM))) !== 0)) {
 				{
 				this.state = 50;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
-				case FollowParser.KW_TYPE:
+				case ANTLRFollowParser.KW_TYPE:
 					{
 					this.state = 44;
 					this.typeBlock();
 					}
 					break;
-				case FollowParser.KW_CONST:
+				case ANTLRFollowParser.KW_CONST:
 					{
 					this.state = 45;
 					this.constBlock();
 					}
 					break;
-				case FollowParser.KW_VAR:
+				case ANTLRFollowParser.KW_VAR:
 					{
 					this.state = 46;
 					this.varBlock();
 					}
 					break;
-				case FollowParser.KW_PROP:
+				case ANTLRFollowParser.KW_PROP:
 					{
 					this.state = 47;
 					this.propBlock();
 					}
 					break;
-				case FollowParser.KW_AXIOM:
+				case ANTLRFollowParser.KW_AXIOM:
 					{
 					this.state = 48;
 					this.axiomBlock();
 					}
 					break;
-				case FollowParser.KW_THEOREM:
+				case ANTLRFollowParser.KW_THEOREM:
 					{
 					this.state = 49;
 					this.theoremBlock();
@@ -174,7 +174,7 @@ export class FollowParser extends Parser {
 				_la = this._input.LA(1);
 			}
 			this.state = 55;
-			this.match(FollowParser.EOF);
+			this.match(ANTLRFollowParser.EOF);
 			}
 		}
 		catch (re) {
@@ -194,13 +194,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public typeBlock(): TypeBlockContext {
 		let _localctx: TypeBlockContext = new TypeBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 2, FollowParser.RULE_typeBlock);
+		this.enterRule(_localctx, 2, ANTLRFollowParser.RULE_typeBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 57;
-			this.match(FollowParser.KW_TYPE);
+			this.match(ANTLRFollowParser.KW_TYPE);
 			this.state = 59;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
@@ -214,7 +214,7 @@ export class FollowParser extends Parser {
 				this.state = 61;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (_la === FollowParser.ID);
+			} while (_la === ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -234,13 +234,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public constBlock(): ConstBlockContext {
 		let _localctx: ConstBlockContext = new ConstBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 4, FollowParser.RULE_constBlock);
+		this.enterRule(_localctx, 4, ANTLRFollowParser.RULE_constBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 63;
-			this.match(FollowParser.KW_CONST);
+			this.match(ANTLRFollowParser.KW_CONST);
 			this.state = 64;
 			this.typeID();
 			this.state = 66;
@@ -256,7 +256,7 @@ export class FollowParser extends Parser {
 				this.state = 68;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (_la === FollowParser.ID);
+			} while (_la === ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -276,13 +276,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public varBlock(): VarBlockContext {
 		let _localctx: VarBlockContext = new VarBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 6, FollowParser.RULE_varBlock);
+		this.enterRule(_localctx, 6, ANTLRFollowParser.RULE_varBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 70;
-			this.match(FollowParser.KW_VAR);
+			this.match(ANTLRFollowParser.KW_VAR);
 			this.state = 71;
 			this.typeID();
 			this.state = 73;
@@ -298,7 +298,7 @@ export class FollowParser extends Parser {
 				this.state = 75;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (_la === FollowParser.ID);
+			} while (_la === ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -318,12 +318,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public propBlock(): PropBlockContext {
 		let _localctx: PropBlockContext = new PropBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 8, FollowParser.RULE_propBlock);
+		this.enterRule(_localctx, 8, ANTLRFollowParser.RULE_propBlock);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 77;
-			this.match(FollowParser.KW_PROP);
+			this.match(ANTLRFollowParser.KW_PROP);
 			this.state = 78;
 			this.typeID();
 			this.state = 79;
@@ -349,12 +349,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public axiomBlock(): AxiomBlockContext {
 		let _localctx: AxiomBlockContext = new AxiomBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 10, FollowParser.RULE_axiomBlock);
+		this.enterRule(_localctx, 10, ANTLRFollowParser.RULE_axiomBlock);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 82;
-			this.match(FollowParser.KW_AXIOM);
+			this.match(ANTLRFollowParser.KW_AXIOM);
 			this.state = 83;
 			this.axiomID();
 			this.state = 84;
@@ -380,12 +380,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public theoremBlock(): TheoremBlockContext {
 		let _localctx: TheoremBlockContext = new TheoremBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 12, FollowParser.RULE_theoremBlock);
+		this.enterRule(_localctx, 12, ANTLRFollowParser.RULE_theoremBlock);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 87;
-			this.match(FollowParser.KW_THEOREM);
+			this.match(ANTLRFollowParser.KW_THEOREM);
 			this.state = 88;
 			this.theoremID();
 			this.state = 89;
@@ -393,7 +393,7 @@ export class FollowParser extends Parser {
 			this.state = 90;
 			this.contentBlock();
 			this.state = 91;
-			this.match(FollowParser.EQ);
+			this.match(ANTLRFollowParser.EQ);
 			this.state = 92;
 			this.proofBlock();
 			}
@@ -415,13 +415,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public paramBlock(): ParamBlockContext {
 		let _localctx: ParamBlockContext = new ParamBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 14, FollowParser.RULE_paramBlock);
+		this.enterRule(_localctx, 14, ANTLRFollowParser.RULE_paramBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 94;
-			this.match(FollowParser.LPAREN);
+			this.match(ANTLRFollowParser.LPAREN);
 			this.state = 95;
 			this.typeID();
 			this.state = 96;
@@ -429,11 +429,11 @@ export class FollowParser extends Parser {
 			this.state = 103;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === FollowParser.COMMA) {
+			while (_la === ANTLRFollowParser.COMMA) {
 				{
 				{
 				this.state = 97;
-				this.match(FollowParser.COMMA);
+				this.match(ANTLRFollowParser.COMMA);
 				this.state = 98;
 				this.typeID();
 				this.state = 99;
@@ -445,7 +445,7 @@ export class FollowParser extends Parser {
 				_la = this._input.LA(1);
 			}
 			this.state = 106;
-			this.match(FollowParser.RPAREN);
+			this.match(ANTLRFollowParser.RPAREN);
 			}
 		}
 		catch (re) {
@@ -465,13 +465,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public assumeBlock(): AssumeBlockContext {
 		let _localctx: AssumeBlockContext = new AssumeBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 16, FollowParser.RULE_assumeBlock);
+		this.enterRule(_localctx, 16, ANTLRFollowParser.RULE_assumeBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 108;
-			this.match(FollowParser.KW_ASSUME);
+			this.match(ANTLRFollowParser.KW_ASSUME);
 			this.state = 110;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
@@ -485,7 +485,7 @@ export class FollowParser extends Parser {
 				this.state = 112;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (_la === FollowParser.ID);
+			} while (_la === ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -505,13 +505,13 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public targetBlock(): TargetBlockContext {
 		let _localctx: TargetBlockContext = new TargetBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 18, FollowParser.RULE_targetBlock);
+		this.enterRule(_localctx, 18, ANTLRFollowParser.RULE_targetBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 114;
-			this.match(FollowParser.KW_TARGET);
+			this.match(ANTLRFollowParser.KW_TARGET);
 			this.state = 116;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
@@ -525,7 +525,7 @@ export class FollowParser extends Parser {
 				this.state = 118;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (_la === FollowParser.ID);
+			} while (_la === ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -545,17 +545,17 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public contentBlock(): ContentBlockContext {
 		let _localctx: ContentBlockContext = new ContentBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 20, FollowParser.RULE_contentBlock);
+		this.enterRule(_localctx, 20, ANTLRFollowParser.RULE_contentBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 120;
-			this.match(FollowParser.LBRACE);
+			this.match(ANTLRFollowParser.LBRACE);
 			this.state = 124;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === FollowParser.KW_ASSUME) {
+			while (_la === ANTLRFollowParser.KW_ASSUME) {
 				{
 				{
 				this.state = 121;
@@ -569,7 +569,7 @@ export class FollowParser extends Parser {
 			this.state = 127;
 			this.targetBlock();
 			this.state = 128;
-			this.match(FollowParser.RBRACE);
+			this.match(ANTLRFollowParser.RBRACE);
 			}
 		}
 		catch (re) {
@@ -589,17 +589,17 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public proofBlock(): ProofBlockContext {
 		let _localctx: ProofBlockContext = new ProofBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 22, FollowParser.RULE_proofBlock);
+		this.enterRule(_localctx, 22, ANTLRFollowParser.RULE_proofBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 130;
-			this.match(FollowParser.LBRACE);
+			this.match(ANTLRFollowParser.LBRACE);
 			this.state = 134;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === FollowParser.ID) {
+			while (_la === ANTLRFollowParser.ID) {
 				{
 				{
 				this.state = 131;
@@ -611,7 +611,7 @@ export class FollowParser extends Parser {
 				_la = this._input.LA(1);
 			}
 			this.state = 137;
-			this.match(FollowParser.RBRACE);
+			this.match(ANTLRFollowParser.RBRACE);
 			}
 		}
 		catch (re) {
@@ -631,12 +631,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public typeID(): TypeIDContext {
 		let _localctx: TypeIDContext = new TypeIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 24, FollowParser.RULE_typeID);
+		this.enterRule(_localctx, 24, ANTLRFollowParser.RULE_typeID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 139;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -656,12 +656,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public constID(): ConstIDContext {
 		let _localctx: ConstIDContext = new ConstIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 26, FollowParser.RULE_constID);
+		this.enterRule(_localctx, 26, ANTLRFollowParser.RULE_constID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 141;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -681,12 +681,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public varID(): VarIDContext {
 		let _localctx: VarIDContext = new VarIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 28, FollowParser.RULE_varID);
+		this.enterRule(_localctx, 28, ANTLRFollowParser.RULE_varID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 143;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -706,12 +706,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public propID(): PropIDContext {
 		let _localctx: PropIDContext = new PropIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 30, FollowParser.RULE_propID);
+		this.enterRule(_localctx, 30, ANTLRFollowParser.RULE_propID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 145;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -731,12 +731,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public axiomID(): AxiomIDContext {
 		let _localctx: AxiomIDContext = new AxiomIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 32, FollowParser.RULE_axiomID);
+		this.enterRule(_localctx, 32, ANTLRFollowParser.RULE_axiomID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 147;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -756,12 +756,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public theoremID(): TheoremIDContext {
 		let _localctx: TheoremIDContext = new TheoremIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 34, FollowParser.RULE_theoremID);
+		this.enterRule(_localctx, 34, ANTLRFollowParser.RULE_theoremID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 149;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -781,12 +781,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public argID(): ArgIDContext {
 		let _localctx: ArgIDContext = new ArgIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 36, FollowParser.RULE_argID);
+		this.enterRule(_localctx, 36, ANTLRFollowParser.RULE_argID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 151;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -806,12 +806,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public assumeID(): AssumeIDContext {
 		let _localctx: AssumeIDContext = new AssumeIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 38, FollowParser.RULE_assumeID);
+		this.enterRule(_localctx, 38, ANTLRFollowParser.RULE_assumeID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 153;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -831,12 +831,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public targetID(): TargetIDContext {
 		let _localctx: TargetIDContext = new TargetIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 40, FollowParser.RULE_targetID);
+		this.enterRule(_localctx, 40, ANTLRFollowParser.RULE_targetID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 155;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -856,12 +856,12 @@ export class FollowParser extends Parser {
 	// @RuleVersion(0)
 	public proofID(): ProofIDContext {
 		let _localctx: ProofIDContext = new ProofIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 42, FollowParser.RULE_proofID);
+		this.enterRule(_localctx, 42, ANTLRFollowParser.RULE_proofID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
 			this.state = 157;
-			this.match(FollowParser.ID);
+			this.match(ANTLRFollowParser.ID);
 			}
 		}
 		catch (re) {
@@ -944,17 +944,17 @@ export class FollowParser extends Parser {
 		"irx~\x88";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
-		if (!FollowParser.__ATN) {
-			FollowParser.__ATN = new ATNDeserializer().deserialize(Utils.toCharArray(FollowParser._serializedATN));
+		if (!ANTLRFollowParser.__ATN) {
+			ANTLRFollowParser.__ATN = new ATNDeserializer().deserialize(Utils.toCharArray(ANTLRFollowParser._serializedATN));
 		}
 
-		return FollowParser.__ATN;
+		return ANTLRFollowParser.__ATN;
 	}
 
 }
 
 export class RootContext extends ParserRuleContext {
-	public EOF(): TerminalNode { return this.getToken(FollowParser.EOF, 0); }
+	public EOF(): TerminalNode { return this.getToken(ANTLRFollowParser.EOF, 0); }
 	public typeBlock(): TypeBlockContext[];
 	public typeBlock(i: number): TypeBlockContext;
 	public typeBlock(i?: number): TypeBlockContext | TypeBlockContext[] {
@@ -1013,12 +1013,12 @@ export class RootContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_root; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_root; }
 }
 
 
 export class TypeBlockContext extends ParserRuleContext {
-	public KW_TYPE(): TerminalNode { return this.getToken(FollowParser.KW_TYPE, 0); }
+	public KW_TYPE(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_TYPE, 0); }
 	public typeID(): TypeIDContext[];
 	public typeID(i: number): TypeIDContext;
 	public typeID(i?: number): TypeIDContext | TypeIDContext[] {
@@ -1032,12 +1032,12 @@ export class TypeBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_typeBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_typeBlock; }
 }
 
 
 export class ConstBlockContext extends ParserRuleContext {
-	public KW_CONST(): TerminalNode { return this.getToken(FollowParser.KW_CONST, 0); }
+	public KW_CONST(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_CONST, 0); }
 	public typeID(): TypeIDContext {
 		return this.getRuleContext(0, TypeIDContext);
 	}
@@ -1054,12 +1054,12 @@ export class ConstBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_constBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_constBlock; }
 }
 
 
 export class VarBlockContext extends ParserRuleContext {
-	public KW_VAR(): TerminalNode { return this.getToken(FollowParser.KW_VAR, 0); }
+	public KW_VAR(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_VAR, 0); }
 	public typeID(): TypeIDContext {
 		return this.getRuleContext(0, TypeIDContext);
 	}
@@ -1076,12 +1076,12 @@ export class VarBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_varBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_varBlock; }
 }
 
 
 export class PropBlockContext extends ParserRuleContext {
-	public KW_PROP(): TerminalNode { return this.getToken(FollowParser.KW_PROP, 0); }
+	public KW_PROP(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_PROP, 0); }
 	public typeID(): TypeIDContext {
 		return this.getRuleContext(0, TypeIDContext);
 	}
@@ -1095,12 +1095,12 @@ export class PropBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_propBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_propBlock; }
 }
 
 
 export class AxiomBlockContext extends ParserRuleContext {
-	public KW_AXIOM(): TerminalNode { return this.getToken(FollowParser.KW_AXIOM, 0); }
+	public KW_AXIOM(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_AXIOM, 0); }
 	public axiomID(): AxiomIDContext {
 		return this.getRuleContext(0, AxiomIDContext);
 	}
@@ -1114,12 +1114,12 @@ export class AxiomBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_axiomBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_axiomBlock; }
 }
 
 
 export class TheoremBlockContext extends ParserRuleContext {
-	public KW_THEOREM(): TerminalNode { return this.getToken(FollowParser.KW_THEOREM, 0); }
+	public KW_THEOREM(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_THEOREM, 0); }
 	public theoremID(): TheoremIDContext {
 		return this.getRuleContext(0, TheoremIDContext);
 	}
@@ -1129,7 +1129,7 @@ export class TheoremBlockContext extends ParserRuleContext {
 	public contentBlock(): ContentBlockContext {
 		return this.getRuleContext(0, ContentBlockContext);
 	}
-	public EQ(): TerminalNode { return this.getToken(FollowParser.EQ, 0); }
+	public EQ(): TerminalNode { return this.getToken(ANTLRFollowParser.EQ, 0); }
 	public proofBlock(): ProofBlockContext {
 		return this.getRuleContext(0, ProofBlockContext);
 	}
@@ -1137,12 +1137,12 @@ export class TheoremBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_theoremBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_theoremBlock; }
 }
 
 
 export class ParamBlockContext extends ParserRuleContext {
-	public LPAREN(): TerminalNode { return this.getToken(FollowParser.LPAREN, 0); }
+	public LPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.LPAREN, 0); }
 	public typeID(): TypeIDContext[];
 	public typeID(i: number): TypeIDContext;
 	public typeID(i?: number): TypeIDContext | TypeIDContext[] {
@@ -1161,26 +1161,26 @@ export class ParamBlockContext extends ParserRuleContext {
 			return this.getRuleContext(i, ArgIDContext);
 		}
 	}
-	public RPAREN(): TerminalNode { return this.getToken(FollowParser.RPAREN, 0); }
+	public RPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.RPAREN, 0); }
 	public COMMA(): TerminalNode[];
 	public COMMA(i: number): TerminalNode;
 	public COMMA(i?: number): TerminalNode | TerminalNode[] {
 		if (i === undefined) {
-			return this.getTokens(FollowParser.COMMA);
+			return this.getTokens(ANTLRFollowParser.COMMA);
 		} else {
-			return this.getToken(FollowParser.COMMA, i);
+			return this.getToken(ANTLRFollowParser.COMMA, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_paramBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_paramBlock; }
 }
 
 
 export class AssumeBlockContext extends ParserRuleContext {
-	public KW_ASSUME(): TerminalNode { return this.getToken(FollowParser.KW_ASSUME, 0); }
+	public KW_ASSUME(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_ASSUME, 0); }
 	public assumeID(): AssumeIDContext[];
 	public assumeID(i: number): AssumeIDContext;
 	public assumeID(i?: number): AssumeIDContext | AssumeIDContext[] {
@@ -1194,12 +1194,12 @@ export class AssumeBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_assumeBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_assumeBlock; }
 }
 
 
 export class TargetBlockContext extends ParserRuleContext {
-	public KW_TARGET(): TerminalNode { return this.getToken(FollowParser.KW_TARGET, 0); }
+	public KW_TARGET(): TerminalNode { return this.getToken(ANTLRFollowParser.KW_TARGET, 0); }
 	public targetID(): TargetIDContext[];
 	public targetID(i: number): TargetIDContext;
 	public targetID(i?: number): TargetIDContext | TargetIDContext[] {
@@ -1213,16 +1213,16 @@ export class TargetBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_targetBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_targetBlock; }
 }
 
 
 export class ContentBlockContext extends ParserRuleContext {
-	public LBRACE(): TerminalNode { return this.getToken(FollowParser.LBRACE, 0); }
+	public LBRACE(): TerminalNode { return this.getToken(ANTLRFollowParser.LBRACE, 0); }
 	public targetBlock(): TargetBlockContext {
 		return this.getRuleContext(0, TargetBlockContext);
 	}
-	public RBRACE(): TerminalNode { return this.getToken(FollowParser.RBRACE, 0); }
+	public RBRACE(): TerminalNode { return this.getToken(ANTLRFollowParser.RBRACE, 0); }
 	public assumeBlock(): AssumeBlockContext[];
 	public assumeBlock(i: number): AssumeBlockContext;
 	public assumeBlock(i?: number): AssumeBlockContext | AssumeBlockContext[] {
@@ -1236,13 +1236,13 @@ export class ContentBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_contentBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_contentBlock; }
 }
 
 
 export class ProofBlockContext extends ParserRuleContext {
-	public LBRACE(): TerminalNode { return this.getToken(FollowParser.LBRACE, 0); }
-	public RBRACE(): TerminalNode { return this.getToken(FollowParser.RBRACE, 0); }
+	public LBRACE(): TerminalNode { return this.getToken(ANTLRFollowParser.LBRACE, 0); }
+	public RBRACE(): TerminalNode { return this.getToken(ANTLRFollowParser.RBRACE, 0); }
 	public proofID(): ProofIDContext[];
 	public proofID(i: number): ProofIDContext;
 	public proofID(i?: number): ProofIDContext | ProofIDContext[] {
@@ -1256,107 +1256,107 @@ export class ProofBlockContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_proofBlock; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_proofBlock; }
 }
 
 
 export class TypeIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_typeID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_typeID; }
 }
 
 
 export class ConstIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_constID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_constID; }
 }
 
 
 export class VarIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_varID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_varID; }
 }
 
 
 export class PropIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_propID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_propID; }
 }
 
 
 export class AxiomIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_axiomID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_axiomID; }
 }
 
 
 export class TheoremIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_theoremID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_theoremID; }
 }
 
 
 export class ArgIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_argID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_argID; }
 }
 
 
 export class AssumeIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_assumeID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_assumeID; }
 }
 
 
 export class TargetIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_targetID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_targetID; }
 }
 
 
 export class ProofIDContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(FollowParser.ID, 0); }
+	public ID(): TerminalNode { return this.getToken(ANTLRFollowParser.ID, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return FollowParser.RULE_proofID; }
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_proofID; }
 }
 
 

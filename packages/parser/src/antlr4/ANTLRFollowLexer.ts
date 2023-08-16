@@ -1,4 +1,4 @@
-// Generated from ./antlr4/FollowLexer.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from ./antlr4/ANTLRFollowLexer.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -15,7 +15,7 @@ import { VocabularyImpl } from "antlr4ts/VocabularyImpl";
 import * as Utils from "antlr4ts/misc/Utils";
 
 
-export class FollowLexer extends Lexer {
+export class ANTLRFollowLexer extends Lexer {
 	public static readonly WS = 1;
 	public static readonly NL = 2;
 	public static readonly LINE_COMMENT = 3;
@@ -66,35 +66,35 @@ export class FollowLexer extends Lexer {
 		"KW_CONST", "KW_VAR", "KW_PROP", "KW_AXIOM", "KW_THEOREM", "KW_ASSUME", 
 		"KW_TARGET", "ID",
 	];
-	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(FollowLexer._LITERAL_NAMES, FollowLexer._SYMBOLIC_NAMES, []);
+	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ANTLRFollowLexer._LITERAL_NAMES, ANTLRFollowLexer._SYMBOLIC_NAMES, []);
 
 	// @Override
 	// @NotNull
 	public get vocabulary(): Vocabulary {
-		return FollowLexer.VOCABULARY;
+		return ANTLRFollowLexer.VOCABULARY;
 	}
 	// tslint:enable:no-trailing-whitespace
 
 
 	constructor(input: CharStream) {
 		super(input);
-		this._interp = new LexerATNSimulator(FollowLexer._ATN, this);
+		this._interp = new LexerATNSimulator(ANTLRFollowLexer._ATN, this);
 	}
 
 	// @Override
-	public get grammarFileName(): string { return "FollowLexer.g4"; }
+	public get grammarFileName(): string { return "ANTLRFollowLexer.g4"; }
 
 	// @Override
-	public get ruleNames(): string[] { return FollowLexer.ruleNames; }
+	public get ruleNames(): string[] { return ANTLRFollowLexer.ruleNames; }
 
 	// @Override
-	public get serializedATN(): string { return FollowLexer._serializedATN; }
+	public get serializedATN(): string { return ANTLRFollowLexer._serializedATN; }
 
 	// @Override
-	public get channelNames(): string[] { return FollowLexer.channelNames; }
+	public get channelNames(): string[] { return ANTLRFollowLexer.channelNames; }
 
 	// @Override
-	public get modeNames(): string[] { return FollowLexer.modeNames; }
+	public get modeNames(): string[] { return ANTLRFollowLexer.modeNames; }
 
 	public static readonly _serializedATN: string =
 		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x02\x17\x91\b\x01" +
@@ -160,11 +160,11 @@ export class FollowLexer extends Lexer {
 		"\b\x02\x02\x02\x03\x02";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
-		if (!FollowLexer.__ATN) {
-			FollowLexer.__ATN = new ATNDeserializer().deserialize(Utils.toCharArray(FollowLexer._serializedATN));
+		if (!ANTLRFollowLexer.__ATN) {
+			ANTLRFollowLexer.__ATN = new ATNDeserializer().deserialize(Utils.toCharArray(ANTLRFollowLexer._serializedATN));
 		}
 
-		return FollowLexer.__ATN;
+		return ANTLRFollowLexer.__ATN;
 	}
 
 }

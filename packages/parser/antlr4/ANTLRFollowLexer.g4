@@ -1,4 +1,4 @@
-lexer grammar FollowLexer;
+lexer grammar ANTLRFollowLexer;
 
 WS: [ \t]+ -> skip ;
 NL: ('\r\n' | '\r' | '\n') -> skip ;

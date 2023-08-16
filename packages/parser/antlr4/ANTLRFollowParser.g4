@@ -1,6 +1,6 @@
-parser grammar FollowParser;
+parser grammar ANTLRFollowParser;
 
-options { tokenVocab=FollowLexer; }
+options { tokenVocab=ANTLRFollowLexer; }
 
 root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock)* EOF;
 

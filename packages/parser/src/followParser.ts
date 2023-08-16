@@ -1,37 +1,34 @@
-import {CommonTokenStream, Token, ANTLRErrorListener, CharStreams } from 'antlr4ts';
-import { FollowLexer } from './antlr4/FollowLexer';
-import { FollowParser } from './antlr4/FollowParser';
+import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams } from 'antlr4ts';
+import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
+import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
 
-class ConsoleErrorListener implements ANTLRErrorListener<Token> {
-    // @ts-ignore
-    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-        console.log("ERROR " + msg);
-    }
-}
-
+/*
+ * Test antlr4.
+ */
 function createLexer(input: string) {
-    const chars = CharStreams.fromString(input);
-    const lexer = new FollowLexer(chars);    
-    return lexer;
+  const chars = CharStreams.fromString(input);
+  const lexer = new ANTLRFollowLexer(chars);
+  return lexer;
 }
 
-export function getTokens(input: string) : Token[] {
-    return createLexer(input).getAllTokens();
+export function getTokens(input: string): Token[] {
+  return createLexer(input).getAllTokens();
 }
 
-function createParserFromLexer(lexer: FollowLexer) {
-    const tokens = new CommonTokenStream(lexer);
-    return new FollowParser(tokens);
+function createParserFromLexer(lexer: ANTLRFollowLexer) {
+  const tokens = new CommonTokenStream(lexer);
+  return new ANTLRFollowParser(tokens);
 }
 
 export function parseTreeStr(input: string) {
-    const lexer = createLexer(input);
-    lexer.removeErrorListeners();
-    lexer.addErrorListener(new ConsoleErrorListener());
-
-    const parser = createParserFromLexer(lexer);
-    parser.removeErrorListeners();
-    parser.addErrorListener(new ConsoleErrorListener());
-    const tree = parser.root();
-    return tree.toStringTree(parser);
+  const lexer = createLexer(input);
+  const parser = createParserFromLexer(lexer);
+  const tree = parser.root();
+  return tree.toStringTree(parser);
 }
+
+/*
+ * Parser for server.
+ */
+
+export class ANTLRBackend {}
