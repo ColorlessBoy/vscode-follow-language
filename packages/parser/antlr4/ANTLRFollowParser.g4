@@ -7,11 +7,12 @@ root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock
 typeBlock : KW_TYPE (typeID)+ ;
 constBlock : KW_CONST typeID (constID)+ ;
 varBlock : KW_VAR typeID (varID)+ ;
-propBlock : KW_PROP typeID propID paramBlock ;
+propBlock : KW_PROP typeID propID paramBlockNonEmpty ;
 axiomBlock : KW_AXIOM axiomID paramBlock contentBlock ;
 theoremBlock : KW_THEOREM theoremID paramBlock contentBlock EQ proofBlock ;
 
-paramBlock : LPAREN typeID argID (COMMA typeID argID)* RPAREN ;
+paramBlockNonEmpty : LPAREN typeID argID (COMMA typeID argID)* RPAREN ;
+paramBlock : LPAREN (typeID argID (COMMA typeID argID)*)? RPAREN ;
 assumeBlock : KW_ASSUME (assumeID)+ ;
 targetBlock : KW_TARGET (targetID)+ ;
 contentBlock : LBRACE (assumeBlock)* targetBlock RBRACE ;
@@ -26,6 +27,6 @@ theoremID : ID ;
 argID : ID ;
 assumeID : ID ;
 targetID : ID ;
-proofID : ID ;
+proofID : ID | COMMA ;
 
 

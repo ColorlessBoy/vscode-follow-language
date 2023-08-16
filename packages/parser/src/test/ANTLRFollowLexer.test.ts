@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { getTokens } from '../followParser';
+import { getTokens } from '../FollowParser';
 import { Token } from 'antlr4ts';
 import { ANTLRFollowLexer } from '../antlr4/ANTLRFollowLexer';
 
@@ -10,7 +10,7 @@ function checkToken(token: Token, typeId: number, start: number, end: number, te
   assert.equal(token.text, text);
 }
 
-suite('FollowLexer Tests', () => {
+suite('ANTLRFollowLexer Tests', () => {
   test('Lexing VarBlock', () => {
     let tokens = getTokens('var wff w0');
     assert.equal(tokens.length, 3);

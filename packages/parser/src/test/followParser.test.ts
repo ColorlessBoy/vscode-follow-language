@@ -1,49 +1,27 @@
 import assert from 'assert';
-import { parseTreeStr } from '../followParser';
+import { FollowParser } from '../FollowParser';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { DiagnosticSeverity, Diagnostic } from 'vscode-languageserver/node';
 
 suite('FollowParser Tests', () => {
-  test('Parsing empty file.', () => {
-    var result = parseTreeStr('');
-    var target = '(root <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing type block.', () => {
-    var result = parseTreeStr('type wff set nat');
-    var target = '(root (typeBlock type (typeID wff) (typeID set) (typeID nat)) <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing const block.', () => {
-    var result = parseTreeStr('const wff w0');
-    var target = '(root (constBlock const (typeID wff) (constID w0)) <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing var block.', () => {
-    var result = parseTreeStr('var wff w0');
-    var target = '(root (varBlock var (typeID wff) (varID w0)) <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing prop block.', () => {
-    var result = parseTreeStr('prop wff imp (wff w0, wff w1)');
-    var target =
-      '(root (propBlock prop (typeID wff) (propID imp) (paramBlock ( (typeID wff) (argID w0) , (typeID wff) (argID w1) ))) <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing axiom block.', () => {
-    var result = parseTreeStr('axiom axiom1(wff w0, wff w1) {|- imp w0 imp w1 w0}');
-    var target =
-      '(root (axiomBlock axiom (axiomID axiom1) (paramBlock ( (typeID wff) (argID w0) , (typeID wff) (argID w1) )) (contentBlock { (targetBlock |- (targetID imp) (targetID w0) (targetID imp) (targetID w1) (targetID w0)) })) <EOF>)';
-    assert.equal(result, target);
-  });
-
-  test('Parsing theorem block.', () => {
-    var result = parseTreeStr('thm thm1(wff w0, wff w1) {|- imp w0 imp w1 w0} = {ax1 w0 w1}');
-    var target =
-      '(root (theoremBlock thm (theoremID thm1) (paramBlock ( (typeID wff) (argID w0) , (typeID wff) (argID w1) )) (contentBlock { (targetBlock |- (targetID imp) (targetID w0) (targetID imp) (targetID w1) (targetID w0)) }) = (proofBlock { (proofID ax1) (proofID w0) (proofID w1) })) <EOF>)';
-    assert.equal(result, target);
+  test('test #1: Diagnostics for single syntax error', async () => {
+    const content = 'axiom a1 (wff w0, wff w1) { -| }';
+    const document = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const result = await parser.getDiagnostics(document).catch((_) => {
+      assert.fail();
+    });
+    const collection = result.get(document.uri);
+    if (collection === undefined) {
+      assert.fail();
+    }
+    assert.strictEqual(collection.length, 1);
+    collection.forEach((diagnostic: Diagnostic) => {
+      if (diagnostic.severity !== DiagnosticSeverity.Error) {
+        assert.fail();
+      } else {
+        console.log(diagnostic);
+      }
+    });
   });
 });
