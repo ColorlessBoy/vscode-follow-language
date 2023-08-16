@@ -18,6 +18,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "follow-parser": "workspace:*",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   }

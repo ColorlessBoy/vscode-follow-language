@@ -29,7 +29,7 @@ suite('ANTLRFollowParser Tests', () => {
   test('Parsing prop block.', () => {
     var result = parseTreeStr('prop wff imp (wff w0, wff w1)');
     var target =
-      '(root (propBlock prop (typeID wff) (propID imp) (paramBlock ( (typeID wff) (argID w0) , (typeID wff) (argID w1) ))) <EOF>)';
+      '(root (propBlock prop (typeID wff) (propID imp) (paramBlockNonEmpty ( (typeID wff) (argID w0) , (typeID wff) (argID w1) ))) <EOF>)';
     assert.equal(result, target);
   });
 
