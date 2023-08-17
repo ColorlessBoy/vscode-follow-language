@@ -54,7 +54,6 @@ export class SyntaxErrorListener implements ANTLRErrorListener<any> {
       source: 'follow',
     };
     this.diagnosticList.push(diagnostic);
-    console.log(_recognizer);
   }
 }
 
@@ -82,6 +81,21 @@ export class FollowParser {
 
       diagnosticCollection.set(document.uri, syntaxError.diagnosticList);
       resolve(diagnosticCollection);
+    });
+  }
+  public async getAllTokens(document: TextDocument): Promise<Map<String, Token[]>> {
+    return new Promise((resolve, reject) => {
+      if (!document) {
+        reject(new Error('Follow: Invalid document.'));
+        return;
+      }
+      const tokenCollection: Map<string, Token[]> = new Map();
+      const text = document.getText();
+      // Create the lexer and parser
+      const inputStream = CharStreams.fromString(text);
+      const lexer = new ANTLRFollowLexer(inputStream);
+      const tokenStream = new CommonTokenStream(lexer);
+      const parser = new ANTLRFollowParser(tokenStream);
     });
   }
 }
