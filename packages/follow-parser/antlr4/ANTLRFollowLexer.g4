@@ -23,4 +23,4 @@ KW_AXIOM : 'axiom' ;
 KW_THEOREM : 'thm' ;
 KW_ASSUME : '-|' ; // proof input
 KW_TARGET : '|-' ; // proof output
-ID: [a-zA-Z][a-zA-Z0-9_.$]* ;
+ID: [a-zA-Z0-9_.\-]+ ;

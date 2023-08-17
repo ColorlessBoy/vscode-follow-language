@@ -1,8 +1,17 @@
 import { Position, Range, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
+import {
+  CommonTokenStream,
+  Token,
+  ANTLRErrorListener,
+  CharStreams,
+  Recognizer,
+  RecognitionException,
+  ParserInterpreter,
+} from 'antlr4ts';
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
 import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
+import { SemanticErrorListener } from './SemanticErrorListener';
 
 /*
  * Test antlr4.
@@ -73,29 +82,20 @@ export class FollowParser {
       const lexer = new ANTLRFollowLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new ANTLRFollowParser(tokenStream);
-      const syntaxError = new SyntaxErrorListener();
+      const syntaxErrorListener = new SyntaxErrorListener();
+      const semanticErrorListener = new SemanticErrorListener();
+      parser.removeParseListeners();
       parser.removeErrorListeners();
-      parser.addErrorListener(syntaxError);
+      parser.addErrorListener(syntaxErrorListener);
+      parser.addParseListener(semanticErrorListener);
 
+      // ParserTree walker = new ParseTreeWalker();
+      // walker.walk(myParseTreeListener, myParseTree); <-- triggers events in your listener
       parser.root();
+      const diagnosticList = syntaxErrorListener.diagnosticList.concat(semanticErrorListener.semanticDiagnosticList);
 
-      diagnosticCollection.set(document.uri, syntaxError.diagnosticList);
+      diagnosticCollection.set(document.uri, diagnosticList);
       resolve(diagnosticCollection);
-    });
-  }
-  public async getAllTokens(document: TextDocument): Promise<Map<String, Token[]>> {
-    return new Promise((resolve, reject) => {
-      if (!document) {
-        reject(new Error('Follow: Invalid document.'));
-        return;
-      }
-      const tokenCollection: Map<string, Token[]> = new Map();
-      const text = document.getText();
-      // Create the lexer and parser
-      const inputStream = CharStreams.fromString(text);
-      const lexer = new ANTLRFollowLexer(inputStream);
-      const tokenStream = new CommonTokenStream(lexer);
-      const parser = new ANTLRFollowParser(tokenStream);
     });
   }
 }

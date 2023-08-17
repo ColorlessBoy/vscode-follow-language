@@ -4,7 +4,7 @@ options { tokenVocab=ANTLRFollowLexer; }
 
 root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock)* EOF;
 
-typeBlock : KW_TYPE (typeID)+ ;
+typeBlock : KW_TYPE (typeDef)+ ;
 constBlock : KW_CONST typeID (constID)+ ;
 varBlock : KW_VAR typeID (varID)+ ;
 propBlock : KW_PROP typeID propID paramBlockNonEmpty ;
@@ -18,6 +18,7 @@ targetBlock : KW_TARGET (targetID)+ ;
 contentBlock : LBRACE (assumeBlock)* targetBlock RBRACE ;
 proofBlock : LBRACE (proofID)* RBRACE ;
 
+typeDef : ID ;
 typeID : ID ;
 constID : ID ;
 varID : ID ;

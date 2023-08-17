@@ -10,7 +10,7 @@ suite('ANTLRFollowParser Tests', () => {
 
   test('Parsing type block.', () => {
     var result = parseTreeStr('type wff set nat');
-    var target = '(root (typeBlock type (typeID wff) (typeID set) (typeID nat)) <EOF>)';
+    var target = '(root (typeBlock type (typeDef wff) (typeDef set) (typeDef nat)) <EOF>)';
     assert.equal(result, target);
   });
 
