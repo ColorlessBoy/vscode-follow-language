@@ -3,5 +3,9 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "git.branchProtection": ["main"],
   "git.branchProtectionPrompt": "alwaysCommitToNewBranch",
-  "git.branchRandomName.enable": true
+  "git.branchRandomName.enable": true,
+  "editor.formatOnType": true,
+  "[lisp]": {
+    "editor.wordSeparators": "`|;:'\",()"
+  }
 }

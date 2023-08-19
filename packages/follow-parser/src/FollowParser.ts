@@ -1,14 +1,6 @@
 import { Position, Range, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import {
-  CommonTokenStream,
-  Token,
-  ANTLRErrorListener,
-  CharStreams,
-  Recognizer,
-  RecognitionException,
-  ParserInterpreter,
-} from 'antlr4ts';
+import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
 import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
 import { SemanticErrorListener } from './SemanticErrorListener';
@@ -67,6 +59,7 @@ export class SyntaxErrorListener implements ANTLRErrorListener<any> {
 }
 
 export class FollowParser {
+  public semanticErrorListener = new SemanticErrorListener();
   public async getDiagnostics(document: TextDocument): Promise<Map<string, Diagnostic[]>> {
     return new Promise((resolve, reject) => {
       if (!document) {
@@ -83,16 +76,16 @@ export class FollowParser {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new ANTLRFollowParser(tokenStream);
       const syntaxErrorListener = new SyntaxErrorListener();
-      const semanticErrorListener = new SemanticErrorListener();
+      this.semanticErrorListener = new SemanticErrorListener();
       parser.removeParseListeners();
       parser.removeErrorListeners();
       parser.addErrorListener(syntaxErrorListener);
-      parser.addParseListener(semanticErrorListener);
+      parser.addParseListener(this.semanticErrorListener);
 
-      // ParserTree walker = new ParseTreeWalker();
-      // walker.walk(myParseTreeListener, myParseTree); <-- triggers events in your listener
       parser.root();
-      const diagnosticList = syntaxErrorListener.diagnosticList.concat(semanticErrorListener.semanticDiagnosticList);
+      const diagnosticList = syntaxErrorListener.diagnosticList.concat(
+        this.semanticErrorListener.semanticDiagnosticList,
+      );
 
       diagnosticCollection.set(document.uri, diagnosticList);
       resolve(diagnosticCollection);
