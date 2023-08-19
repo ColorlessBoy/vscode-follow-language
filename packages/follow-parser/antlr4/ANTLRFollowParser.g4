@@ -11,8 +11,9 @@ propBlock : KW_PROP typeID propID paramBlockNonEmpty ;
 axiomBlock : KW_AXIOM axiomID paramBlock contentBlock ;
 theoremBlock : KW_THEOREM theoremID paramBlock contentBlock EQ proofBlock ;
 
-paramBlockNonEmpty : LPAREN typeID argID (COMMA typeID argID)* RPAREN ;
-paramBlock : LPAREN (typeID argID (COMMA typeID argID)*)? RPAREN ;
+paramBlockNonEmpty : LPAREN paramPair (COMMA paramPair)* RPAREN ;
+paramBlock : LPAREN (paramPair (COMMA paramPair)*)? RPAREN ;
+paramPair : typeID argID;
 assumeBlock : KW_ASSUME (assumeID)+ ;
 targetBlock : KW_TARGET (targetID)+ ;
 contentBlock : LBRACE (assumeBlock)* targetBlock RBRACE ;

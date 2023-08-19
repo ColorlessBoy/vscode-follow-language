@@ -56,27 +56,29 @@ export class ANTLRFollowParser extends Parser {
 	public static readonly RULE_theoremBlock = 6;
 	public static readonly RULE_paramBlockNonEmpty = 7;
 	public static readonly RULE_paramBlock = 8;
-	public static readonly RULE_assumeBlock = 9;
-	public static readonly RULE_targetBlock = 10;
-	public static readonly RULE_contentBlock = 11;
-	public static readonly RULE_proofBlock = 12;
-	public static readonly RULE_typeDef = 13;
-	public static readonly RULE_typeID = 14;
-	public static readonly RULE_constID = 15;
-	public static readonly RULE_varID = 16;
-	public static readonly RULE_propID = 17;
-	public static readonly RULE_axiomID = 18;
-	public static readonly RULE_theoremID = 19;
-	public static readonly RULE_argID = 20;
-	public static readonly RULE_assumeID = 21;
-	public static readonly RULE_targetID = 22;
-	public static readonly RULE_proofID = 23;
+	public static readonly RULE_paramPair = 9;
+	public static readonly RULE_assumeBlock = 10;
+	public static readonly RULE_targetBlock = 11;
+	public static readonly RULE_contentBlock = 12;
+	public static readonly RULE_proofBlock = 13;
+	public static readonly RULE_typeDef = 14;
+	public static readonly RULE_typeID = 15;
+	public static readonly RULE_constID = 16;
+	public static readonly RULE_varID = 17;
+	public static readonly RULE_propID = 18;
+	public static readonly RULE_axiomID = 19;
+	public static readonly RULE_theoremID = 20;
+	public static readonly RULE_argID = 21;
+	public static readonly RULE_assumeID = 22;
+	public static readonly RULE_targetID = 23;
+	public static readonly RULE_proofID = 24;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
 		"root", "typeBlock", "constBlock", "varBlock", "propBlock", "axiomBlock", 
-		"theoremBlock", "paramBlockNonEmpty", "paramBlock", "assumeBlock", "targetBlock", 
-		"contentBlock", "proofBlock", "typeDef", "typeID", "constID", "varID", 
-		"propID", "axiomID", "theoremID", "argID", "assumeID", "targetID", "proofID",
+		"theoremBlock", "paramBlockNonEmpty", "paramBlock", "paramPair", "assumeBlock", 
+		"targetBlock", "contentBlock", "proofBlock", "typeDef", "typeID", "constID", 
+		"varID", "propID", "axiomID", "theoremID", "argID", "assumeID", "targetID", 
+		"proofID",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
@@ -124,47 +126,47 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 56;
+			this.state = 58;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ANTLRFollowParser.KW_TYPE) | (1 << ANTLRFollowParser.KW_CONST) | (1 << ANTLRFollowParser.KW_VAR) | (1 << ANTLRFollowParser.KW_PROP) | (1 << ANTLRFollowParser.KW_AXIOM) | (1 << ANTLRFollowParser.KW_THEOREM))) !== 0)) {
 				{
-				this.state = 54;
+				this.state = 56;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
 				case ANTLRFollowParser.KW_TYPE:
 					{
-					this.state = 48;
+					this.state = 50;
 					this.typeBlock();
 					}
 					break;
 				case ANTLRFollowParser.KW_CONST:
 					{
-					this.state = 49;
+					this.state = 51;
 					this.constBlock();
 					}
 					break;
 				case ANTLRFollowParser.KW_VAR:
 					{
-					this.state = 50;
+					this.state = 52;
 					this.varBlock();
 					}
 					break;
 				case ANTLRFollowParser.KW_PROP:
 					{
-					this.state = 51;
+					this.state = 53;
 					this.propBlock();
 					}
 					break;
 				case ANTLRFollowParser.KW_AXIOM:
 					{
-					this.state = 52;
+					this.state = 54;
 					this.axiomBlock();
 					}
 					break;
 				case ANTLRFollowParser.KW_THEOREM:
 					{
-					this.state = 53;
+					this.state = 55;
 					this.theoremBlock();
 					}
 					break;
@@ -172,11 +174,11 @@ export class ANTLRFollowParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 58;
+				this.state = 60;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 59;
+			this.state = 61;
 			this.match(ANTLRFollowParser.EOF);
 			}
 		}
@@ -202,19 +204,19 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 61;
-			this.match(ANTLRFollowParser.KW_TYPE);
 			this.state = 63;
+			this.match(ANTLRFollowParser.KW_TYPE);
+			this.state = 65;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 62;
+				this.state = 64;
 				this.typeDef();
 				}
 				}
-				this.state = 65;
+				this.state = 67;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === ANTLRFollowParser.ID);
@@ -242,21 +244,21 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 67;
+			this.state = 69;
 			this.match(ANTLRFollowParser.KW_CONST);
-			this.state = 68;
-			this.typeID();
 			this.state = 70;
+			this.typeID();
+			this.state = 72;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 69;
+				this.state = 71;
 				this.constID();
 				}
 				}
-				this.state = 72;
+				this.state = 74;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === ANTLRFollowParser.ID);
@@ -284,21 +286,21 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 74;
+			this.state = 76;
 			this.match(ANTLRFollowParser.KW_VAR);
-			this.state = 75;
-			this.typeID();
 			this.state = 77;
+			this.typeID();
+			this.state = 79;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 76;
+				this.state = 78;
 				this.varID();
 				}
 				}
-				this.state = 79;
+				this.state = 81;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === ANTLRFollowParser.ID);
@@ -325,13 +327,13 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 81;
-			this.match(ANTLRFollowParser.KW_PROP);
-			this.state = 82;
-			this.typeID();
 			this.state = 83;
-			this.propID();
+			this.match(ANTLRFollowParser.KW_PROP);
 			this.state = 84;
+			this.typeID();
+			this.state = 85;
+			this.propID();
+			this.state = 86;
 			this.paramBlockNonEmpty();
 			}
 		}
@@ -356,13 +358,13 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 86;
-			this.match(ANTLRFollowParser.KW_AXIOM);
-			this.state = 87;
-			this.axiomID();
 			this.state = 88;
-			this.paramBlock();
+			this.match(ANTLRFollowParser.KW_AXIOM);
 			this.state = 89;
+			this.axiomID();
+			this.state = 90;
+			this.paramBlock();
+			this.state = 91;
 			this.contentBlock();
 			}
 		}
@@ -387,17 +389,17 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 91;
-			this.match(ANTLRFollowParser.KW_THEOREM);
-			this.state = 92;
-			this.theoremID();
 			this.state = 93;
-			this.paramBlock();
+			this.match(ANTLRFollowParser.KW_THEOREM);
 			this.state = 94;
-			this.contentBlock();
+			this.theoremID();
 			this.state = 95;
-			this.match(ANTLRFollowParser.EQ);
+			this.paramBlock();
 			this.state = 96;
+			this.contentBlock();
+			this.state = 97;
+			this.match(ANTLRFollowParser.EQ);
+			this.state = 98;
 			this.proofBlock();
 			}
 		}
@@ -423,31 +425,27 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 98;
-			this.match(ANTLRFollowParser.LPAREN);
-			this.state = 99;
-			this.typeID();
 			this.state = 100;
-			this.argID();
-			this.state = 107;
+			this.match(ANTLRFollowParser.LPAREN);
+			this.state = 101;
+			this.paramPair();
+			this.state = 106;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ANTLRFollowParser.COMMA) {
 				{
 				{
-				this.state = 101;
-				this.match(ANTLRFollowParser.COMMA);
 				this.state = 102;
-				this.typeID();
+				this.match(ANTLRFollowParser.COMMA);
 				this.state = 103;
-				this.argID();
+				this.paramPair();
 				}
 				}
-				this.state = 109;
+				this.state = 108;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 110;
+			this.state = 109;
 			this.match(ANTLRFollowParser.RPAREN);
 			}
 		}
@@ -473,40 +471,63 @@ export class ANTLRFollowParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 112;
+			this.state = 111;
 			this.match(ANTLRFollowParser.LPAREN);
-			this.state = 124;
+			this.state = 120;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === ANTLRFollowParser.ID) {
 				{
-				this.state = 113;
-				this.typeID();
-				this.state = 114;
-				this.argID();
-				this.state = 121;
+				this.state = 112;
+				this.paramPair();
+				this.state = 117;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				while (_la === ANTLRFollowParser.COMMA) {
 					{
 					{
-					this.state = 115;
+					this.state = 113;
 					this.match(ANTLRFollowParser.COMMA);
-					this.state = 116;
-					this.typeID();
-					this.state = 117;
-					this.argID();
+					this.state = 114;
+					this.paramPair();
 					}
 					}
-					this.state = 123;
+					this.state = 119;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
 				}
 			}
 
-			this.state = 126;
+			this.state = 122;
 			this.match(ANTLRFollowParser.RPAREN);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public paramPair(): ParamPairContext {
+		let _localctx: ParamPairContext = new ParamPairContext(this._ctx, this.state);
+		this.enterRule(_localctx, 18, ANTLRFollowParser.RULE_paramPair);
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 124;
+			this.typeID();
+			this.state = 125;
+			this.argID();
 			}
 		}
 		catch (re) {
@@ -526,24 +547,24 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public assumeBlock(): AssumeBlockContext {
 		let _localctx: AssumeBlockContext = new AssumeBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 18, ANTLRFollowParser.RULE_assumeBlock);
+		this.enterRule(_localctx, 20, ANTLRFollowParser.RULE_assumeBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 128;
+			this.state = 127;
 			this.match(ANTLRFollowParser.KW_ASSUME);
-			this.state = 130;
+			this.state = 129;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 129;
+				this.state = 128;
 				this.assumeID();
 				}
 				}
-				this.state = 132;
+				this.state = 131;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === ANTLRFollowParser.ID);
@@ -566,24 +587,24 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public targetBlock(): TargetBlockContext {
 		let _localctx: TargetBlockContext = new TargetBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 20, ANTLRFollowParser.RULE_targetBlock);
+		this.enterRule(_localctx, 22, ANTLRFollowParser.RULE_targetBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 134;
+			this.state = 133;
 			this.match(ANTLRFollowParser.KW_TARGET);
-			this.state = 136;
+			this.state = 135;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 135;
+				this.state = 134;
 				this.targetID();
 				}
 				}
-				this.state = 138;
+				this.state = 137;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === ANTLRFollowParser.ID);
@@ -606,30 +627,30 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public contentBlock(): ContentBlockContext {
 		let _localctx: ContentBlockContext = new ContentBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 22, ANTLRFollowParser.RULE_contentBlock);
+		this.enterRule(_localctx, 24, ANTLRFollowParser.RULE_contentBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 140;
+			this.state = 139;
 			this.match(ANTLRFollowParser.LBRACE);
-			this.state = 144;
+			this.state = 143;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ANTLRFollowParser.KW_ASSUME) {
 				{
 				{
-				this.state = 141;
+				this.state = 140;
 				this.assumeBlock();
 				}
 				}
-				this.state = 146;
+				this.state = 145;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 147;
+			this.state = 146;
 			this.targetBlock();
-			this.state = 148;
+			this.state = 147;
 			this.match(ANTLRFollowParser.RBRACE);
 			}
 		}
@@ -650,28 +671,28 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public proofBlock(): ProofBlockContext {
 		let _localctx: ProofBlockContext = new ProofBlockContext(this._ctx, this.state);
-		this.enterRule(_localctx, 24, ANTLRFollowParser.RULE_proofBlock);
+		this.enterRule(_localctx, 26, ANTLRFollowParser.RULE_proofBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 150;
+			this.state = 149;
 			this.match(ANTLRFollowParser.LBRACE);
-			this.state = 154;
+			this.state = 153;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ANTLRFollowParser.COMMA || _la === ANTLRFollowParser.ID) {
 				{
 				{
-				this.state = 151;
+				this.state = 150;
 				this.proofID();
 				}
 				}
-				this.state = 156;
+				this.state = 155;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 157;
+			this.state = 156;
 			this.match(ANTLRFollowParser.RBRACE);
 			}
 		}
@@ -692,11 +713,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public typeDef(): TypeDefContext {
 		let _localctx: TypeDefContext = new TypeDefContext(this._ctx, this.state);
-		this.enterRule(_localctx, 26, ANTLRFollowParser.RULE_typeDef);
+		this.enterRule(_localctx, 28, ANTLRFollowParser.RULE_typeDef);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 159;
+			this.state = 158;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -717,11 +738,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public typeID(): TypeIDContext {
 		let _localctx: TypeIDContext = new TypeIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 28, ANTLRFollowParser.RULE_typeID);
+		this.enterRule(_localctx, 30, ANTLRFollowParser.RULE_typeID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 161;
+			this.state = 160;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -742,11 +763,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public constID(): ConstIDContext {
 		let _localctx: ConstIDContext = new ConstIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 30, ANTLRFollowParser.RULE_constID);
+		this.enterRule(_localctx, 32, ANTLRFollowParser.RULE_constID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 163;
+			this.state = 162;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -767,11 +788,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public varID(): VarIDContext {
 		let _localctx: VarIDContext = new VarIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 32, ANTLRFollowParser.RULE_varID);
+		this.enterRule(_localctx, 34, ANTLRFollowParser.RULE_varID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 165;
+			this.state = 164;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -792,11 +813,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public propID(): PropIDContext {
 		let _localctx: PropIDContext = new PropIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 34, ANTLRFollowParser.RULE_propID);
+		this.enterRule(_localctx, 36, ANTLRFollowParser.RULE_propID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 167;
+			this.state = 166;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -817,11 +838,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public axiomID(): AxiomIDContext {
 		let _localctx: AxiomIDContext = new AxiomIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 36, ANTLRFollowParser.RULE_axiomID);
+		this.enterRule(_localctx, 38, ANTLRFollowParser.RULE_axiomID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 169;
+			this.state = 168;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -842,11 +863,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public theoremID(): TheoremIDContext {
 		let _localctx: TheoremIDContext = new TheoremIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 38, ANTLRFollowParser.RULE_theoremID);
+		this.enterRule(_localctx, 40, ANTLRFollowParser.RULE_theoremID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 171;
+			this.state = 170;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -867,11 +888,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public argID(): ArgIDContext {
 		let _localctx: ArgIDContext = new ArgIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 40, ANTLRFollowParser.RULE_argID);
+		this.enterRule(_localctx, 42, ANTLRFollowParser.RULE_argID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 173;
+			this.state = 172;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -892,11 +913,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public assumeID(): AssumeIDContext {
 		let _localctx: AssumeIDContext = new AssumeIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 42, ANTLRFollowParser.RULE_assumeID);
+		this.enterRule(_localctx, 44, ANTLRFollowParser.RULE_assumeID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 175;
+			this.state = 174;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -917,11 +938,11 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public targetID(): TargetIDContext {
 		let _localctx: TargetIDContext = new TargetIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 44, ANTLRFollowParser.RULE_targetID);
+		this.enterRule(_localctx, 46, ANTLRFollowParser.RULE_targetID);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 177;
+			this.state = 176;
 			this.match(ANTLRFollowParser.ID);
 			}
 		}
@@ -942,12 +963,12 @@ export class ANTLRFollowParser extends Parser {
 	// @RuleVersion(0)
 	public proofID(): ProofIDContext {
 		let _localctx: ProofIDContext = new ProofIDContext(this._ctx, this.state);
-		this.enterRule(_localctx, 46, ANTLRFollowParser.RULE_proofID);
+		this.enterRule(_localctx, 48, ANTLRFollowParser.RULE_proofID);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 179;
+			this.state = 178;
 			_la = this._input.LA(1);
 			if (!(_la === ANTLRFollowParser.COMMA || _la === ANTLRFollowParser.ID)) {
 			this._errHandler.recoverInline(this);
@@ -977,78 +998,78 @@ export class ANTLRFollowParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x17\xB8\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x17\xB7\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
 		"\x13\t\x13\x04\x14\t\x14\x04\x15\t\x15\x04\x16\t\x16\x04\x17\t\x17\x04" +
-		"\x18\t\x18\x04\x19\t\x19\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02" +
-		"\x07\x029\n\x02\f\x02\x0E\x02<\v\x02\x03\x02\x03\x02\x03\x03\x03\x03\x06" +
-		"\x03B\n\x03\r\x03\x0E\x03C\x03\x04\x03\x04\x03\x04\x06\x04I\n\x04\r\x04" +
-		"\x0E\x04J\x03\x05\x03\x05\x03\x05\x06\x05P\n\x05\r\x05\x0E\x05Q\x03\x06" +
-		"\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07" +
-		"\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\t\x03\t\x03\t\x03\t\x03" +
-		"\t\x03\t\x03\t\x07\tl\n\t\f\t\x0E\to\v\t\x03\t\x03\t\x03\n\x03\n\x03\n" +
-		"\x03\n\x03\n\x03\n\x03\n\x07\nz\n\n\f\n\x0E\n}\v\n\x05\n\x7F\n\n\x03\n" +
-		"\x03\n\x03\v\x03\v\x06\v\x85\n\v\r\v\x0E\v\x86\x03\f\x03\f\x06\f\x8B\n" +
-		"\f\r\f\x0E\f\x8C\x03\r\x03\r\x07\r\x91\n\r\f\r\x0E\r\x94\v\r\x03\r\x03" +
-		"\r\x03\r\x03\x0E\x03\x0E\x07\x0E\x9B\n\x0E\f\x0E\x0E\x0E\x9E\v\x0E\x03" +
-		"\x0E\x03\x0E\x03\x0F\x03\x0F\x03\x10\x03\x10\x03\x11\x03\x11\x03\x12\x03" +
+		"\x18\t\x18\x04\x19\t\x19\x04\x1A\t\x1A\x03\x02\x03\x02\x03\x02\x03\x02" +
+		"\x03\x02\x03\x02\x07\x02;\n\x02\f\x02\x0E\x02>\v\x02\x03\x02\x03\x02\x03" +
+		"\x03\x03\x03\x06\x03D\n\x03\r\x03\x0E\x03E\x03\x04\x03\x04\x03\x04\x06" +
+		"\x04K\n\x04\r\x04\x0E\x04L\x03\x05\x03\x05\x03\x05\x06\x05R\n\x05\r\x05" +
+		"\x0E\x05S\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03" +
+		"\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\t\x03" +
+		"\t\x03\t\x03\t\x07\tk\n\t\f\t\x0E\tn\v\t\x03\t\x03\t\x03\n\x03\n\x03\n" +
+		"\x03\n\x07\nv\n\n\f\n\x0E\ny\v\n\x05\n{\n\n\x03\n\x03\n\x03\v\x03\v\x03" +
+		"\v\x03\f\x03\f\x06\f\x84\n\f\r\f\x0E\f\x85\x03\r\x03\r\x06\r\x8A\n\r\r" +
+		"\r\x0E\r\x8B\x03\x0E\x03\x0E\x07\x0E\x90\n\x0E\f\x0E\x0E\x0E\x93\v\x0E" +
+		"\x03\x0E\x03\x0E\x03\x0E\x03\x0F\x03\x0F\x07\x0F\x9A\n\x0F\f\x0F\x0E\x0F" +
+		"\x9D\v\x0F\x03\x0F\x03\x0F\x03\x10\x03\x10\x03\x11\x03\x11\x03\x12\x03" +
 		"\x12\x03\x13\x03\x13\x03\x14\x03\x14\x03\x15\x03\x15\x03\x16\x03\x16\x03" +
-		"\x17\x03\x17\x03\x18\x03\x18\x03\x19\x03\x19\x03\x19\x02\x02\x02\x1A\x02" +
-		"\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02" +
-		"\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02" +
-		",\x02.\x020\x02\x02\x03\x04\x02\x0E\x0E\x17\x17\x02\xAF\x02:\x03\x02\x02" +
-		"\x02\x04?\x03\x02\x02\x02\x06E\x03\x02\x02\x02\bL\x03\x02\x02\x02\nS\x03" +
-		"\x02\x02\x02\fX\x03\x02\x02\x02\x0E]\x03\x02\x02\x02\x10d\x03\x02\x02" +
-		"\x02\x12r\x03\x02\x02\x02\x14\x82\x03\x02\x02\x02\x16\x88\x03\x02\x02" +
-		"\x02\x18\x8E\x03\x02\x02\x02\x1A\x98\x03\x02\x02\x02\x1C\xA1\x03\x02\x02" +
-		"\x02\x1E\xA3\x03\x02\x02\x02 \xA5\x03\x02\x02\x02\"\xA7\x03\x02\x02\x02" +
-		"$\xA9\x03\x02\x02\x02&\xAB\x03\x02\x02\x02(\xAD\x03\x02\x02\x02*\xAF\x03" +
-		"\x02\x02\x02,\xB1\x03\x02\x02\x02.\xB3\x03\x02\x02\x020\xB5\x03\x02\x02" +
-		"\x0229\x05\x04\x03\x0239\x05\x06\x04\x0249\x05\b\x05\x0259\x05\n\x06\x02" +
-		"69\x05\f\x07\x0279\x05\x0E\b\x0282\x03\x02\x02\x0283\x03\x02\x02\x028" +
-		"4\x03\x02\x02\x0285\x03\x02\x02\x0286\x03\x02\x02\x0287\x03\x02\x02\x02" +
-		"9<\x03\x02\x02\x02:8\x03\x02\x02\x02:;\x03\x02\x02\x02;=\x03\x02\x02\x02" +
-		"<:\x03\x02\x02\x02=>\x07\x02\x02\x03>\x03\x03\x02\x02\x02?A\x07\x0F\x02" +
-		"\x02@B\x05\x1C\x0F\x02A@\x03\x02\x02\x02BC\x03\x02\x02\x02CA\x03\x02\x02" +
-		"\x02CD\x03\x02\x02\x02D\x05\x03\x02\x02\x02EF\x07\x10\x02\x02FH\x05\x1E" +
-		"\x10\x02GI\x05 \x11\x02HG\x03\x02\x02\x02IJ\x03\x02\x02\x02JH\x03\x02" +
-		"\x02\x02JK\x03\x02\x02\x02K\x07\x03\x02\x02\x02LM\x07\x11\x02\x02MO\x05" +
-		"\x1E\x10\x02NP\x05\"\x12\x02ON\x03\x02\x02\x02PQ\x03\x02\x02\x02QO\x03" +
-		"\x02\x02\x02QR\x03\x02\x02\x02R\t\x03\x02\x02\x02ST\x07\x12\x02\x02TU" +
-		"\x05\x1E\x10\x02UV\x05$\x13\x02VW\x05\x10\t\x02W\v\x03\x02\x02\x02XY\x07" +
-		"\x13\x02\x02YZ\x05&\x14\x02Z[\x05\x12\n\x02[\\\x05\x18\r\x02\\\r\x03\x02" +
-		"\x02\x02]^\x07\x14\x02\x02^_\x05(\x15\x02_`\x05\x12\n\x02`a\x05\x18\r" +
-		"\x02ab\x07\r\x02\x02bc\x05\x1A\x0E\x02c\x0F\x03\x02\x02\x02de\x07\v\x02" +
-		"\x02ef\x05\x1E\x10\x02fm\x05*\x16\x02gh\x07\x0E\x02\x02hi\x05\x1E\x10" +
-		"\x02ij\x05*\x16\x02jl\x03\x02\x02\x02kg\x03\x02\x02\x02lo\x03\x02\x02" +
-		"\x02mk\x03\x02\x02\x02mn\x03\x02\x02\x02np\x03\x02\x02\x02om\x03\x02\x02" +
-		"\x02pq\x07\f\x02\x02q\x11\x03\x02\x02\x02r~\x07\v\x02\x02st\x05\x1E\x10" +
-		"\x02t{\x05*\x16\x02uv\x07\x0E\x02\x02vw\x05\x1E\x10\x02wx\x05*\x16\x02" +
-		"xz\x03\x02\x02\x02yu\x03\x02\x02\x02z}\x03\x02\x02\x02{y\x03\x02\x02\x02" +
-		"{|\x03\x02\x02\x02|\x7F\x03\x02\x02\x02}{\x03\x02\x02\x02~s\x03\x02\x02" +
-		"\x02~\x7F\x03\x02\x02\x02\x7F\x80\x03\x02\x02\x02\x80\x81\x07\f\x02\x02" +
-		"\x81\x13\x03\x02\x02\x02\x82\x84\x07\x15\x02\x02\x83\x85\x05,\x17\x02" +
-		"\x84\x83\x03\x02\x02\x02\x85\x86\x03\x02\x02\x02\x86\x84\x03\x02\x02\x02" +
-		"\x86\x87\x03\x02\x02\x02\x87\x15\x03\x02\x02\x02\x88\x8A\x07\x16\x02\x02" +
-		"\x89\x8B\x05.\x18\x02\x8A\x89\x03\x02\x02\x02\x8B\x8C\x03\x02\x02\x02" +
-		"\x8C\x8A\x03\x02\x02\x02\x8C\x8D\x03\x02\x02\x02\x8D\x17\x03\x02\x02\x02" +
-		"\x8E\x92\x07\x07\x02\x02\x8F\x91\x05\x14\v\x02\x90\x8F\x03\x02\x02\x02" +
-		"\x91\x94\x03\x02\x02\x02\x92\x90\x03\x02\x02\x02\x92\x93\x03\x02\x02\x02" +
-		"\x93\x95\x03\x02\x02\x02\x94\x92\x03\x02\x02\x02\x95\x96\x05\x16\f\x02" +
-		"\x96\x97\x07\b\x02\x02\x97\x19\x03\x02\x02\x02\x98\x9C\x07\x07\x02\x02" +
-		"\x99\x9B\x050\x19\x02\x9A\x99\x03\x02\x02\x02\x9B\x9E\x03\x02\x02\x02" +
-		"\x9C\x9A\x03\x02\x02\x02\x9C\x9D\x03\x02\x02\x02\x9D\x9F\x03\x02\x02\x02" +
-		"\x9E\x9C\x03\x02\x02\x02\x9F\xA0\x07\b\x02\x02\xA0\x1B\x03\x02\x02\x02" +
-		"\xA1\xA2\x07\x17\x02\x02\xA2\x1D\x03\x02\x02\x02\xA3\xA4\x07\x17\x02\x02" +
-		"\xA4\x1F\x03\x02\x02\x02\xA5\xA6\x07\x17\x02\x02\xA6!\x03\x02\x02\x02" +
-		"\xA7\xA8\x07\x17\x02\x02\xA8#\x03\x02\x02\x02\xA9\xAA\x07\x17\x02\x02" +
-		"\xAA%\x03\x02\x02\x02\xAB\xAC\x07\x17\x02\x02\xAC\'\x03\x02\x02\x02\xAD" +
-		"\xAE\x07\x17\x02\x02\xAE)\x03\x02\x02\x02\xAF\xB0\x07\x17\x02\x02\xB0" +
-		"+\x03\x02\x02\x02\xB1\xB2\x07\x17\x02\x02\xB2-\x03\x02\x02\x02\xB3\xB4" +
-		"\x07\x17\x02\x02\xB4/\x03\x02\x02\x02\xB5\xB6\t\x02\x02\x02\xB61\x03\x02" +
-		"\x02\x02\x0E8:CJQm{~\x86\x8C\x92\x9C";
+		"\x17\x03\x17\x03\x18\x03\x18\x03\x19\x03\x19\x03\x1A\x03\x1A\x03\x1A\x02" +
+		"\x02\x02\x1B\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02" +
+		"\x12\x02\x14\x02\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02" +
+		"&\x02(\x02*\x02,\x02.\x020\x022\x02\x02\x03\x04\x02\x0E\x0E\x17\x17\x02" +
+		"\xAD\x02<\x03\x02\x02\x02\x04A\x03\x02\x02\x02\x06G\x03\x02\x02\x02\b" +
+		"N\x03\x02\x02\x02\nU\x03\x02\x02\x02\fZ\x03\x02\x02\x02\x0E_\x03\x02\x02" +
+		"\x02\x10f\x03\x02\x02\x02\x12q\x03\x02\x02\x02\x14~\x03\x02\x02\x02\x16" +
+		"\x81\x03\x02\x02\x02\x18\x87\x03\x02\x02\x02\x1A\x8D\x03\x02\x02\x02\x1C" +
+		"\x97\x03\x02\x02\x02\x1E\xA0\x03\x02\x02\x02 \xA2\x03\x02\x02\x02\"\xA4" +
+		"\x03\x02\x02\x02$\xA6\x03\x02\x02\x02&\xA8\x03\x02\x02\x02(\xAA\x03\x02" +
+		"\x02\x02*\xAC\x03\x02\x02\x02,\xAE\x03\x02\x02\x02.\xB0\x03\x02\x02\x02" +
+		"0\xB2\x03\x02\x02\x022\xB4\x03\x02\x02\x024;\x05\x04\x03\x025;\x05\x06" +
+		"\x04\x026;\x05\b\x05\x027;\x05\n\x06\x028;\x05\f\x07\x029;\x05\x0E\b\x02" +
+		":4\x03\x02\x02\x02:5\x03\x02\x02\x02:6\x03\x02\x02\x02:7\x03\x02\x02\x02" +
+		":8\x03\x02\x02\x02:9\x03\x02\x02\x02;>\x03\x02\x02\x02<:\x03\x02\x02\x02" +
+		"<=\x03\x02\x02\x02=?\x03\x02\x02\x02><\x03\x02\x02\x02?@\x07\x02\x02\x03" +
+		"@\x03\x03\x02\x02\x02AC\x07\x0F\x02\x02BD\x05\x1E\x10\x02CB\x03\x02\x02" +
+		"\x02DE\x03\x02\x02\x02EC\x03\x02\x02\x02EF\x03\x02\x02\x02F\x05\x03\x02" +
+		"\x02\x02GH\x07\x10\x02\x02HJ\x05 \x11\x02IK\x05\"\x12\x02JI\x03\x02\x02" +
+		"\x02KL\x03\x02\x02\x02LJ\x03\x02\x02\x02LM\x03\x02\x02\x02M\x07\x03\x02" +
+		"\x02\x02NO\x07\x11\x02\x02OQ\x05 \x11\x02PR\x05$\x13\x02QP\x03\x02\x02" +
+		"\x02RS\x03\x02\x02\x02SQ\x03\x02\x02\x02ST\x03\x02\x02\x02T\t\x03\x02" +
+		"\x02\x02UV\x07\x12\x02\x02VW\x05 \x11\x02WX\x05&\x14\x02XY\x05\x10\t\x02" +
+		"Y\v\x03\x02\x02\x02Z[\x07\x13\x02\x02[\\\x05(\x15\x02\\]\x05\x12\n\x02" +
+		"]^\x05\x1A\x0E\x02^\r\x03\x02\x02\x02_`\x07\x14\x02\x02`a\x05*\x16\x02" +
+		"ab\x05\x12\n\x02bc\x05\x1A\x0E\x02cd\x07\r\x02\x02de\x05\x1C\x0F\x02e" +
+		"\x0F\x03\x02\x02\x02fg\x07\v\x02\x02gl\x05\x14\v\x02hi\x07\x0E\x02\x02" +
+		"ik\x05\x14\v\x02jh\x03\x02\x02\x02kn\x03\x02\x02\x02lj\x03\x02\x02\x02" +
+		"lm\x03\x02\x02\x02mo\x03\x02\x02\x02nl\x03\x02\x02\x02op\x07\f\x02\x02" +
+		"p\x11\x03\x02\x02\x02qz\x07\v\x02\x02rw\x05\x14\v\x02st\x07\x0E\x02\x02" +
+		"tv\x05\x14\v\x02us\x03\x02\x02\x02vy\x03\x02\x02\x02wu\x03\x02\x02\x02" +
+		"wx\x03\x02\x02\x02x{\x03\x02\x02\x02yw\x03\x02\x02\x02zr\x03\x02\x02\x02" +
+		"z{\x03\x02\x02\x02{|\x03\x02\x02\x02|}\x07\f\x02\x02}\x13\x03\x02\x02" +
+		"\x02~\x7F\x05 \x11\x02\x7F\x80\x05,\x17\x02\x80\x15\x03\x02\x02\x02\x81" +
+		"\x83\x07\x15\x02\x02\x82\x84\x05.\x18\x02\x83\x82\x03\x02\x02\x02\x84" +
+		"\x85\x03\x02\x02\x02\x85\x83\x03\x02\x02\x02\x85\x86\x03\x02\x02\x02\x86" +
+		"\x17\x03\x02\x02\x02\x87\x89\x07\x16\x02\x02\x88\x8A\x050\x19\x02\x89" +
+		"\x88\x03\x02\x02\x02\x8A\x8B\x03\x02\x02\x02\x8B\x89\x03\x02\x02\x02\x8B" +
+		"\x8C\x03\x02\x02\x02\x8C\x19\x03\x02\x02\x02\x8D\x91\x07\x07\x02\x02\x8E" +
+		"\x90\x05\x16\f\x02\x8F\x8E\x03\x02\x02\x02\x90\x93\x03\x02\x02\x02\x91" +
+		"\x8F\x03\x02\x02\x02\x91\x92\x03\x02\x02\x02\x92\x94\x03\x02\x02\x02\x93" +
+		"\x91\x03\x02\x02\x02\x94\x95\x05\x18\r\x02\x95\x96\x07\b\x02\x02\x96\x1B" +
+		"\x03\x02\x02\x02\x97\x9B\x07\x07\x02\x02\x98\x9A\x052\x1A\x02\x99\x98" +
+		"\x03\x02\x02\x02\x9A\x9D\x03\x02\x02\x02\x9B\x99\x03\x02\x02\x02\x9B\x9C" +
+		"\x03\x02\x02\x02\x9C\x9E\x03\x02\x02\x02\x9D\x9B\x03\x02\x02\x02\x9E\x9F" +
+		"\x07\b\x02\x02\x9F\x1D\x03\x02\x02\x02\xA0\xA1\x07\x17\x02\x02\xA1\x1F" +
+		"\x03\x02\x02\x02\xA2\xA3\x07\x17\x02\x02\xA3!\x03\x02\x02\x02\xA4\xA5" +
+		"\x07\x17\x02\x02\xA5#\x03\x02\x02\x02\xA6\xA7\x07\x17\x02\x02\xA7%\x03" +
+		"\x02\x02\x02\xA8\xA9\x07\x17\x02\x02\xA9\'\x03\x02\x02\x02\xAA\xAB\x07" +
+		"\x17\x02\x02\xAB)\x03\x02\x02\x02\xAC\xAD\x07\x17\x02\x02\xAD+\x03\x02" +
+		"\x02\x02\xAE\xAF\x07\x17\x02\x02\xAF-\x03\x02\x02\x02\xB0\xB1\x07\x17" +
+		"\x02\x02\xB1/\x03\x02\x02\x02\xB2\xB3\x07\x17\x02\x02\xB31\x03\x02\x02" +
+		"\x02\xB4\xB5\t\x02\x02\x02\xB53\x03\x02\x02\x02\x0E:<ELSlwz\x85\x8B\x91" +
+		"\x9B";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!ANTLRFollowParser.__ATN) {
@@ -1334,22 +1355,13 @@ export class TheoremBlockContext extends ParserRuleContext {
 
 export class ParamBlockNonEmptyContext extends ParserRuleContext {
 	public LPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.LPAREN, 0); }
-	public typeID(): TypeIDContext[];
-	public typeID(i: number): TypeIDContext;
-	public typeID(i?: number): TypeIDContext | TypeIDContext[] {
+	public paramPair(): ParamPairContext[];
+	public paramPair(i: number): ParamPairContext;
+	public paramPair(i?: number): ParamPairContext | ParamPairContext[] {
 		if (i === undefined) {
-			return this.getRuleContexts(TypeIDContext);
+			return this.getRuleContexts(ParamPairContext);
 		} else {
-			return this.getRuleContext(i, TypeIDContext);
-		}
-	}
-	public argID(): ArgIDContext[];
-	public argID(i: number): ArgIDContext;
-	public argID(i?: number): ArgIDContext | ArgIDContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ArgIDContext);
-		} else {
-			return this.getRuleContext(i, ArgIDContext);
+			return this.getRuleContext(i, ParamPairContext);
 		}
 	}
 	public RPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.RPAREN, 0); }
@@ -1385,22 +1397,13 @@ export class ParamBlockNonEmptyContext extends ParserRuleContext {
 export class ParamBlockContext extends ParserRuleContext {
 	public LPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.LPAREN, 0); }
 	public RPAREN(): TerminalNode { return this.getToken(ANTLRFollowParser.RPAREN, 0); }
-	public typeID(): TypeIDContext[];
-	public typeID(i: number): TypeIDContext;
-	public typeID(i?: number): TypeIDContext | TypeIDContext[] {
+	public paramPair(): ParamPairContext[];
+	public paramPair(i: number): ParamPairContext;
+	public paramPair(i?: number): ParamPairContext | ParamPairContext[] {
 		if (i === undefined) {
-			return this.getRuleContexts(TypeIDContext);
+			return this.getRuleContexts(ParamPairContext);
 		} else {
-			return this.getRuleContext(i, TypeIDContext);
-		}
-	}
-	public argID(): ArgIDContext[];
-	public argID(i: number): ArgIDContext;
-	public argID(i?: number): ArgIDContext | ArgIDContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ArgIDContext);
-		} else {
-			return this.getRuleContext(i, ArgIDContext);
+			return this.getRuleContext(i, ParamPairContext);
 		}
 	}
 	public COMMA(): TerminalNode[];
@@ -1427,6 +1430,33 @@ export class ParamBlockContext extends ParserRuleContext {
 	public exitRule(listener: ANTLRFollowParserListener): void {
 		if (listener.exitParamBlock) {
 			listener.exitParamBlock(this);
+		}
+	}
+}
+
+
+export class ParamPairContext extends ParserRuleContext {
+	public typeID(): TypeIDContext {
+		return this.getRuleContext(0, TypeIDContext);
+	}
+	public argID(): ArgIDContext {
+		return this.getRuleContext(0, ArgIDContext);
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return ANTLRFollowParser.RULE_paramPair; }
+	// @Override
+	public enterRule(listener: ANTLRFollowParserListener): void {
+		if (listener.enterParamPair) {
+			listener.enterParamPair(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ANTLRFollowParserListener): void {
+		if (listener.exitParamPair) {
+			listener.exitParamPair(this);
 		}
 	}
 }

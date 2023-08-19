@@ -24,10 +24,10 @@ import { ParserRuleContext, Token } from 'antlr4ts';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
 
 class SemanticNode {
-  public readonly type: number;
+  public readonly nodeType: number;
   public readonly token: Token;
-  constructor(type: number, token: Token) {
-    this.type = type;
+  constructor(nodeType: number, token: Token) {
+    this.nodeType = nodeType;
     this.token = token;
   }
 }
@@ -52,9 +52,9 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     let tokenType: number = ctx.ruleIndex;
     if (token.text) {
       if (this.argSymbolTable.has(token.text)) {
-        tokenType = this.argSymbolTable.get(token.text)?.type || 0;
+        tokenType = this.argSymbolTable.get(token.text)?.nodeType || 0;
       } else if (this.symbolTable.has(token.text)) {
-        tokenType = this.symbolTable.get(token.text)?.type || 0;
+        tokenType = this.symbolTable.get(token.text)?.nodeType || 0;
       }
     }
     // TODO: ctx.ruleIndex does not work.

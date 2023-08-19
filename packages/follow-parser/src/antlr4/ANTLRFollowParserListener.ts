@@ -12,6 +12,7 @@ import { AxiomBlockContext } from "./ANTLRFollowParser";
 import { TheoremBlockContext } from "./ANTLRFollowParser";
 import { ParamBlockNonEmptyContext } from "./ANTLRFollowParser";
 import { ParamBlockContext } from "./ANTLRFollowParser";
+import { ParamPairContext } from "./ANTLRFollowParser";
 import { AssumeBlockContext } from "./ANTLRFollowParser";
 import { TargetBlockContext } from "./ANTLRFollowParser";
 import { ContentBlockContext } from "./ANTLRFollowParser";
@@ -132,6 +133,17 @@ export interface ANTLRFollowParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitParamBlock?: (ctx: ParamBlockContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ANTLRFollowParser.paramPair`.
+	 * @param ctx the parse tree
+	 */
+	enterParamPair?: (ctx: ParamPairContext) => void;
+	/**
+	 * Exit a parse tree produced by `ANTLRFollowParser.paramPair`.
+	 * @param ctx the parse tree
+	 */
+	exitParamPair?: (ctx: ParamPairContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ANTLRFollowParser.assumeBlock`.
