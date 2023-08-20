@@ -4,6 +4,8 @@ import {
   ANTLRFollowParser,
   AssumeBlockContext,
   ConstBlockContext,
+  ParamPairContext,
+  ProofBlockContext,
   TargetBlockContext,
   TypeBlockContext,
   VarBlockContext,
@@ -26,6 +28,9 @@ import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
 class SemanticNode {
   public readonly nodeType: number;
   public readonly token: Token;
+  public codeType?: string;
+  public argsMap?: Map<string, SemanticNode>;
+  public argsList?: Array<SemanticNode>;
   constructor(nodeType: number, token: Token) {
     this.nodeType = nodeType;
     this.token = token;
@@ -35,7 +40,18 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
   public semanticTokensBuilder = new SemanticTokensBuilder();
   private symbolTable: Map<string, SemanticNode> = new Map();
   private argSymbolTable: Map<string, SemanticNode> = new Map();
+  private argSymbolList: Array<SemanticNode> = new Array();
   public semanticDiagnosticList: Diagnostic[] = [];
+  private hasDiagnostic = false;
+
+  private getSemanticNode(ctx: ParserRuleContext): SemanticNode | undefined {
+    const token = ctx.start;
+    if (token.text && this.argSymbolTable.has(token.text)) {
+      return this.argSymbolTable.get(token.text);
+    } else if (token.text && this.symbolTable.has(token.text)) {
+      return this.symbolTable.get(token.text);
+    }
+  }
 
   private getRange(token: Token): Range {
     const line = token.line - 1;
@@ -70,6 +86,16 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
       source: 'follow',
     };
     this.semanticDiagnosticList.push(diagnostic);
+    this.hasDiagnostic = true; // set diagnostic flag, for compiler
+  }
+  private addCodeType(arg: Token | undefined, argType: Token | undefined) {
+    if (arg && arg.text && argType) {
+      const argSymbol = this.argSymbolTable.get(arg.text);
+      if (argSymbol) {
+        argSymbol.codeType = argType.text;
+        this.argSymbolList.push(argSymbol);
+      }
+    }
   }
   private hasBeenUsedCheck(ctx: ParserRuleContext): void {
     const token = ctx.start;
@@ -77,6 +103,12 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
       this.addSemanticDiagnostic(token, `${token.text} has been used.`);
     } else {
       const semanticNode = new SemanticNode(ctx.ruleIndex, token);
+      if (ctx.ruleIndex === ANTLRFollowParser.RULE_axiomID) {
+        semanticNode.codeType = 'axiom';
+      }
+      if (ctx.ruleIndex === ANTLRFollowParser.RULE_theoremID) {
+        semanticNode.codeType = 'theorem';
+      }
       if (ctx.ruleIndex === ANTLRFollowParser.RULE_argID) {
         this.argSymbolTable.set(token.text, semanticNode);
       } else {
@@ -90,14 +122,53 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
       this.addSemanticDiagnostic(token, `${token.text} has not been declared.`);
     }
   }
+  private functionStackCheck(contextList: ParserRuleContext[]) {
+    var stack: Array<string> = [];
+    var isStart: boolean = true;
+    for (const context of contextList) {
+      const semanticNode = this.getSemanticNode(context);
+      if (semanticNode) {
+        if (!isStart) {
+          const targetCodeType = stack.pop();
+          if (semanticNode.codeType !== targetCodeType) {
+            this.addSemanticDiagnostic(
+              context.start,
+              `${context.start.text} is a ${semanticNode.codeType}, not ${targetCodeType}. `,
+            );
+            break;
+          }
+        }
+        if (semanticNode.argsList) {
+          semanticNode.argsList.reverse().forEach((element) => {
+            if (element.codeType) {
+              stack.push(element.codeType);
+            }
+          });
+        }
+        isStart = false;
+      }
+    }
+  }
   public enterTypeBlock(ctx: TypeBlockContext): void {
     this.addSemanticTokens(ctx);
   }
   public enterConstBlock(ctx: ConstBlockContext): void {
     this.addSemanticTokens(ctx);
   }
+  public exitConstBlock(ctx: ConstBlockContext): void {
+    const argType = ctx.typeID().start;
+    for (const argCtx of ctx.constID()) {
+      this.addCodeType(argCtx.start, argType);
+    }
+  }
   public enterVarBlock(ctx: VarBlockContext): void {
     this.addSemanticTokens(ctx);
+  }
+  public exitVarBlock(ctx: VarBlockContext): void {
+    const argType = ctx.typeID().start;
+    for (const argCtx of ctx.varID()) {
+      this.addCodeType(argCtx.start, argType);
+    }
   }
   public enterPropBlock(ctx: PropBlockContext): void {
     this.addSemanticTokens(ctx);
@@ -109,12 +180,33 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     this.addSemanticTokens(ctx);
   }
   public enterAssumeBlock(ctx: AssumeBlockContext): void {
+    this.hasDiagnostic = false; // clear flag of diagnostic, for compiler
     this.addSemanticTokens(ctx);
+  }
+  public exitAssumeBlock(ctx: AssumeBlockContext): void {
+    if (this.hasDiagnostic === false) {
+      // compile proposition
+      const contextList = ctx.assumeID();
+      this.functionStackCheck(contextList);
+    }
   }
   public enterTargetBlock(ctx: TargetBlockContext): void {
+    this.hasDiagnostic = false; // clear flag of diagnostic, for compiler
     this.addSemanticTokens(ctx);
   }
-
+  public exitTargetBlock(ctx: TargetBlockContext): void {
+    if (this.hasDiagnostic === false) {
+      // compile proposition
+      const contextList = ctx.targetID();
+      this.functionStackCheck(contextList);
+    }
+  }
+  public exitProofBlock(ctx: ProofBlockContext): void {
+    if (this.hasDiagnostic === false) {
+      const contextList = ctx.proofID();
+      this.functionStackCheck(contextList);
+    }
+  }
   public enterTypeDef(ctx: TypeIDContext): void {
     this.hasBeenUsedCheck(ctx);
     this.addSemanticTokens(ctx);
@@ -143,15 +235,40 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     this.hasBeenUsedCheck(ctx);
     this.addSemanticTokens(ctx);
   }
-
+  public exitParamPair(ctx: ParamPairContext): void {
+    const arg = ctx.stop;
+    const argType = ctx.start;
+    this.addCodeType(arg, argType);
+  }
   public exitPropBlock(ctx: PropBlockContext): void {
-    this.argSymbolTable.clear();
+    const arg = ctx.propID().start;
+    const argType = ctx.typeID().start;
+    this.addCodeType(arg, argType);
+    const propSymbolNode = this.getSemanticNode(ctx.propID());
+    if (propSymbolNode) {
+      propSymbolNode.argsList = this.argSymbolList;
+      propSymbolNode.argsMap = this.argSymbolTable;
+    }
+    this.argSymbolTable = new Map();
+    this.argSymbolList = new Array();
   }
   public exitAxiomBlock(ctx: AxiomBlockContext): void {
-    this.argSymbolTable.clear();
+    const axiomSymbolNode = this.getSemanticNode(ctx.axiomID());
+    if (axiomSymbolNode) {
+      axiomSymbolNode.argsList = this.argSymbolList;
+      axiomSymbolNode.argsMap = this.argSymbolTable;
+    }
+    this.argSymbolTable = new Map();
+    this.argSymbolList = new Array();
   }
   public exitTheoremBlock(ctx: TheoremBlockContext): void {
-    this.argSymbolTable.clear();
+    const theoremSymbolNode = this.getSemanticNode(ctx.theoremID());
+    if (theoremSymbolNode) {
+      theoremSymbolNode.argsList = this.argSymbolList;
+      theoremSymbolNode.argsMap = this.argSymbolTable;
+    }
+    this.argSymbolTable = new Map();
+    this.argSymbolList = new Array();
   }
   public enterArgID(ctx: ArgIDContext): void {
     this.hasBeenUsedCheck(ctx);

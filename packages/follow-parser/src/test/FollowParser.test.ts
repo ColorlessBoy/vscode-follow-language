@@ -44,4 +44,17 @@ suite('FollowParser Tests', () => {
       }
     });
   });
+  test('test #3: Diagnostics for single function stack', async () => {
+    const content = 'type wff prop wff imp(wff w0, wff w1) axiom ax-1(wff w2, wff w3) { -| w2 |- imp w3 w2 }';
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const result = await parser.getDiagnostics(textDocument).catch((_) => {
+      assert.fail();
+    });
+    const collection = result.get(textDocument.uri);
+    if (collection === undefined) {
+      assert.fail();
+    }
+    assert.strictEqual(collection.length, 0);
+  });
 });
