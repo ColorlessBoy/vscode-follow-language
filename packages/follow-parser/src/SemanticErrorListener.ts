@@ -65,10 +65,10 @@ class SemanticNode {
     if (this.contentList && this.contentList.length > 0) {
       result += '{';
       for (const content of this.contentList) {
-        result += '\n\t';
+        result += '  \n\t';
         result += content.join(' ');
       }
-      result += '\n}';
+      result += '  \n}';
     }
     return result;
   }
@@ -334,7 +334,7 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     const argType = ctx.typeID().start;
     const propSymbolNode = this.getSemanticNode(ctx.propID());
     if (propSymbolNode) {
-      propSymbolNode.argsList = this.argSymbolList.reverse();
+      propSymbolNode.argsList = this.argSymbolList;
       propSymbolNode.argsMap = this.argSymbolTable;
       propSymbolNode.contentList = this.contentList;
       propSymbolNode.codeType = argType.text;
@@ -346,7 +346,7 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
   public exitAxiomBlock(ctx: AxiomBlockContext): void {
     const axiomSymbolNode = this.getSemanticNode(ctx.axiomID());
     if (axiomSymbolNode) {
-      axiomSymbolNode.argsList = this.argSymbolList.reverse();
+      axiomSymbolNode.argsList = this.argSymbolList;
       axiomSymbolNode.argsMap = this.argSymbolTable;
       axiomSymbolNode.contentList = this.contentList;
     }
@@ -357,7 +357,7 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
   public exitTheoremBlock(ctx: TheoremBlockContext): void {
     const theoremSymbolNode = this.getSemanticNode(ctx.theoremID());
     if (theoremSymbolNode) {
-      theoremSymbolNode.argsList = this.argSymbolList.reverse();
+      theoremSymbolNode.argsList = this.argSymbolList;
       theoremSymbolNode.argsMap = this.argSymbolTable;
       theoremSymbolNode.contentList = this.contentList;
     }

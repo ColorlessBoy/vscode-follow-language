@@ -25,6 +25,7 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+let parser = new FollowParser();
 
 connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
@@ -46,6 +47,7 @@ connection.onInitialize((params: InitializeParams) => {
       completionProvider: {
         resolveProvider: true,
       },
+      hoverProvider: true,
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -123,7 +125,6 @@ documents.onDidChangeContent((change) => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  const parser = new FollowParser();
   await parser
     .getDiagnostics(textDocument)
     .then((diagnosticCollection: Map<string, Diagnostic[]>) => {
@@ -137,6 +138,15 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
       connection.window.showErrorMessage(error);
     });
 }
+
+connection.onHover((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument) {
+    const hover = parser.getHover(textDocument, event.position);
+    console.log(hover);
+    return hover;
+  }
+});
 
 connection.onDidChangeWatchedFiles((_change) => {
   // Monitored files have change in VS Code
