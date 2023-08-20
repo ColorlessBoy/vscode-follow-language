@@ -1,4 +1,4 @@
-import { Position, Range, DiagnosticSeverity, Diagnostic } from 'vscode-languageserver/node';
+import { Position, Range, DiagnosticSeverity, Diagnostic, Hover, URI } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
@@ -59,7 +59,40 @@ export class SyntaxErrorListener implements ANTLRErrorListener<any> {
 }
 
 export class FollowParser {
-  public semanticErrorListener = new SemanticErrorListener();
+  public semanticErrorListenerMap: Map<string, SemanticErrorListener> = new Map();
+  public async getHover(document: TextDocument, position: Position): Promise<Hover> {
+    return new Promise((resolve, reject) => {
+      if (!document) {
+        reject(new Error('Follow: Invalid document.'));
+        return;
+      }
+      if (!this.semanticErrorListenerMap.has(document.uri)) {
+        const text = document.getText();
+        // Create the lexer and parser
+        const inputStream = CharStreams.fromString(text);
+        const lexer = new ANTLRFollowLexer(inputStream);
+        const tokenStream = new CommonTokenStream(lexer);
+        const parser = new ANTLRFollowParser(tokenStream);
+        const syntaxErrorListener = new SyntaxErrorListener();
+        const semanticErrorListener = new SemanticErrorListener();
+        parser.removeParseListeners();
+        parser.removeErrorListeners();
+        parser.addErrorListener(syntaxErrorListener);
+        parser.addParseListener(semanticErrorListener);
+        parser.root();
+        this.semanticErrorListenerMap.set(document.uri, semanticErrorListener);
+      }
+      const semanticErrorListener = this.semanticErrorListenerMap.get(document.uri);
+      if (semanticErrorListener) {
+        const hover = semanticErrorListener.getHover(position.line, position.character);
+        if (hover) {
+          resolve(hover);
+        }
+      }
+      reject(new Error('Follow: getHover failed.'));
+      return;
+    });
+  }
   public async getDiagnostics(document: TextDocument): Promise<Map<string, Diagnostic[]>> {
     return new Promise((resolve, reject) => {
       if (!document) {
@@ -76,18 +109,17 @@ export class FollowParser {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new ANTLRFollowParser(tokenStream);
       const syntaxErrorListener = new SyntaxErrorListener();
-      this.semanticErrorListener = new SemanticErrorListener();
+      const semanticErrorListener = new SemanticErrorListener();
       parser.removeParseListeners();
       parser.removeErrorListeners();
       parser.addErrorListener(syntaxErrorListener);
-      parser.addParseListener(this.semanticErrorListener);
+      parser.addParseListener(semanticErrorListener);
 
       parser.root();
-      const diagnosticList = syntaxErrorListener.diagnosticList.concat(
-        this.semanticErrorListener.semanticDiagnosticList,
-      );
+      const diagnosticList = syntaxErrorListener.diagnosticList.concat(semanticErrorListener.semanticDiagnosticList);
 
       diagnosticCollection.set(document.uri, diagnosticList);
+      this.semanticErrorListenerMap.set(document.uri, semanticErrorListener);
       resolve(diagnosticCollection);
     });
   }
