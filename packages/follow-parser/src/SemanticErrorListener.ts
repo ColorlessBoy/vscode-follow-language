@@ -12,7 +12,6 @@ import {
   AssumeBlockContext,
   ConstBlockContext,
   ParamPairContext,
-  ProofBlockContext,
   TargetBlockContext,
   TypeBlockContext,
   VarBlockContext,
@@ -36,12 +35,51 @@ class SemanticNode {
   public readonly nodeType: number;
   public readonly token: Token;
   public codeType?: string;
-  public argsMap?: Map<string, SemanticNode>;
+  public argsMap?: Map<string, number>;
   public argsList?: Array<SemanticNode>;
-  public contentList?: Array<Array<string>>;
+  public assumeList?: Array<string>;
+  public targetList?: Array<string>;
+  public proofList?: Array<SemanticNode>;
   constructor(nodeType: number, token: Token) {
     this.nodeType = nodeType;
     this.token = token;
+  }
+  public run(argsStringList: Array<string>): [Array<string>, Array<string>] {
+    var newAssumeList: Array<string> = new Array();
+    if (this.assumeList) {
+      for (const assume of this.assumeList) {
+        var newAssume = '-|';
+        for (const op of assume.split(' ')) {
+          if (op === '-|') {
+            continue;
+          } else if (this.argsMap && this.argsMap.has(op)) {
+            const argIdx = this.argsMap.get(op) || 0;
+            newAssume += ' ' + argsStringList[argIdx];
+          } else {
+            newAssume += ' ' + op;
+          }
+        }
+        newAssumeList.push(newAssume);
+      }
+    }
+    var newTargetList: Array<string> = new Array();
+    if (this.targetList) {
+      var newTarget = '|-';
+      for (const target of this.targetList) {
+        for (const op of target.split(' ')) {
+          if (op === '|-') {
+            continue;
+          } else if (this.argsMap && this.argsMap.has(op)) {
+            const argIdx = this.argsMap.get(op) || 0;
+            newTarget += ' ' + argsStringList[argIdx];
+          } else {
+            newTarget += ' ' + op;
+          }
+        }
+      }
+      newTargetList.push(newTarget);
+    }
+    return [newAssumeList, newTargetList];
   }
   public toString() {
     var result: string = '';
@@ -62,11 +100,19 @@ class SemanticNode {
       }
       result += ')';
     }
-    if (this.contentList && this.contentList.length > 0) {
+    if ((this.assumeList && this.assumeList.length > 0) || (this.targetList && this.targetList.length > 0)) {
       result += '{';
-      for (const content of this.contentList) {
-        result += '  \n\t';
-        result += content.join(' ');
+      if (this.assumeList) {
+        for (const assume of this.assumeList) {
+          result += '  \n';
+          result += assume;
+        }
+      }
+      if (this.targetList) {
+        for (const target of this.targetList) {
+          result += '  \n';
+          result += target;
+        }
       }
       result += '  \n}';
     }
@@ -81,7 +127,8 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
   private argSymbolList: Array<SemanticNode> = new Array();
   public semanticDiagnosticList: Diagnostic[] = [];
   private hasDiagnostic = false;
-  private contentList: Array<Array<string>> = new Array();
+  private assumeList: Array<string> = new Array();
+  private targetList: Array<string> = new Array();
 
   public getHover(line: number, column: number): Hover | undefined {
     for (const token of this.semanticTokensList) {
@@ -269,7 +316,7 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
       for (const assumeID of ctx.assumeID()) {
         assumeContent.push(assumeID.text);
       }
-      this.contentList.push(assumeContent);
+      this.assumeList.push(assumeContent.join(' '));
     }
   }
   public enterTargetBlock(ctx: TargetBlockContext): void {
@@ -288,13 +335,7 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
       for (const targetID of ctx.targetID()) {
         targetContent.push(targetID.text);
       }
-      this.contentList.push(targetContent);
-    }
-  }
-  public exitProofBlock(ctx: ProofBlockContext): void {
-    if (this.hasDiagnostic === false) {
-      const contextList = ctx.proofID();
-      this.functionStackCheck(contextList);
+      this.targetList.push(targetContent.join(' '));
     }
   }
   public enterTypeDef(ctx: TypeIDContext): void {
@@ -335,35 +376,136 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     const propSymbolNode = this.getSemanticNode(ctx.propID());
     if (propSymbolNode) {
       propSymbolNode.argsList = this.argSymbolList;
-      propSymbolNode.argsMap = this.argSymbolTable;
-      propSymbolNode.contentList = this.contentList;
+      propSymbolNode.assumeList = this.assumeList;
+      propSymbolNode.argsMap = new Map(
+        this.argSymbolList.map((i, e) => {
+          return [i.token.text || '', e];
+        }),
+      );
+      propSymbolNode.targetList = this.targetList;
       propSymbolNode.codeType = argType.text;
     }
     this.argSymbolTable = new Map();
     this.argSymbolList = new Array();
-    this.contentList = new Array();
+    this.assumeList = new Array();
+    this.targetList = new Array();
   }
   public exitAxiomBlock(ctx: AxiomBlockContext): void {
     const axiomSymbolNode = this.getSemanticNode(ctx.axiomID());
     if (axiomSymbolNode) {
       axiomSymbolNode.argsList = this.argSymbolList;
-      axiomSymbolNode.argsMap = this.argSymbolTable;
-      axiomSymbolNode.contentList = this.contentList;
+      axiomSymbolNode.assumeList = this.assumeList;
+      axiomSymbolNode.argsMap = new Map(
+        this.argSymbolList.map((i, e) => {
+          return [i.token.text || '', e];
+        }),
+      );
+      axiomSymbolNode.targetList = this.targetList;
     }
     this.argSymbolTable = new Map();
     this.argSymbolList = new Array();
-    this.contentList = new Array();
+    this.assumeList = new Array();
+    this.targetList = new Array();
   }
   public exitTheoremBlock(ctx: TheoremBlockContext): void {
+    // add properties
     const theoremSymbolNode = this.getSemanticNode(ctx.theoremID());
     if (theoremSymbolNode) {
       theoremSymbolNode.argsList = this.argSymbolList;
-      theoremSymbolNode.argsMap = this.argSymbolTable;
-      theoremSymbolNode.contentList = this.contentList;
+      theoremSymbolNode.assumeList = this.assumeList;
+      theoremSymbolNode.argsMap = new Map(
+        this.argSymbolList.map((i, e) => {
+          return [i.token.text || '', e];
+        }),
+      );
+      theoremSymbolNode.targetList = this.targetList;
     }
+    var currentAssumeList = this.assumeList;
+    var currentTargetList = this.targetList;
     this.argSymbolTable = new Map();
     this.argSymbolList = new Array();
-    this.contentList = new Array();
+    this.assumeList = new Array();
+    this.targetList = new Array();
+
+    // verify
+    const theoremToken = ctx.theoremID().start;
+    const proofIDList = ctx.proofBlock().proofID();
+    var proofCommand: Array<Array<ParserRuleContext>> = new Array();
+    for (const proofID of proofIDList) {
+      if (proofID.text === theoremToken.text) {
+        this.addSemanticDiagnostic(theoremToken, `${theoremToken.text} is using itself.`);
+        break;
+      }
+      const proofIDCodeType = this.getSemanticNode(proofID)?.codeType;
+      if (proofIDCodeType === 'axiom' || proofIDCodeType === 'theorem') {
+        const newArray: Array<ParserRuleContext> = [proofID];
+        proofCommand.push(newArray);
+      } else {
+        var lastArray = proofCommand[-1];
+        lastArray.push(proofID);
+      }
+    }
+    for (const command of proofCommand) {
+      this.functionStackCheck(command);
+    }
+    if (this.hasDiagnostic === false) {
+      for (const command of proofCommand) {
+        const [newAssumeList, newTargetList] = this.runCommand(command);
+        if (!currentTargetList.includes(newTargetList[0])) {
+          //@ts-ignore
+          const currentStr = currentAssumeList.join('  \n') + '  \n' + currentTargetList.join('  \n');
+          const getStr = newAssumeList.join('  \n') + ' . \n' + currentTargetList.join('  \n');
+          this.addSemanticDiagnostic(command[0].start, `No use command.  \n\n${currentStr}\n\n${getStr}`);
+        } else {
+          currentTargetList = currentTargetList.filter((e) => {
+            e == newTargetList[0];
+          });
+          const assumeList1 = currentAssumeList.filter((e) => {
+            !newAssumeList.includes(e);
+          });
+          const assumeList2 = newAssumeList.filter((e) => {
+            !currentAssumeList.includes(e);
+          });
+          currentAssumeList = assumeList1;
+          for (var assume of assumeList2) {
+            currentTargetList.push('|-' + assume.slice(2));
+          }
+        }
+      }
+      if ((currentAssumeList && currentAssumeList.length > 0) || (currentTargetList && currentTargetList.length > 0)) {
+        //@ts-ignore
+        const currentStr = currentAssumeList.join('  \n') + '  \n' + currentTargetList.join('  \n');
+        this.addSemanticDiagnostic(theoremToken, `Theorem is not proved. \n\n ${currentStr}`);
+      }
+    }
+  }
+  private runCommand(command: ParserRuleContext[]): [Array<string>, Array<string>] {
+    var stack: Array<string> = new Array();
+    for (const op of command.reverse()) {
+      const semanticNode = this.getSemanticNode(op);
+      if (semanticNode) {
+        if (semanticNode.codeType === 'axiom' || semanticNode.codeType === 'theorem') {
+          continue;
+        } else if ((semanticNode.argsList?.length || 0) > 0) {
+          var argsStringList: Array<string> = new Array();
+          if (semanticNode.token.text) {
+            argsStringList.push(semanticNode.token.text);
+          }
+          for (var i = 0; i < (semanticNode.argsList?.length || 0); i++) {
+            argsStringList.push(stack.pop() || '');
+          }
+          stack.push(argsStringList.join(' '));
+        } else {
+          if (semanticNode.token.text) {
+            stack.push(semanticNode.token.text);
+          }
+        }
+      }
+    }
+    //@ts-ignore
+    const semanticNode = this.getSemanticNode(command.shift());
+    //@ts-ignore
+    return semanticNode.run(stack.reverse());
   }
   public enterArgID(ctx: ArgIDContext): void {
     this.hasBeenUsedCheck(ctx);

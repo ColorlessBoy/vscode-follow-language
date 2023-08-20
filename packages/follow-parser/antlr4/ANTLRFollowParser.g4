@@ -29,6 +29,6 @@ theoremID : ID ;
 argID : ID ;
 assumeID : ID ;
 targetID : ID ;
-proofID : ID | COMMA ;
+proofID : ID ;
 
 
