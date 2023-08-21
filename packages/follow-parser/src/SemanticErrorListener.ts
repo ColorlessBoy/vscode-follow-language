@@ -377,11 +377,11 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     if (propSymbolNode) {
       propSymbolNode.argsList = this.argSymbolList;
       propSymbolNode.assumeList = this.assumeList;
-      propSymbolNode.argsMap = new Map(
-        this.argSymbolList.map((i, e) => {
-          return [i.token.text || '', e];
-        }),
-      );
+      propSymbolNode.argsMap = new Map();
+      for (var i = 0; i < this.argSymbolList.length; i++) {
+        // @ts-ignore
+        propSymbolNode.argsMap[this.argSymbolList[i].token.text] = i;
+      }
       propSymbolNode.targetList = this.targetList;
       propSymbolNode.codeType = argType.text;
     }
@@ -395,11 +395,11 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     if (axiomSymbolNode) {
       axiomSymbolNode.argsList = this.argSymbolList;
       axiomSymbolNode.assumeList = this.assumeList;
-      axiomSymbolNode.argsMap = new Map(
-        this.argSymbolList.map((i, e) => {
-          return [i.token.text || '', e];
-        }),
-      );
+      axiomSymbolNode.argsMap = new Map();
+      for (var i = 0; i < this.argSymbolList.length; i++) {
+        // @ts-ignore
+        axiomSymbolNode.argsMap[this.argSymbolList[i].token.text] = i;
+      }
       axiomSymbolNode.targetList = this.targetList;
     }
     this.argSymbolTable = new Map();
@@ -413,11 +413,11 @@ export class SemanticErrorListener implements ANTLRFollowParserListener {
     if (theoremSymbolNode) {
       theoremSymbolNode.argsList = this.argSymbolList;
       theoremSymbolNode.assumeList = this.assumeList;
-      theoremSymbolNode.argsMap = new Map(
-        this.argSymbolList.map((i, e) => {
-          return [i.token.text || '', e];
-        }),
-      );
+      theoremSymbolNode.argsMap = new Map();
+      for (var i = 0; i < this.argSymbolList.length; i++) {
+        // @ts-ignore
+        theoremSymbolNode.argsMap[this.argSymbolList[i].token.text] = i;
+      }
       theoremSymbolNode.targetList = this.targetList;
     }
     var currentAssumeList = this.assumeList;

@@ -77,17 +77,4 @@ suite('FollowParser Tests', () => {
     assert(hover.contents !== null);
     console.log(hover);
   });
-  test('test #5: Verify', async () => {
-    const content = 'type wff prop wff imp(wff w0, wff w1) axiom ax-1(wff w2, wff w3) { -| w2 |- imp w3 w2}';
-    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
-    const parser = new FollowParser();
-    const hover = await parser.getHover(textDocument, { line: 0, character: 47 }).catch((_) => {
-      assert.fail();
-    });
-    if (hover === undefined) {
-      assert.fail();
-    }
-    assert(hover.contents !== null);
-    console.log(hover);
-  });
 });

@@ -4,6 +4,8 @@ import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, 
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
 import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
 import { SemanticErrorListener } from './SemanticErrorListener';
+import { FollowParserListener } from './FollowParserListener';
+import { ASTNode } from './FollowLanguageTypes';
 
 /*
  * Test antlr4.
@@ -60,6 +62,9 @@ export class SyntaxErrorListener implements ANTLRErrorListener<any> {
 
 export class FollowParser {
   public semanticErrorListenerMap: Map<string, SemanticErrorListener> = new Map();
+  public definitionMap: Map<string, ASTNode> = new Map();
+  public semanticTokenList: Array<ASTNode> = new Array();
+  public semanticErrors: Diagnostic[] = new Array();
   public async getHover(document: TextDocument, position: Position): Promise<Hover> {
     return new Promise((resolve, reject) => {
       if (!document) {
@@ -109,17 +114,20 @@ export class FollowParser {
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new ANTLRFollowParser(tokenStream);
       const syntaxErrorListener = new SyntaxErrorListener();
-      const semanticErrorListener = new SemanticErrorListener();
+      const followParserListener = new FollowParserListener(
+        this.definitionMap,
+        this.semanticTokenList,
+        this.semanticErrors,
+      );
       parser.removeParseListeners();
       parser.removeErrorListeners();
       parser.addErrorListener(syntaxErrorListener);
-      parser.addParseListener(semanticErrorListener);
+      parser.addParseListener(followParserListener);
 
       parser.root();
-      const diagnosticList = syntaxErrorListener.diagnosticList.concat(semanticErrorListener.semanticDiagnosticList);
+      const diagnosticList = syntaxErrorListener.diagnosticList.concat(this.semanticErrors);
 
       diagnosticCollection.set(document.uri, diagnosticList);
-      this.semanticErrorListenerMap.set(document.uri, semanticErrorListener);
       resolve(diagnosticCollection);
     });
   }
