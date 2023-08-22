@@ -107,6 +107,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
           const argNode = new ArgDefASTNodeImpl(typeASTNode, arg);
           this.argMap.set(arg.text, argNode);
           this.argList.push(argNode);
+          this.semanticTokenList.push(argNode);
         }
       }
     }
@@ -571,15 +572,26 @@ export class ArgDefASTNodeImpl extends BaseASTNodeImpl implements ArgDefASTNode 
 export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTNode {
   public readonly semanticType = 'axiom';
   public readonly type = 'axiom';
+  public assumptionStrList: string[] = new Array();
+  public targetStr: string = '';
 
   constructor(
     public readonly token: Token,
-    public readonly args: ArgDefASTNode[] = new Array(),
-    public readonly assumptions: Array<ASTNode[]> = new Array(),
-    public readonly target: ASTNode[] = new Array(),
+    public readonly args: ArgDefASTNode[],
+    public readonly assumptions: Array<ASTNode[]>,
+    public readonly target: ASTNode[],
     public readonly reference: ASTNode[] = new Array(),
   ) {
     super(token);
+    if (this.assumptions.length > 0) {
+      for (const assumption of this.assumptions) {
+        const assumeStr = assumption[0].toStringSimp();
+        this.assumptionStrList.push(assumeStr);
+      }
+    }
+    if (this.target.length > 0) {
+      this.targetStr = this.target[0].toStringSimp();
+    }
   }
 
   public toString(): string {
@@ -594,17 +606,13 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
     }
 
     str += ' {';
-    if (this.assumptions.length > 0) {
-      for (const assumption of this.assumptions) {
-        // const assumeStr = assumption.map((e) => e.token.text).join(' ');
-        const assumeStr = assumption[0].toStringSimp();
-        str += '  \n-| ' + assumeStr;
+    if (this.assumptionStrList.length > 0) {
+      for (const assumptionStr of this.assumptionStrList) {
+        str += '  \n-| ' + assumptionStr;
       }
     }
     if (this.target.length > 0) {
-      // const targetStr = this.target.map((e) => e.token.text).join(' ');
-      const targetStr = this.target[0].toStringSimp();
-      str += '  \n|- ' + targetStr;
+      str += '  \n|- ' + this.targetStr;
     }
     str += '  \n}';
     return str;
@@ -613,16 +621,27 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
 export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDefASTNode {
   public readonly semanticType = 'theorem';
   public readonly type = 'theorem';
+  public assumptionStrList: string[] = new Array();
+  public targetStr: string = '';
 
   constructor(
     public readonly token: Token,
-    public readonly args: ArgDefASTNode[] = new Array(),
-    public readonly assumptions: Array<ASTNode[]> = new Array(),
-    public readonly target: ASTNode[] = new Array(),
-    public readonly proof: Array<ASTNode[]> = new Array(),
+    public readonly args: ArgDefASTNode[],
+    public readonly assumptions: Array<ASTNode[]>,
+    public readonly target: ASTNode[],
+    public readonly proof: Array<ASTNode[]>,
     public readonly reference: ASTNode[] = new Array(),
   ) {
     super(token);
+    if (this.assumptions.length > 0) {
+      for (const assumption of this.assumptions) {
+        const assumeStr = assumption[0].toStringSimp();
+        this.assumptionStrList.push(assumeStr);
+      }
+    }
+    if (this.target.length > 0) {
+      this.targetStr = this.target[0].toStringSimp();
+    }
   }
 
   public toString(): string {
@@ -637,15 +656,13 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     }
 
     str += ' {';
-    if (this.assumptions.length > 0) {
-      for (const assumption of this.assumptions) {
-        const assumeStr = assumption[0].toStringSimp();
-        str += '  \n-| ' + assumeStr;
+    if (this.assumptionStrList.length > 0) {
+      for (const assumptionStr of this.assumptionStrList) {
+        str += '  \n-| ' + assumptionStr;
       }
     }
     if (this.target.length > 0) {
-      const targetStr = this.target[0].toStringSimp();
-      str += '  \n|- ' + targetStr;
+      str += '  \n|- ' + this.targetStr;
     }
     str += '  \n}';
     return str;
@@ -758,18 +775,18 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     public readonly definition: AxiomDefASTNode,
     public readonly token: Token,
     public args: ASTNode[] = new Array(),
+    public assumptionStrList: string[] = new Array(),
+    public targetStr: string = '',
   ) {
     super(token);
   }
 
-  public toString(): string {
+  private generateStr(): void {
     var argMap: Map<string, string> = new Map();
     for (var i = 0; i < this.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
       argMap.set(argCode, this.args[i].toStringSimp());
     }
-
-    var str = 'axiom ' + this.token.text;
     for (const assumption of this.definition.assumptions) {
       const assumeStr = assumption
         .map((assumeOp) => {
@@ -777,7 +794,7 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
           return argMap.get(opStr || '') || opStr;
         })
         .join(' ');
-      str += '  \n-| ' + assumeStr;
+      this.assumptionStrList.push(assumeStr);
     }
     const targetStr = this.definition.target
       .map((targetOp) => {
@@ -785,7 +802,18 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
         return argMap.get(opStr || '') || opStr;
       })
       .join(' ');
-    str += '  \n|- ' + targetStr;
+    this.targetStr = targetStr;
+  }
+
+  public toString(): string {
+    if (this.targetStr.length === 0) {
+      this.generateStr();
+    }
+    var str = 'axiom ' + this.token.text;
+    for (const assumptionStr of this.assumptionStrList) {
+      str += '  \n-| ' + assumptionStr;
+    }
+    str += '  \n|- ' + this.targetStr;
     return str;
   }
 
@@ -799,18 +827,18 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     public readonly definition: TheoremDefASTNode,
     public readonly token: Token,
     public args: ASTNode[] = new Array(),
-    public readonly proof: Array<ASTNode[]> = new Array(),
+    public assumptionStrList: string[] = new Array(),
+    public targetStr: string = '',
   ) {
     super(token);
   }
-  public toString(): string {
+
+  private generateStr(): void {
     var argMap: Map<string, string> = new Map();
     for (var i = 0; i < this.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
       argMap.set(argCode, this.args[i].toStringSimp());
     }
-
-    var str = 'theorem ' + this.token.text;
     for (const assumption of this.definition.assumptions) {
       const assumeStr = assumption
         .map((assumeOp) => {
@@ -818,7 +846,7 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
           return argMap.get(opStr || '') || opStr;
         })
         .join(' ');
-      str += '  \n-| ' + assumeStr;
+      this.assumptionStrList.push(assumeStr);
     }
     const targetStr = this.definition.target
       .map((targetOp) => {
@@ -826,7 +854,18 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
         return argMap.get(opStr || '') || opStr;
       })
       .join(' ');
-    str += '  \n|- ' + targetStr;
+    this.targetStr = targetStr;
+  }
+
+  public toString(): string {
+    if (this.targetStr.length === 0) {
+      this.generateStr();
+    }
+    var str = 'thm ' + this.token.text;
+    for (const assumptionStr of this.assumptionStrList) {
+      str += '  \n-| ' + assumptionStr;
+    }
+    str += '  \n|- ' + this.targetStr;
     return str;
   }
 
