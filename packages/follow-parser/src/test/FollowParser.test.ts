@@ -84,11 +84,11 @@ suite('FollowParser Tests', () => {
       'axiom ax-2(wff w0, wff w1, wff w2) { |- imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2}\n' +
       'axiom ax-mp(wff w0, wff w1) { -| w0 -| imp w0 w1 |- w1}\n' +
       'thm a1i(wff w0, wff w1) { -| w0 |- imp w1 w0 } = {\n' +
-      '    ax-mp w0 w1\n' +
+      '    ax-mp w0 imp w1 w0\n' +
       '}\n';
     const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
     const parser = new FollowParser();
-    const hover = parser.getHover(textDocument, { line: 7, character: 5 });
+    const hover = parser.getHover(textDocument, { line: 6, character: 5 });
     if (hover === undefined) {
       assert.fail();
     }

@@ -85,30 +85,32 @@ export interface TheoremDefASTNode extends BaseASTNode {
 }
 export interface TypeASTNode extends BaseASTNode {
   readonly definition: TypeDefASTNode;
+  readonly token: Token;
 }
 export interface ConstASTNode extends BaseASTNode {
   readonly definition: ConstDefASTNode;
+  readonly token: Token;
 }
 export interface VarASTNode extends BaseASTNode {
   readonly definition: VarDefASTNode;
+  readonly token: Token;
 }
 export interface ArgASTNode extends BaseASTNode {
   readonly definition: ArgDefASTNode;
+  readonly token: Token;
 }
 export interface PropASTNode extends BaseASTNode {
   readonly definition: PropDefASTNode;
   readonly args: ASTNode[];
+  readonly token: Token;
 }
 export interface AxiomASTNode extends BaseASTNode {
   readonly definition: AxiomDefASTNode;
   readonly args: ASTNode[];
-  readonly assumptions: Array<ASTNode[]>;
-  readonly target: ASTNode[];
+  readonly token: Token;
 }
 export interface TheoremASTNode extends BaseASTNode {
   readonly definition: TheoremDefASTNode;
   readonly args: ASTNode[];
-  readonly assumptions: Array<ASTNode[]>;
-  readonly target: ASTNode[];
-  readonly proof: Array<ASTNode[]>;
+  readonly token: Token;
 }
