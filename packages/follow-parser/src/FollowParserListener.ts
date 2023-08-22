@@ -124,7 +124,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       const propID = ctx.propID().start;
       if (propID.text) {
         if (this.nameHasBeenUsedCheck(propID)) {
-          const propASTNode = new PropDefASTNodeImpl(typeASTNode, propID);
+          const propASTNode = new PropDefASTNodeImpl(typeASTNode, propID, this.argList);
           this.semanticTokenList.push(propASTNode);
           this.definitionMap.set(propID.text, propASTNode);
         }
@@ -332,8 +332,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         } else {
           isStart = false;
         }
-        if (opNode.args) {
-          for (const arg of opNode.args.reverse()) {
+        if (opNode.definition.args) {
+          for (const arg of opNode.definition.args.reverse()) {
             stack.push(arg);
             opStack.push(opNode);
           }
@@ -346,7 +346,11 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     if (opNode) {
       const token = opNode.token;
       const argType = stack.pop();
-      this.addSemanticDiagnostic(token, `${token.text} is missing the arg ${argType?.definition?.token.text}`);
+      this.addSemanticDiagnostic(
+        token,
+        //@ts-ignore
+        `${token.text} needs (${argType?.type.token.text}, ${argType?.token.text})`,
+      );
       return false;
     }
     return true;

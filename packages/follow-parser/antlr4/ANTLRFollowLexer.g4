@@ -2,6 +2,7 @@ lexer grammar ANTLRFollowLexer;
 
 WS: [ \t]+ -> skip ;
 NL: ('\r\n' | '\r' | '\n') -> skip ;
+SC: (';') -> skip;
 
 LINE_COMMENT : '//' (~[\n])* '\n' -> channel(HIDDEN) ;
 BLOCK_COMMENT : '/*' .*? '*/' -> channel(HIDDEN);
