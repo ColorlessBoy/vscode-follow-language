@@ -68,9 +68,27 @@ suite('FollowParser Tests', () => {
     const content = 'type wff prop wff imp(wff w0, wff w1) axiom ax-1(wff w2, wff w3) { -| w2 |- imp w3 w2}';
     const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
     const parser = new FollowParser();
-    const hover = await parser.getHover(textDocument, { line: 0, character: 47 }).catch((_) => {
+    const hover = parser.getHover(textDocument, { line: 0, character: 47 });
+    if (hover === undefined) {
       assert.fail();
-    });
+    }
+    assert(hover.contents !== null);
+    console.log(hover);
+  });
+  test('test #5: Hover', async () => {
+    const content: string =
+      'type wff\n' +
+      'const wff true false\n' +
+      'prop wff imp(wff w0, wff w1)\n' +
+      'axiom ax-1(wff w0, wff w1) { |- imp w0 imp w1 w0}\n' +
+      'axiom ax-2(wff w0, wff w1, wff w2) { |- imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2}\n' +
+      'axiom ax-mp(wff w0, wff w1) { -| w0 -| imp w0 w1 |- w1}\n' +
+      'thm a1i(wff w0, wff w1) { -| w0 |- imp w1 w0 } = {\n' +
+      '    ax-mp w0 w1\n' +
+      '}\n';
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const hover = parser.getHover(textDocument, { line: 6, character: 8 });
     if (hover === undefined) {
       assert.fail();
     }

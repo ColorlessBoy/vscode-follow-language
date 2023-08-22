@@ -1,5 +1,6 @@
 import { Token } from 'antlr4ts';
 import { ArgASTNodeImpl } from './FollowParserListener';
+import { Range } from 'vscode-languageserver';
 
 export type ASTNode =
   | BaseASTNode
@@ -32,6 +33,8 @@ export interface BaseASTNode {
   readonly target?: ASTNode[];
   readonly proof?: Array<ASTNode[]>;
   readonly error?: string;
+  toString(): string;
+  getRange(): Range;
 }
 export interface KeywordASTNode extends BaseASTNode {
   readonly semanticType: 'keyword';

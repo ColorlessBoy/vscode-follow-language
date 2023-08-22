@@ -49,7 +49,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
   public enterTypeBlock(ctx: TypeBlockContext): void {
     this.createKeywordASTNode(ctx.start);
   }
-  public enterTypeDef(ctx: TypeIDContext): void {
+  public exitTypeDef(ctx: TypeIDContext): void {
     const token = ctx.start;
     if (token.text) {
       if (this.nameHasBeenUsedCheck(token)) {
@@ -59,7 +59,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       }
     }
   }
-  public enterConstBlock(ctx: ConstBlockContext): void {
+  public exitConstBlock(ctx: ConstBlockContext): void {
     this.createKeywordASTNode(ctx.start);
     const typeToken = ctx.typeID().start;
     var typeASTNode: TypeASTNode | undefined = this.createTypeASTNode(typeToken);
@@ -77,7 +77,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     }
   }
 
-  public enterVarBlock(ctx: VarBlockContext): void {
+  public exitVarBlock(ctx: VarBlockContext): void {
     this.createKeywordASTNode(ctx.start);
     const typeToken = ctx.typeID().start;
     var typeASTNode: TypeASTNode | undefined = this.createTypeASTNode(typeToken);
@@ -235,7 +235,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     }
   }
 
-  public getRange(token: Token): Range {
+  private getRange(token: Token): Range {
     const line = token.line - 1;
     const startCol = token.charPositionInLine;
     const endCol = token.text ? startCol + token.text.length : startCol;
@@ -301,6 +301,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       }
       if (opNode && definition && definition.reference) {
         definition.reference.push(opNode);
+        this.semanticTokenList.push(opNode);
       }
     }
     return opNode;
@@ -349,7 +350,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       this.addSemanticDiagnostic(
         token,
         //@ts-ignore
-        `${token.text} needs (${argType?.type.token.text}, ${argType?.token.text})`,
+        `${token.text} is missing argument (${argType?.type.token.text}, ${argType?.token.text})`,
       );
       return false;
     }
@@ -364,6 +365,20 @@ export class FollowParserListener implements ANTLRFollowParserListener {
 
 export class BaseASTNodeImpl implements BaseASTNode {
   constructor(public readonly token: Token) {}
+
+  public toString(): string {
+    return this.token.text || '';
+  }
+
+  public getRange(): Range {
+    const line = this.token.line - 1;
+    const startCol = this.token.charPositionInLine;
+    const endCol = this.token.text ? startCol + this.token.text.length : startCol;
+    const startPos: Position = Position.create(line, startCol);
+    const endPos: Position = Position.create(line, endCol);
+    const range: Range = Range.create(startPos, endPos);
+    return range;
+  }
 }
 
 export class KeywordASTNodeImpl extends BaseASTNodeImpl implements KeywordASTNode {
@@ -372,6 +387,10 @@ export class KeywordASTNodeImpl extends BaseASTNodeImpl implements KeywordASTNod
 
   constructor(public readonly token: Token) {
     super(token);
+  }
+
+  public toString(): string {
+    return this.type + ' ' + this.token.text;
   }
 }
 
@@ -385,6 +404,10 @@ export class TypeDefASTNodeImpl extends BaseASTNodeImpl implements TypeDefASTNod
   ) {
     super(token);
   }
+
+  public toString(): string {
+    return this.type + ' ' + this.token.text;
+  }
 }
 
 export class TypeASTNodeImpl extends BaseASTNodeImpl implements TypeASTNode {
@@ -393,6 +416,10 @@ export class TypeASTNodeImpl extends BaseASTNodeImpl implements TypeASTNode {
     public readonly token: Token,
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return this.definition.toString();
   }
 }
 
@@ -406,6 +433,10 @@ export class ConstDefASTNodeImpl extends BaseASTNodeImpl implements ConstDefASTN
   ) {
     super(token);
   }
+
+  public toString(): string {
+    return 'const ' + this.type.token.text + ' ' + this.token.text;
+  }
 }
 
 export class VarDefASTNodeImpl extends BaseASTNodeImpl implements VarDefASTNode {
@@ -417,6 +448,10 @@ export class VarDefASTNodeImpl extends BaseASTNodeImpl implements VarDefASTNode 
     public readonly reference: ASTNode[] = new Array(),
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return 'var ' + this.type.token.text + ' ' + this.token.text;
   }
 }
 
@@ -431,6 +466,19 @@ export class PropDefASTNodeImpl extends BaseASTNodeImpl implements PropDefASTNod
   ) {
     super(token);
   }
+
+  public toString(): string {
+    var str = 'prop ' + this.type.token.text + ' ' + this.token.text;
+    if (this.args.length > 0) {
+      const argStr = this.args
+        .map((e) => {
+          return e.type.token.text + ' ' + e.token.text;
+        })
+        .join(', ');
+      str = str + '(' + argStr + ')';
+    }
+    return str;
+  }
 }
 
 export class ArgDefASTNodeImpl extends BaseASTNodeImpl implements ArgDefASTNode {
@@ -442,6 +490,10 @@ export class ArgDefASTNodeImpl extends BaseASTNodeImpl implements ArgDefASTNode 
     public readonly reference: ASTNode[] = new Array(),
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return 'argument ' + this.type.token.text + ' ' + this.token.text;
   }
 }
 
@@ -458,6 +510,32 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
   ) {
     super(token);
   }
+
+  public toString(): string {
+    var str = 'axiom ' + this.token.text;
+    if (this.args.length > 0) {
+      const argStr = this.args
+        .map((e) => {
+          return e.type.token.text + ' ' + e.token.text;
+        })
+        .join(', ');
+      str = str + '(' + argStr + ')';
+    }
+
+    str += ' {';
+    if (this.assumptions.length > 0) {
+      for (const assumption of this.assumptions) {
+        const assumeStr = assumption.map((e) => e.token.text).join(' ');
+        str += '  \n-| ' + assumeStr;
+      }
+    }
+    if (this.target.length > 0) {
+      const targetStr = this.target.map((e) => e.token.text).join(' ');
+      str += '  \n|- ' + targetStr;
+    }
+    str += '  \n}';
+    return str;
+  }
 }
 export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDefASTNode {
   public readonly semanticType = 'theorem';
@@ -473,6 +551,32 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   ) {
     super(token);
   }
+
+  public toString(): string {
+    var str = 'thm ' + this.token.text;
+    if (this.args.length > 0) {
+      const argStr = this.args
+        .map((e) => {
+          return e.type.token.text + ' ' + e.token.text;
+        })
+        .join(', ');
+      str = str + '(' + argStr + ')';
+    }
+
+    str += ' {';
+    if (this.assumptions.length > 0) {
+      for (const assumption of this.assumptions) {
+        const assumeStr = assumption.map((e) => e.token.text).join(' ');
+        str += '  \n-| ' + assumeStr;
+      }
+    }
+    if (this.target.length > 0) {
+      const targetStr = this.target.map((e) => e.token.text).join(' ');
+      str += '  \n|- ' + targetStr;
+    }
+    str += '  \n}';
+    return str;
+  }
 }
 
 export class ConstASTNodeImpl extends BaseASTNodeImpl implements ConstASTNode {
@@ -482,6 +586,10 @@ export class ConstASTNodeImpl extends BaseASTNodeImpl implements ConstASTNode {
   ) {
     super(token);
   }
+
+  public toString(): string {
+    return this.definition.toString();
+  }
 }
 
 export class VarASTNodeImpl extends BaseASTNodeImpl implements VarASTNode {
@@ -490,6 +598,10 @@ export class VarASTNodeImpl extends BaseASTNodeImpl implements VarASTNode {
     public readonly token: Token,
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return this.definition.toString();
   }
 }
 
@@ -501,6 +613,10 @@ export class PropASTNodeImpl extends BaseASTNodeImpl implements PropASTNode {
   ) {
     super(token);
   }
+
+  public toString(): string {
+    return this.definition.toString();
+  }
 }
 export class ArgASTNodeImpl extends BaseASTNodeImpl implements ArgASTNode {
   constructor(
@@ -509,6 +625,10 @@ export class ArgASTNodeImpl extends BaseASTNodeImpl implements ArgASTNode {
     public readonly args: ASTNode[] = new Array(),
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return this.definition.toString();
   }
 }
 
@@ -522,6 +642,10 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
   ) {
     super(token);
   }
+
+  public toString(): string {
+    return this.definition.toString();
+  }
 }
 
 export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNode {
@@ -533,5 +657,9 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     public readonly target: ASTNode[] = new Array(),
   ) {
     super(token);
+  }
+
+  public toString(): string {
+    return this.definition.toString();
   }
 }

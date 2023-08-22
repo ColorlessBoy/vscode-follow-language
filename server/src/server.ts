@@ -143,7 +143,6 @@ connection.onHover((event) => {
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument) {
     const hover = parser.getHover(textDocument, event.position);
-    console.log(hover);
     return hover;
   }
 });
