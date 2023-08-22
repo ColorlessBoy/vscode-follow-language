@@ -24,8 +24,6 @@ export interface BaseASTNode {
   readonly token: Token;
   readonly semanticType?: string;
   readonly type?: string | BaseASTNode;
-  readonly parent?: BaseASTNode;
-  readonly child?: BaseASTNode[];
   readonly args?: BaseASTNode[];
   readonly definition?: BaseASTNode;
   readonly reference?: BaseASTNode[];
@@ -34,7 +32,9 @@ export interface BaseASTNode {
   readonly proof?: Array<ASTNode[]>;
   readonly error?: string;
   toString(): string;
+  toStringSimp(): string;
   getRange(): Range;
+  addArg(arg: BaseASTNode): void;
 }
 export interface KeywordASTNode extends BaseASTNode {
   readonly semanticType: 'keyword';
@@ -110,4 +110,5 @@ export interface TheoremASTNode extends BaseASTNode {
   readonly args: ASTNode[];
   readonly assumptions: Array<ASTNode[]>;
   readonly target: ASTNode[];
+  readonly proof: Array<ASTNode[]>;
 }

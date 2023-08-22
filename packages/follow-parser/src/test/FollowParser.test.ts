@@ -88,7 +88,7 @@ suite('FollowParser Tests', () => {
       '}\n';
     const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
     const parser = new FollowParser();
-    const hover = parser.getHover(textDocument, { line: 6, character: 8 });
+    const hover = parser.getHover(textDocument, { line: 7, character: 5 });
     if (hover === undefined) {
       assert.fail();
     }
