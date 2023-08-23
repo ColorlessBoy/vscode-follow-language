@@ -124,6 +124,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     const typeToken = ctx.typeID().start;
     var typeASTNode: TypeASTNode | undefined = this.createTypeASTNode(typeToken);
     if (typeASTNode) {
+      this.semanticTokenList.push(typeASTNode);
       const propID = ctx.propID().start;
       if (propID.text) {
         if (this.nameHasBeenUsedCheck(propID)) {
@@ -374,8 +375,10 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       } else if (definition instanceof ConstDefASTNodeImpl) {
         opNode = new ConstASTNodeImpl(definition, token);
       }
-      if (opNode && definition && definition.reference) {
-        definition.reference.push(opNode);
+      if (opNode) {
+        if (definition && definition.reference) {
+          definition.reference.push(opNode);
+        }
         this.semanticTokenList.push(opNode);
       }
     }

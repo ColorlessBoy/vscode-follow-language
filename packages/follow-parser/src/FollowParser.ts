@@ -297,6 +297,9 @@ export class FollowParser {
     const diagnosticList = syntaxErrorListener.diagnosticList.concat(semanticErrors);
     this.semanticErrorDocMap.set(document.uri, diagnosticList);
     this.definitionMapDocMap.set(document.uri, definitionMap);
+    semanticTokenList.sort((a, b) => {
+      return a.token.startIndex - b.token.startIndex;
+    });
     this.semanticTokenListDocMap.set(document.uri, semanticTokenList);
   }
 }
