@@ -31,6 +31,12 @@ export interface BaseASTNode {
   readonly target?: ASTNode[];
   readonly proof?: Array<ASTNode[]>;
   readonly error?: string;
+  readonly assumptionStrList?: string[];
+  readonly targetStr?: string;
+  readonly untilNowAssumptionStrSet?: Set<string>;
+  readonly untilNowTargetStrSet?: Set<string>;
+  readonly nextAssumptionStrSet?: Set<string>;
+  readonly nextTargetStrSet?: Set<string>;
   toString(): string;
   toStringSimp(): string;
   getRange(): Range;
@@ -84,8 +90,11 @@ export interface TheoremDefASTNode extends BaseASTNode {
   readonly assumptions: Array<ASTNode[]>;
   readonly target: ASTNode[];
   readonly proof: Array<ASTNode[]>;
-  readonly assumptionStrList: string[];
-  readonly targetStr: string;
+  readonly untilNowAssumptionStrSet: Set<string>;
+  readonly untilNowTargetStrSet: Set<string>;
+  readonly nextAssumptionStrSet: Set<string>;
+  readonly nextTargetStrSet: Set<string>;
+  isProved(): boolean;
 }
 export interface TypeASTNode extends BaseASTNode {
   readonly definition: TypeDefASTNode;
@@ -114,11 +123,17 @@ export interface AxiomASTNode extends BaseASTNode {
   readonly token: Token;
   readonly assumptionStrList: string[];
   readonly targetStr: string;
+  readonly untilNowAssumptionStrSet: Set<string>;
+  readonly untilNowTargetStrSet: Set<string>;
+  readonly nextAssumptionStrSet: Set<string>;
+  readonly nextTargetStrSet: Set<string>;
 }
 export interface TheoremASTNode extends BaseASTNode {
   readonly definition: TheoremDefASTNode;
   readonly args: ASTNode[];
   readonly token: Token;
-  readonly assumptionStrList: string[];
-  readonly targetStr: string;
+  readonly untilNowAssumptionStrSet: Set<string>;
+  readonly untilNowTargetStrSet: Set<string>;
+  readonly nextAssumptionStrSet: Set<string>;
+  readonly nextTargetStrSet: Set<string>;
 }

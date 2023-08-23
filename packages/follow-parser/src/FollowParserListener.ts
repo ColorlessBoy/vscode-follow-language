@@ -261,6 +261,21 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         );
         this.semanticTokenList.push(theoremDefASTNode);
         this.definitionMap.set(theoremID.text, theoremDefASTNode);
+
+        for (const proofCommand of theoremDefASTNode.proof) {
+          const proofOp = proofCommand[0];
+          if ((proofOp.untilNowTargetStrSet?.size || 0) !== 1) {
+            this.addSemanticDiagnostic(proofOp.token, `Proofs nothing.`);
+          }
+        }
+        if (!theoremDefASTNode.isProved()) {
+          var errorMsg: string = 'Without valid proof. Get';
+          for (const assumption of theoremDefASTNode.untilNowAssumptionStrSet) {
+            errorMsg += '  \n-| ' + assumption;
+          }
+          errorMsg += ' \n|- ' + theoremDefASTNode.targetStr;
+          this.addSemanticDiagnostic(theoremDefASTNode.token, errorMsg);
+        }
       }
     }
     this.argList = new Array();
@@ -622,6 +637,10 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   public readonly type = 'theorem';
   public assumptionStrList: string[] = new Array();
   public targetStr: string = '';
+  public untilNowAssumptionStrSet: Set<string> = new Set();
+  public untilNowTargetStrSet: Set<string> = new Set();
+  public nextAssumptionStrSet: Set<string> = new Set();
+  public nextTargetStrSet: Set<string> = new Set();
 
   constructor(
     public readonly token: Token,
@@ -641,6 +660,53 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     if (this.target.length > 0) {
       this.targetStr = this.target[0].toStringSimp();
     }
+    this.compile();
+  }
+
+  public isProved(): boolean {
+    if (this.untilNowTargetStrSet.size !== 1) {
+      return false;
+    }
+    if (!this.untilNowTargetStrSet.has(this.targetStr)) {
+      return false;
+    }
+    if (this.assumptionStrList.length !== this.untilNowAssumptionStrSet.size) {
+      return false;
+    }
+    for (const assumeStr of this.assumptionStrList) {
+      if (!this.untilNowAssumptionStrSet.has(assumeStr)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private compile(): void {
+    var currentAssumptions: Set<string> = new Set();
+    var currentTargets: Set<string> = new Set();
+    for (const proofCommand of this.proof) {
+      const proofOp = proofCommand[0];
+      if (proofOp instanceof AxiomASTNodeImpl || proofOp instanceof TheoremASTNodeImpl) {
+        proofOp.toString(); // generate targetStr and assumptionStr
+        const proofOpTarget: string = proofOp.targetStr || '';
+        const proofOpAssumptions: string[] = proofOp.assumptionStrList || new Array();
+        if (currentAssumptions.has(proofOpTarget)) {
+          // proof one assumption
+          currentAssumptions.delete(proofOpTarget);
+        } else {
+          // proof nothing
+          currentTargets.add(proofOpTarget);
+        }
+        proofOpAssumptions.forEach((e) => {
+          currentAssumptions.add(e);
+        });
+
+        proofOp.untilNowAssumptionStrSet = currentAssumptions;
+        proofOp.untilNowTargetStrSet = currentTargets;
+      }
+    }
+    this.untilNowAssumptionStrSet = currentAssumptions;
+    this.untilNowTargetStrSet = currentTargets;
   }
 
   public toString(): string {
@@ -776,6 +842,10 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     public args: ASTNode[] = new Array(),
     public assumptionStrList: string[] = new Array(),
     public targetStr: string = '',
+    public untilNowAssumptionStrSet: Set<string> = new Set(),
+    public untilNowTargetStrSet: Set<string> = new Set(),
+    public nextAssumptionStrSet: Set<string> = new Set(),
+    public nextTargetStrSet: Set<string> = new Set(),
   ) {
     super(token);
   }
@@ -828,6 +898,10 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     public args: ASTNode[] = new Array(),
     public assumptionStrList: string[] = new Array(),
     public targetStr: string = '',
+    public untilNowAssumptionStrSet: Set<string> = new Set(),
+    public untilNowTargetStrSet: Set<string> = new Set(),
+    public nextAssumptionStrSet: Set<string> = new Set(),
+    public nextTargetStrSet: Set<string> = new Set(),
   ) {
     super(token);
   }
