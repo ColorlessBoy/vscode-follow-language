@@ -663,6 +663,10 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     this.compile();
   }
 
+  public isUseful(untilNowAssumptionStrSet: Set<string>, untilNowTargetStrSet: Set<string>): boolean {
+    return false;
+  }
+
   public isProved(): boolean {
     if (this.untilNowTargetStrSet.size !== 1) {
       return false;
@@ -684,6 +688,8 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   private compile(): void {
     var currentAssumptions: Set<string> = new Set();
     var currentTargets: Set<string> = new Set();
+    var nextAssumptions: Set<string> = new Set();
+    var nextTarget: Set<string> = new Set();
     for (const proofCommand of this.proof) {
       const proofOp = proofCommand[0];
       if (proofOp instanceof AxiomASTNodeImpl || proofOp instanceof TheoremASTNodeImpl) {
