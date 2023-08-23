@@ -128,6 +128,7 @@ export class FollowParser {
     document?: TextDocument,
   ): SemanticTokens | SemanticTokensDelta {
     const builder = new SemanticTokensBuilder();
+    builder.previousResult(previousResultId);
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
         this.parse(document);
@@ -141,7 +142,6 @@ export class FollowParser {
         }
       }
     }
-    builder.previousResult(previousResultId);
     return builder.buildEdits();
   }
 

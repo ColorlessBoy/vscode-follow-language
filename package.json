@@ -20,6 +20,13 @@
     "vscode": "^1.22.0"
   },
   "contributes": {
+    "configurationDefaults": {
+      "editor.semanticTokenColorCustomizations": {
+        "rules": {
+          "operator": "#B5BD68"
+        }
+      }
+    },
     "languages": [
       {
         "id": "follow",
