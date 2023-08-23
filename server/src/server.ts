@@ -10,6 +10,8 @@ import {
   TextDocumentPositionParams,
   TextDocumentSyncKind,
   InitializeResult,
+  SemanticTokensRegistrationOptions,
+  SemanticTokensRegistrationType,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -51,6 +53,14 @@ connection.onInitialize((params: InitializeParams) => {
       definitionProvider: true,
       referencesProvider: { workDoneProgress: true },
       renameProvider: true,
+      semanticTokensProvider: {
+        documentSelector: [{ language: 'follow' }],
+        legend: parser.semanticTokensLegend,
+        range: false,
+        full: {
+          delta: true,
+        },
+      },
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -73,6 +83,15 @@ connection.onInitialized(() => {
       connection.console.log('Workspace folder change event received.');
     });
   }
+  const registrationOptions: SemanticTokensRegistrationOptions = {
+    documentSelector: [{ language: 'follow' }],
+    legend: parser.semanticTokensLegend,
+    range: false,
+    full: {
+      delta: true,
+    },
+  };
+  void connection.client.register(SemanticTokensRegistrationType.type, registrationOptions);
 });
 
 // The example settings
@@ -172,6 +191,18 @@ connection.onRenameRequest((event) => {
     const edit = parser.getRename(textDocument, event.position, event.newName);
     return edit;
   }
+});
+
+connection.languages.semanticTokens.on((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  const semanticTokens = parser.getSemanticToken(textDocument);
+  return semanticTokens;
+});
+
+connection.languages.semanticTokens.onDelta((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  const semanticTokens = parser.getSemanticTokenDelta(event.previousResultId, textDocument);
+  return semanticTokens;
 });
 
 connection.onDidChangeWatchedFiles((_change) => {

@@ -1,4 +1,4 @@
-import { Diagnostic, DiagnosticSeverity, Position, Range } from 'vscode-languageserver';
+import { Diagnostic, DiagnosticSeverity, Position, Range, SemanticTokenTypes } from 'vscode-languageserver';
 import {
   ASTNode,
   ArgASTNode,
@@ -19,7 +19,6 @@ import {
   VarDefASTNode,
 } from './FollowLanguageTypes';
 import {
-  ArgIDContext,
   AssumeBlockContext,
   AxiomBlockContext,
   ConstBlockContext,
@@ -472,7 +471,7 @@ export class BaseASTNodeImpl implements BaseASTNode {
 }
 
 export class KeywordASTNodeImpl extends BaseASTNodeImpl implements KeywordASTNode {
-  public readonly semanticType = 'keyword';
+  public readonly semanticType = SemanticTokenTypes.keyword;
   public readonly type = 'keyword';
 
   constructor(public readonly token: Token) {
@@ -485,7 +484,7 @@ export class KeywordASTNodeImpl extends BaseASTNodeImpl implements KeywordASTNod
 }
 
 export class TypeDefASTNodeImpl extends BaseASTNodeImpl implements TypeDefASTNode {
-  public readonly semanticType = 'type';
+  public readonly semanticType = SemanticTokenTypes.type;
   public readonly type = 'type';
 
   constructor(
@@ -501,6 +500,8 @@ export class TypeDefASTNodeImpl extends BaseASTNodeImpl implements TypeDefASTNod
 }
 
 export class TypeASTNodeImpl extends BaseASTNodeImpl implements TypeASTNode {
+  public readonly semanticType = SemanticTokenTypes.type;
+
   constructor(
     public readonly definition: TypeDefASTNode,
     public readonly token: Token,
@@ -514,7 +515,7 @@ export class TypeASTNodeImpl extends BaseASTNodeImpl implements TypeASTNode {
 }
 
 export class ConstDefASTNodeImpl extends BaseASTNodeImpl implements ConstDefASTNode {
-  public readonly semanticType = 'const';
+  public readonly semanticType = SemanticTokenTypes.number;
 
   constructor(
     public readonly type: TypeASTNode,
@@ -530,7 +531,7 @@ export class ConstDefASTNodeImpl extends BaseASTNodeImpl implements ConstDefASTN
 }
 
 export class VarDefASTNodeImpl extends BaseASTNodeImpl implements VarDefASTNode {
-  public readonly semanticType = 'variable';
+  public readonly semanticType = SemanticTokenTypes.variable;
 
   constructor(
     public readonly type: TypeASTNode,
@@ -546,7 +547,7 @@ export class VarDefASTNodeImpl extends BaseASTNodeImpl implements VarDefASTNode 
 }
 
 export class PropDefASTNodeImpl extends BaseASTNodeImpl implements PropDefASTNode {
-  public readonly semanticType = 'prop';
+  public readonly semanticType = SemanticTokenTypes.operator;
 
   constructor(
     public readonly type: TypeASTNode,
@@ -572,7 +573,7 @@ export class PropDefASTNodeImpl extends BaseASTNodeImpl implements PropDefASTNod
 }
 
 export class ArgDefASTNodeImpl extends BaseASTNodeImpl implements ArgDefASTNode {
-  public readonly semanticType = 'argument';
+  public readonly semanticType = SemanticTokenTypes.parameter;
 
   constructor(
     public readonly type: TypeASTNode,
@@ -588,7 +589,7 @@ export class ArgDefASTNodeImpl extends BaseASTNodeImpl implements ArgDefASTNode 
 }
 
 export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTNode {
-  public readonly semanticType = 'axiom';
+  public readonly semanticType = SemanticTokenTypes.method;
   public readonly type = 'axiom';
   public assumptionStrList: string[] = new Array();
   public targetStr: string = '';
@@ -637,7 +638,7 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
   }
 }
 export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDefASTNode {
-  public readonly semanticType = 'theorem';
+  public readonly semanticType = SemanticTokenTypes.function;
   public readonly type = 'theorem';
   public assumptionStrList: string[] = new Array();
   public targetStr: string = '';
@@ -745,6 +746,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
 }
 
 export class ConstASTNodeImpl extends BaseASTNodeImpl implements ConstASTNode {
+  public readonly semanticType = SemanticTokenTypes.number;
   constructor(
     public readonly definition: ConstDefASTNode,
     public readonly token: Token,
@@ -762,6 +764,7 @@ export class ConstASTNodeImpl extends BaseASTNodeImpl implements ConstASTNode {
 }
 
 export class VarASTNodeImpl extends BaseASTNodeImpl implements VarASTNode {
+  public readonly semanticType = SemanticTokenTypes.variable;
   constructor(
     public readonly definition: VarDefASTNode,
     public readonly token: Token,
@@ -779,6 +782,7 @@ export class VarASTNodeImpl extends BaseASTNodeImpl implements VarASTNode {
 }
 
 export class PropASTNodeImpl extends BaseASTNodeImpl implements PropASTNode {
+  public readonly semanticType = SemanticTokenTypes.operator;
   constructor(
     public readonly definition: PropDefASTNode,
     public readonly token: Token,
@@ -829,6 +833,7 @@ export class PropASTNodeImpl extends BaseASTNodeImpl implements PropASTNode {
   }
 }
 export class ArgASTNodeImpl extends BaseASTNodeImpl implements ArgASTNode {
+  public readonly semanticType = SemanticTokenTypes.parameter;
   constructor(
     public readonly definition: ArgDefASTNode,
     public readonly token: Token,
@@ -846,6 +851,8 @@ export class ArgASTNodeImpl extends BaseASTNodeImpl implements ArgASTNode {
 }
 
 export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
+  public readonly semanticType = SemanticTokenTypes.method;
+
   constructor(
     public readonly definition: AxiomDefASTNode,
     public readonly token: Token,
@@ -902,6 +909,8 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
 }
 
 export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNode {
+  public readonly semanticType = SemanticTokenTypes.function;
+
   constructor(
     public readonly definition: TheoremDefASTNode,
     public readonly token: Token,

@@ -96,4 +96,14 @@ suite('FollowParser Tests', () => {
     assert(hover.contents !== null);
     console.log(hover);
   });
+  test('test #6: Semantic Token', async () => {
+    const content = 'type wff prop wff imp(wff w0, wff w1) axiom ax-1(wff w0) { |- w0 }';
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const semanticToken = parser.getSemanticToken(textDocument);
+    if (semanticToken === undefined) {
+      assert.fail();
+    }
+    console.log(parser.semanticTokenListDocMap.get(textDocument.uri)?.length);
+  });
 });

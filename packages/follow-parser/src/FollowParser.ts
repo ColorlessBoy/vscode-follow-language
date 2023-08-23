@@ -7,6 +7,12 @@ import {
   DefinitionLink,
   Location,
   WorkspaceEdit,
+  SemanticTokensBuilder,
+  SemanticTokenModifiers,
+  SemanticTokens,
+  SemanticTokensLegend,
+  SemanticTokenTypes,
+  SemanticTokensDelta,
 } from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
@@ -70,10 +76,74 @@ export class SyntaxErrorListener implements ANTLRErrorListener<any> {
 }
 
 export class FollowParser {
+  public semanticTokensLegend: SemanticTokensLegend = {
+    tokenTypes: [
+      SemanticTokenTypes.keyword,
+      SemanticTokenTypes.type,
+      SemanticTokenTypes.number,
+      SemanticTokenTypes.variable,
+      SemanticTokenTypes.parameter,
+      SemanticTokenTypes.operator,
+      SemanticTokenTypes.method,
+      SemanticTokenTypes.function,
+    ],
+    tokenModifiers: [SemanticTokenModifiers.declaration],
+  };
+
+  public semanticTokensMap: Map<string, number> = new Map([
+    [SemanticTokenTypes.keyword, 0],
+    [SemanticTokenTypes.type, 1],
+    [SemanticTokenTypes.number, 2],
+    [SemanticTokenTypes.variable, 3],
+    [SemanticTokenTypes.parameter, 4],
+    [SemanticTokenTypes.operator, 5],
+    [SemanticTokenTypes.method, 6],
+    [SemanticTokenTypes.function, 7],
+  ]);
+
   public semanticErrorListenerMap: Map<string, SemanticErrorListener> = new Map();
   public definitionMapDocMap: Map<string, Map<string, ASTNode>> = new Map();
   public semanticTokenListDocMap: Map<string, Array<ASTNode>> = new Map();
   public semanticErrorDocMap: Map<string, Diagnostic[]> = new Map();
+
+  public getSemanticToken(document?: TextDocument): SemanticTokens {
+    const builder = new SemanticTokensBuilder();
+    if (document) {
+      if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parse(document);
+      }
+      const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
+      if (semanticTokenList) {
+        for (const semanticNode of semanticTokenList) {
+          const type = this.semanticTokensMap.get(semanticNode.semanticType || '') || 0;
+          const token = semanticNode.token;
+          builder.push(token.line - 1, token.charPositionInLine, token.text?.length || 0, type, 0);
+        }
+      }
+    }
+    return builder.build();
+  }
+  public getSemanticTokenDelta(
+    previousResultId: string,
+    document?: TextDocument,
+  ): SemanticTokens | SemanticTokensDelta {
+    const builder = new SemanticTokensBuilder();
+    if (document) {
+      if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parse(document);
+      }
+      const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
+      if (semanticTokenList) {
+        for (const semanticNode of semanticTokenList) {
+          const type = this.semanticTokensMap.get(semanticNode.semanticType || '') || 0;
+          const token = semanticNode.token;
+          builder.push(token.line - 1, token.charPositionInLine, token.text?.length || 0, type, 0);
+        }
+      }
+    }
+    builder.previousResult(previousResultId);
+    return builder.buildEdits();
+  }
 
   public getRename(document: TextDocument, position: Position, newName: string): WorkspaceEdit {
     const edit: WorkspaceEdit = { changes: {} };
@@ -89,7 +159,8 @@ export class FollowParser {
         const offset = document.offsetAt(position);
         for (const semanticToken of semanticTokenList) {
           if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-            const definition = definitionMap.get(semanticToken.token.text || '');
+            const definition =
+              semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
             if (definition && definition.reference) {
               editList.push({
                 range: definition.getRange(),
@@ -122,7 +193,8 @@ export class FollowParser {
       const offset = document.offsetAt(position);
       for (const semanticToken of semanticTokenList) {
         if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-          const definition = definitionMap.get(semanticToken.token.text || '');
+          const definition =
+            semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
           if (definition && definition.reference) {
             const result: Location[] = [];
             for (const ref of definition.reference) {
@@ -152,7 +224,8 @@ export class FollowParser {
       const offset = document.offsetAt(position);
       for (const semanticToken of semanticTokenList) {
         if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-          const definition = definitionMap.get(semanticToken.token.text || '');
+          const definition =
+            semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
           if (definition) {
             const definitionLink: DefinitionLink = {
               targetUri: document.uri, // local search
