@@ -223,8 +223,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         if (opNode && opNode.definition) {
           if (
             proofList.length > 0 &&
-            (opNode.definition.type instanceof AxiomDefASTNodeImpl ||
-              opNode.definition.type instanceof TheoremASTNodeImpl)
+            (opNode.definition instanceof AxiomDefASTNodeImpl || opNode.definition instanceof TheoremDefASTNodeImpl)
           ) {
             this.proof.push(proofList);
             proofList = new Array();
@@ -377,7 +376,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       ) {
         if (!isStart) {
           if (argDefStack.length === 0) {
-            this.addSemanticDiagnostic(opNode.token, `${opNode.token.text} is no needed.`);
+            this.addSemanticDiagnostic(opNode.token, `${opNode.token.text} is not needed.`);
             return false;
           }
           const argDefASTNode = argDefStack.pop();
