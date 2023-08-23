@@ -139,6 +139,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     this.hasError = false;
   }
   public exitAssumeBlock(ctx: AssumeBlockContext): void {
+    this.createKeywordASTNode(ctx.start);
+
     var assumeList: Array<ASTNode> = new Array();
     for (const assumeID of ctx.assumeID()) {
       const token = assumeID.start;
@@ -158,6 +160,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     }
   }
   public exitTargetBlock(ctx: TargetBlockContext): void {
+    this.createKeywordASTNode(ctx.start);
+
     for (const targetID of ctx.targetID()) {
       const token = targetID.start;
       if (this.defMissingCheck(token)) {

@@ -48,6 +48,9 @@ connection.onInitialize((params: InitializeParams) => {
         resolveProvider: true,
       },
       hoverProvider: true,
+      definitionProvider: true,
+      referencesProvider: { workDoneProgress: true },
+      renameProvider: true,
     },
   };
   if (hasWorkspaceFolderCapability) {
@@ -144,6 +147,30 @@ connection.onHover((event) => {
   if (textDocument) {
     const hover = parser.getHover(textDocument, event.position);
     return hover;
+  }
+});
+
+connection.onDefinition((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument) {
+    const definition = parser.getDefinition(textDocument, event.position);
+    return definition;
+  }
+});
+
+connection.onReferences((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument) {
+    const references = parser.getReference(textDocument, event.position);
+    return references;
+  }
+});
+
+connection.onRenameRequest((event) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument) {
+    const edit = parser.getRename(textDocument, event.position, event.newName);
+    return edit;
   }
 });
 

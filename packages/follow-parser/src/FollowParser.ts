@@ -1,4 +1,13 @@
-import { Position, Range, DiagnosticSeverity, Diagnostic, Hover, URI } from 'vscode-languageserver/node';
+import {
+  Position,
+  Range,
+  DiagnosticSeverity,
+  Diagnostic,
+  Hover,
+  DefinitionLink,
+  Location,
+  WorkspaceEdit,
+} from 'vscode-languageserver/node';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
@@ -65,6 +74,99 @@ export class FollowParser {
   public definitionMapDocMap: Map<string, Map<string, ASTNode>> = new Map();
   public semanticTokenListDocMap: Map<string, Array<ASTNode>> = new Map();
   public semanticErrorDocMap: Map<string, Diagnostic[]> = new Map();
+
+  public getRename(document: TextDocument, position: Position, newName: string): WorkspaceEdit {
+    const edit: WorkspaceEdit = { changes: {} };
+    if (document) {
+      edit.changes![document.uri] = [];
+      if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parse(document);
+      }
+      var editList = edit.changes![document.uri];
+      const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
+      const definitionMap = this.definitionMapDocMap.get(document.uri);
+      if (semanticTokenList && definitionMap) {
+        const offset = document.offsetAt(position);
+        for (const semanticToken of semanticTokenList) {
+          if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
+            const definition = definitionMap.get(semanticToken.token.text || '');
+            if (definition && definition.reference) {
+              editList.push({
+                range: definition.getRange(),
+                newText: newName,
+              });
+              for (const ref of definition.reference) {
+                editList.push({
+                  range: ref.getRange(),
+                  newText: newName,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+    return edit;
+  }
+
+  public getReference(document: TextDocument, position: Position): Location[] {
+    if (!document) {
+      return new Array();
+    }
+    if (!this.semanticTokenListDocMap.has(document.uri)) {
+      this.parse(document);
+    }
+    const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
+    const definitionMap = this.definitionMapDocMap.get(document.uri);
+    if (semanticTokenList && definitionMap) {
+      const offset = document.offsetAt(position);
+      for (const semanticToken of semanticTokenList) {
+        if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
+          const definition = definitionMap.get(semanticToken.token.text || '');
+          if (definition && definition.reference) {
+            const result: Location[] = [];
+            for (const ref of definition.reference) {
+              result.push({
+                uri: document.uri,
+                range: ref.getRange(),
+              });
+            }
+            return result;
+          }
+        }
+      }
+    }
+    return new Array();
+  }
+
+  public getDefinition(document: TextDocument, position: Position): DefinitionLink[] {
+    if (!document) {
+      return new Array();
+    }
+    if (!this.semanticTokenListDocMap.has(document.uri)) {
+      this.parse(document);
+    }
+    const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
+    const definitionMap = this.definitionMapDocMap.get(document.uri);
+    if (semanticTokenList && definitionMap) {
+      const offset = document.offsetAt(position);
+      for (const semanticToken of semanticTokenList) {
+        if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
+          const definition = definitionMap.get(semanticToken.token.text || '');
+          if (definition) {
+            const definitionLink: DefinitionLink = {
+              targetUri: document.uri, // local search
+              targetRange: definition.getRange(),
+              targetSelectionRange: definition.getRange(),
+              originSelectionRange: semanticToken.getRange(),
+            };
+            return [definitionLink];
+          }
+        }
+      }
+    }
+    return new Array();
+  }
 
   public getHover(document: TextDocument, position: Position): Hover | undefined {
     if (!document) {
