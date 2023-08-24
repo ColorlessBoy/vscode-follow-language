@@ -1,7 +1,13 @@
 {
   "name": "vscode-follow-language",
+  "displayName": "Follow",
   "version": "1.0.0",
-  "description": "",
+  "publisher": "Peng Lingwei",
+  "description": "Language support for Follow",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ColorlessBoy/vscode-follow-language.git"
+  },
   "scripts": {
     "build": "pnpm --stream -r run build",
     "watch": "pnpm --stream -r run watch",
@@ -17,7 +23,7 @@
     "Programming Languages"
   ],
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.74.0"
   },
   "contributes": {
     "configurationDefaults": {
@@ -75,7 +81,7 @@
       }
     }
   },
-  "dependencies": {
-    "prettier": "^3.0.0"
+  "devDependencies": {
+    "prettier": "^3.0.2"
   }
 }

@@ -4,8 +4,5 @@
   "git.branchProtection": ["main"],
   "git.branchProtectionPrompt": "alwaysCommitToNewBranch",
   "git.branchRandomName.enable": true,
-  "editor.formatOnType": true,
-  "[lisp]": {
-    "editor.wordSeparators": "`|;:'\",()"
-  }
+  "editor.formatOnType": true
 }
