@@ -15,7 +15,8 @@
     "antlr4": "pnpm --stream -r run antlr4",
     "clean": "pnpm --stream -r run clean",
     "esbuild-base": "pnpm --stream -r run esbuild-base",
-    "vscode:prepublish": "npm run esbuild-base"
+    "vscode:prepublish": "npm run esbuild-base",
+    "install-ext": "vsce package -o vscode-follow-language.vsix && code --install-extension vscode-follow-language.vsix"
   },
   "keywords": [],
   "author": "Peng Lingwei",
