@@ -20,6 +20,7 @@ axiom df-or(wff w0, wff w1) {|- iff or w0 w1 imp not w0 w1}
 prop wff ifp(wff cond, wff w0, wff w1)
 axiom df-ifp(wff cond, wff w0, wff w1) {  |- iff ifp cond w0 w1 or and cond w0 and not cond w1}
 
+// Propsition Logic-Imp
 
 // 689
 thm mp2(wff w0, wff w1, wff w2) {

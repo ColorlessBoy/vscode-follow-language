@@ -1,4 +1,11 @@
-import { Diagnostic, DiagnosticSeverity, Position, Range, SemanticTokenTypes } from 'vscode-languageserver';
+import {
+  Diagnostic,
+  DiagnosticSeverity,
+  MarkedString,
+  Position,
+  Range,
+  SemanticTokenTypes,
+} from 'vscode-languageserver';
 import {
   ASTNode,
   ArgASTNode,
@@ -298,10 +305,18 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         if (!theoremDefASTNode.isProved()) {
           var errorMsg: string = 'Without valid proof. Current state';
           for (const assumption of theoremDefASTNode.untilNowAssumptionStrSet) {
-            errorMsg += '  \n-| ' + assumption;
+            if (theoremDefASTNode.assumptionStrList.includes(assumption)) {
+              errorMsg += '  \n-| ' + assumption;
+            } else {
+              errorMsg += '  \n * -| ' + assumption;
+            }
           }
           for (const target of theoremDefASTNode.untilNowTargetStrSet) {
-            errorMsg += '  \n|-' + target;
+            if (target === theoremDefASTNode.targetStr) {
+              errorMsg += '  \n|- ' + target;
+            } else {
+              errorMsg += '  \n * -| ' + target;
+            }
           }
           this.addSemanticDiagnostic(theoremDefASTNode.token, errorMsg);
         }

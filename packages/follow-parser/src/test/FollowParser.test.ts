@@ -106,4 +106,23 @@ suite('FollowParser Tests', () => {
     }
     console.log(parser.semanticTokenListDocMap.get(textDocument.uri)?.length);
   });
+  test('test #7: Theorem without proof.', async () => {
+    const content: string =
+      'type wff\n' +
+      'const wff true false\n' +
+      'prop wff imp(wff w0, wff w1)\n' +
+      'axiom ax-1(wff w0, wff w1) { |- imp w0 imp w1 w0}\n' +
+      'axiom ax-2(wff w0, wff w1, wff w2) { |- imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2}\n' +
+      'axiom ax-mp(wff w0, wff w1) { -| w0 -| imp w0 w1 |- w1}\n' +
+      'thm a1i(wff w0, wff w1) { -| w0 |- imp w1 w0 } = {\n' +
+      '    ax-mp w0 imp w1 w0\n' +
+      '}\n';
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const diagnostic = await parser.getDiagnostics(textDocument);
+    if (diagnostic === undefined) {
+      assert.fail();
+    }
+    console.log(diagnostic);
+  });
 });
