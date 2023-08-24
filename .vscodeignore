@@ -1,7 +1,5 @@
 .git/
 .vscode/
-dist/**/*.LICENSE.txt
-dist/**/*.map
 node_modules/
 out/
 examples/
@@ -12,3 +10,5 @@ package-lock.json
 tsconfig.json
 *.vsix
 devnotes/
+packages/
+src/

@@ -14,7 +14,8 @@
     "test": "pnpm --stream -r run test",
     "antlr4": "pnpm --stream -r run antlr4",
     "clean": "pnpm --stream -r run clean",
-    "vscode:prepublish": "npm run build"
+    "esbuild-base": "pnpm --stream -r run esbuild-base",
+    "vscode:prepublish": "npm run esbuild-base"
   },
   "keywords": [],
   "author": "Peng Lingwei",

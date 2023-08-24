@@ -85,6 +85,9 @@ importers:
       '@types/node':
         specifier: ^20.5.0
         version: 20.5.0
+      esbuild:
+        specifier: ^0.19.2
+        version: 0.19.2
       rimraf:
         specifier: ^5.0.1
         version: 5.0.1

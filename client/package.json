@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc -b",
     "watch": "tsc -b -w",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=build/extension.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
     "test": "echo \"Error: no test specified\"",
     "clean": "rimraf build"
   },
