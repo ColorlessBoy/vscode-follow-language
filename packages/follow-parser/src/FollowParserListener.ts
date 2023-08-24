@@ -19,7 +19,6 @@ import {
   VarDefASTNode,
 } from './FollowLanguageTypes';
 import {
-  ANTLRFollowParser,
   AssumeBlockContext,
   AxiomBlockContext,
   ConstBlockContext,
@@ -36,8 +35,6 @@ import { ANTLRFollowParserListener } from './antlr4/ANTLRFollowParserListener';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
-import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
-import { AnySoaRecord } from 'dns';
 
 export class FollowParserListener implements ANTLRFollowParserListener {
   private argList: Array<ArgDefASTNode> = new Array();
@@ -105,7 +102,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var typeASTNode: TypeASTNode | undefined = this.createTypeASTNode(argType);
     if (typeASTNode) {
       if (arg && arg.text) {
-        if (this.nameHasBeenUsedCheck(arg)) {
+        if (this.nameHasBeenUsedCheck(arg, true)) {
           const argNode = new ArgDefASTNodeImpl(typeASTNode, arg);
           this.argMap.set(arg.text, argNode);
           this.argList.push(argNode);
@@ -349,12 +346,15 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     return range;
   }
 
-  private nameHasBeenUsedCheck(token: Token): boolean {
-    if (token.text && this.definitionMap.has(token.text)) {
+  private nameHasBeenUsedCheck(token: Token, onlyArg: boolean = false): boolean {
+    if (token.text && this.argMap.has(token.text)) {
       this.addSemanticDiagnostic(token, `${token.text} has been used.`);
       return false;
     }
-    if (token.text && this.argMap.has(token.text)) {
+    if (onlyArg) {
+      return true;
+    }
+    if (token.text && this.definitionMap.has(token.text)) {
       this.addSemanticDiagnostic(token, `${token.text} has been used.`);
       return false;
     }
