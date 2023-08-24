@@ -9,9 +9,7 @@ export function activate(context: ExtensionContext) {
   // The server is implemented in node
 
   let config = workspace.getConfiguration('follow');
-  let serverModule: string = context.asAbsolutePath(
-    config.get('executablePath') || path.join('server', 'build', 'server.js'),
-  );
+  let serverModule: string = context.asAbsolutePath(path.join('server', 'build', 'server.js'));
 
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging

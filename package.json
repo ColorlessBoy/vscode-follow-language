@@ -13,12 +13,13 @@
     "watch": "pnpm --stream -r run watch",
     "test": "pnpm --stream -r run test",
     "antlr4": "pnpm --stream -r run antlr4",
-    "clean": "pnpm --stream -r run clean"
+    "clean": "pnpm --stream -r run clean",
+    "vscode:prepublish": "npm run build"
   },
   "keywords": [],
   "author": "Peng Lingwei",
   "license": "ISC",
-  "main": "./client/build/extension",
+  "main": "./client/build/extension.js",
   "categories": [
     "Programming Languages"
   ],
@@ -82,6 +83,7 @@
     }
   },
   "devDependencies": {
+    "esbuild": "^0.19.2",
     "prettier": "^3.0.2"
   }
 }

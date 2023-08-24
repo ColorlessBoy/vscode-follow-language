@@ -1,0 +1,14 @@
+.git/
+.vscode/
+dist/**/*.LICENSE.txt
+dist/**/*.map
+node_modules/
+out/
+examples/
+.gitignore
+.prettierrc.json
+.vscodeignore
+package-lock.json
+tsconfig.json
+*.vsix
+devnotes/
