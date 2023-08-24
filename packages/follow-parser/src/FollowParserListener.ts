@@ -19,6 +19,7 @@ import {
   VarDefASTNode,
 } from './FollowLanguageTypes';
 import {
+  ANTLRFollowParser,
   AssumeBlockContext,
   AxiomBlockContext,
   ConstBlockContext,
@@ -35,6 +36,8 @@ import { ANTLRFollowParserListener } from './antlr4/ANTLRFollowParserListener';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
+import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
+import { AnySoaRecord } from 'dns';
 
 export class FollowParserListener implements ANTLRFollowParserListener {
   private argList: Array<ArgDefASTNode> = new Array();
@@ -144,6 +147,9 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var assumeList: Array<ASTNode> = new Array();
     for (const assumeID of ctx.assumeID()) {
       const token = assumeID.start;
+      if (token.text === '(' || token.text === ')') {
+        continue;
+      }
       if (this.defMissingCheck(token)) {
         const opNode = this.createOpNode(token);
         if (opNode) {
@@ -164,6 +170,9 @@ export class FollowParserListener implements ANTLRFollowParserListener {
 
     for (const targetID of ctx.targetID()) {
       const token = targetID.start;
+      if (token.text === '(' || token.text === ')') {
+        continue;
+      }
       if (this.defMissingCheck(token)) {
         const opNode = this.createOpNode(token);
         if (opNode) {
@@ -222,6 +231,9 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var proofList: ASTNode[] = new Array();
     for (const proofOp of ctx.proofID()) {
       const token = proofOp.start;
+      if (token.text === '(' || token.text === ')') {
+        continue;
+      }
       if (this.defMissingCheck(token)) {
         const opNode = this.createOpNode(token);
         if (opNode && opNode.definition) {
@@ -243,9 +255,6 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     if (proofList.length > 0) {
       this.proof.push(proofList);
     }
-    for (const proofList of this.proof) {
-      this.checkFunctionStack(proofList);
-    }
   }
 
   public exitTheoremBlock(ctx: TheoremBlockContext): void {
@@ -254,6 +263,12 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     }
     this.createKeywordASTNode(ctx.start);
     const theoremID = ctx.theoremID().start;
+    var validProof: ASTNode[][] = new Array();
+    for (const proofCommand of this.proof) {
+      if (this.checkFunctionStack(proofCommand)) {
+        validProof.push(proofCommand);
+      }
+    }
     if (theoremID.text) {
       if (this.nameHasBeenUsedCheck(theoremID)) {
         const theoremDefASTNode = new TheoremDefASTNodeImpl(
@@ -261,7 +276,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
           this.argList,
           this.assumptions,
           this.target,
-          this.proof,
+          validProof,
         );
         this.semanticTokenList.push(theoremDefASTNode);
         this.definitionMap.set(theoremID.text, theoremDefASTNode);
@@ -269,15 +284,28 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         for (const proofCommand of theoremDefASTNode.proof) {
           const proofOp = proofCommand[0];
           if ((proofOp.untilNowTargetStrSet?.size || 0) !== 1) {
-            this.addSemanticDiagnostic(proofOp.token, `Proofs nothing.`);
+            var errorMsg: string = 'Proof no assumption. Input state:';
+            if (proofOp.prevAssumptionStrSet) {
+              for (const assumption of proofOp.prevAssumptionStrSet) {
+                errorMsg += '  \n-| ' + assumption;
+              }
+            }
+            if (proofOp.prevTargetStrSet) {
+              for (const target of proofOp.prevTargetStrSet) {
+                errorMsg += '  \n|- ' + target;
+              }
+            }
+            this.addSemanticDiagnostic(proofOp.token, errorMsg);
           }
         }
         if (!theoremDefASTNode.isProved()) {
-          var errorMsg: string = 'Without valid proof. Get';
+          var errorMsg: string = 'Without valid proof. Current state';
           for (const assumption of theoremDefASTNode.untilNowAssumptionStrSet) {
             errorMsg += '  \n-| ' + assumption;
           }
-          errorMsg += ' \n|- ' + theoremDefASTNode.targetStr;
+          for (const target of theoremDefASTNode.untilNowTargetStrSet) {
+            errorMsg += '  \n|-' + target;
+          }
           this.addSemanticDiagnostic(theoremDefASTNode.token, errorMsg);
         }
       }
@@ -647,8 +675,8 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   public targetStr: string = '';
   public untilNowAssumptionStrSet: Set<string> = new Set();
   public untilNowTargetStrSet: Set<string> = new Set();
-  public nextAssumptionStrSet: Set<string> = new Set();
-  public nextTargetStrSet: Set<string> = new Set();
+  public prevAssumptionStrSet: Set<string> = new Set();
+  public prevTargetStrSet: Set<string> = new Set();
 
   constructor(
     public readonly token: Token,
@@ -696,12 +724,13 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   private compile(): void {
     var currentAssumptions: Set<string> = new Set();
     var currentTargets: Set<string> = new Set();
-    var nextAssumptions: Set<string> = new Set();
-    var nextTarget: Set<string> = new Set();
     for (const proofCommand of this.proof) {
       const proofOp = proofCommand[0];
       if (proofOp instanceof AxiomASTNodeImpl || proofOp instanceof TheoremASTNodeImpl) {
         proofOp.toString(); // generate targetStr and assumptionStr
+        proofOp.prevAssumptionStrSet = new Set(currentAssumptions);
+        proofOp.prevTargetStrSet = new Set(currentTargets);
+
         const proofOpTarget: string = proofOp.targetStr || '';
         const proofOpAssumptions: string[] = proofOp.assumptionStrList || new Array();
         if (currentAssumptions.has(proofOpTarget)) {
@@ -715,8 +744,8 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
           currentAssumptions.add(e);
         });
 
-        proofOp.untilNowAssumptionStrSet = currentAssumptions;
-        proofOp.untilNowTargetStrSet = currentTargets;
+        proofOp.untilNowAssumptionStrSet = new Set(currentAssumptions);
+        proofOp.untilNowTargetStrSet = new Set(currentTargets);
       }
     }
     this.untilNowAssumptionStrSet = currentAssumptions;
@@ -864,8 +893,8 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     public targetStr: string = '',
     public untilNowAssumptionStrSet: Set<string> = new Set(),
     public untilNowTargetStrSet: Set<string> = new Set(),
-    public nextAssumptionStrSet: Set<string> = new Set(),
-    public nextTargetStrSet: Set<string> = new Set(),
+    public prevAssumptionStrSet: Set<string> = new Set(),
+    public prevTargetStrSet: Set<string> = new Set(),
   ) {
     super(token);
   }
@@ -922,8 +951,8 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     public targetStr: string = '',
     public untilNowAssumptionStrSet: Set<string> = new Set(),
     public untilNowTargetStrSet: Set<string> = new Set(),
-    public nextAssumptionStrSet: Set<string> = new Set(),
-    public nextTargetStrSet: Set<string> = new Set(),
+    public prevAssumptionStrSet: Set<string> = new Set(),
+    public prevTargetStrSet: Set<string> = new Set(),
   ) {
     super(token);
   }

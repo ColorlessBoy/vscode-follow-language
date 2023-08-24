@@ -27,8 +27,8 @@ propID : ID ;
 axiomID : ID ;
 theoremID : ID ;
 argID : ID ;
-assumeID : ID ;
-targetID : ID ;
-proofID : ID ;
+assumeID : ID | LPAREN | RPAREN ;
+targetID : ID | LPAREN | RPAREN ;
+proofID : ID | LPAREN | RPAREN ;
 
 
