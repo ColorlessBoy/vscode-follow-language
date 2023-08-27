@@ -1,11 +1,4 @@
-import {
-  Diagnostic,
-  DiagnosticSeverity,
-  MarkedString,
-  Position,
-  Range,
-  SemanticTokenTypes,
-} from 'vscode-languageserver';
+import { Diagnostic, DiagnosticSeverity, Position, Range, SemanticTokenTypes } from 'vscode-languageserver';
 import {
   ASTNode,
   ArgASTNode,
@@ -288,36 +281,14 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         for (const proofCommand of theoremDefASTNode.proof) {
           const proofOp = proofCommand[0];
           if ((proofOp.untilNowTargetStrSet?.size || 0) !== 1) {
-            var errorMsg: string = 'Proof no assumption. Input state:';
-            if (proofOp.prevAssumptionStrSet) {
-              for (const assumption of proofOp.prevAssumptionStrSet) {
-                errorMsg += '  \n-| ' + assumption;
-              }
-            }
-            if (proofOp.prevTargetStrSet) {
-              for (const target of proofOp.prevTargetStrSet) {
-                errorMsg += '  \n|- ' + target;
-              }
-            }
+            var errorMsg: string = 'Proof no assumption. Input state:  \n';
+            errorMsg += proofOp.prevProofState?.join('  \n');
             this.addSemanticDiagnostic(proofOp.token, errorMsg);
           }
         }
         if (!theoremDefASTNode.isProved()) {
-          var errorMsg: string = 'Without valid proof. Current state';
-          for (const assumption of theoremDefASTNode.untilNowAssumptionStrSet) {
-            if (theoremDefASTNode.assumptionStrList.includes(assumption)) {
-              errorMsg += '  \n-| ' + assumption;
-            } else {
-              errorMsg += '  \n * -| ' + assumption;
-            }
-          }
-          for (const target of theoremDefASTNode.untilNowTargetStrSet) {
-            if (target === theoremDefASTNode.targetStr) {
-              errorMsg += '  \n|- ' + target;
-            } else {
-              errorMsg += '  \n * -| ' + target;
-            }
-          }
+          var errorMsg: string = 'Without valid proof. Current state:  \n';
+          errorMsg += theoremDefASTNode.untilNowProofState.join('  \n');
           this.addSemanticDiagnostic(theoremDefASTNode.token, errorMsg);
         }
       }
@@ -690,8 +661,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   public targetStr: string = '';
   public untilNowAssumptionStrSet: Set<string> = new Set();
   public untilNowTargetStrSet: Set<string> = new Set();
-  public prevAssumptionStrSet: Set<string> = new Set();
-  public prevTargetStrSet: Set<string> = new Set();
+  public untilNowProofState: string[] = new Array();
 
   constructor(
     public readonly token: Token,
@@ -712,6 +682,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
       this.targetStr = this.target[0].toStringSimp();
     }
     this.compile();
+    this.untilNowProofState = this.getProofState(this.untilNowAssumptionStrSet, this.untilNowTargetStrSet);
   }
 
   public isUseful(untilNowAssumptionStrSet: Set<string>, untilNowTargetStrSet: Set<string>): boolean {
@@ -745,6 +716,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
         proofOp.toString(); // generate targetStr and assumptionStr
         proofOp.prevAssumptionStrSet = new Set(currentAssumptions);
         proofOp.prevTargetStrSet = new Set(currentTargets);
+        proofOp.prevProofState = this.getProofState(proofOp.prevAssumptionStrSet, proofOp.prevTargetStrSet);
 
         const proofOpTarget: string = proofOp.targetStr || '';
         const proofOpAssumptions: string[] = proofOp.assumptionStrList || new Array();
@@ -761,6 +733,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
 
         proofOp.untilNowAssumptionStrSet = new Set(currentAssumptions);
         proofOp.untilNowTargetStrSet = new Set(currentTargets);
+        proofOp.untilNowProofState = this.getProofState(proofOp.untilNowAssumptionStrSet, proofOp.untilNowTargetStrSet);
       }
     }
     this.untilNowAssumptionStrSet = currentAssumptions;
@@ -789,6 +762,36 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     }
     str += '  \n}';
     return str;
+  }
+
+  public getProofState(untilNowAssumptionStrSet: Set<string>, untilNowTargetStrSet: Set<string>): string[] {
+    var proofState: string[] = new Array();
+    for (const assumption of untilNowAssumptionStrSet) {
+      if (this.assumptionStrList.includes(assumption)) {
+        proofState.push(' [Y] -| ' + assumption);
+      }
+    }
+    for (const assumption of untilNowAssumptionStrSet) {
+      if (!this.untilNowAssumptionStrSet.has(assumption)) {
+        proofState.push(' [N] -| ' + assumption);
+      }
+    }
+    if (untilNowTargetStrSet.has(this.targetStr)) {
+      proofState.push(' [Y] |- ' + this.targetStr);
+    } else {
+      proofState.push(' [N] |- ' + this.targetStr);
+    }
+    for (const assumption of untilNowAssumptionStrSet) {
+      if (!this.assumptionStrList.includes(assumption)) {
+        proofState.push(' [*] -| ' + assumption);
+      }
+    }
+    for (const target of untilNowTargetStrSet) {
+      if (target !== this.targetStr) {
+        proofState.push(' [*] |- ' + target);
+      }
+    }
+    return proofState;
   }
 }
 
@@ -910,6 +913,9 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     public untilNowTargetStrSet: Set<string> = new Set(),
     public prevAssumptionStrSet: Set<string> = new Set(),
     public prevTargetStrSet: Set<string> = new Set(),
+
+    public untilNowProofState: string[] = new Array(),
+    public prevProofState: string[] = new Array(),
   ) {
     super(token);
   }
@@ -968,6 +974,9 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     public untilNowTargetStrSet: Set<string> = new Set(),
     public prevAssumptionStrSet: Set<string> = new Set(),
     public prevTargetStrSet: Set<string> = new Set(),
+
+    public untilNowProofState: string[] = new Array(),
+    public prevProofState: string[] = new Array(),
   ) {
     super(token);
   }

@@ -36,6 +36,9 @@ export interface BaseASTNode {
   readonly untilNowTargetStrSet?: Set<string>;
   readonly prevAssumptionStrSet?: Set<string>;
   readonly prevTargetStrSet?: Set<string>;
+
+  readonly untilNowProofState?: string[];
+  readonly prevProofState?: string[];
   toString(): string;
   toStringSimp(): string;
   getRange(): Range;
@@ -91,8 +94,8 @@ export interface TheoremDefASTNode extends BaseASTNode {
   readonly proof: Array<ASTNode[]>;
   readonly untilNowAssumptionStrSet: Set<string>;
   readonly untilNowTargetStrSet: Set<string>;
-  readonly prevAssumptionStrSet: Set<string>;
-  readonly prevTargetStrSet: Set<string>;
+
+  readonly untilNowProofState: string[];
   isProved(): boolean;
 }
 export interface TypeASTNode extends BaseASTNode {
@@ -132,6 +135,9 @@ export interface AxiomASTNode extends BaseASTNode {
   readonly untilNowTargetStrSet: Set<string>;
   readonly prevAssumptionStrSet: Set<string>;
   readonly prevTargetStrSet: Set<string>;
+
+  readonly untilNowProofState: string[];
+  readonly prevProofState: string[];
 }
 export interface TheoremASTNode extends BaseASTNode {
   readonly semanticType: SemanticTokenTypes.function;
@@ -142,4 +148,7 @@ export interface TheoremASTNode extends BaseASTNode {
   readonly untilNowTargetStrSet: Set<string>;
   readonly prevAssumptionStrSet: Set<string>;
   readonly prevTargetStrSet: Set<string>;
+
+  readonly untilNowProofState: string[];
+  readonly prevProofState: string[];
 }

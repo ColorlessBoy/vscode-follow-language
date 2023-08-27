@@ -1,5 +1,7 @@
 # Follow Language Language
 
+## Working On
+
 TODO List
 
 - add comment block into semantic tokens;
@@ -17,3 +19,9 @@ I want to achieve this:
 - communatiion between people, learn by talking;
 - BEST RESULT: create while learning;
 - ...
+
+## New State Description
+
+- `[Y]`: Used and can be reused assumption;
+- `[N]`: Unused and can be reused assumption;
+- `[*]`: Should be proved assumption;
