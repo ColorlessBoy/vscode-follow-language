@@ -116,6 +116,7 @@ suite('FollowParser Tests', () => {
       'axiom ax-mp(wff w0, wff w1) { -| w0 -| imp w0 w1 |- w1}\n' +
       'thm a1i(wff w0, wff w1) { -| w0 |- imp w1 w0 } = {\n' +
       '    ax-mp w0 imp w1 w0\n' +
+      '    ax-mp w0\n' +
       '}\n';
     const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
     const parser = new FollowParser();

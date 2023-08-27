@@ -938,13 +938,12 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
   }
 
   private generateStr(): void {
-    if (!this.isValid) {
-      return;
-    }
     var argMap: Map<string, string> = new Map();
-    for (var i = 0; i < this.args.length; ++i) {
+    for (var i = 0; i < this.definition.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
-      argMap.set(argCode, this.args[i].toStringSimp());
+      const argType: string = this.definition.args[i].type.token.text || '';
+      const unknownArgStr = `${argType}?`;
+      argMap.set(argCode, this.args[i]?.toStringSimp() || unknownArgStr);
     }
     for (const assumption of this.definition.assumptions) {
       const assumeStr = assumption
@@ -965,9 +964,6 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
   }
 
   public toString(): string {
-    if (!this.isValid && this.targetStr.length === 0) {
-      return this.definition.toString();
-    }
     if (this.targetStr.length === 0) {
       this.generateStr();
     }
@@ -1010,13 +1006,12 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
   }
 
   private generateStr(): void {
-    if (!this.isValid) {
-      return;
-    }
     var argMap: Map<string, string> = new Map();
-    for (var i = 0; i < this.args.length; ++i) {
+    for (var i = 0; i < this.definition.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
-      argMap.set(argCode, this.args[i].toStringSimp());
+      const argType: string = this.definition.args[i].type.token.text || '';
+      const unknownArgStr = `${argType}?`;
+      argMap.set(argCode, this.args[i]?.toStringSimp() || unknownArgStr);
     }
     for (const assumption of this.definition.assumptions) {
       const assumeStr = assumption
@@ -1037,9 +1032,6 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
   }
 
   public toString(): string {
-    if (!this.isValid && this.targetStr.length === 0) {
-      return this.definition.toString();
-    }
     if (this.targetStr.length === 0) {
       this.generateStr();
     }
