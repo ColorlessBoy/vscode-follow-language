@@ -20,6 +20,7 @@ export type ASTNode =
   | ArgASTNode;
 
 export interface BaseASTNode {
+  isValid: boolean;
   readonly token: Token;
   readonly semanticType?: SemanticTokenTypes;
   readonly type?: string | BaseASTNode;
@@ -39,7 +40,6 @@ export interface BaseASTNode {
 
   readonly untilNowProofState?: string[];
   readonly prevProofState?: string[];
-  isValid?: boolean;
 
   toString(): string;
   toStringSimp(): string;

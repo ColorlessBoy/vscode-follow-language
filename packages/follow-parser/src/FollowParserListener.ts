@@ -275,7 +275,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
   }
 
   public exitTheoremBlock(ctx: TheoremBlockContext): void {
-    if (this.hasError) {
+    if (this.hasError || this.target.length === 0) {
       return;
     }
     this.createKeywordASTNode(ctx.start);
@@ -474,8 +474,10 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       return false;
     }
     const startOpNode = opNodeList[0];
-    startOpNode.isValid = true;
-    opNodeList[0].toString(); // Generate state information.
+    if (startOpNode) {
+      startOpNode.isValid = true;
+      opNodeList[0].toString(); // Generate state information.
+    }
     return true;
   }
 
@@ -486,6 +488,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
 }
 
 export class BaseASTNodeImpl implements BaseASTNode {
+  public isValid = false;
+
   constructor(public readonly token: Token) {}
 
   public toString(): string {
