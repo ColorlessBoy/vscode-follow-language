@@ -1,5 +1,21 @@
 {
   "name": "Follow",
-  "patterns": [],
-  "scopeName": "source.follow"
+  "patterns": [{ "include": "#comment" }],
+  "scopeName": "source.follow",
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "begin": "//",
+          "end": "$",
+          "name": "comment.line.follow0"
+        },
+        {
+          "begin": "/\\*",
+          "end": "\\*/",
+          "name": "comment.block.follow0"
+        }
+      ]
+    }
+  }
 }
