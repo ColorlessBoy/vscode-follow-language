@@ -9,6 +9,7 @@ import {
   ConstASTNode,
   ConstDefASTNode,
   KeywordASTNode,
+  LineCommentBlock,
   PropASTNode,
   PropDefASTNode,
   TheoremASTNode,
@@ -21,7 +22,9 @@ import {
 import {
   AssumeBlockContext,
   AxiomBlockContext,
+  BlockCommentBlockContext,
   ConstBlockContext,
+  LineCommentBlockContext,
   ParamPairContext,
   ProofBlockContext,
   PropBlockContext,
@@ -48,6 +51,23 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     public readonly semanticTokenList: Array<ASTNode>,
     public readonly semanticErrors: Diagnostic[] = [],
   ) {}
+
+  public exitLineCommentBlock(ctx: LineCommentBlockContext) {
+    // const token = ctx.start;
+    // if (token.text) {
+    //   const lineCommentBlock = new LineCommentBlockImpl(token);
+    //   this.semanticTokenList.push(lineCommentBlock);
+    // }
+  }
+
+  public exitBlockCommentBlock(ctx: BlockCommentBlockContext) {
+    // const token = ctx.start;
+    // if (token.text) {
+    //   const blockCommentBlock = new BlockCommentBlockImpl(token);
+    //   this.semanticTokenList.push(blockCommentBlock);
+    // }
+  }
+
   public enterTypeBlock(ctx: TypeBlockContext): void {
     this.createKeywordASTNode(ctx.start);
   }
@@ -313,7 +333,6 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       }
     }
   }
-
   public createKeywordASTNode(token: Token): void {
     if (token.text) {
       const typeASTNode: KeywordASTNode = new KeywordASTNodeImpl(token);
@@ -1049,5 +1068,30 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
 
   public addArg(arg: ASTNode): void {
     this.args.push(arg);
+  }
+}
+
+export class LineCommentBlockImpl extends BaseASTNodeImpl implements LineCommentBlock {
+  public readonly semanticType = SemanticTokenTypes.comment;
+
+  constructor(public readonly token: Token) {
+    super(token);
+  }
+}
+export class BlockCommentBlockImpl extends BaseASTNodeImpl implements BlockCommentBlockImpl {
+  public readonly semanticType = SemanticTokenTypes.comment;
+
+  constructor(public readonly token: Token) {
+    super(token);
+  }
+
+  public getRange(): Range {
+    const line = this.token.line - 1;
+    const startCol = this.token.charPositionInLine;
+    const endCol = this.token.text ? startCol + this.token.text.length : startCol;
+    const startPos: Position = Position.create(line, startCol);
+    const endPos: Position = Position.create(line, endCol);
+    const range: Range = Range.create(startPos, endPos);
+    return range;
   }
 }

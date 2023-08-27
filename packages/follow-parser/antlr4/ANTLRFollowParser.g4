@@ -2,7 +2,7 @@ parser grammar ANTLRFollowParser;
 
 options { tokenVocab=ANTLRFollowLexer; }
 
-root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock)* EOF;
+root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock | lineCommentBlock | blockCommentBlock)* EOF;
 
 typeBlock : KW_TYPE (typeDef)+ ;
 constBlock : KW_CONST typeID (constID)+ ;
@@ -10,6 +10,8 @@ varBlock : KW_VAR typeID (varID)+ ;
 propBlock : KW_PROP typeID propID paramBlockNonEmpty ;
 axiomBlock : KW_AXIOM axiomID paramBlock contentBlock ;
 theoremBlock : KW_THEOREM theoremID paramBlock contentBlock EQ proofBlock ;
+lineCommentBlock: LINE_COMMENT;
+blockCommentBlock: BLOCK_COMMENT;
 
 paramBlockNonEmpty : LPAREN paramPair (COMMA paramPair)* RPAREN ;
 paramBlock : LPAREN (paramPair (COMMA paramPair)*)? RPAREN ;

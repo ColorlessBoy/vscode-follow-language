@@ -156,3 +156,12 @@ export interface TheoremASTNode extends BaseASTNode {
   readonly prevProofState: string[];
   isValid: boolean;
 }
+
+export interface LineCommentBlock extends BaseASTNode {
+  readonly token: Token;
+  readonly semanticType: SemanticTokenTypes.comment;
+}
+export interface BlockCommentBlock extends BaseASTNode {
+  readonly token: Token;
+  readonly semanticType: SemanticTokenTypes.comment;
+}

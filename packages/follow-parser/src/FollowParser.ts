@@ -86,6 +86,7 @@ export class FollowParser {
       SemanticTokenTypes.operator,
       SemanticTokenTypes.method,
       SemanticTokenTypes.function,
+      SemanticTokenTypes.comment,
     ],
     tokenModifiers: [SemanticTokenModifiers.declaration],
   };
@@ -99,6 +100,7 @@ export class FollowParser {
     [SemanticTokenTypes.operator, 5],
     [SemanticTokenTypes.method, 6],
     [SemanticTokenTypes.function, 7],
+    [SemanticTokenTypes.comment, 8],
   ]);
 
   public semanticErrorListenerMap: Map<string, SemanticErrorListener> = new Map();

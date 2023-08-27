@@ -10,6 +10,8 @@ import { VarBlockContext } from "./ANTLRFollowParser";
 import { PropBlockContext } from "./ANTLRFollowParser";
 import { AxiomBlockContext } from "./ANTLRFollowParser";
 import { TheoremBlockContext } from "./ANTLRFollowParser";
+import { LineCommentBlockContext } from "./ANTLRFollowParser";
+import { BlockCommentBlockContext } from "./ANTLRFollowParser";
 import { ParamBlockNonEmptyContext } from "./ANTLRFollowParser";
 import { ParamBlockContext } from "./ANTLRFollowParser";
 import { ParamPairContext } from "./ANTLRFollowParser";
@@ -111,6 +113,28 @@ export interface ANTLRFollowParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitTheoremBlock?: (ctx: TheoremBlockContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ANTLRFollowParser.lineCommentBlock`.
+	 * @param ctx the parse tree
+	 */
+	enterLineCommentBlock?: (ctx: LineCommentBlockContext) => void;
+	/**
+	 * Exit a parse tree produced by `ANTLRFollowParser.lineCommentBlock`.
+	 * @param ctx the parse tree
+	 */
+	exitLineCommentBlock?: (ctx: LineCommentBlockContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ANTLRFollowParser.blockCommentBlock`.
+	 * @param ctx the parse tree
+	 */
+	enterBlockCommentBlock?: (ctx: BlockCommentBlockContext) => void;
+	/**
+	 * Exit a parse tree produced by `ANTLRFollowParser.blockCommentBlock`.
+	 * @param ctx the parse tree
+	 */
+	exitBlockCommentBlock?: (ctx: BlockCommentBlockContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ANTLRFollowParser.paramBlockNonEmpty`.

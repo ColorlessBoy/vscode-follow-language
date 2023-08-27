@@ -4,8 +4,8 @@ WS: [ \t]+ -> skip ;
 NL: ('\r\n' | '\r' | '\n') -> skip ;
 SC: (';') -> skip;
 
-LINE_COMMENT : '//' (~[\n])* '\n' -> channel(HIDDEN) ;
-BLOCK_COMMENT : '/*' .*? '*/' -> channel(HIDDEN);
+LINE_COMMENT : '//' (~[\n])* '\n';
+BLOCK_COMMENT : '/*' .*? '*/';
 
 LBRACE : '{' ;
 RBRACE : '}' ;
