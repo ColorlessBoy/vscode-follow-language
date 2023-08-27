@@ -262,9 +262,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     const theoremID = ctx.theoremID().start;
     var validProof: ASTNode[][] = new Array();
     for (const proofCommand of this.proof) {
-      if (this.checkFunctionStack(proofCommand)) {
-        validProof.push(proofCommand);
-      }
+      this.checkFunctionStack(proofCommand);
+      validProof.push(proofCommand);
     }
     if (theoremID.text) {
       if (this.nameHasBeenUsedCheck(theoremID)) {
@@ -280,8 +279,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
 
         for (const proofCommand of theoremDefASTNode.proof) {
           const proofOp = proofCommand[0];
-          if ((proofOp.untilNowTargetStrSet?.size || 0) !== 1) {
-            var errorMsg: string = 'Proof no assumption. Input state:  \n';
+          if (proofOp.isValid === false && (proofOp.targetStr?.length || 0) > 0) {
+            var errorMsg: string = 'Proof command is invalid. Input state:  \n';
             errorMsg += proofOp.prevProofState?.join('  \n');
             this.addSemanticDiagnostic(proofOp.token, errorMsg);
           }
@@ -455,6 +454,9 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       );
       return false;
     }
+    const startOpNode = opNodeList[0];
+    startOpNode.isValid = true;
+    opNodeList[0].toString(); // Generate state information.
     return true;
   }
 
@@ -644,11 +646,11 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
     str += ' {';
     if (this.assumptionStrList.length > 0) {
       for (const assumptionStr of this.assumptionStrList) {
-        str += '  \n-| ' + assumptionStr;
+        str += '  \n  -| ' + assumptionStr;
       }
     }
     if (this.target.length > 0) {
-      str += '  \n|- ' + this.targetStr;
+      str += '  \n  |- ' + this.targetStr;
     }
     str += '  \n}';
     return str;
@@ -710,27 +712,39 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
   private compile(): void {
     var currentAssumptions: Set<string> = new Set();
     var currentTargets: Set<string> = new Set();
+    var isStart = true;
     for (const proofCommand of this.proof) {
       const proofOp = proofCommand[0];
       if (proofOp instanceof AxiomASTNodeImpl || proofOp instanceof TheoremASTNodeImpl) {
-        proofOp.toString(); // generate targetStr and assumptionStr
+        // proofOp.toString(); // generate targetStr and assumptionStr
         proofOp.prevAssumptionStrSet = new Set(currentAssumptions);
         proofOp.prevTargetStrSet = new Set(currentTargets);
         proofOp.prevProofState = this.getProofState(proofOp.prevAssumptionStrSet, proofOp.prevTargetStrSet);
 
         const proofOpTarget: string = proofOp.targetStr || '';
         const proofOpAssumptions: string[] = proofOp.assumptionStrList || new Array();
-        if (currentAssumptions.has(proofOpTarget)) {
-          // proof one assumption
-          currentAssumptions.delete(proofOpTarget);
+        if (isStart) {
+          if (proofOpTarget === this.targetStr) {
+            isStart = false;
+            currentTargets.add(proofOpTarget);
+            proofOpAssumptions.forEach((e) => {
+              currentAssumptions.add(e);
+            });
+          } else {
+            proofOp.isValid = false;
+          }
         } else {
-          // proof nothing
-          currentTargets.add(proofOpTarget);
+          if (currentAssumptions.has(proofOpTarget)) {
+            // proof one assumption
+            currentAssumptions.delete(proofOpTarget);
+            proofOpAssumptions.forEach((e) => {
+              currentAssumptions.add(e);
+            });
+          } else {
+            // proof nothing
+            proofOp.isValid = false;
+          }
         }
-        proofOpAssumptions.forEach((e) => {
-          currentAssumptions.add(e);
-        });
-
         proofOp.untilNowAssumptionStrSet = new Set(currentAssumptions);
         proofOp.untilNowTargetStrSet = new Set(currentTargets);
         proofOp.untilNowProofState = this.getProofState(proofOp.untilNowAssumptionStrSet, proofOp.untilNowTargetStrSet);
@@ -754,13 +768,14 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     str += ' {';
     if (this.assumptionStrList.length > 0) {
       for (const assumptionStr of this.assumptionStrList) {
-        str += '  \n-| ' + assumptionStr;
+        str += '  \n  -| ' + assumptionStr;
       }
     }
     if (this.target.length > 0) {
-      str += '  \n|- ' + this.targetStr;
+      str += '  \n  |- ' + this.targetStr;
     }
     str += '  \n}';
+    str = '```  \n' + str + '  \n```';
     return str;
   }
 
@@ -771,8 +786,8 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
         proofState.push(' [Y] -| ' + assumption);
       }
     }
-    for (const assumption of untilNowAssumptionStrSet) {
-      if (!this.untilNowAssumptionStrSet.has(assumption)) {
+    for (const assumption of this.assumptionStrList) {
+      if (!untilNowAssumptionStrSet.has(assumption)) {
         proofState.push(' [N] -| ' + assumption);
       }
     }
@@ -781,6 +796,7 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     } else {
       proofState.push(' [N] |- ' + this.targetStr);
     }
+    proofState.push('---');
     for (const assumption of untilNowAssumptionStrSet) {
       if (!this.assumptionStrList.includes(assumption)) {
         proofState.push(' [*] -| ' + assumption);
@@ -916,11 +932,15 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
 
     public untilNowProofState: string[] = new Array(),
     public prevProofState: string[] = new Array(),
+    public isValid: boolean = false,
   ) {
     super(token);
   }
 
   private generateStr(): void {
+    if (!this.isValid) {
+      return;
+    }
     var argMap: Map<string, string> = new Map();
     for (var i = 0; i < this.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
@@ -945,14 +965,21 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
   }
 
   public toString(): string {
+    if (!this.isValid && this.targetStr.length === 0) {
+      return this.definition.toString();
+    }
     if (this.targetStr.length === 0) {
       this.generateStr();
     }
-    var str = 'axiom ' + this.token.text;
+    var str = 'axiom ' + this.token.text + ' {';
     for (const assumptionStr of this.assumptionStrList) {
-      str += '  \n-| ' + assumptionStr;
+      str += '  \n  -| ' + assumptionStr;
     }
-    str += '  \n|- ' + this.targetStr;
+    str += '  \n  |- ' + this.targetStr + '  \n}';
+    str = '```  \n' + str + '  \n```';
+
+    var proofState = this.untilNowProofState.join('  \n');
+    str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
     return str;
   }
 
@@ -977,11 +1004,15 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
 
     public untilNowProofState: string[] = new Array(),
     public prevProofState: string[] = new Array(),
+    public isValid: boolean = false,
   ) {
     super(token);
   }
 
   private generateStr(): void {
+    if (!this.isValid) {
+      return;
+    }
     var argMap: Map<string, string> = new Map();
     for (var i = 0; i < this.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
@@ -1006,14 +1037,21 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
   }
 
   public toString(): string {
+    if (!this.isValid && this.targetStr.length === 0) {
+      return this.definition.toString();
+    }
     if (this.targetStr.length === 0) {
       this.generateStr();
     }
-    var str = 'thm ' + this.token.text;
+    var str = 'thm ' + this.token.text + ' {';
     for (const assumptionStr of this.assumptionStrList) {
-      str += '  \n-| ' + assumptionStr;
+      str += '  \n  -| ' + assumptionStr;
     }
-    str += '  \n|- ' + this.targetStr;
+    str += '  \n  |- ' + this.targetStr + '  \n}';
+    str = '```  \n' + str + '  \n```';
+
+    var proofState = this.untilNowProofState.join('  \n');
+    str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
     return str;
   }
 

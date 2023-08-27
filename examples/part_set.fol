@@ -53,6 +53,8 @@ prop wff hadd(wff w0, wff w1, wff w2)
 axiom df-hadd(wff w0, wff w1, wff w2) { |- iff (hadd w0 w1 w2) (xor xor w0 w1 w2) }
 prop wff cadd(wff w0, wff w1, wff w2)
 axiom df-cadd(wff w0, wff w1, wff w2) { |- iff (cadd w0 w1 w2) (or (and w0 w1) (and w2 xor w0 w1)) }
+
+
 // 689
 thm mp2(wff w0, wff w1, wff w2) {
   -| w0

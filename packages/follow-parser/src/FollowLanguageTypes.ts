@@ -39,6 +39,8 @@ export interface BaseASTNode {
 
   readonly untilNowProofState?: string[];
   readonly prevProofState?: string[];
+  isValid?: boolean;
+
   toString(): string;
   toStringSimp(): string;
   getRange(): Range;
@@ -138,6 +140,7 @@ export interface AxiomASTNode extends BaseASTNode {
 
   readonly untilNowProofState: string[];
   readonly prevProofState: string[];
+  isValid: boolean;
 }
 export interface TheoremASTNode extends BaseASTNode {
   readonly semanticType: SemanticTokenTypes.function;
@@ -151,4 +154,5 @@ export interface TheoremASTNode extends BaseASTNode {
 
   readonly untilNowProofState: string[];
   readonly prevProofState: string[];
+  isValid: boolean;
 }
