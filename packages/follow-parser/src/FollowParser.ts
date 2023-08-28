@@ -336,12 +336,10 @@ export class FollowParser {
   public buildParent() {
     var nodeList = [];
     for (const node of this.childDocMap.keys()) {
-      if (!this.isBuildParentVisitedDoc.has(node)) {
-        nodeList.push(node);
-      }
+      nodeList.push(node);
     }
     for (const node of this.parentDocMap.keys()) {
-      if (!this.isBuildParentVisitedDoc.has(node) && !nodeList.includes(node)) {
+      if (!nodeList.includes(node)) {
         nodeList.push(node);
       }
     }

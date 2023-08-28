@@ -10,7 +10,7 @@ import { ImportBlockContext, ImportBlocksContext } from './antlr4/ANTLRFollowPar
 export class FollowImportListener implements ANTLRFollowParserListener {
   private folderPath: string;
   private filePath: string;
-  private parentUri: string[] = [];
+  private parentUri: string[];
   constructor(
     public readonly fileUri: string,
     public readonly parentDocMap: Map<string, string[]>,
@@ -18,6 +18,7 @@ export class FollowImportListener implements ANTLRFollowParserListener {
   ) {
     this.filePath = URI.parse(fileUri).path;
     this.folderPath = path.dirname(this.filePath);
+    this.parentUri = parentDocMap.get(fileUri) || [];
   }
 
   public exitImportBlock(ctx: ImportBlockContext): void {

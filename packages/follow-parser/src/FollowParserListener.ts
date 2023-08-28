@@ -38,6 +38,8 @@ import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { URI } from 'vscode-uri';
+import path from 'path';
 
 export class FollowParserListener implements ANTLRFollowParserListener {
   private argList: Array<ArgDefASTNode> = new Array();
@@ -47,6 +49,8 @@ export class FollowParserListener implements ANTLRFollowParserListener {
   private hasError = false;
   private proof: Array<ASTNode[]> = new Array();
   private parentUri: string[] = [];
+  private folderPath: string;
+  private filePath: string;
   constructor(
     public readonly document: TextDocument,
     public readonly definitionMap: Map<string, ASTNode>,
@@ -56,11 +60,26 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     public readonly parentDocMap: Map<string, string[]>,
   ) {
     this.parentUri = parentDocMap.get(document.uri) || [];
+    this.filePath = URI.parse(document.uri).path;
+    this.folderPath = path.dirname(this.filePath);
   }
 
   public exitImportBlock(ctx: ImportBlockContext): void {
     const start = ctx.start;
     this.createKeywordASTNode(start);
+
+    const tokenStr = ctx.STRING().toString();
+    if (tokenStr.length > 0) {
+      const subPath = tokenStr.slice(1, tokenStr.length - 1);
+      const absPath = path.resolve(path.join(this.folderPath, subPath));
+      const absUri = URI.parse(absPath).toString();
+      if (!this.definitionMapDocMap.has(absUri)) {
+        const token = ctx.stop;
+        if (token) {
+          this.addSemanticDiagnostic(token, 'can not import this file');
+        }
+      }
+    }
   }
 
   public enterTypeBlock(ctx: TypeBlockContext): void {

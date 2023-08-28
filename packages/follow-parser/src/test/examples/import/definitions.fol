@@ -10,7 +10,6 @@ axiom ax-2(wff w0, wff w1, wff w2) {|- imp (imp w0 imp w1 w2) (imp imp w0 w1 imp
 axiom ax-3(wff w0, wff w1) {|- imp (imp not w0 not w1) (imp w1 w0)}
 axiom ax-mp(wff w0, wff w1) {-| w0 -| imp w0 w1 |- w1}
 
-
 axiom df-iff(wff w0, wff w1) {
   |- not imp
     imp (iff w0 w1) (not imp imp w0 w1 not imp w1 w0)
