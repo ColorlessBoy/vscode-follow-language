@@ -105,11 +105,11 @@ export class FollowParserListener implements ANTLRFollowParserListener {
           this.addSemanticDiagnostic(token, 'Can not import this file.');
         }
       }
-      const token = ctx.stop;
-      if (token) {
-        const importFileNode = new ImportFileBlockImpl(this.document, token);
-        this.semanticTokenList.push(importFileNode);
-      }
+      // const token = ctx.stop;
+      // if (token) {
+      //   const importFileNode = new ImportFileBlockImpl(this.document, token);
+      //   this.semanticTokenList.push(importFileNode);
+      // }
     }
   }
 
