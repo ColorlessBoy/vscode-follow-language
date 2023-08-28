@@ -1,6 +1,5 @@
 import { ANTLRFollowParserListener } from './antlr4/ANTLRFollowParserListener';
 import { URI } from 'vscode-uri';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 import path from 'path';
 import * as fs from 'fs';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
@@ -34,14 +33,30 @@ export class FollowImportListener implements ANTLRFollowParserListener {
   }
 
   public exitImportBlocks(ctx: ImportBlocksContext): void {
+    const currentChild = this.childDocMap.get(this.fileUri);
     for (const path of this.parentUri) {
       const node = this.childDocMap.get(path);
       if (node) {
         if (!node.includes(this.fileUri)) {
           node.push(this.fileUri);
         }
+        if (currentChild) {
+          for (const uri of currentChild) {
+            if (!node.includes(uri)) {
+              node.push(uri); // child's child
+            }
+          }
+        }
       } else {
-        this.childDocMap.set(path, [this.fileUri]);
+        var newList = [this.fileUri];
+        if (currentChild) {
+          for (const uri of currentChild) {
+            if (!newList.includes(uri)) {
+              newList.push(uri); // child's child
+            }
+          }
+        }
+        this.childDocMap.set(path, newList);
       }
     }
     this.parentDocMap.set(this.fileUri, this.parentUri);

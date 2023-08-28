@@ -1,5 +1,4 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range, SemanticTokenTypes } from 'vscode-languageserver';
-import { URI } from 'vscode-uri';
 import {
   ASTNode,
   ArgASTNode,
@@ -23,11 +22,8 @@ import {
 import {
   AssumeBlockContext,
   AxiomBlockContext,
-  BlockCommentBlockContext,
   ConstBlockContext,
   ImportBlockContext,
-  ImportBlocksContext,
-  LineCommentBlockContext,
   ParamPairContext,
   ProofBlockContext,
   PropBlockContext,
@@ -42,7 +38,6 @@ import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import path from 'path';
 
 export class FollowParserListener implements ANTLRFollowParserListener {
   private argList: Array<ArgDefASTNode> = new Array();
@@ -51,9 +46,6 @@ export class FollowParserListener implements ANTLRFollowParserListener {
   private target: Array<ASTNode> = new Array();
   private hasError = false;
   private proof: Array<ASTNode[]> = new Array();
-  private folderPath: string;
-  private filePath: string;
-  private fileUri: string;
   private parentUri: string[] = [];
   constructor(
     public readonly document: TextDocument,
@@ -62,69 +54,13 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     public readonly semanticErrors: Diagnostic[],
     public readonly definitionMapDocMap: Map<string, Map<string, ASTNode>>,
     public readonly parentDocMap: Map<string, string[]>,
-    public readonly childDocMap: Map<string, string[]>,
   ) {
-    const uri = URI.parse(this.document.uri);
-    this.filePath = path.resolve(uri.path);
-    this.folderPath = path.dirname(this.filePath);
-    this.fileUri = uri.toString();
-  }
-
-  public exitLineCommentBlock(ctx: LineCommentBlockContext): void {
-    // const token = ctx.start;
-    // if (token.text) {
-    //   const lineCommentBlock = new LineCommentBlockImpl(token);
-    //   this.semanticTokenList.push(lineCommentBlock);
-    // }
-  }
-
-  public exitBlockCommentBlock(ctx: BlockCommentBlockContext): void {
-    // const token = ctx.start;
-    // if (token.text) {
-    //   const blockCommentBlock = new BlockCommentBlockImpl(token);
-    //   this.semanticTokenList.push(blockCommentBlock);
-    // }
+    this.parentUri = parentDocMap.get(document.uri) || [];
   }
 
   public exitImportBlock(ctx: ImportBlockContext): void {
     const start = ctx.start;
     this.createKeywordASTNode(start);
-
-    const tokenStr = ctx.STRING().toString();
-    if (tokenStr.length > 0) {
-      const subPath = tokenStr.slice(1, tokenStr.length - 1);
-      const absPath = path.resolve(path.join(this.folderPath, subPath));
-      const absUri = URI.parse(absPath).toString();
-      if (this.definitionMapDocMap.has(absUri)) {
-        if (!this.parentUri.includes(absUri)) {
-          this.parentUri.push(absUri);
-        }
-      } else {
-        const token = ctx.stop;
-        if (token) {
-          this.addSemanticDiagnostic(token, 'Can not import this file.');
-        }
-      }
-      // const token = ctx.stop;
-      // if (token) {
-      //   const importFileNode = new ImportFileBlockImpl(this.document, token);
-      //   this.semanticTokenList.push(importFileNode);
-      // }
-    }
-  }
-
-  public exitImportBlocks(ctx: ImportBlocksContext): void {
-    for (const path of this.parentUri) {
-      const node = this.childDocMap.get(path);
-      if (node) {
-        if (!node.includes(this.fileUri)) {
-          node.push(this.fileUri);
-        }
-      } else {
-        this.childDocMap.set(path, [this.fileUri]);
-      }
-    }
-    this.parentDocMap.set(this.fileUri, this.parentUri);
   }
 
   public enterTypeBlock(ctx: TypeBlockContext): void {
@@ -472,25 +408,11 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     } else if (this.definitionMap.has(token.text)) {
       return this.definitionMap.get(token.text);
     }
-    var nodeStack: Array<string> = this.parentUri.slice();
-    var isVisitedDoc: Set<string> = new Set();
-    while (nodeStack.length > 0) {
-      const node = nodeStack.pop();
-      if (!node || isVisitedDoc.has(node)) {
-        continue;
-      }
-      isVisitedDoc.add(node);
-      const nodeDefinition = this.definitionMapDocMap.get(node);
+    var parentList: Array<string> = this.parentUri.slice();
+    for (const parent of parentList) {
+      const nodeDefinition = this.definitionMapDocMap.get(parent);
       if (nodeDefinition?.has(token.text)) {
         return nodeDefinition.get(token.text);
-      }
-      const nextParentList = this.parentDocMap.get(node);
-      if (nextParentList) {
-        for (const nextParent of nextParentList) {
-          if (!isVisitedDoc.has(nextParent)) {
-            nodeStack.push(nextParent);
-          }
-        }
       }
     }
     return;

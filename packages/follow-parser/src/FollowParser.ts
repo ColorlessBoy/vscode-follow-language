@@ -21,9 +21,8 @@ import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
 import { FollowParserListener } from './FollowParserListener';
 import { ASTNode } from './FollowLanguageTypes';
 import { FollowImportListener } from './FollowImportListener';
-import { exists, existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { URI } from 'vscode-uri';
-import path from 'path';
 
 /*
  * Test antlr4.
@@ -115,14 +114,15 @@ export class FollowParser {
   public childDocMap: Map<string, string[]> = new Map();
   public isParseImportVisitedDoc: Set<string> = new Set();
   public isParseRecVisitedDoc: Set<string> = new Set();
+  public isBuildParentVisitedDoc: Set<string> = new Set();
 
   public getSemanticToken(document?: TextDocument): SemanticTokens {
     const builder = new SemanticTokensBuilder();
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
         this.parseImport(document.uri);
-        this.parseRec(document.uri);
-        this.parse(document);
+        this.buildParent();
+        this.parseRec(document);
       }
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
       if (semanticTokenList) {
@@ -144,8 +144,8 @@ export class FollowParser {
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
         this.parseImport(document.uri);
-        this.parseRec(document.uri);
-        this.parse(document);
+        this.buildParent();
+        this.parseRec(document);
       }
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
       if (semanticTokenList) {
@@ -180,8 +180,8 @@ export class FollowParser {
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
         this.parseImport(document.uri);
-        this.parseRec(document.uri);
-        this.parse(document);
+        this.buildParent();
+        this.parseRec(document);
       }
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
       if (semanticTokenList) {
@@ -210,8 +210,8 @@ export class FollowParser {
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
       this.parseImport(document.uri);
-      this.parseRec(document.uri);
-      this.parse(document);
+      this.buildParent();
+      this.parseRec(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
     if (semanticTokenList) {
@@ -241,8 +241,8 @@ export class FollowParser {
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
       this.parseImport(document.uri);
-      this.parseRec(document.uri);
-      this.parse(document);
+      this.buildParent();
+      this.parseRec(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
     if (semanticTokenList) {
@@ -271,8 +271,8 @@ export class FollowParser {
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
       this.parseImport(document.uri);
-      this.parseRec(document.uri);
-      this.parse(document);
+      this.buildParent();
+      this.parseRec(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
     if (semanticTokenList) {
@@ -296,11 +296,11 @@ export class FollowParser {
         reject(new Error('Follow: Invalid document.'));
         return;
       }
-      if (!this.isParseImportVisitedDoc.has(document.uri)) {
-        this.parseImport(document.uri);
-        this.parseRec(document.uri);
-      }
-      this.parse(document);
+      this.isParseImportVisitedDoc.delete(document.uri);
+      this.isBuildParentVisitedDoc.delete(document.uri);
+      this.parseImport(document.uri);
+      this.buildParent();
+      this.parseRec(document);
       resolve(this.semanticErrorDocMap);
     });
   }
@@ -333,23 +333,67 @@ export class FollowParser {
     }
   }
 
-  private parseRec(uri: string) {
-    const filePath: string = URI.parse(uri).path;
-    if (this.isParseRecVisitedDoc.has(uri) || !existsSync(filePath)) {
-      return;
-    }
-    this.isParseRecVisitedDoc.add(uri);
-    const parentList = this.parentDocMap.get(uri);
-    if (parentList) {
-      for (const parent of parentList) {
-        if (!this.isParseRecVisitedDoc.has(parent)) {
-          this.parseRec(parent);
-        }
+  public buildParent() {
+    var nodeList = [];
+    for (const node of this.childDocMap.keys()) {
+      if (!this.isBuildParentVisitedDoc.has(node)) {
+        nodeList.push(node);
       }
     }
-    const content = readFileSync(filePath, 'utf-8');
-    const document = TextDocument.create(uri, 'fol', 0, content);
+    for (const node of this.parentDocMap.keys()) {
+      if (!this.isBuildParentVisitedDoc.has(node) && !nodeList.includes(node)) {
+        nodeList.push(node);
+      }
+    }
+    // large to small
+    nodeList.sort((a, b) => (this.childDocMap.get(b)?.length || 0) - (this.childDocMap.get(a)?.length || 0));
+    for (const node of nodeList) {
+      const parentList = this.parentDocMap.get(node);
+      const childList = this.childDocMap.get(node);
+      if (childList) {
+        for (const child of childList) {
+          var child_parent = this.parentDocMap.get(child) || [];
+          if (!child_parent.includes(node)) {
+            child_parent.push(node);
+          }
+          if (parentList) {
+            for (const parent of parentList) {
+              if (!child_parent.includes(parent)) {
+                child_parent.push(parent);
+              }
+            }
+          }
+          this.parentDocMap.set(child, child_parent);
+        }
+      }
+      this.isBuildParentVisitedDoc.add(node);
+    }
+  }
+
+  private parseRec(document: TextDocument) {
+    const uri = document.uri;
+    var nodeList = Array.from(this.parentDocMap.get(uri) || []);
+    // large to small
+    nodeList.sort((a, b) => (this.childDocMap.get(b)?.length || 0) - (this.childDocMap.get(a)?.length || 0));
+    for (const node of nodeList) {
+      const definitions = this.definitionMapDocMap.get(node);
+      if (definitions === undefined) {
+        const nodeFilePath: string = URI.parse(node).path;
+        const content = readFileSync(nodeFilePath, 'utf-8');
+        const nodeDocument = TextDocument.create(node, 'fol', 0, content);
+        this.parse(nodeDocument);
+      }
+    }
     this.parse(document);
+    const childList = this.childDocMap.get(uri);
+    if (childList) {
+      for (const child of childList) {
+        const nodeFilePath: string = URI.parse(child).path;
+        const content = readFileSync(nodeFilePath, 'utf-8');
+        const nodeDocument = TextDocument.create(child, 'fol', 0, content);
+        this.parse(nodeDocument);
+      }
+    }
   }
 
   private parse(document: TextDocument) {
@@ -373,7 +417,6 @@ export class FollowParser {
       semanticErrors,
       this.definitionMapDocMap,
       this.parentDocMap,
-      this.childDocMap,
     );
     parser.removeParseListeners();
     parser.removeErrorListeners();
