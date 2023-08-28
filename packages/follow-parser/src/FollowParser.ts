@@ -18,9 +18,10 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { CommonTokenStream, Token, ANTLRErrorListener, CharStreams, Recognizer, RecognitionException } from 'antlr4ts';
 import { ANTLRFollowLexer } from './antlr4/ANTLRFollowLexer';
 import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
-import { SemanticErrorListener } from './SemanticErrorListener';
 import { FollowParserListener } from './FollowParserListener';
 import { ASTNode } from './FollowLanguageTypes';
+import { FollowImportListener } from './FollowImportListener';
+import { existsSync, readFileSync } from 'fs';
 
 /*
  * Test antlr4.
@@ -87,6 +88,7 @@ export class FollowParser {
       SemanticTokenTypes.method,
       SemanticTokenTypes.function,
       SemanticTokenTypes.comment,
+      SemanticTokenTypes.string,
     ],
     tokenModifiers: [SemanticTokenModifiers.declaration],
   };
@@ -101,12 +103,15 @@ export class FollowParser {
     [SemanticTokenTypes.method, 6],
     [SemanticTokenTypes.function, 7],
     [SemanticTokenTypes.comment, 8],
+    [SemanticTokenTypes.string, 9],
   ]);
 
-  public semanticErrorListenerMap: Map<string, SemanticErrorListener> = new Map();
   public definitionMapDocMap: Map<string, Map<string, ASTNode>> = new Map();
   public semanticTokenListDocMap: Map<string, Array<ASTNode>> = new Map();
   public semanticErrorDocMap: Map<string, Diagnostic[]> = new Map();
+  public parentDocMap: Map<string, string[]> = new Map();
+  public childDocMap: Map<string, string[]> = new Map();
+  public isVisitedDoc: Set<string> = new Set();
 
   public getSemanticToken(document?: TextDocument): SemanticTokens {
     const builder = new SemanticTokensBuilder();
@@ -276,6 +281,33 @@ export class FollowParser {
       resolve(this.semanticErrorDocMap);
     });
   }
+  public parseImport(filePath: string) {
+    if (this.isVisitedDoc.has(filePath) || !existsSync(filePath)) {
+      return;
+    }
+    const text = readFileSync(filePath, 'utf-8');
+    // Create the lexer and parser
+    const inputStream = CharStreams.fromString(text);
+    const lexer = new ANTLRFollowLexer(inputStream);
+    const tokenStream = new CommonTokenStream(lexer);
+    const parser = new ANTLRFollowParser(tokenStream);
+    const followImportListener = new FollowImportListener(filePath, this.parentDocMap, this.childDocMap);
+    parser.removeParseListeners();
+    parser.removeErrorListeners();
+    parser.addParseListener(followImportListener);
+    parser.root();
+
+    const parentList = this.parentDocMap.get(filePath);
+    this.isVisitedDoc.add(filePath);
+    if (parentList) {
+      for (const parentFilePath of parentList) {
+        if (!this.isVisitedDoc.has(parentFilePath)) {
+          this.parseImport(parentFilePath);
+        }
+      }
+    }
+  }
+
   private parse(document: TextDocument) {
     if (!document) {
       return;
@@ -290,7 +322,15 @@ export class FollowParser {
     const definitionMap: Map<string, ASTNode> = new Map();
     const semanticTokenList: Array<ASTNode> = new Array();
     const semanticErrors: Diagnostic[] = new Array();
-    const followParserListener = new FollowParserListener(definitionMap, semanticTokenList, semanticErrors);
+    const followParserListener = new FollowParserListener(
+      document,
+      definitionMap,
+      semanticTokenList,
+      semanticErrors,
+      this.definitionMapDocMap,
+      this.parentDocMap,
+      this.childDocMap,
+    );
     parser.removeParseListeners();
     parser.removeErrorListeners();
     parser.addErrorListener(syntaxErrorListener);

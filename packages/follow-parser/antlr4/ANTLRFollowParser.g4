@@ -2,8 +2,10 @@ parser grammar ANTLRFollowParser;
 
 options { tokenVocab=ANTLRFollowLexer; }
 
-root: (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock | lineCommentBlock | blockCommentBlock)* EOF;
+root: importBlocks? (typeBlock | constBlock | varBlock | propBlock | axiomBlock | theoremBlock | lineCommentBlock | blockCommentBlock)* EOF;
 
+importBlocks: (importBlock)+;
+importBlock: KW_IMPORT STRING;
 typeBlock : KW_TYPE (typeDef)+ ;
 constBlock : KW_CONST typeID (constID)+ ;
 varBlock : KW_VAR typeID (varID)+ ;

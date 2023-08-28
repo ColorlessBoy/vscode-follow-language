@@ -16,6 +16,10 @@ RPAREN : ')' ;
 EQ : '=' ;
 COMMA : ',';
 
+SINGLE_QUOTA : '\'';
+STRING: SINGLE_QUOTA .*? SINGLE_QUOTA;
+KW_IMPORT: 'import';
+
 KW_TYPE : 'type' ;
 KW_CONST : 'const' ;
 KW_VAR : 'var' ;

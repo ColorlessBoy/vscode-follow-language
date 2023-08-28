@@ -1,4 +1,5 @@
 import { Diagnostic, DiagnosticSeverity, Position, Range, SemanticTokenTypes } from 'vscode-languageserver';
+import { URI } from 'vscode-uri';
 import {
   ASTNode,
   ArgASTNode,
@@ -24,6 +25,8 @@ import {
   AxiomBlockContext,
   BlockCommentBlockContext,
   ConstBlockContext,
+  ImportBlockContext,
+  ImportBlocksContext,
   LineCommentBlockContext,
   ParamPairContext,
   ProofBlockContext,
@@ -38,6 +41,8 @@ import { ANTLRFollowParserListener } from './antlr4/ANTLRFollowParserListener';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { ErrorNode } from 'antlr4ts/tree/ErrorNode';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import path from 'path';
 
 export class FollowParserListener implements ANTLRFollowParserListener {
   private argList: Array<ArgDefASTNode> = new Array();
@@ -46,13 +51,24 @@ export class FollowParserListener implements ANTLRFollowParserListener {
   private target: Array<ASTNode> = new Array();
   private hasError = false;
   private proof: Array<ASTNode[]> = new Array();
+  private fsPath: string;
+  private filePath: string;
+  private parentPath: string[] = [];
   constructor(
+    public readonly document: TextDocument,
     public readonly definitionMap: Map<string, ASTNode>,
     public readonly semanticTokenList: Array<ASTNode>,
-    public readonly semanticErrors: Diagnostic[] = [],
-  ) {}
+    public readonly semanticErrors: Diagnostic[],
+    public readonly definitionMapDocMap: Map<string, Map<string, ASTNode>>,
+    public readonly parentDocMap: Map<string, string[]>,
+    public readonly childDocMap: Map<string, string[]>,
+  ) {
+    const uri = URI.parse(this.document.uri);
+    this.fsPath = uri.fsPath;
+    this.filePath = path.resolve(uri.path);
+  }
 
-  public exitLineCommentBlock(ctx: LineCommentBlockContext) {
+  public exitLineCommentBlock(ctx: LineCommentBlockContext): void {
     // const token = ctx.start;
     // if (token.text) {
     //   const lineCommentBlock = new LineCommentBlockImpl(token);
@@ -60,12 +76,44 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     // }
   }
 
-  public exitBlockCommentBlock(ctx: BlockCommentBlockContext) {
+  public exitBlockCommentBlock(ctx: BlockCommentBlockContext): void {
     // const token = ctx.start;
     // if (token.text) {
     //   const blockCommentBlock = new BlockCommentBlockImpl(token);
     //   this.semanticTokenList.push(blockCommentBlock);
     // }
+  }
+
+  public exitImportBlock(ctx: ImportBlockContext): void {
+    const tokenStr = ctx.STRING().toString();
+    if (tokenStr.length > 0) {
+      const subPath = tokenStr.slice(1, tokenStr.length - 1);
+      const absPath = path.resolve(path.join(this.fsPath, subPath));
+      if (this.definitionMapDocMap.has(absPath)) {
+        if (!this.parentPath.includes(absPath)) {
+          this.parentPath.push(absPath);
+        }
+      } else {
+        const token = ctx.stop;
+        if (token) {
+          this.addSemanticDiagnostic(token, 'Can not import this file.');
+        }
+      }
+    }
+  }
+
+  public exitImportBlocks(ctx: ImportBlocksContext): void {
+    for (const path of this.parentPath) {
+      const node = this.childDocMap.get(path);
+      if (node) {
+        if (!node.includes(this.filePath)) {
+          node.push(this.filePath);
+        }
+      } else {
+        this.childDocMap.set(path, [this.filePath]);
+      }
+    }
+    this.parentDocMap.set(this.filePath, this.parentPath);
   }
 
   public enterTypeBlock(ctx: TypeBlockContext): void {

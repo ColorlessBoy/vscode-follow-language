@@ -4,6 +4,8 @@
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { RootContext } from "./ANTLRFollowParser";
+import { ImportBlocksContext } from "./ANTLRFollowParser";
+import { ImportBlockContext } from "./ANTLRFollowParser";
 import { TypeBlockContext } from "./ANTLRFollowParser";
 import { ConstBlockContext } from "./ANTLRFollowParser";
 import { VarBlockContext } from "./ANTLRFollowParser";
@@ -47,6 +49,28 @@ export interface ANTLRFollowParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitRoot?: (ctx: RootContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ANTLRFollowParser.importBlocks`.
+	 * @param ctx the parse tree
+	 */
+	enterImportBlocks?: (ctx: ImportBlocksContext) => void;
+	/**
+	 * Exit a parse tree produced by `ANTLRFollowParser.importBlocks`.
+	 * @param ctx the parse tree
+	 */
+	exitImportBlocks?: (ctx: ImportBlocksContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ANTLRFollowParser.importBlock`.
+	 * @param ctx the parse tree
+	 */
+	enterImportBlock?: (ctx: ImportBlockContext) => void;
+	/**
+	 * Exit a parse tree produced by `ANTLRFollowParser.importBlock`.
+	 * @param ctx the parse tree
+	 */
+	exitImportBlock?: (ctx: ImportBlockContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ANTLRFollowParser.typeBlock`.
