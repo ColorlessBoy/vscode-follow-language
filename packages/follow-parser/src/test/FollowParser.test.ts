@@ -139,7 +139,7 @@ suite('FollowParser Tests', () => {
     assert.equal(parser.isParseImportVisitedDoc.size, 3);
     console.log(parser.isParseImportVisitedDoc);
   });
-  test('test # 8: Import-hover', async () => {
+  test('test # 9: Import-hover', async () => {
     const filePath = path.resolve('./src/test/examples/import/negation.fol');
     const content = readFileSync(filePath, 'utf-8');
     const fileUri = URI.parse(filePath).toString();
@@ -150,5 +150,22 @@ suite('FollowParser Tests', () => {
       assert.fail();
     }
     console.log(diagnostic);
+  });
+  test('test # 10: Import-hover', async () => {
+    const filePath = path.resolve('./src/test/examples/import/negation.fol');
+    const content = readFileSync(filePath, 'utf-8');
+    const fileUri = URI.parse(filePath).toString();
+    const textDocument = TextDocument.create(fileUri, 'fol', 0, content);
+    const parser = new FollowParser();
+    const diagnostic = await parser.getDiagnostics(textDocument);
+    if (diagnostic === undefined) {
+      assert.fail();
+    }
+    const filePath2 = path.resolve('./src/test/examples/import/definitions.fol');
+    const content2 = readFileSync(filePath2, 'utf-8');
+    const fileUri2 = URI.parse(filePath2).toString();
+    const textDocument2 = TextDocument.create(fileUri2, 'fol', 0, content2);
+    const location = parser.getReference(textDocument2, { line: 8, character: 7 });
+    console.log(location);
   });
 });

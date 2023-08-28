@@ -296,8 +296,10 @@ export class FollowParser {
         reject(new Error('Follow: Invalid document.'));
         return;
       }
-      this.parseImport(document.uri);
-      this.parseRec(document.uri);
+      if (!this.isParseImportVisitedDoc.has(document.uri)) {
+        this.parseImport(document.uri);
+        this.parseRec(document.uri);
+      }
       this.parse(document);
       resolve(this.semanticErrorDocMap);
     });
