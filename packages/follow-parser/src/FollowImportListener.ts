@@ -11,13 +11,13 @@ import { ImportBlockContext, ImportBlocksContext } from './antlr4/ANTLRFollowPar
 export class FollowImportListener implements ANTLRFollowParserListener {
   private folderPath: string;
   private filePath: string;
-  private parentPath: string[] = [];
+  private parentUri: string[] = [];
   constructor(
-    filePath: string,
+    public readonly fileUri: string,
     public readonly parentDocMap: Map<string, string[]>,
     public readonly childDocMap: Map<string, string[]>,
   ) {
-    this.filePath = path.resolve(filePath);
+    this.filePath = URI.parse(fileUri).path;
     this.folderPath = path.dirname(this.filePath);
   }
 
@@ -26,24 +26,25 @@ export class FollowImportListener implements ANTLRFollowParserListener {
     if (tokenStr.length > 0) {
       const subPath = tokenStr.slice(1, tokenStr.length - 1);
       const absPath = path.resolve(path.join(this.folderPath, subPath));
-      if (!this.parentPath.includes(absPath) && fs.existsSync(absPath)) {
-        this.parentPath.push(absPath);
+      const absUri = URI.parse(absPath).toString();
+      if (!this.parentUri.includes(absUri) && fs.existsSync(absPath)) {
+        this.parentUri.push(absUri);
       }
     }
   }
 
   public exitImportBlocks(ctx: ImportBlocksContext): void {
-    for (const path of this.parentPath) {
+    for (const path of this.parentUri) {
       const node = this.childDocMap.get(path);
       if (node) {
-        if (!node.includes(this.filePath)) {
-          node.push(this.filePath);
+        if (!node.includes(this.fileUri)) {
+          node.push(this.fileUri);
         }
       } else {
-        this.childDocMap.set(path, [this.filePath]);
+        this.childDocMap.set(path, [this.fileUri]);
       }
     }
-    this.parentDocMap.set(this.filePath, this.parentPath);
+    this.parentDocMap.set(this.fileUri, this.parentUri);
   }
 
   visitTerminal?: (/*@NotNull*/ node: TerminalNode) => void;

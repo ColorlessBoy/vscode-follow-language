@@ -1,5 +1,6 @@
 import { Token } from 'antlr4ts';
 import { Range, SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export type ASTNode =
   | BaseASTNode
@@ -21,6 +22,7 @@ export type ASTNode =
 
 export interface BaseASTNode {
   isValid: boolean;
+  readonly document: TextDocument;
   readonly token: Token;
   readonly semanticType?: SemanticTokenTypes;
   readonly type?: string | BaseASTNode;
@@ -164,4 +166,9 @@ export interface LineCommentBlock extends BaseASTNode {
 export interface BlockCommentBlock extends BaseASTNode {
   readonly token: Token;
   readonly semanticType: SemanticTokenTypes.comment;
+}
+
+export interface ImportFileBlock extends BaseASTNode {
+  readonly token: Token;
+  readonly semanticType: SemanticTokenTypes.string;
 }

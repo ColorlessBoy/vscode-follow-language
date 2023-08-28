@@ -21,7 +21,9 @@ import { ANTLRFollowParser } from './antlr4/ANTLRFollowParser';
 import { FollowParserListener } from './FollowParserListener';
 import { ASTNode } from './FollowLanguageTypes';
 import { FollowImportListener } from './FollowImportListener';
-import { existsSync, readFileSync } from 'fs';
+import { exists, existsSync, readFileSync } from 'fs';
+import { URI } from 'vscode-uri';
+import path from 'path';
 
 /*
  * Test antlr4.
@@ -111,12 +113,15 @@ export class FollowParser {
   public semanticErrorDocMap: Map<string, Diagnostic[]> = new Map();
   public parentDocMap: Map<string, string[]> = new Map();
   public childDocMap: Map<string, string[]> = new Map();
-  public isVisitedDoc: Set<string> = new Set();
+  public isParseImportVisitedDoc: Set<string> = new Set();
+  public isParseRecVisitedDoc: Set<string> = new Set();
 
   public getSemanticToken(document?: TextDocument): SemanticTokens {
     const builder = new SemanticTokensBuilder();
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parseImport(document.uri);
+        this.parseRec(document.uri);
         this.parse(document);
       }
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
@@ -138,6 +143,8 @@ export class FollowParser {
     builder.previousResult(previousResultId);
     if (document) {
       if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parseImport(document.uri);
+        this.parseRec(document.uri);
         this.parse(document);
       }
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
@@ -152,32 +159,42 @@ export class FollowParser {
     return builder.buildEdits();
   }
 
+  private addEdit(edit: WorkspaceEdit, node: ASTNode, newName: string) {
+    if (edit.changes![node.document.uri]) {
+      edit.changes![node.document.uri].push({
+        range: node.getRange(),
+        newText: newName,
+      });
+    } else {
+      edit.changes![node.document.uri] = [
+        {
+          range: node.getRange(),
+          newText: newName,
+        },
+      ];
+    }
+  }
+
   public getRename(document: TextDocument, position: Position, newName: string): WorkspaceEdit {
     const edit: WorkspaceEdit = { changes: {} };
     if (document) {
-      edit.changes![document.uri] = [];
       if (!this.semanticTokenListDocMap.has(document.uri)) {
+        this.parseImport(document.uri);
+        this.parseRec(document.uri);
         this.parse(document);
       }
-      var editList = edit.changes![document.uri];
       const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
-      const definitionMap = this.definitionMapDocMap.get(document.uri);
-      if (semanticTokenList && definitionMap) {
+      if (semanticTokenList) {
         const offset = document.offsetAt(position);
         for (const semanticToken of semanticTokenList) {
           if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-            const definition =
-              semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
+            const definition = semanticToken.definition || semanticToken;
+            if (definition) {
+              this.addEdit(edit, definition, newName);
+            }
             if (definition && definition.reference) {
-              editList.push({
-                range: definition.getRange(),
-                newText: newName,
-              });
               for (const ref of definition.reference) {
-                editList.push({
-                  range: ref.getRange(),
-                  newText: newName,
-                });
+                this.addEdit(edit, ref, newName);
               }
             }
           }
@@ -192,21 +209,21 @@ export class FollowParser {
       return new Array();
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
+      this.parseImport(document.uri);
+      this.parseRec(document.uri);
       this.parse(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
-    const definitionMap = this.definitionMapDocMap.get(document.uri);
-    if (semanticTokenList && definitionMap) {
+    if (semanticTokenList) {
       const offset = document.offsetAt(position);
       for (const semanticToken of semanticTokenList) {
         if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-          const definition =
-            semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
+          const definition = semanticToken.definition || semanticToken;
           if (definition && definition.reference) {
             const result: Location[] = [];
             for (const ref of definition.reference) {
               result.push({
-                uri: document.uri,
+                uri: ref.document.uri,
                 range: ref.getRange(),
               });
             }
@@ -223,19 +240,19 @@ export class FollowParser {
       return new Array();
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
+      this.parseImport(document.uri);
+      this.parseRec(document.uri);
       this.parse(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
-    const definitionMap = this.definitionMapDocMap.get(document.uri);
-    if (semanticTokenList && definitionMap) {
+    if (semanticTokenList) {
       const offset = document.offsetAt(position);
       for (const semanticToken of semanticTokenList) {
         if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
-          const definition =
-            semanticToken.definition || definitionMap.get(semanticToken.token.text || '') || semanticToken;
+          const definition = semanticToken.definition || semanticToken;
           if (definition) {
             const definitionLink: DefinitionLink = {
-              targetUri: document.uri, // local search
+              targetUri: definition.document.uri,
               targetRange: definition.getRange(),
               targetSelectionRange: definition.getRange(),
               originSelectionRange: semanticToken.getRange(),
@@ -253,11 +270,12 @@ export class FollowParser {
       return;
     }
     if (!this.semanticTokenListDocMap.has(document.uri)) {
+      this.parseImport(document.uri);
+      this.parseRec(document.uri);
       this.parse(document);
     }
     const semanticTokenList = this.semanticTokenListDocMap.get(document.uri);
-    const definitionMap = this.definitionMapDocMap.get(document.uri);
-    if (semanticTokenList && definitionMap) {
+    if (semanticTokenList) {
       const offset = document.offsetAt(position);
       for (const semanticToken of semanticTokenList) {
         if (semanticToken.token.startIndex <= offset && semanticToken.token.stopIndex >= offset) {
@@ -271,18 +289,23 @@ export class FollowParser {
     }
     return;
   }
+
   public async getDiagnostics(document: TextDocument): Promise<Map<string, Diagnostic[]>> {
     return new Promise((resolve, reject) => {
       if (!document) {
         reject(new Error('Follow: Invalid document.'));
         return;
       }
+      this.parseImport(document.uri);
+      this.parseRec(document.uri);
       this.parse(document);
       resolve(this.semanticErrorDocMap);
     });
   }
-  public parseImport(filePath: string) {
-    if (this.isVisitedDoc.has(filePath) || !existsSync(filePath)) {
+
+  public parseImport(uri: string) {
+    const filePath: string = URI.parse(uri).path;
+    if (this.isParseImportVisitedDoc.has(uri) || !existsSync(filePath)) {
       return;
     }
     const text = readFileSync(filePath, 'utf-8');
@@ -291,21 +314,40 @@ export class FollowParser {
     const lexer = new ANTLRFollowLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new ANTLRFollowParser(tokenStream);
-    const followImportListener = new FollowImportListener(filePath, this.parentDocMap, this.childDocMap);
+    const followImportListener = new FollowImportListener(uri, this.parentDocMap, this.childDocMap);
     parser.removeParseListeners();
     parser.removeErrorListeners();
     parser.addParseListener(followImportListener);
     parser.root();
 
-    const parentList = this.parentDocMap.get(filePath);
-    this.isVisitedDoc.add(filePath);
+    const parentList = this.parentDocMap.get(uri);
+    this.isParseImportVisitedDoc.add(uri);
     if (parentList) {
       for (const parentFilePath of parentList) {
-        if (!this.isVisitedDoc.has(parentFilePath)) {
+        if (!this.isParseImportVisitedDoc.has(parentFilePath)) {
           this.parseImport(parentFilePath);
         }
       }
     }
+  }
+
+  private parseRec(uri: string) {
+    const filePath: string = URI.parse(uri).path;
+    if (this.isParseRecVisitedDoc.has(uri) || !existsSync(filePath)) {
+      return;
+    }
+    this.isParseRecVisitedDoc.add(uri);
+    const parentList = this.parentDocMap.get(uri);
+    if (parentList) {
+      for (const parent of parentList) {
+        if (!this.isParseRecVisitedDoc.has(parent)) {
+          this.parseRec(parent);
+        }
+      }
+    }
+    const content = readFileSync(filePath, 'utf-8');
+    const document = TextDocument.create(uri, 'fol', 0, content);
+    this.parse(document);
   }
 
   private parse(document: TextDocument) {

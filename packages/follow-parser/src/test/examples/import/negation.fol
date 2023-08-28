@@ -1,4 +1,4 @@
-import 'definition.fol'
+import 'definitions.fol'
 import 'implication.fol'
 
 /*******************************************************************************

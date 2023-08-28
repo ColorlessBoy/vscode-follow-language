@@ -3,6 +3,8 @@ import { FollowParser } from '../FollowParser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DiagnosticSeverity, Diagnostic, Position } from 'vscode-languageserver/node';
 import path from 'path';
+import { readFileSync } from 'fs';
+import { URI } from 'vscode-uri';
 
 suite('FollowParser Tests', () => {
   test('test #1: Diagnostics for single syntax error', async () => {
@@ -127,13 +129,26 @@ suite('FollowParser Tests', () => {
     }
     console.log(diagnostic);
   });
-  test('test # 8: Import', async () => {
+  test('test # 8: Import-parseImport', async () => {
     const filePath = path.resolve('./src/test/examples/import/negation.fol');
     const parser = new FollowParser();
-    parser.parseImport(filePath);
+    const fileUri = URI.parse(filePath).toString();
+    parser.parseImport(fileUri);
     assert.equal(parser.childDocMap.size, 2);
     assert.equal(parser.parentDocMap.size, 2);
-    assert.equal(parser.isVisitedDoc.size, 3);
-    console.log(parser.isVisitedDoc);
+    assert.equal(parser.isParseImportVisitedDoc.size, 3);
+    console.log(parser.isParseImportVisitedDoc);
+  });
+  test('test # 8: Import-hover', async () => {
+    const filePath = path.resolve('./src/test/examples/import/negation.fol');
+    const content = readFileSync(filePath, 'utf-8');
+    const fileUri = URI.parse(filePath).toString();
+    const textDocument = TextDocument.create(fileUri, 'fol', 0, content);
+    const parser = new FollowParser();
+    const diagnostic = await parser.getDiagnostics(textDocument);
+    if (diagnostic === undefined) {
+      assert.fail();
+    }
+    console.log(diagnostic);
   });
 });
