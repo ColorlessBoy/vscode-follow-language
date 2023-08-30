@@ -383,8 +383,9 @@ export class FollowParser {
       }
     }
     this.parse(document);
-    const childList = this.childDocMap.get(uri);
+    const childList = this.childDocMap.get(uri)?.slice();
     if (childList) {
+      childList.sort((a, b) => (this.childDocMap.get(b)?.length || 0) - (this.childDocMap.get(a)?.length || 0));
       for (const child of childList) {
         const nodeFilePath: string = URI.parse(child).path;
         const content = readFileSync(nodeFilePath, 'utf-8');
