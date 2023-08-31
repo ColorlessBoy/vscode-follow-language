@@ -1001,3 +1001,5 @@ thm loowoz(wff w0, wff w1, wff w2) {
   a2d imp imp w0 w1 imp w0 w2 w1 w0 w2
   jarr w0 w1 imp w0 w2
 }
+
+const wff cw0

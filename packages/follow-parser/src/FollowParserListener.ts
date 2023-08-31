@@ -322,15 +322,49 @@ export class FollowParserListener implements ANTLRFollowParserListener {
         for (const proofCommand of theoremDefASTNode.proof) {
           const proofOp = proofCommand[0];
           if (proofOp.isValid === false && (proofOp.targetStr?.length || 0) > 0) {
-            var errorMsg: string = 'Proof command is invalid. Input state:  \n';
+            var errorMsg: string = 'Proof command is useless. Input state:  \n';
             errorMsg += proofOp.prevProofState?.join('  \n');
             this.addSemanticDiagnostic(proofOp.token, errorMsg);
+          } else {
+            if (proofOp.untilNowAssumptionStrSet) {
+              for (const assume of proofOp.untilNowAssumptionStrSet) {
+                if (!this.checkDiffStatement(assume)) {
+                  this.addSemanticDiagnostic(proofOp.token, 'Invalid distinct condition.');
+                  break;
+                }
+              }
+            }
+            if (proofOp.isValid && proofOp.untilNowTargetStrSet) {
+              for (const target of proofOp.untilNowTargetStrSet) {
+                if (!this.checkDiffStatement(target)) {
+                  this.addSemanticDiagnostic(proofOp.token, 'Invalid distinct condition.');
+                  break;
+                }
+              }
+            }
           }
         }
         if (!theoremDefASTNode.isProved()) {
           var errorMsg: string = 'Without valid proof. Current state:  \n';
           errorMsg += theoremDefASTNode.untilNowProofState.join('  \n');
           this.addSemanticDiagnostic(theoremDefASTNode.token, errorMsg);
+        } else {
+          if (theoremDefASTNode.untilNowAssumptionStrSet) {
+            for (const assume of theoremDefASTNode.untilNowAssumptionStrSet) {
+              if (!this.checkDiffStatement(assume)) {
+                this.addSemanticDiagnostic(theoremDefASTNode.token, 'Invalid distinct condition.');
+                break;
+              }
+            }
+          }
+          if (theoremDefASTNode.untilNowTargetStrSet) {
+            for (const target of theoremDefASTNode.untilNowTargetStrSet) {
+              if (!this.checkDiffStatement(target)) {
+                this.addSemanticDiagnostic(theoremDefASTNode.token, 'Invalid distinct condition.');
+                break;
+              }
+            }
+          }
         }
       }
     }
@@ -377,7 +411,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       const definition = this.argMap.get(token.text);
       this.addSemanticDiagnostic(
         token,
-        `${token.text} has been used.  \n${definition?.document.uri}:${definition?.token
+        `${token.text} has been used. \n${definition?.document.uri}:${definition?.token
           .line}  \n${definition?.toString()}`,
       );
       return false;
@@ -521,10 +555,80 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       );
       return false;
     }
+    for (const opNode of opNodeList) {
+      if (opNode.token.text === 'diffs') {
+        const args = opNode.args;
+        if (args) {
+          const arg0 = args[0].token.text || '';
+          const arg1 = args[1].token.text || '';
+          if (arg0 === arg1) {
+            this.addSemanticDiagnostic(opNode.token, `Invalid distinct condition: diffs ${arg0} ${arg1}.`);
+            return false;
+          }
+        }
+      } else if (opNode.token.text === 'diff') {
+        const args = opNode.args;
+        if (args) {
+          const arg0 = args[0].token.text || '';
+          const arg1 = args[1].toStringSimp();
+          const arg1List = arg1?.split(' ') || [];
+          if (arg1List.includes(arg0)) {
+            this.addSemanticDiagnostic(opNode.token, `Invalid distinct condition: diff ${arg0} ${arg1}.`);
+            return false;
+          }
+        }
+      }
+    }
     const startOpNode = opNodeList[0];
     if (startOpNode) {
       startOpNode.isValid = true;
       opNodeList[0].toString(); // Generate state information.
+    }
+    return true;
+  }
+
+  private getArgsCount(op: string): number {
+    if (!op) {
+      return 0;
+    }
+    if (this.argMap.has(op)) {
+      return this.argMap.get(op)?.args?.length || 0;
+    } else if (this.definitionMap.has(op)) {
+      return this.definitionMap.get(op)?.args?.length || 0;
+    }
+    var parentList: Array<string> = this.parentUri.slice();
+    for (const parent of parentList) {
+      const nodeDefinition = this.definitionMapDocMap.get(parent);
+      if (nodeDefinition?.has(op)) {
+        return nodeDefinition.get(op)?.args?.length || 0;
+      }
+    }
+    return 0;
+  }
+
+  private checkDiffStatement(statement: string): boolean {
+    if (!statement || !statement.includes('diff')) {
+      return true;
+    }
+    const opList = statement.split(' ').reverse() || [];
+    var stack: Array<string> = [];
+    for (const op of opList) {
+      const argsCount = this.getArgsCount(op);
+      if (argsCount === 0) {
+        stack.push(op);
+        continue;
+      }
+      var args: string[] = [];
+      for (var i = 0; i < argsCount; i++) {
+        args.push(stack.pop() || '');
+      }
+      if (op === 'diffs' && args[0] === args[1]) {
+        return false;
+      } else if (op === 'diff' && args[1]?.split(' ').includes(args[0])) {
+        return false;
+      }
+      const newOp = op + ' ' + args.join(' ');
+      stack.push(newOp);
     }
     return true;
   }
@@ -957,7 +1061,7 @@ export class PropASTNodeImpl extends BaseASTNodeImpl implements PropASTNode {
         if (argStr.length > 0) {
           argStr += ', ';
         }
-        argStr += `${this.definition.args[i].type.token.text} ?`;
+        argStr += `${this.definition.args[i].type.token.text}?${this.definition.args[i].token.text}`;
       }
       str = str + '(' + argStr + ')';
     }
@@ -975,7 +1079,7 @@ export class PropASTNodeImpl extends BaseASTNodeImpl implements PropASTNode {
         if (argStr.length > 0) {
           argStr += ' ';
         }
-        argStr += `${this.definition.args[i].type.token.text}?`;
+        argStr += `${this.definition.args[i].type.token.text}?${this.definition.args[i].token.text}`;
       }
       str = str + ' ' + argStr;
     }
@@ -1032,7 +1136,7 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     for (var i = 0; i < this.definition.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
       const argType: string = this.definition.args[i].type.token.text || '';
-      const unknownArgStr = `${argType}?`;
+      const unknownArgStr = `${argType}?${argCode}`;
       argMap.set(argCode, this.args[i]?.toStringSimp() || unknownArgStr);
     }
     for (const assumption of this.definition.assumptions) {
@@ -1101,7 +1205,7 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     for (var i = 0; i < this.definition.args.length; ++i) {
       const argCode: string = this.definition.args[i].token.text || '';
       const argType: string = this.definition.args[i].type.token.text || '';
-      const unknownArgStr = `${argType}?`;
+      const unknownArgStr = `${argType}?${argCode}`;
       argMap.set(argCode, this.args[i]?.toStringSimp() || unknownArgStr);
     }
     for (const assumption of this.definition.assumptions) {

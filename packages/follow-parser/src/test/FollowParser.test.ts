@@ -168,4 +168,38 @@ suite('FollowParser Tests', () => {
     const location = parser.getReference(textDocument2, { line: 8, character: 7 });
     console.log(location);
   });
+  test('test # 11 : Invalid diff statement', async () => {
+    const content: string =
+      'type setvar wff\n' +
+      'prop wff eqset(setvar s0, setvar s1)' +
+      'prop wff diffs(setvar s0, setvar s1)\n' +
+      'prop wff diff(setvar s0, wff w0)\n' +
+      'axiom ax-1(setvar s0) { |- diffs s0 s0 }\n' +
+      'axiom ax-2(setvar s0, setvar s1) { |- diff s0 eqset s0 s1 }';
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const diagnostic = await parser.getDiagnostics(textDocument);
+    if (diagnostic === undefined) {
+      assert.fail();
+    }
+    console.log(diagnostic);
+  });
+  test('test # 11 : Invalid diff proof statement', async () => {
+    const content: string =
+      'type setvar wff\n' +
+      'prop wff diffs(setvar s0, setvar s1)\n' +
+      'const setvar hs0 hs1\n' +
+      'axiom df-hs0-s(setvar s0) { |- diffs hs0 s0 }\n' +
+      'axiom a1ii(wff w0, wff w1) { -| w1 -| w0 |- w0 }\n' +
+      'thm th1(setvar s0) { |- diffs hs0 s0 } = { df-hs0-s s0 }\n' +
+      'thm th2(setvar s0) { |- diffs hs1 s0 } = { a1ii diffs hs1 s0 diffs hs0 hs0 th1 hs0 }\n';
+
+    const textDocument = TextDocument.create('test://test.fol', 'fol', 0, content);
+    const parser = new FollowParser();
+    const diagnostic = await parser.getDiagnostics(textDocument);
+    if (diagnostic === undefined) {
+      assert.fail();
+    }
+    console.log(diagnostic);
+  });
 });
