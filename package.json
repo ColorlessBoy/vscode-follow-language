@@ -32,8 +32,9 @@
     "configurationDefaults": {
       "editor.semanticTokenColorCustomizations": {
         "rules": {
-          "operator": "#B5BD68",
-          "string": "#FF8C00"
+          "operator": "#17B169",
+          "string": "#FF8C00",
+          "number": "#F9629F"
         }
       }
     },
