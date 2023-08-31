@@ -137,7 +137,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var typeASTNode: TypeASTNode | undefined = this.createTypeASTNode(argType);
     if (typeASTNode) {
       if (arg && arg.text) {
-        if (this.nameHasBeenUsedCheck(arg, true)) {
+        if (this.nameHasBeenUsedCheck(arg, false)) {
           const argNode = new ArgDefASTNodeImpl(this.document, typeASTNode, arg);
           this.argMap.set(arg.text, argNode);
           this.argList.push(argNode);
