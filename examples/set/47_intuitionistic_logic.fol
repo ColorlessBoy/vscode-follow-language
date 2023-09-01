@@ -1,0 +1,175 @@
+import '42_ax_13.fol'
+
+/*******************************************************************************
+  Intuitionistic logic
+*******************************************************************************/
+
+// 24159
+thm axia1(wff w0, wff w1) {
+  |- (imp (and w0 w1) w0)
+} = {
+  simpl w0 w1
+}
+
+// 24164
+thm axia2(wff w0, wff w1) {
+  |- (imp (and w0 w1) w1)
+} = {
+  simpr w0 w1
+}
+
+// 24169
+thm axia3(wff w0, wff w1) {
+  |- (imp w0 (imp w1 (and w0 w1)))
+} = {
+  pm3.2 w0 w1
+}
+
+// 24174
+thm axin1(wff w0) {
+  |- (imp (imp w0 not w0) not w0)
+} = {
+  pm2.01 w0
+}
+
+// 24179
+thm axin2(wff w0, wff w1) {
+  |- (imp not w0 (imp w0 w1))
+} = {
+  pm2.21 w0 w1
+}
+
+// 24184
+thm axio(wff w0, wff w1, wff w2) {
+  |- (iff (imp (or w0 w2) w1) (and (imp w0 w1) (imp w2 w1)))
+} = {
+  jaob w0 w1 w2
+}
+
+// 24191
+thm axi4(wff w0, setvar s0) {
+  |- (imp forall s0 w0 w0)
+} = {
+  sp w0 s0
+}
+
+// 24196
+thm axi5r(wff w0, wff w1, setvar s0) {
+  |- (imp (imp forall s0 w0 forall s0 w1) forall s0 (imp forall s0 w0 w1))
+} = {
+  alrimih imp forall s0 w0 forall s0 w1 imp forall s0 w0 w1 s0
+  imim2i forall s0 w1 w1 forall s0 w0
+  sp w1 s0
+  hbim forall s0 w0 forall s0 w1 s0
+  hba1 w1 s0
+  hba1 w0 s0
+}
+
+// 24202
+thm axial(wff w0, setvar s0) {
+  |- (imp forall s0 w0 forall s0 forall s0 w0)
+} = {
+  hba1 w0 s0
+}
+
+// 24208
+thm axie1(wff w0, setvar s0) {
+  |- (imp exist s0 w0 forall s0 exist s0 w0)
+} = {
+  hbe1 w0 s0
+}
+
+// 24213
+thm axie2(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w1 forall s0 w1) (iff forall s0 (imp w0 w1) (imp exist s0 w0 w1)))
+} = {
+  sylbir forall s0 imp w1 forall s0 w1 notfree s0 w1 iff forall s0 imp w0 w1 imp exist s0 w0 w1
+  19.23t w0 w1 s0
+  nf5 w1 s0
+}
+
+// 24221
+thm axi9(setvar s0, setvar s1) {
+  |- exist s0 eqset s0 s1
+} = {
+  ax6e s0 s1
+}
+
+// 24227
+thm axi10(setvar s0, setvar s1) {
+  |- (imp forall s0 eqset s0 s1 forall s1 eqset s1 s0)
+} = {
+  axc11n s0 s1
+}
+
+// 24236
+thm axi12(setvar s0, setvar s1, setvar s2) {
+  |- (or forall s2 eqset s2 s0 (or forall s2 eqset s2 s1 forall s2 (imp eqset s0 s1 forall s2 eqset s0 s1)))
+} = {
+  mpbi or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  mpgbi or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 s2
+  mpbir or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orri forall s2 eqset s2 s0 or forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orrd not forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  axc9 s0 s1 s2
+  19.32 or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 s2
+  nfor forall s2 eqset s2 s0 forall s2 eqset s2 s1 s2
+  nfa1 eqset s2 s1 s2
+  nfa1 eqset s2 s0 s2
+}
+
+// 24245
+thm axi12OLD(setvar s0, setvar s1, setvar s2) {
+  |- (or forall s2 eqset s2 s0 (or forall s2 eqset s2 s1 forall s2 (imp eqset s0 s1 forall s2 eqset s0 s1)))
+} = {
+  mpbi or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  mpgbi or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 s2
+  mpbir or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orri forall s2 eqset s2 s0 or forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  orrd not forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  axc9 s0 s1 s2
+  19.32 or forall s2 eqset s2 s0 forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 s2
+  nfor forall s2 eqset s2 s0 forall s2 eqset s2 s1 s2
+  nfae s2 s1 s2
+  nfae s2 s0 s2
+}
+
+// 24257
+thm axbnd(setvar s0, setvar s1, setvar s2) {
+  |- (or forall s2 eqset s2 s0 (or forall s2 eqset s2 s1 forall s0 forall s2 (imp eqset s0 s1 forall s2 eqset s0 s1)))
+} = {
+  mpgbi or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 s0
+  mpbir or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  axi12 s0 s1 s2
+  bitri forall s0 or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 or forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  orass forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  19.32 or forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 s0
+  nfor forall s2 eqset s2 s0 forall s2 eqset s2 s1 s0
+  nfae s2 s1 s0
+  nfae s2 s0 s0
+}
+
+// 24266
+thm axbndOLD(setvar s0, setvar s1, setvar s2) {
+  |- (or forall s2 eqset s2 s0 (or forall s2 eqset s2 s1 forall s0 forall s2 (imp eqset s0 s1 forall s2 eqset s0 s1)))
+} = {
+  orri forall s2 eqset s2 s0 or forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  orrd not forall s2 eqset s2 s0 forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  ex not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 forall s0 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1
+  alrimi and not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 forall s2 imp eqset s0 s1 forall s2 eqset s0 s1 s0
+  alrimi and not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1 s2
+  impand not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 imp eqset s0 s1 forall s2 eqset s0 s1
+  axc9 s0 s1 s2
+  nfan not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 s2
+  nfnae s2 s1 s2
+  nfnae s2 s0 s2
+  nfan not forall s2 eqset s2 s0 not forall s2 eqset s2 s1 s0
+  nfnae s2 s1 s0
+  nfnae s2 s0 s0
+}
+
