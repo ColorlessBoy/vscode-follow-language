@@ -1,0 +1,181 @@
+import '6_mix.fol'
+
+/*******************************************************************************
+  The conditional operator for propositions
+*******************************************************************************/
+
+// 8646
+thm dfifp2(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (and (imp w0 w1) (imp not w0 w2)))
+} = {
+  bitri ifp w0 w1 w2 or and w0 w1 and not w0 w2 and imp w0 w1 imp not w0 w2
+  cases2 w0 w1 w2
+  df-ifp w0 w1 w2
+}
+
+// 8652
+thm dfifp3(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (and (imp w0 w1) (or w0 w2)))
+} = {
+  bitri ifp w0 w1 w2 and imp w0 w1 imp not w0 w2 and imp w0 w1 or w0 w2
+  anbi2i imp not w0 w2 or w0 w2 imp w0 w1
+  pm4.64 w0 w2
+  dfifp2 w0 w1 w2
+}
+
+// 8658
+thm dfifp4(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (and (or not w0 w1) (or w0 w2)))
+} = {
+  bitri ifp w0 w1 w2 and imp w0 w1 or w0 w2 and or not w0 w1 or w0 w2
+  anbi1i imp w0 w1 or not w0 w1 or w0 w2
+  imor w0 w1
+  dfifp3 w0 w1 w2
+}
+
+// 8665
+thm dfifp5(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (and (or not w0 w1) (imp not w0 w2)))
+} = {
+  bitri ifp w0 w1 w2 and imp w0 w1 imp not w0 w2 and or not w0 w1 imp not w0 w2
+  anbi1i imp w0 w1 or not w0 w1 imp not w0 w2
+  imor w0 w1
+  dfifp2 w0 w1 w2
+}
+
+// 8672
+thm dfifp6(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (or (and w0 w1) not (imp w2 w0)))
+} = {
+  bitri ifp w0 w1 w2 or and w0 w1 and not w0 w2 or and w0 w1 not imp w2 w0
+  orbi2i and not w0 w2 not imp w2 w0 and w0 w1
+  bitri and not w0 w2 and w2 not w0 not imp w2 w0
+  annim w2 w0
+  ancom not w0 w2
+  df-ifp w0 w1 w2
+}
+
+// 8679
+thm dfifp7(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) (imp (imp w2 w0) (and w0 w1)))
+} = {
+  3bitr4i or and w0 w1 not imp w2 w0 or not imp w2 w0 and w0 w1 ifp w0 w1 w2 imp imp w2 w0 and w0 w1
+  imor imp w2 w0 and w0 w1
+  dfifp6 w0 w1 w2
+  orcom and w0 w1 not imp w2 w0
+}
+
+// 8686
+thm anifp(wff w0, wff w1, wff w2) {
+  |- (imp (and w1 w2) ifp (w0 w1 w2))
+} = {
+  sylibr and w1 w2 and or not w0 w1 or w0 w2 ifp w0 w1 w2
+  dfifp4 w0 w1 w2
+  anim12i w1 or not w0 w1 w2 or w0 w2
+  olc w2 w0
+  olc w1 not w0
+}
+
+// 8692
+thm ifpor(wff w0, wff w1, wff w2) {
+  |- (imp ifp (w0 w1 w2) (or w1 w2))
+} = {
+  sylbi ifp w0 w1 w2 or and w0 w1 and not w0 w2 or w1 w2
+  orim12i and w0 w1 w1 and not w0 w2 w2
+  simpr not w0 w2
+  simpr w0 w1
+  df-ifp w0 w1 w2
+}
+
+// 8698
+thm ifpn(wff w0, wff w1, wff w2) {
+  |- (iff ifp (w0 w1 w2) ifp (not w0 w2 w1))
+} = {
+  3bitr4i and imp w0 w1 imp not w0 w2 and imp not w0 w2 imp not not w0 w1 ifp w0 w1 w2 ifp not w0 w2 w1
+  dfifp2 not w0 w2 w1
+  dfifp2 w0 w1 w2
+  anbi2ci imp w0 w1 imp not not w0 w1 imp not w0 w2
+  imbi1i w0 not not w0 w1
+  notnotb w0
+}
+
+// 8706
+thm ifptru(wff w0, wff w1, wff w2) {
+  |- (imp w0 (iff ifp (w0 w1 w2) w1))
+} = {
+  bitr2d w0 w1 imp w0 w1 ifp w0 w1 w2
+  syl6bbr w0 imp w0 w1 and imp w0 w1 or w0 w2 ifp w0 w1 w2
+  dfifp3 w0 w1 w2
+  biantrud w0 or w0 w2 imp w0 w1
+  orc w0 w2
+  biimt w0 w1
+}
+
+// 8714
+thm ifpfal(wff w0, wff w1, wff w2) {
+  |- (imp not w0 (iff ifp (w0 w1 w2) w2))
+} = {
+  syl5bb ifp w0 w1 w2 ifp not w0 w2 w1 not w0 w2
+  ifptru not w0 w2 w1
+  ifpn w0 w1 w2
+}
+
+// 8721
+thm ifpid(wff w0, wff w1) {
+  |- (iff ifp (w0 w1 w1) w1)
+} = {
+  pm2.61i w0 iff ifp w0 w1 w1 w1
+  ifpfal w0 w1 w1
+  ifptru w0 w1 w1
+}
+
+// 8732
+thm casesifp(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (iff w1 w2))
+  -| (imp not w0 (iff w1 w3))
+  |- (iff w1 ifp (w0 w2 w3))
+} = {
+  bitr4i w1 or and w0 w2 and not w0 w3 ifp w0 w2 w3
+  df-ifp w0 w2 w3
+  cases w0 w1 w2 w3
+}
+
+// 8742
+thm ifpbi123d(wff w0, wff w1, wff w2, wff w3, wff w4, wff w5, wff w6) {
+  -| (imp w0 (iff w1 w4))
+  -| (imp w0 (iff w2 w5))
+  -| (imp w0 (iff w3 w6))
+  |- (imp w0 (iff ifp (w1 w2 w3) ifp (w4 w5 w6)))
+} = {
+  3bitr4g w0 or and w1 w2 and not w1 w3 or and w4 w5 and not w4 w6 ifp w1 w2 w3 ifp w4 w5 w6
+  df-ifp w4 w5 w6
+  df-ifp w1 w2 w3
+  orbi12d w0 and w1 w2 and w4 w5 and not w1 w3 and not w4 w6
+  anbi12d w0 not w1 not w4 w3 w6
+  notbid w0 w1 w4
+  anbi12d w0 w1 w4 w2 w5
+}
+
+// 8754
+thm ifpimpda(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (and w0 not w1) w3)
+  |- (imp w0 ifp (w1 w2 w3))
+} = {
+  sylanbrc w0 imp w1 w2 imp not w1 w3 ifp w1 w2 w3
+  dfifp2 w1 w2 w3
+  ex w0 not w1 w3
+  ex w0 w1 w2
+}
+
+// 8763
+thm 1fpid3(wff w0, wff w1, wff w2) {
+  -| (imp (and w0 w1) w2)
+  |- (imp ifp (w0 w1 w2) w2)
+} = {
+  sylbi ifp w0 w1 w2 or and w0 w1 and not w0 w2 w2
+  jaoi and w0 w1 w2 and not w0 w2
+  simpr not w0 w2
+  df-ifp w0 w1 w2
+}
+

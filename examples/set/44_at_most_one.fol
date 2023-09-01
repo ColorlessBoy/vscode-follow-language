@@ -1,0 +1,544 @@
+import '42_ax_13.fol'
+
+/*******************************************************************************
+  Uniqueness: the at-most-one quantifier
+*******************************************************************************/
+
+// 22050
+thm mojust(wff w0, setvar s0, setvar s1, setvar s2) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s2 w0
+  -| diffs s2 s0
+  |- (iff exist s1 forall s0 (imp w0 eqset s0 s1) exist s2 forall s0 (imp w0 eqset s0 s2))
+} = {
+  bitri exist s1 forall s0 imp w0 eqset s0 s1 exist hs0 forall s0 imp w0 eqset s0 hs0 exist s2 forall s0 imp w0 eqset s0 s2
+  cbvexvw forall s0 imp w0 eqset s0 hs0 forall s0 imp w0 eqset s0 s2 hs0 s2
+  albidv eqset hs0 s2 imp w0 eqset s0 hs0 imp w0 eqset s0 s2 s0
+  imbi2d eqset hs0 s2 eqset s0 hs0 eqset s0 s2 w0
+  equequ2 hs0 s2 s0
+  cbvexvw forall s0 imp w0 eqset s0 s1 forall s0 imp w0 eqset s0 hs0 s1 hs0
+  albidv eqset s1 hs0 imp w0 eqset s0 s1 imp w0 eqset s0 hs0 s0
+  imbi2d eqset s1 hs0 eqset s0 s1 eqset s0 hs0 w0
+  equequ2 s1 hs0 s0
+  diff-forallii imp w0 eqset s0 hs0 s2 s0
+  diff-eqsetii s0 hs0 s2
+  diff-forallii imp w0 eqset s0 hs0 s1 s0
+  diff-impii w0 eqset s0 hs0 s2
+  diff-impii w0 eqset s0 hs0 s1
+  diff-eqsetii s0 s1 hs0
+  diff-eqsetii s2 s0 hs0
+  diff-eqsetii s1 s0 hs0
+  diffs-exi hs0 s0
+  diffs-exi hs0 s1
+  diffs-exi hs0 s2
+  diffs-exi s2 s0
+  diffs-exi s1 s0
+  df-hs0-w forall s0 imp w0 eqset s0 s2
+  df-hs0-w forall s0 imp w0 eqset s0 s1
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-s s2
+}
+
+// 22076
+thm nexmo(wff w0, setvar s0) {
+  |- (imp not exist s0 w0 mo s0 w0)
+} = {
+  3imtr4i forall s0 not w0 exist hs0 forall s0 imp w0 eqset s0 hs0 not exist s0 w0 mo s0 w0
+  df-mo w0 s0 hs0
+  bicomi forall s0 not w0 not exist s0 w0
+  alnex w0 s0
+  19.2d forall s0 not w0 forall s0 imp w0 eqset s0 hs0 hs0
+  alrimiv forall s0 not w0 forall s0 imp w0 eqset s0 hs0 hs0
+  alimi not w0 imp w0 eqset s0 hs0 s0
+  pm2.21 w0 eqset s0 hs0
+  df-hs0-w forall s0 not w0
+}
+
+// 22083
+thm nexmoOLD(wff w0, setvar s0) {
+  |- (imp not exist s0 w0 mo s0 w0)
+} = {
+  sylbir not exist s0 w0 forall s0 not w0 mo s0 w0
+  sylibr forall s0 not w0 exist hs0 forall s0 imp w0 eqset s0 hs0 mo s0 w0
+  df-mo w0 s0 hs0
+  19.2d forall s0 not w0 forall s0 imp w0 eqset s0 hs0 hs0
+  sylib forall s0 not w0 forall s0 forall hs0 imp w0 eqset s0 hs0 forall hs0 forall s0 imp w0 eqset s0 hs0
+  alcom imp w0 eqset s0 hs0 s0 hs0
+  alimi not w0 forall hs0 imp w0 eqset s0 hs0 s0
+  alrimiv not w0 imp w0 eqset s0 hs0 hs0
+  pm2.21 w0 eqset s0 hs0
+  alnex w0 s0
+  df-hs0-w not w0
+}
+
+// 22092
+thm exmo(wff w0, setvar s0) {
+  |- (or exist s0 w0 mo s0 w0)
+} = {
+  orri exist s0 w0 mo s0 w0
+  nexmo w0 s0
+}
+
+// 22098
+thm moabs(wff w0, setvar s0) {
+  |- (iff mo s0 w0 (imp exist s0 w0 mo s0 w0))
+} = {
+  impbii mo s0 w0 imp exist s0 w0 mo s0 w0
+  ja exist s0 w0 mo s0 w0 mo s0 w0
+  id mo s0 w0
+  nexmo w0 s0
+  ax-1 mo s0 w0 exist s0 w0
+}
+
+// 22105
+thm moim(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w0 w1) (imp mo s0 w1 mo s0 w0))
+} = {
+  3imtr4g forall s0 imp w0 w1 exist hs0 forall s0 imp w1 eqset s0 hs0 exist hs0 forall s0 imp w0 eqset s0 hs0 mo s0 w1 mo s0 w0
+  df-mo w0 s0 hs0
+  df-mo w1 s0 hs0
+  eximdv forall s0 imp w0 w1 forall s0 imp w1 eqset s0 hs0 forall s0 imp w0 eqset s0 hs0 hs0
+  al2imi imp w0 w1 imp w1 eqset s0 hs0 imp w0 eqset s0 hs0 s0
+  imim1 w0 w1 eqset s0 hs0
+  df-hs0-w forall s0 imp w0 w1
+}
+
+// 22116
+thm moimi(wff w0, wff w1, setvar s0) {
+  -| (imp w0 w1)
+  |- (imp mo s0 w1 mo s0 w0)
+} = {
+  3imtr4i exist hs0 forall s0 imp w1 eqset s0 hs0 exist hs0 forall s0 imp w0 eqset s0 hs0 mo s0 w1 mo s0 w0
+  df-mo w0 s0 hs0
+  df-mo w1 s0 hs0
+  eximi forall s0 imp w1 eqset s0 hs0 forall s0 imp w0 eqset s0 hs0 hs0
+  alimi imp w1 eqset s0 hs0 imp w0 eqset s0 hs0 s0
+  imim1i w0 w1 eqset s0 hs0
+}
+
+// 22126
+thm moimiOLD(wff w0, wff w1, setvar s0) {
+  -| (imp w0 w1)
+  |- (imp mo s0 w1 mo s0 w0)
+} = {
+  mpg imp w0 w1 imp mo s0 w1 mo s0 w0 s0
+  moim w0 w1 s0
+}
+
+// 22135
+thm moimdv(wff w0, wff w1, wff w2, setvar s0) {
+  -| diff s0 w0
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 (imp mo s0 w2 mo s0 w1))
+} = {
+  syl w0 forall s0 imp w1 w2 imp mo s0 w2 mo s0 w1
+  moim w1 w2 s0
+  alrimiv w0 imp w1 w2 s0
+}
+
+// 22141
+thm mobi(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff mo s0 w0 mo s0 w1))
+} = {
+  sylbi forall s0 iff w0 w1 and forall s0 imp w0 w1 forall s0 imp w1 w0 iff mo s0 w0 mo s0 w1
+  impand forall s0 imp w0 w1 forall s0 imp w1 w0 iff mo s0 w0 mo s0 w1
+  impbid21d forall s0 imp w0 w1 forall s0 imp w1 w0 mo s0 w0 mo s0 w1
+  moim w0 w1 s0
+  moim w1 w0 s0
+  albiim w0 w1 s0
+}
+
+// 22150
+thm mobiOLD(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff mo s0 w0 mo s0 w1))
+} = {
+  3bitr4g forall s0 iff w0 w1 exist hs0 forall s0 imp w0 eqset s0 hs0 exist hs0 forall s0 imp w1 eqset s0 hs0 mo s0 w0 mo s0 w1
+  df-mo w1 s0 hs0
+  df-mo w0 s0 hs0
+  exbidv forall s0 iff w0 w1 forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0 hs0
+  syl forall s0 iff w0 w1 forall s0 iff imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 iff forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0
+  albi imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 s0
+  alimi iff w0 w1 iff imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 s0
+  imbi1 w0 w1 eqset s0 hs0
+  df-hs0-w forall s0 iff w0 w1
+}
+
+// 22158
+thm mobiOLDOLD(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff mo s0 w0 mo s0 w1))
+} = {
+  3bitr4g forall s0 iff w0 w1 exist hs0 forall s0 imp w0 eqset s0 hs0 exist hs0 forall s0 imp w1 eqset s0 hs0 mo s0 w0 mo s0 w1
+  df-mo w1 s0 hs0
+  df-mo w0 s0 hs0
+  syl forall s0 iff w0 w1 forall hs0 iff forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0 iff exist hs0 forall s0 imp w0 eqset s0 hs0 exist hs0 forall s0 imp w1 eqset s0 hs0
+  exbi forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0 hs0
+  alrimiv forall s0 iff w0 w1 iff forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0 hs0
+  syl forall s0 iff w0 w1 forall s0 iff imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 iff forall s0 imp w0 eqset s0 hs0 forall s0 imp w1 eqset s0 hs0
+  albi imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 s0
+  alimi iff w0 w1 iff imp w0 eqset s0 hs0 imp w1 eqset s0 hs0 s0
+  imbi1 w0 w1 eqset s0 hs0
+  df-hs0-w forall s0 iff w0 w1
+}
+
+// 22169
+thm mobii(wff w1, wff w2, setvar s0) {
+  -| (iff w1 w2)
+  |- (iff mo s0 w1 mo s0 w2)
+} = {
+  mpg iff w1 w2 iff mo s0 w1 mo s0 w2 s0
+  mobi w1 w2 s0
+}
+
+// 22179
+thm mobidv(wff w0, wff w1, wff w2, setvar s0) {
+  -| diff s0 w0
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff mo s0 w1 mo s0 w2))
+} = {
+  syl w0 forall s0 iff w1 w2 iff mo s0 w1 mo s0 w2
+  mobi w1 w2 s0
+  alrimiv w0 iff w1 w2 s0
+}
+
+// 22191
+thm mobid(wff w0, wff w1, wff w2, setvar s0) {
+  -| notfree s0 w0
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff mo s0 w1 mo s0 w2))
+} = {
+  syl w0 forall s0 iff w1 w2 iff mo s0 w1 mo s0 w2
+  mobi w1 w2 s0
+  alrimi w0 iff w1 w2 s0
+}
+
+// 22198
+thm mobidOLD(wff w0, wff w1, wff w2, setvar s0) {
+  -| notfree s0 w0
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff mo s0 w1 mo s0 w2))
+} = {
+  3bitr4g w0 exist hs0 forall s0 imp w1 eqset s0 hs0 exist hs0 forall s0 imp w2 eqset s0 hs0 mo s0 w1 mo s0 w2
+  df-mo w2 s0 hs0
+  df-mo w1 s0 hs0
+  exbidv w0 forall s0 imp w1 eqset s0 hs0 forall s0 imp w2 eqset s0 hs0 hs0
+  albid w0 imp w1 eqset s0 hs0 imp w2 eqset s0 hs0 s0
+  imbi1d w0 w1 w2 eqset s0 hs0
+  df-hs0-w w0
+}
+
+// 22207
+thm moa1(wff w0, wff w1, setvar s0) {
+  |- (imp mo s0 (imp w0 w1) mo s0 w1)
+} = {
+  moimi w1 imp w0 w1 s0
+  ax-1 w1 w0
+}
+
+// 22212
+thm moan(wff w0, wff w1, setvar s0) {
+  |- (imp mo s0 w0 mo s0 (and w1 w0))
+} = {
+  moimi and w1 w0 w0 s0
+  simpr w1 w0
+}
+
+// 22219
+thm moani(wff w0, wff w1, setvar s0) {
+  -| mo s0 w0
+  |- mo s0 (and w1 w0)
+} = {
+  ax-mp mo s0 w0 mo s0 and w1 w0
+  moan w0 w1 s0
+}
+
+// 22225
+thm moor(wff w0, wff w1, setvar s0) {
+  |- (imp mo s0 (or w0 w1) mo s0 w0)
+} = {
+  moimi w0 or w0 w1 s0
+  orc w0 w1
+}
+
+// 22230
+thm mooran1(wff w0, wff w1, setvar s0) {
+  |- (imp (or mo s0 w0 mo s0 w1) mo s0 (and w0 w1))
+} = {
+  jaoi mo s0 w0 mo s0 and w0 w1 mo s0 w1
+  moan w1 w0 s0
+  moimi and w0 w1 w0 s0
+  simpl w0 w1
+}
+
+// 22235
+thm mooran2(wff w0, wff w1, setvar s0) {
+  |- (imp mo s0 (or w0 w1) (and mo s0 w0 mo s0 w1))
+} = {
+  jca mo s0 or w0 w1 mo s0 w0 mo s0 w1
+  moimi w1 or w0 w1 s0
+  olc w1 w0
+  moor w0 w1 s0
+}
+
+// 22243
+thm nfmo1(wff w0, setvar s0) {
+  |- notfree s0 mo s0 w0
+} = {
+  nfxfr mo s0 w0 exist hs0 forall s0 imp w0 eqset s0 hs0 s0
+  nfex forall s0 imp w0 eqset s0 hs0 s0 hs0
+  nfa1 imp w0 eqset s0 hs0 s0
+  df-mo w0 s0 hs0
+}
+
+// 22255
+thm nfmod2(wff w0, wff w1, setvar s0, setvar s1) {
+  -| notfree s1 w0
+  -| (imp (and w0 not forall s0 eqset s0 s1) notfree s0 w1)
+  |- (imp w0 notfree s0 mo s1 w1)
+} = {
+  nfxfrd mo s1 w1 exist hs0 forall s1 imp w1 eqset s1 hs0 w0 s0
+  nfexd w0 forall s1 imp w1 eqset s1 hs0 s0 hs0
+  nfald2 w0 imp w1 eqset s1 hs0 s0 s1
+  nfimd and w0 not forall s0 eqset s0 s1 w1 eqset s1 hs0 s0
+  adantl not forall s0 eqset s0 s1 notfree s0 eqset s1 hs0 w0
+  nfeqf1 s0 s1 hs0
+  nfv w0 hs0
+  df-mo w1 s1 hs0
+  df-hs0-s s0
+  df-hs0-w w0
+}
+
+// 22268
+thm nfmodv(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  -| (imp w0 notfree s0 w1)
+  |- (imp w0 notfree s0 mo s1 w1)
+} = {
+  nfxfrd mo s1 w1 exist hs0 forall s1 imp w1 eqset s1 hs0 w0 s0
+  nfexd w0 forall s1 imp w1 eqset s1 hs0 s0 hs0
+  nfald w0 imp w1 eqset s1 hs0 s0 s1
+  nfimd w0 w1 eqset s1 hs0 s0
+  nfvd w0 eqset s1 hs0 s0
+  nfv w0 hs0
+  df-mo w1 s1 hs0
+  diff-eqsetii s0 s1 hs0
+  diffs-exi s1 s0
+  diffs-exi hs0 s0
+  df-hs0-s s0
+  df-hs0-w w0
+}
+
+// 22279
+thm nfmod(wff w0, wff w1, setvar s0, setvar s1) {
+  -| notfree s1 w0
+  -| (imp w0 notfree s0 w1)
+  |- (imp w0 notfree s0 mo s1 w1)
+} = {
+  nfmod2 w0 w1 s0 s1
+  adantr w0 notfree s0 w1 not forall s0 eqset s0 s1
+}
+
+// 22288
+thm nfmo(wff w0, setvar s0, setvar s1) {
+  -| notfree s0 w0
+  |- notfree s0 mo s1 w0
+} = {
+  mptru notfree s0 mo s1 w0
+  nfmod true w0 s0 s1
+  a1i notfree s0 w0 true
+  nftru s1
+}
+
+// 22300
+thm mof(wff w0, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  |- (iff mo s0 w0 exist s1 forall s0 (imp w0 eqset s0 s1))
+} = {
+  bitri mo s0 w0 exist hs0 forall s0 imp w0 eqset s0 hs0 exist s1 forall s0 imp w0 eqset s0 s1
+  cbvexv1 forall s0 imp w0 eqset s0 hs0 forall s0 imp w0 eqset s0 s1 hs0 s1
+  albidv eqset hs0 s1 imp w0 eqset s0 hs0 imp w0 eqset s0 s1 s0
+  imbi2d eqset hs0 s1 eqset s0 hs0 eqset s0 s1 w0
+  equequ2 hs0 s1 s0
+  nfv forall s0 imp w0 eqset s0 s1 hs0
+  nfal imp w0 eqset s0 hs0 s1 s0
+  nfim w0 eqset s0 hs0 s1
+  nfv eqset s0 hs0 s1
+  df-mo w0 s0 hs0
+  diff-forallii imp w0 eqset s0 s1 hs0 s0
+  diff-impii w0 eqset s0 s1 hs0
+  diff-eqsetii s0 hs0 s1
+  diff-eqsetii hs0 s0 s1
+  diff-eqsetii s1 s0 hs0
+  diffs-exi hs0 s1
+  diffs-exi hs0 s0
+  diffs-exi s1 s0
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-w w0
+}
+
+// 22310
+thm mofOLD(wff w0, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  |- (iff mo s0 w0 exist s1 forall s0 (imp w0 eqset s0 s1))
+} = {
+  bitri mo s0 w0 exist hs0 forall s0 imp w0 eqset s0 hs0 exist s1 forall s0 imp w0 eqset s0 s1
+  cbvex forall s0 imp w0 eqset s0 hs0 forall s0 imp w0 eqset s0 s1 hs0 s1
+  albidv eqset hs0 s1 imp w0 eqset s0 hs0 imp w0 eqset s0 s1 s0
+  imbi2d eqset hs0 s1 eqset s0 hs0 eqset s0 s1 w0
+  equequ2 hs0 s1 s0
+  nfv forall s0 imp w0 eqset s0 s1 hs0
+  nfal imp w0 eqset s0 hs0 s1 s0
+  nfim w0 eqset s0 hs0 s1
+  nfv eqset s0 hs0 s1
+  df-mo w0 s0 hs0
+  diff-eqsetii s0 hs0 s1
+  diff-eqsetii s1 s0 hs0
+  diffs-exi s1 s0
+  diffs-exi hs0 s0
+  diffs-exi hs0 s1
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-w forall s0 imp w0 eqset s0 s1
+}
+
+// 22324
+thm mo3(wff w0, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  |- (iff mo s0 w0 forall s0 forall s1 (imp (and w0 subs s0 s1 w0) eqset s0 s1))
+} = {
+  impbii mo s0 w0 forall s0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1
+  alcoms imp and w0 subs s0 s1 w0 eqset s0 s1 mo s0 w0 s1 s0
+  sylibr forall s1 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 imp exist s0 w0 mo s0 w0 mo s0 w0
+  moabs w0 s0
+  3imtr4g forall s1 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 exist s1 subs s0 s1 w0 exist s1 forall s0 imp w0 eqset s0 s1 exist s0 w0 mo s0 w0
+  mof w0 s0 s1
+  sb8ev w0 s0 s1
+  aleximi forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 subs s0 s1 w0 forall s0 imp w0 eqset s0 s1 s1
+  com12 subs s0 s1 w0 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 forall s0 imp w0 eqset s0 s1
+  alimd subs s0 s1 w0 imp and w0 subs s0 s1 w0 eqset s0 s1 imp w0 eqset s0 s1 s0
+  imim1d subs s0 s1 w0 w0 and w0 subs s0 s1 w0 eqset s0 s1
+  pm3.21 subs s0 s1 w0 w0
+  nfs1v w0 s0 s1
+  alrimi mo s0 w0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1 s0
+  alrimi mo s0 w0 imp and w0 subs s0 s1 w0 eqset s0 s1 s1
+  sylbi mo s0 w0 exist hs0 forall s0 imp w0 eqset s0 hs0 imp and w0 subs s0 s1 w0 eqset s0 s1
+  exlimiv forall s0 imp w0 eqset s0 hs0 imp and w0 subs s0 s1 w0 eqset s0 s1 hs0
+  syl6 forall s0 imp w0 eqset s0 hs0 and w0 subs s0 s1 w0 and eqset s0 hs0 eqset s1 hs0 eqset s0 s1
+  equtr2 s0 s1 hs0
+  anim12d forall s0 imp w0 eqset s0 hs0 w0 eqset s0 hs0 subs s0 s1 w0 eqset s1 hs0
+  syl6ib forall s0 imp w0 eqset s0 hs0 subs s0 s1 w0 subs s0 s1 eqset s0 hs0 eqset s1 hs0
+  equsb3 s1 s0 hs0
+  spsbim w0 eqset s0 hs0 s0 s1
+  sp imp w0 eqset s0 hs0 s0
+  df-mo w0 s0 hs0
+  mptru notfree s1 mo s0 w0
+  nfmodv true w0 s1 s0
+  a1i notfree s1 w0 true
+  nfv true s0
+  nfmo1 w0 s0
+  diffs-exi s1 s0
+  diff-true s0
+  df-hs0-w imp and w0 subs s0 s1 w0 eqset s0 s1
+  df-hs0-s s0
+}
+
+// 22337
+thm mo3OLD(wff w0, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  |- (iff mo s0 w0 forall s0 forall s1 (imp (and w0 subs s0 s1 w0) eqset s0 s1))
+} = {
+  impbii mo s0 w0 forall s0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1
+  alcoms imp and w0 subs s0 s1 w0 eqset s0 s1 mo s0 w0 s1 s0
+  sylibr forall s1 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 imp exist s0 w0 mo s0 w0 mo s0 w0
+  moabs w0 s0
+  3imtr4g forall s1 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 exist s1 subs s0 s1 w0 exist s1 forall s0 imp w0 eqset s0 s1 exist s0 w0 mo s0 w0
+  mof w0 s0 s1
+  sb8e w0 s0 s1
+  aleximi forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 subs s0 s1 w0 forall s0 imp w0 eqset s0 s1 s1
+  com12 subs s0 s1 w0 forall s0 imp and w0 subs s0 s1 w0 eqset s0 s1 forall s0 imp w0 eqset s0 s1
+  alimd subs s0 s1 w0 imp and w0 subs s0 s1 w0 eqset s0 s1 imp w0 eqset s0 s1 s0
+  imim1d subs s0 s1 w0 w0 and w0 subs s0 s1 w0 eqset s0 s1
+  pm3.21 subs s0 s1 w0 w0
+  nfs1v w0 s0 s1
+  alrimi mo s0 w0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1 s0
+  alrimi mo s0 w0 imp and w0 subs s0 s1 w0 eqset s0 s1 s1
+  sylbi mo s0 w0 exist hs0 forall s0 imp w0 eqset s0 hs0 imp and w0 subs s0 s1 w0 eqset s0 s1
+  exlimiv forall s0 imp w0 eqset s0 hs0 imp and w0 subs s0 s1 w0 eqset s0 s1 hs0
+  syl6 forall s0 imp w0 eqset s0 hs0 and w0 subs s0 s1 w0 and eqset s0 hs0 eqset s1 hs0 eqset s0 s1
+  equtr2 s0 s1 hs0
+  anim12d forall s0 imp w0 eqset s0 hs0 w0 eqset s0 hs0 subs s0 s1 w0 eqset s1 hs0
+  syl6ib forall s0 imp w0 eqset s0 hs0 subs s0 s1 w0 subs s0 s1 eqset s0 hs0 eqset s1 hs0
+  equsb3 s1 s0 hs0
+  spsbim w0 eqset s0 hs0 s0 s1
+  sp imp w0 eqset s0 hs0 s0
+  df-mo w0 s0 hs0
+  nfmo w0 s1 s0
+  nfmo1 w0 s0
+  df-hs0-w imp and w0 subs s0 s1 w0 eqset s0 s1
+  df-hs0-s s0
+}
+
+// 22354
+thm monf(wff w0, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| notfree s1 w0
+  |- (iff exist s1 forall s0 (imp w0 eqset s0 s1) forall s0 forall s1 (imp (and w0 subs s0 s1 w0) eqset s0 s1))
+} = {
+  bitr3i exist s1 forall s0 imp w0 eqset s0 s1 mo s0 w0 forall s0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1
+  mo3 w0 s0 s1
+  mof w0 s0 s1
+}
+
+// 22369
+thm mo4f(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| notfree s0 w1
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (iff mo s0 w0 forall s0 forall s1 (imp (and w0 w1) eqset s0 s1))
+} = {
+  bitri mo s0 w0 forall s0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1 forall s0 forall s1 imp and w0 w1 eqset s0 s1
+  2albii imp and w0 subs s0 s1 w0 eqset s0 s1 imp and w0 w1 eqset s0 s1 s0 s1
+  imbi1i and w0 subs s0 s1 w0 and w0 w1 eqset s0 s1
+  anbi2i subs s0 s1 w0 w1 w0
+  sbiev w0 w1 s0 s1
+  mo3 w0 s0 s1
+  nfv w0 s1
+}
+
+// 22376
+thm mo4fOLD(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| notfree s0 w1
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (iff mo s0 w0 forall s0 forall s1 (imp (and w0 w1) eqset s0 s1))
+} = {
+  bitri mo s0 w0 forall s0 forall s1 imp and w0 subs s0 s1 w0 eqset s0 s1 forall s0 forall s1 imp and w0 w1 eqset s0 s1
+  2albii imp and w0 subs s0 s1 w0 eqset s0 s1 imp and w0 w1 eqset s0 s1 s0 s1
+  imbi1i and w0 subs s0 s1 w0 and w0 w1 eqset s0 s1
+  anbi2i subs s0 s1 w0 w1 w0
+  sbie w0 w1 s0 s1
+  mo3OLD w0 s0 s1
+  nfv w0 s1
+}
+
+// 22386
+thm mo4(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diff s0 w1
+  -| diffs s1 s0
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (iff mo s0 w0 forall s0 forall s1 (imp (and w0 w1) eqset s0 s1))
+} = {
+  mo4f w0 w1 s0 s1
+  nfv w1 s0
+}
+

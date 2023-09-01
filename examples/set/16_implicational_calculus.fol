@@ -1,0 +1,296 @@
+import '15_minimal_imp.fol'
+
+/*******************************************************************************
+  Implicational Calculus
+*******************************************************************************/
+
+// 12630
+thm impsingle(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp w0 w1) w2) (imp (imp w2 w0) (imp w3 w0)))
+} = {
+  syl6 imp imp w0 w1 w2 imp w2 w0 imp imp w0 w1 w0 imp w3 w0
+  a1d imp imp w0 w1 w0 w0 w3
+  peirce w0 w1
+  imim1 imp w0 w1 w2 w0
+}
+
+// 12640
+thm impsingle-step4(wff w0, wff w1, wff w2) {
+  |- (imp (imp (imp w0 w1) w0) (imp w2 w0))
+} = {
+  ax-mp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w0 imp w2 w0
+  ax-mp imp imp imp w0 w3 imp w0 w1 imp imp imp w0 w1 w0 imp w2 w0 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w0 imp w2 w0
+  ax-mp imp imp imp imp imp w0 w1 w0 imp w2 w0 imp w0 w1 imp imp w0 w3 imp w0 w1 imp imp imp imp w0 w3 imp w0 w1 imp imp imp w0 w1 w0 imp w2 w0 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w0 imp w2 w0
+  impsingle imp imp imp w0 w1 w0 imp w2 w0 imp w0 w1 imp imp w0 w3 imp w0 w1 imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4
+  ax-mp imp imp imp w0 w1 imp w0 w1 imp imp imp w0 w1 w0 imp w2 w0 imp imp imp imp imp w0 w1 w0 imp w2 w0 imp w0 w1 imp imp w0 w3 imp w0 w1
+  impsingle imp w0 w1 imp w0 w1 imp imp imp w0 w1 w0 imp w2 w0 imp w0 w3
+  impsingle w0 w1 imp w0 w1 w2
+  impsingle w0 w3 imp w0 w1 w2
+  impsingle w4 w5 w6 w7
+}
+
+// 12650
+thm impsingle-step8(wff w0, wff w1, wff w2) {
+  |- (imp (imp (imp w0 w1) w2) (imp w1 w2))
+} = {
+  ax-mp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w2 imp w1 w2
+  ax-mp imp imp imp w2 w3 imp w0 w1 imp imp imp w0 w1 w2 imp w1 w2 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w2 imp w1 w2
+  ax-mp imp imp imp imp imp w0 w1 w2 imp w1 w2 imp w0 w1 imp imp w2 w3 imp w0 w1 imp imp imp imp w2 w3 imp w0 w1 imp imp imp w0 w1 w2 imp w1 w2 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w0 w1 w2 imp w1 w2
+  impsingle imp imp imp w0 w1 w2 imp w1 w2 imp w0 w1 imp imp w2 w3 imp w0 w1 imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4
+  ax-mp imp imp imp w0 w1 imp w1 w2 imp imp imp w0 w1 w2 imp w1 w2 imp imp imp imp imp w0 w1 w2 imp w1 w2 imp w0 w1 imp imp w2 w3 imp w0 w1
+  impsingle imp w0 w1 imp w1 w2 imp imp imp w0 w1 w2 imp w1 w2 imp w2 w3
+  ax-mp imp imp imp w1 w2 w1 imp w0 w1 imp imp imp w0 w1 imp w1 w2 imp imp imp w0 w1 w2 imp w1 w2
+  impsingle imp w1 w2 w1 imp w0 w1 imp imp w0 w1 w2
+  ax-mp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w1 w2 w1 imp w0 w1
+  ax-mp imp imp imp w1 w3 imp w1 w2 imp imp imp w1 w2 w1 imp w0 w1 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w1 w2 w1 imp w0 w1
+  ax-mp imp imp imp imp imp w1 w2 w1 imp w0 w1 imp w1 w2 imp imp w1 w3 imp w1 w2 imp imp imp imp w1 w3 imp w1 w2 imp imp imp w1 w2 w1 imp w0 w1 imp imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4 imp imp imp w1 w2 w1 imp w0 w1
+  impsingle imp imp imp w1 w2 w1 imp w0 w1 imp w1 w2 imp imp w1 w3 imp w1 w2 imp imp imp w4 w5 w6 imp imp w6 w4 imp w7 w4
+  ax-mp imp imp imp w1 w2 imp w1 w2 imp imp imp w1 w2 w1 imp w0 w1 imp imp imp imp imp w1 w2 w1 imp w0 w1 imp w1 w2 imp imp w1 w3 imp w1 w2
+  impsingle imp w1 w2 imp w1 w2 imp imp imp w1 w2 w1 imp w0 w1 imp w1 w3
+  impsingle w1 w2 imp w1 w2 w0
+  impsingle w1 w3 imp w1 w2 w0
+  impsingle w4 w5 w6 w7
+  impsingle w2 w3 imp w0 w1 w1
+}
+
+// 12665
+thm impsingle-ax1(wff w0, wff w1) {
+  |- (imp w0 (imp w1 w0))
+} = {
+  ax-mp imp imp imp w2 w1 w0 imp w1 w0 imp w0 imp w1 w0
+  impsingle-step8 imp w2 w1 w0 imp w1 w0
+  impsingle-step8 w2 w1 w0
+}
+
+// 12674
+thm impsingle-step15(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp w0 w1) (imp w2 w3)) (imp (imp w0 w3) (imp w2 w3)))
+} = {
+  ax-mp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  ax-mp imp imp imp w4 w7 w8 imp imp w8 w4 imp w9 w4 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  ax-mp imp imp imp imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp w4 w7 w8 imp imp w8 w4 imp w9 w4 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  ax-mp imp imp imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp w3 w10 w0 imp imp imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0 imp imp imp imp imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp w4 w7 w8 imp imp w8 w4 imp w9 w4 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  impsingle imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp w3 w10 w0 imp imp imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0 imp imp imp w4 w7 w8 imp imp w8 w4 imp w9 w4
+  ax-mp imp imp imp imp w3 w10 w0 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp w3 w10 w0 imp imp imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0
+  impsingle imp imp w3 w10 w0 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp w0 w3 imp w2 w3 w5
+  ax-mp imp imp imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 w0 imp imp w3 w10 w0 imp imp imp imp w3 w10 w0 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  impsingle imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 w0 imp imp w3 w10 w0 imp imp imp w3 w10 w0 imp imp w0 w3 imp w2 w3
+  ax-mp imp imp w0 w1 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 w0 imp imp w3 w10 w0
+  impsingle w0 w1 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp w3 w10
+  ax-mp imp imp imp imp w2 w3 w6 imp w0 w1 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3 imp imp w0 w1 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  impsingle-step8 imp imp w2 w3 w6 imp w0 w1 imp imp imp w0 w1 imp w2 w3 imp imp w0 w3 imp w2 w3
+  impsingle imp w2 w3 w6 imp w0 w1 imp w0 w3
+  impsingle imp imp w0 w3 imp w2 w3 w5 imp imp w3 w10 w0 imp imp w0 w1 imp w2 w3
+  impsingle w4 w7 w8 w9
+  impsingle w3 w10 w0 w2
+}
+
+// 12687
+thm impsingle-step18(wff w0, wff w1, wff w2, wff w3, wff w4, wff w5) {
+  |- (imp (imp (imp (imp w0 w1) (imp w2 w1)) (imp (imp (imp w1 w3) w0) w4)) (imp w5 (imp (imp (imp w1 w3) w0) w4)))
+} = {
+  ax-mp imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1 imp imp imp imp w0 w1 imp w2 w1 imp imp imp w1 w3 w0 w4 imp w5 imp imp imp w1 w3 w0 w4
+  impsingle imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1 w5
+  ax-mp imp imp imp w1 w3 w0 imp imp w0 w1 imp w2 w1 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1
+  ax-mp imp imp imp imp w1 w3 w0 w4 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1 imp imp imp imp w1 w3 w0 imp imp w0 w1 imp w2 w1 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1
+  impsingle-step15 imp imp w1 w3 w0 w4 imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1
+  ax-mp imp imp imp imp w2 w1 w8 imp imp imp w1 w3 w0 w4 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1 imp imp imp imp w1 w3 w0 w4 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1
+  impsingle-step8 imp imp w2 w1 w8 imp imp imp w1 w3 w0 w4 imp imp imp imp imp w1 w3 w0 w4 imp w2 w1 imp imp w0 w1 imp w2 w1
+  impsingle imp w2 w1 w8 imp imp imp w1 w3 w0 w4 imp w0 w1
+  impsingle w1 w3 w0 w2
+}
+
+// 12699
+thm impsingle-step19(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp (imp w0 w1) w2) (imp w3 w1)) (imp (imp (imp w1 w2) w3) (imp w0 w1)))
+} = {
+  ax-mp imp imp imp imp w4 w5 imp w6 w5 imp imp imp w5 w7 w4 w8 imp w9 imp imp imp w5 w7 w4 w8 imp imp imp imp w0 w1 w2 imp w3 w1 imp imp imp w1 w2 w3 imp w0 w1
+  ax-mp imp imp imp imp w3 w1 imp w0 w1 imp imp imp w1 w2 w3 imp w0 w1 imp imp imp imp w0 w1 w2 imp w3 w1 imp imp imp w1 w2 w3 imp w0 w1 imp imp imp imp imp w4 w5 imp w6 w5 imp imp imp w5 w7 w4 w8 imp w9 imp imp imp w5 w7 w4 w8 imp imp imp imp w0 w1 w2 imp w3 w1 imp imp imp w1 w2 w3 imp w0 w1
+  impsingle-step18 imp w3 w1 imp w0 w1 imp imp w1 w2 w3 w2 imp imp imp w1 w2 w3 imp w0 w1 imp imp imp imp w4 w5 imp w6 w5 imp imp imp w5 w7 w4 w8 imp w9 imp imp imp w5 w7 w4 w8
+  impsingle-step18 w3 w1 w0 w2 imp w0 w1 imp imp imp w0 w1 w2 imp w3 w1
+  impsingle-step18 w4 w5 w6 w7 w8 w9
+}
+
+// 12710
+thm impsingle-step20(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp (imp w0 w1) w1) (imp w2 w1)) (imp (imp (imp w1 w3) w0) (imp w2 w1)))
+} = {
+  ax-mp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  ax-mp imp imp imp w4 w6 w7 imp imp w7 w4 imp w8 w4 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  ax-mp imp imp imp imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w4 w6 w7 imp imp w7 w4 imp w8 w4 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  ax-mp imp imp imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w4 w6 w7 imp imp w7 w4 imp w8 w4 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  impsingle imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w4 w6 w7 imp imp w7 w4 imp w8 w4
+  ax-mp imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1
+  impsingle imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w1 w3 w0 imp w2 w1 w5
+  ax-mp imp imp imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp w0 w1 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  impsingle imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp w0 w1 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w1 w3 w0 imp w2 w1
+  ax-mp imp imp imp w0 w1 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp w0 w1 imp imp imp w2 w1 w3 imp w0 w1
+  impsingle imp w0 w1 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp w2 w1 w3
+  ax-mp imp imp imp imp w2 w1 w4 imp imp w0 w1 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1 imp imp imp w0 w1 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  impsingle-step8 imp imp w2 w1 w4 imp imp w0 w1 w1 imp imp imp imp w0 w1 w1 imp w2 w1 imp imp imp w1 w3 w0 imp w2 w1
+  impsingle imp w2 w1 w4 imp imp w0 w1 w1 imp imp w1 w3 w0
+  impsingle imp imp imp w1 w3 w0 imp w2 w1 w5 imp imp imp w2 w1 w3 imp w0 w1 imp imp imp w0 w1 w1 imp w2 w1
+  impsingle w4 w6 w7 w8
+  impsingle-step19 w2 w1 w3 w0
+}
+
+// 12723
+thm impsingle-step21(wff w0, wff w1, wff w2) {
+  |- (imp (imp (imp (imp w0 w1) w2) w2) (imp (imp w2 w1) (imp w0 w1)))
+} = {
+  ax-mp imp imp imp w2 imp w0 w1 imp w0 w1 imp imp w2 w1 imp w0 w1 imp imp imp imp w0 w1 w2 w2 imp imp w2 w1 imp w0 w1
+  impsingle-step20 w2 imp w0 w1 imp w2 w1 w2
+  impsingle-step15 w2 imp w0 w1 w0 w1
+}
+
+// 12734
+thm impsingle-step22(wff w0) {
+  |- (imp w0 w0)
+} = {
+  ax-mp imp imp imp w3 w9 w3 imp w10 w3 imp w0 w0
+  ax-mp imp imp imp w0 w1 w0 imp w0 w0 imp imp imp imp w3 w9 w3 imp w10 w3 imp w0 w0
+  ax-mp imp imp imp w0 w0 w0 imp imp w0 w1 w0 imp imp imp imp w0 w1 w0 imp w0 w0 imp imp imp imp w3 w9 w3 imp w10 w3 imp w0 w0
+  impsingle imp w0 w0 w0 imp imp w0 w1 w0 imp imp imp w3 w9 w3 imp w10 w3
+  impsingle-step4 w0 w0 imp w0 w1
+  impsingle-step4 w0 w1 w0
+  impsingle-step4 w3 w9 w10
+}
+
+// 12744
+thm impsingle-step25(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 w1) (imp (imp (imp w0 w2) w1) w1))
+} = {
+  ax-mp imp imp w0 w2 imp imp imp w0 w2 w1 w1 imp imp w0 w1 imp imp imp w0 w2 w1 w1
+  impsingle-step15 w0 w2 imp imp w0 w2 w1 w1
+  ax-mp imp imp imp w1 w3 imp w0 w2 imp imp imp w0 w2 w1 w1 imp imp w0 w2 imp imp imp w0 w2 w1 w1
+  impsingle-step8 imp w1 w3 imp w0 w2 imp imp imp w0 w2 w1 w1
+  ax-mp imp imp imp imp w0 w2 w1 w1 imp imp imp w0 w2 w1 w1 imp imp imp w1 w3 imp w0 w2 imp imp imp w0 w2 w1 w1
+  impsingle-step20 imp w0 w2 w1 imp imp w0 w2 w1 w3
+  impsingle-step22 imp imp imp w0 w2 w1 w1
+}
+
+// 12753
+thm impsingle-imim1(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 w1) (imp (imp w1 w2) (imp w0 w2)))
+} = {
+  ax-mp imp imp imp imp w0 w2 w1 w1 imp imp w1 w2 imp w0 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp imp w0 w2 w1 w1 imp imp imp w0 w2 w1 w1 imp imp imp imp imp w0 w2 w1 w1 imp imp w1 w2 imp w0 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2
+  impsingle-step21 imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp imp w0 w2 w1 w1
+  ax-mp imp imp w0 w1 imp imp imp w0 w2 w1 w1 imp imp imp imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp imp w0 w2 w1 w1 imp imp imp w0 w2 w1 w1
+  impsingle-step25 imp w0 w1 imp imp imp w0 w2 w1 w1 imp imp w1 w2 imp w0 w2
+  impsingle-step25 w0 w1 w2
+  impsingle-step21 w0 w2 w1
+}
+
+// 12762
+thm impsingle-peirce(wff w0, wff w1) {
+  |- (imp (imp (imp w0 w1) w0) w0)
+} = {
+  ax-mp imp w0 w0 imp imp imp w0 w1 w0 w0
+  impsingle-step25 w0 w0 w1
+  impsingle-step22 w0
+}
+
+// 12776
+thm tarski-bernays-ax2(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 (imp w1 w2)) (imp (imp w0 w1) (imp w0 w2)))
+} = {
+  ax-mp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  ax-mp imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  ax-mp imp imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  ax-mp imp imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  imim1 imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  imim1 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2
+  ax-mp imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2 imp imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  imim1 imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 w1 imp w0 w2 imp imp w0 imp w1 w2 imp imp w0 w1 imp w0 w2
+  imim1 imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  ax-1 imp w0 imp w1 w2 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w0 imp w1 w2 imp w0 w2 imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  peirce imp imp imp w0 imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp w0 w1 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 w0 w1 w2
+  ax-mp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  ax-mp imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp w0 imp w1 w2 imp w0 w2
+  imim1 imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-1 imp imp w1 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  peirce imp imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp w0 imp w1 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp w0 imp w1 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp w0 imp w1 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 w0 imp w1 w2 w2
+  ax-mp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-1 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  peirce imp imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp w1 w2 imp w0 w2 imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp w1 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w1 w2 imp w0 w2 imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp w1 w2 imp w0 w2 w2
+  ax-mp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w0 w2 w2 imp imp w1 w2 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp w0 w2 w2 imp imp w1 w2 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp w1 w2 w2 imp w0 w2 imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  peirce imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  imim1 imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  ax-mp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2
+  ax-1 imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp imp w0 w2 w2 imp w0 w2 imp w0 w2 imp imp imp imp w1 w2 w2 imp w0 w2 imp w0 w2
+  peirce imp w0 w2 w2
+}
+

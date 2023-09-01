@@ -1,0 +1,238 @@
+import '12_true_false.fol'
+import '17_meredith_to_lukasiewicz.fol'
+
+/*******************************************************************************
+  Derive the Tarski-Bernays-Wajsberg axioms from Meredith's Second CO Axiom
+*******************************************************************************/
+
+// 13659
+thm merco2(wff w0, wff w1, wff w2, wff w3, wff w4, wff w5) {
+  |- (imp (imp (imp w0 w1) (imp (imp false w2) w3)) (imp (imp w3 w0) (imp w4 (imp w5 w0))))
+} = {
+  com4l w5 imp imp w0 w1 imp imp false w2 w3 imp w3 w0 w4 w0
+  a1i imp imp imp w0 w1 imp imp false w2 w3 imp imp w3 w0 imp w4 w0 w5
+  a1dd imp imp w0 w1 imp imp false w2 w3 imp w3 w0 w0 w4
+  3syl imp imp w0 w1 imp imp false w2 w3 imp imp w0 w1 w3 imp imp w0 w3 w3 imp imp w3 w0 w0
+  looinv w0 w3
+  jad imp imp w0 w1 w3 w0 w3 w3
+  idd imp imp w0 w1 w3 w3
+  jarl w0 w1 w3
+  mpi imp imp w0 w1 imp imp false w2 w3 imp false w2 imp imp w0 w1 w3
+  pm2.04 imp w0 w1 imp false w2 w3
+  falim w2
+}
+
+// 13668
+thm mercolem1(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp w0 w1) w2) (imp w1 (imp w3 w2)))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2
+  ax-mp imp imp imp w2 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2
+  ax-mp imp imp imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp false w0 imp w0 w1 imp imp false w0 imp imp w2 w0 imp imp false w0 imp w0 w1 imp imp imp imp w2 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2
+  merco2 imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp false w0 imp w0 w1 w0 imp imp w2 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp imp false w0 imp w0 w1 imp w1 imp w3 w2 imp imp false w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp imp false w0 imp w0 w1 imp imp false w0 imp imp w2 w0 imp imp false w0 imp w0 w1
+  merco2 imp imp false w0 imp w0 w1 imp w1 imp w3 w2 w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2 imp false w0 imp w2 w0
+  ax-mp imp imp imp w1 imp w3 w2 imp imp false w0 false imp imp false w1 imp imp false w0 imp w0 w1 imp imp imp imp false w0 imp w0 w1 imp w1 imp w3 w2 imp imp false w0 imp imp imp w0 w1 w2 imp w1 imp w3 w2
+  merco2 imp w1 imp w3 w2 imp imp false w0 false w1 imp imp false w0 imp w0 w1 imp false w0 imp imp w0 w1 w2
+  merco2 w1 imp w3 w2 w0 false imp false w0 w0
+  merco2 w2 w0 w0 imp w0 w1 w1 w3
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13676
+thm mercolem2(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp (imp w0 w1) w0) (imp w2 (imp w3 w0)))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0
+  ax-mp imp imp imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp false w0 imp w0 w1 imp imp false w0 imp imp w0 w0 imp imp false w0 imp w0 w1 imp imp imp imp w0 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0
+  merco2 imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp false w0 imp w0 w1 w0 imp imp w0 w0 imp imp false w0 imp w0 w1 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp imp false w0 imp w0 w1 imp w2 imp w3 w0 imp imp false w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp imp false w0 imp w0 w1 imp imp false w0 imp imp w0 w0 imp imp false w0 imp w0 w1
+  merco2 imp imp false w0 imp w0 w1 imp w2 imp w3 w0 w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0 imp false w0 imp w0 w0
+  ax-mp imp imp imp w2 imp w3 w0 imp w0 w1 imp imp false w0 imp imp false w0 imp w0 w1 imp imp imp imp false w0 imp w0 w1 imp w2 imp w3 w0 imp imp false w0 imp imp imp w0 w1 w0 imp w2 imp w3 w0
+  merco2 imp w2 imp w3 w0 imp w0 w1 w0 imp imp false w0 imp w0 w1 imp false w0 imp imp w0 w1 w0
+  ax-mp imp imp imp w0 w1 imp imp false w0 false imp imp false w0 imp w2 imp w3 w0 imp imp imp w2 imp w3 w0 imp w0 w1 imp imp false w0 imp imp false w0 imp w0 w1
+  merco2 imp w0 w1 imp imp false w0 false w0 imp w2 imp w3 w0 imp false w0 imp false w0
+  merco2 w0 w1 w0 false w2 w3
+  merco2 w0 w0 w0 imp w0 w1 w2 w3
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13684
+thm mercolem3(wff w0, wff w1, wff w2) {
+  |- (imp (imp w1 w2) (imp w1 (imp w0 w2)))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w1 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w1 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w2 w0 imp imp false w0 w1 imp imp w1 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w1 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp imp w1 w2 imp w1 imp w0 w2 imp imp false w0 w1 imp imp false w0 imp imp w2 w0 imp imp false w0 w1 imp imp imp imp w2 w0 imp imp false w0 w1 imp imp w1 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w1 w2 imp w1 imp w0 w2
+  merco2 imp imp w1 w2 imp w1 imp w0 w2 imp imp false w0 w1 w0 imp imp w2 w0 imp imp false w0 w1 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp imp false w0 w1 imp w1 imp w0 w2 imp imp false w0 imp imp w1 w2 imp w1 imp w0 w2 imp imp imp imp w1 w2 imp w1 imp w0 w2 imp imp false w0 w1 imp imp false w0 imp imp w2 w0 imp imp false w0 w1
+  merco2 imp imp false w0 w1 imp w1 imp w0 w2 w0 imp imp w1 w2 imp w1 imp w0 w2 imp false w0 imp w2 w0
+  ax-mp imp imp imp w1 imp w0 w2 w1 imp imp false w0 imp imp false w0 w1 imp imp imp imp false w0 w1 imp w1 imp w0 w2 imp imp false w0 imp imp w1 w2 imp w1 imp w0 w2
+  merco2 imp w1 imp w0 w2 w1 w0 imp imp false w0 w1 imp false w0 imp w1 w2
+  mercolem2 w1 imp w0 w2 imp false w0 imp false w0
+  merco2 w2 w0 w0 w1 w1 w0
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13692
+thm mercolem4(wff w0, wff w2, wff w3, wff w4, wff w5) {
+  |- (imp (imp w3 (imp w5 w0)) (imp (imp (imp w3 w2) w0) (imp w4 (imp w5 w0))))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  ax-mp imp imp imp imp w5 w0 w0 imp imp false w0 w3 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  ax-mp imp imp imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 imp imp false w0 imp imp imp w5 w0 w0 imp imp false w0 w3 imp imp imp imp imp w5 w0 w0 imp imp false w0 w3 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  merco2 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 w0 imp imp imp w5 w0 w0 imp imp false w0 w3 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 imp imp imp w5 w0 w0 imp imp false w0 w3 imp imp imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 imp imp false w0 imp imp imp w5 w0 w0 imp imp false w0 w3
+  mercolem3 imp false w0 imp imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 imp imp imp w5 w0 w0 imp imp false w0 w3
+  ax-mp imp imp w3 w2 imp imp false w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 w3 imp imp imp w5 w0 w0 imp imp false w0 w3
+  merco2 w3 w2 w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp w5 w0 w0 imp false w0
+  ax-mp imp imp imp false w0 imp w3 w2 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp w3 w2 imp imp false w0 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  mercolem1 imp false w0 imp w3 w2 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp false w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 imp w3 w2 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp imp imp false w0 imp w3 w2 imp imp w3 imp w5 w0 imp imp imp w3 w2 w0 imp w4 imp w5 w0
+  mercolem1 imp w0 w0 imp imp false w0 imp w3 w2 imp imp imp w3 w2 w0 imp w4 imp w5 w0 imp w3 imp w5 w0
+  merco2 w0 w0 w0 imp w3 w2 w4 w5
+  merco2 imp w5 w0 w0 w0 w3 imp imp w3 w2 w0 w4
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13701
+thm mercolem5(wff w0, wff w2, wff w3, wff w4) {
+  |- (imp w3 (imp (imp w3 w0) (imp w4 (imp w2 w0))))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w3 imp imp w3 w0 imp w4 imp w2 w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w3 imp imp w3 w0 imp w4 imp w2 w0
+  ax-mp imp imp imp false w0 w3 imp w3 imp imp w3 w0 imp w4 imp w2 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w3 imp imp w3 w0 imp w4 imp w2 w0
+  ax-mp imp imp imp w3 imp imp w3 w0 imp w4 imp w2 w0 w3 imp imp false w0 imp imp false w0 w3 imp imp imp imp false w0 w3 imp w3 imp imp w3 w0 imp w4 imp w2 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w3 imp imp w3 w0 imp w4 imp w2 w0
+  merco2 imp w3 imp imp w3 w0 imp w4 imp w2 w0 w3 w0 imp imp false w0 w3 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  mercolem2 w3 imp imp w3 w0 imp w4 imp w2 w0 imp false w0 imp false w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 w3 imp imp w3 w0 imp w4 imp w2 w0 imp imp imp false w0 w3 imp w3 imp imp w3 w0 imp w4 imp w2 w0
+  mercolem1 imp w0 w0 imp imp false w0 w3 imp imp w3 w0 imp w4 imp w2 w0 w3
+  merco2 w0 w0 w0 w3 w4 w2
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13708
+thm mercolem6(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 (imp w1 (imp w0 w2))) (imp w1 (imp w0 w2)))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp w0 imp w1 imp w0 w2 imp imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  mercolem4 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp w1 imp w0 w2 imp w0 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  mercolem5 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w0 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  mercolem1 imp w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  mercolem1 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  merco2 w0 w0 w0 w0 w0 w0
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  ax-mp imp w0 imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  mercolem4 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 w2 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w0 imp w1 imp w0 w2
+  mercolem5 imp w1 imp w0 w2 imp w0 imp w1 imp w0 w2 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp imp w0 imp w0 imp w1 imp w0 w2 imp w0 w2 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2
+  mercolem1 imp w0 imp w0 imp w1 imp w0 w2 imp w0 w2 imp imp w0 imp w1 imp w0 w2 imp w1 imp w0 w2 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  mercolem1 w0 imp w0 imp w1 imp w0 w2 imp w0 w2 w1
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13718
+thm mercolem7(wff w0, wff w1, wff w2, wff w3) {
+  |- (imp (imp w0 w1) (imp (imp (imp w0 w2) (imp w3 w1)) (imp w3 w1)))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp imp w0 w2 imp w3 w1 imp w3 w1
+  ax-mp imp imp w0 w2 imp imp imp w0 w2 imp w3 w1 imp w3 w1 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp imp w0 w2 imp w3 w1 imp w3 w1
+  ax-mp imp w0 imp imp w0 w1 imp imp imp w0 w2 imp w3 w1 imp w3 w1 imp imp imp w0 w2 imp imp imp w0 w2 imp w3 w1 imp w3 w1 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp imp w0 w2 imp w3 w1 imp w3 w1
+  mercolem4 imp imp imp w0 w2 imp w3 w1 imp w3 w1 w2 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp w0 w1
+  mercolem5 w1 w3 w0 imp imp w0 w2 imp w3 w1
+  ax-mp imp imp imp w0 w2 imp w3 w1 imp imp w0 w2 imp imp imp w0 w2 imp w3 w1 imp w3 w1 imp imp w0 w2 imp imp imp w0 w2 imp w3 w1 imp w3 w1
+  mercolem6 imp imp w0 w2 imp w3 w1 imp w0 w2 imp w3 w1
+  mercolem3 imp imp w0 w2 imp w3 w1 imp w0 w2 imp w3 w1
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13727
+thm mercolem8(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  |- (imp (imp w0 w1) (imp (imp w1 (imp w0 w2)) (imp w4 (imp w3 (imp w0 w2)))))
+} = {
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  ax-mp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  ax-mp imp imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  ax-mp imp imp imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp false w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp false w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  merco2 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp false w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0 imp imp imp w0 w0 imp imp false w0 w0 imp imp w0 w0 imp w0 imp w0 w0
+  ax-mp imp imp w0 w1 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp false w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp false w0 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1
+  mercolem7 imp w0 w1 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp false w0
+  mercolem7 w0 w1 w2 imp false w0
+  ax-mp imp imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2 imp imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  mercolem3 imp w0 w1 imp imp imp w0 w2 imp imp false w0 w1 imp imp false w0 w1 imp imp w1 imp w0 w2 imp w4 imp w3 imp w0 w2
+  merco2 imp w0 w2 imp imp false w0 w1 w0 w1 w4 w3
+  merco2 w0 w0 w0 w0 w0 w0
+}
+
+// 13736
+thm re1tbw1(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 w1) (imp (imp w1 w2) (imp w0 w2)))
+} = {
+  ax-mp imp imp w1 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2
+  mercolem6 imp w1 w2 imp w0 w1 imp w0 w2
+  mpsyl imp imp w0 w1 imp imp w1 imp w0 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2 imp w1 w2 imp w1 imp w0 w2 imp imp w0 w1 imp imp w1 w2 imp w0 w2
+  mercolem6 imp w0 w1 imp w1 imp w0 w2 imp imp w1 w2 imp w0 w2
+  mercolem3 w0 w1 w2
+  mercolem8 w0 w1 w2 imp w1 w2 imp w0 w1
+}
+
+// 13743
+thm re1tbw2(wff w0, wff w1) {
+  |- (imp w0 (imp w1 w0))
+} = {
+  ax-mp imp w1 imp w0 imp w1 w0 imp w0 imp w1 w0
+  mercolem6 w1 w0 w0
+  ax-mp imp w0 imp w1 imp w0 imp w1 w0 imp w1 imp w0 imp w1 w0
+  mercolem6 w0 w1 imp w1 w0
+  ax-mp imp imp imp w0 w0 w0 imp w0 imp w1 w0 imp w0 imp w1 imp w0 imp w1 w0
+  mercolem1 imp w0 w0 w0 imp w0 imp w1 w0 w1
+  mercolem1 w0 w0 w0 w1
+}
+
+// 13750
+thm re1tbw3(wff w0, wff w1) {
+  |- (imp (imp (imp w0 w1) w0) w0)
+} = {
+  ax-mp imp imp imp w0 w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 w0
+  ax-mp imp imp imp w0 w1 w0 imp imp imp imp w0 w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 w0 imp imp imp imp w0 w0 w0 imp w0 imp w0 w0 imp imp imp w0 w1 w0 w0
+  mercolem6 imp imp w0 w1 w0 imp imp imp w0 w0 w0 imp w0 imp w0 w0 w0
+  mercolem2 w0 w1 imp imp imp w0 w0 w0 imp w0 imp w0 w0 imp imp w0 w1 w0
+  mercolem2 w0 w0 w0 w0
+}
+
+// 13761
+thm re1tbw4(wff w0) {
+  |- (imp false w0)
+} = {
+  ax-mp imp w0 w0 imp false w0
+  ax-mp imp w0 w0 imp imp w0 w0 imp false w0
+  ax-mp imp imp false w0 imp false w0 imp imp w0 w0 imp imp w0 w0 imp false w0
+  ax-mp imp imp imp false w0 w0 imp imp false w0 imp false w0 imp imp imp false w0 imp false w0 imp imp w0 w0 imp imp w0 w0 imp false w0
+  merco2 imp false w0 w0 w0 imp false w0 imp w0 w0 imp w0 w0
+  mercolem3 false imp false w0 w0
+  ax-mp imp imp imp imp false w0 w0 imp false w0 imp false w0 imp imp false w0 imp false w0
+  ax-mp imp imp false w0 imp imp imp false w0 w0 imp false w0 imp imp imp imp imp false w0 w0 imp false w0 imp false w0 imp imp false w0 imp false w0
+  re1tbw1 imp false w0 imp imp imp false w0 w0 imp false w0 imp false w0
+  re1tbw2 imp false w0 imp imp false w0 w0
+  re1tbw3 imp false w0 w0
+  ax-mp imp imp imp w0 w0 w0 w0 imp w0 w0
+  ax-mp imp w0 imp imp w0 w0 w0 imp imp imp imp w0 w0 w0 w0 imp w0 w0
+  re1tbw1 w0 imp imp w0 w0 w0 w0
+  re1tbw2 w0 imp w0 w0
+  re1tbw3 w0 w0
+}
+
+

@@ -1,0 +1,58 @@
+import '20_nicod_to_lukasiewicz.fol'
+
+/*******************************************************************************
+  Derive Nicod's Axiom from Lukasiewicz's First Sheffer Stroke Axiom
+*******************************************************************************/
+
+// 13301
+thm lukshef-ax1(wff w0, wff w1, wff w2, wff w3) {
+  |- (nand (nand w0 (nand w2 w1)) (nand (nand w3 (nand w3 w3)) (nand (nand w3 w2) (nand (nand w0 w3) (nand w0 w3)))))
+} = {
+  nic-ax w0 w1 w2 w3 w3
+}
+
+// 13307
+thm lukshefth1(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  |- (nand (nand (nand (nand w4 w1) (nand (nand w0 w4) (nand w0 w4))) (nand w3 (nand w3 w3))) (nand w0 (nand w1 w2)))
+} = {
+  nic-mp nand nand w0 nand w1 w2 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w1 w2 nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w1 w2
+  nic-mp nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand nand w0 nand w1 w2 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w1 w2 nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w1 w2 nand nand w0 nand w1 w2 nand nand w0 nand w1 w2 nand w0 nand w1 w2
+  lukshef-ax1 nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w0 nand w1 w2
+  nic-mp nand nand w4 nand w4 w4 nand nand w3 nand w3 w3 nand nand w3 w4 nand nand w4 w3 nand w4 w3 nand nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand w4 nand w4 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand nand w4 w1 nand nand w0 w4 nand w0 w4 nand nand w4 w1 nand nand w0 w4 nand w0 w4
+  lukshef-ax1 nand w4 nand w4 w4 nand nand w3 w4 nand nand w4 w3 nand w4 w3 nand w3 nand w3 w3 nand nand w4 w1 nand nand w0 w4 nand w0 w4
+  lukshef-ax1 w4 w4 w4 w3
+  lukshef-ax1 w0 w2 w1 w4
+}
+
+// 13315
+thm lukshefth2(wff w3, wff w4) {
+  |- (nand (nand w4 w3) (nand (nand w3 w4) (nand w3 w4)))
+} = {
+  nic-mp nand w3 nand w3 w3 nand nand w4 w3 nand nand w3 w4 nand w3 w4 nand w4 nand w4 w4
+  lukshef-ax1 w3 w3 w3 w4
+  nic-mp nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand w3 nand w3 w3 nand nand w4 w0 nand nand w0 w4 nand w0 w4
+  nic-mp nand nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w0 w0 nand nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3
+  nic-mp nand nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand w0 nand w0 w0 nand nand w0 nand nand w1 nand w2 w0 w3 nand nand nand w3 nand w3 nand w3 w3 w0 nand nand w3 nand w3 nand w3 w3 w0 nand nand nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand w0 nand w0 w0 nand nand nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3
+  lukshef-ax1 nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand nand w0 nand nand w1 nand w2 w0 w3 nand nand nand w3 nand w3 nand w3 w3 w0 nand nand w3 nand w3 nand w3 w3 w0 nand w0 nand w0 w0 nand nand nand w4 w0 nand nand w0 w4 nand w0 w4 nand w3 nand w3 w3
+  lukshef-ax1 nand w3 nand w3 nand w3 w3 nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 w0
+  lukshefth1 w0 w0 w0 w3 w4
+  nic-mp nand nand w1 nand w2 w0 nand nand w3 nand w3 w3 nand nand w3 w2 nand nand w1 w3 nand w1 w3 nand nand w3 nand w3 nand w3 w3 nand nand nand w1 nand w2 w0 w3 nand nand w1 nand w2 w0 w3 nand w3 nand w3 w3
+  lukshef-ax1 nand w1 nand w2 w0 nand nand w3 w2 nand nand w1 w3 nand w1 w3 nand w3 nand w3 w3 w3
+  lukshef-ax1 w1 w0 w2 w3
+}
+
+// 13325
+thm renicax(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  |- (nand (nand w0 (nand w2 w1)) (nand (nand w4 (nand w4 w4)) (nand (nand w3 w2) (nand (nand w0 w3) (nand w0 w3)))))
+} = {
+  nic-mp nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w0 nand w2 w1 nand nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  lukshefth2 nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  nic-mp nand nand w0 nand w2 w1 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w0 nand w2 w1 nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w0 nand w2 w1
+  nic-mp nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand nand w0 nand w2 w1 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w0 nand w2 w1 nand nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w0 nand w2 w1 nand nand w0 nand w2 w1 nand nand w0 nand w2 w1 nand w0 nand w2 w1
+  lukshef-ax1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand w0 nand w2 w1
+  lukshefth2 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
+  nic-mp nand nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand w0 nand w2 w1 nand nand w0 nand w2 w1 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4 nand nand w0 nand w2 w1 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
+  lukshefth2 nand w0 nand w2 w1 nand nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
+  lukshefth1 w0 w2 w1 w4 w3
+}
+

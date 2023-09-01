@@ -1,0 +1,172 @@
+import '6_mix.fol'
+
+/*******************************************************************************
+  True and false constants
+*******************************************************************************/
+
+// 11827
+thm trujust(setvar s0, setvar s1) {
+  |- (iff (imp forall s0 eqclass cv s0 cv s0 forall s0 eqclass cv s0 cv s0) (imp forall s1 eqclass cv s1 cv s1 forall s1 eqclass cv s1 cv s1))
+} = {
+  monothetic forall s0 eqclass cv s0 cv s0 forall s1 eqclass cv s1 cv s1
+}
+
+// 11834
+thm trujustOLD(setvar s0, setvar s1) {
+  |- (iff (imp forall s0 eqclass cv s0 cv s0 forall s0 eqclass cv s0 cv s0) (imp forall s1 eqclass cv s1 cv s1 forall s1 eqclass cv s1 cv s1))
+} = {
+  2th imp forall s0 eqclass cv s0 cv s0 forall s0 eqclass cv s0 cv s0 imp forall s1 eqclass cv s1 cv s1 forall s1 eqclass cv s1 cv s1
+  id forall s1 eqclass cv s1 cv s1
+  id forall s0 eqclass cv s0 cv s0
+}
+
+const setvar tru_hidden0
+// 11852
+thm tru() {
+  |- true
+} = {
+  mpbir true imp forall tru_hidden0 eqclass cv tru_hidden0 cv tru_hidden0 forall tru_hidden0 eqclass cv tru_hidden0 cv tru_hidden0
+  df-true tru_hidden0
+  id forall tru_hidden0 eqclass cv tru_hidden0 cv tru_hidden0
+}
+
+// 11860
+thm dftru2(wff w0) {
+  |- (iff true (imp w0 w0))
+} = {
+  2th true imp w0 w0
+  id w0
+  tru
+}
+
+// 11866
+thm trut(wff w0) {
+  |- (iff w0 (imp true w0))
+} = {
+  a1bi true w0
+  tru
+}
+
+// 11875
+thm mptru(wff w0) {
+  -| (imp true w0)
+  |- w0
+} = {
+  ax-mp true w0
+  tru
+}
+
+// 11881
+thm tbtru(wff w0) {
+  |- (iff w0 (iff w0 true))
+} = {
+  tbt true w0
+  tru
+}
+
+// 11888
+thm bitru(wff w0) {
+  -| w0
+  |- (iff w0 true)
+} = {
+  2th w0 true
+  tru
+}
+
+// 11895
+thm trud(wff w0) {
+  |- (imp w0 true)
+} = {
+  a1i true w0
+  tru
+}
+
+// 11900
+thm truan(wff w0) {
+  |- (iff (and true w0) w0)
+} = {
+  bicomi w0 and true w0
+  biantrur true w0
+  tru
+}
+
+// 11921
+thm fal() {
+  |- not false
+} = {
+  mtbir false not true
+  df-false
+  notnoti true
+  tru
+}
+
+// 11926
+thm nbfal(wff w0) {
+  |- (iff not w0 (iff w0 false))
+} = {
+  nbn false w0
+  fal
+}
+
+// 11933
+thm bifal(wff w0) {
+  -| not w0
+  |- (iff w0 false)
+} = {
+  2false w0 false
+  fal
+}
+
+// 11942
+thm falim(wff w0) {
+  |- (imp false w0)
+} = {
+  pm2.21i false w0
+  fal
+}
+
+// 11947
+thm falimd(wff w0, wff w1) {
+  |- (imp (and w0 false) w1)
+} = {
+  adantl false w1 w0
+  falim w1
+}
+
+// 11954
+thm dfnot(wff w0) {
+  |- (iff not w0 (imp w0 false))
+} = {
+  ax-mp not false iff not w0 imp w0 false
+  mtt false w0
+  fal
+}
+
+// 11961
+thm inegd(wff w0, wff w1) {
+  -| (imp (and w0 w1) false)
+  |- (imp w0 not w1)
+} = {
+  sylibr w0 imp w1 false not w1
+  dfnot w1
+  ex w0 w1 false
+}
+
+// 11969
+thm efald(wff w0, wff w1) {
+  -| (imp (and w0 not w1) false)
+  |- (imp w0 w1)
+} = {
+  notnotrd w0 w1
+  inegd w0 not w1
+}
+
+// 11978
+thm pm2.21fal(wff w0, wff w1) {
+  -| (imp w0 w1)
+  -| (imp w0 not w1)
+  |- (imp w0 false)
+} = {
+  pm2.21dd w0 w1 false
+}
+

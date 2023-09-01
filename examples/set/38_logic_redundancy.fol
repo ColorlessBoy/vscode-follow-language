@@ -1,0 +1,194 @@
+import '37_ax_9.fol'
+
+/*******************************************************************************
+  Logical redundancy of ax-10 , ax-11 , ax-12 , ax-13
+*******************************************************************************/
+
+// 17510
+thm ax6dgen(setvar s0) {
+  |- not forall s0 not eqset s0 s0
+} = {
+  mt2 forall s0 not eqset s0 s0 eqset s0 s0
+  spfalw not eqset s0 s0 s0
+  notnoti eqset s0 s0
+  equid s0
+}
+
+// 17521
+thm ax10w(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| diff s1 w0
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (imp not forall s0 w0 forall s0 not forall s0 w0)
+} = {
+  hbn1w w0 w1 s0 s1
+}
+
+// 17534
+thm ax11w(wff w0, wff w1, setvar s0, setvar s1, setvar s2) {
+  -| diff s1 w1
+  -| diffs s1 s0
+  -| diffs s2 s1
+  -| diff s2 w0
+  -| (imp eqset s1 s2 (iff w0 w1))
+  |- (imp forall s0 forall s1 w0 forall s1 forall s0 w0)
+} = {
+  alcomiw w0 w1 s0 s1 s2
+}
+
+// 17543
+thm ax11dgen(wff w0, setvar s0) {
+  |- (imp forall s0 forall s0 w0 forall s0 forall s0 w0)
+} = {
+  id forall s0 forall s0 w0
+}
+
+// 17554
+thm ax12wlem(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s0 w1
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (imp eqset s0 s1 (imp w0 forall s0 (imp eqset s0 s1 w0)))
+} = {
+  ax12i w0 w1 s0 s1
+  ax-5 w1 s0
+}
+
+// 17569
+thm ax12w(wff w0, wff w1, wff w2, setvar s0, setvar s1, setvar s2) {
+  -| diff s0 w1
+  -| diffs s2 s1
+  -| diff s1 w2
+  -| diff s2 w0
+  -| (imp eqset s0 s1 (iff w0 w1))
+  -| (imp eqset s1 s2 (iff w0 w2))
+  |- (imp eqset s0 s1 (imp forall s1 w0 forall s0 (imp eqset s0 s1 w0)))
+} = {
+  syl5 forall s1 w0 w0 eqset s0 s1 forall s0 imp eqset s0 s1 w0
+  ax12wlem w0 w1 s0 s1
+  spw w0 w2 s1 s2
+}
+
+// 17578
+thm ax12dgen(wff w0, setvar s0) {
+  |- (imp eqset s0 s0 (imp forall s0 w0 forall s0 (imp eqset s0 s0 w0)))
+} = {
+  a1i imp forall s0 w0 forall s0 imp eqset s0 s0 w0 eqset s0 s0
+  ala1 w0 eqset s0 s0 s0
+}
+
+const setvar ax12wdemo_hidden0 ax12wdemo_hidden1
+axiom df-ax12wdemo_hidden0(setvar s0) { |- diffs ax12wdemo_hidden0 s0 }
+axiom df-ax12wdemo_hidden1(setvar s0) { |- diffs ax12wdemo_hidden1 s0 }
+// 17591
+thm ax12wdemo(setvar s0, setvar s1, setvar s2, setvar ax12wdemo_hidden0, setvar ax12wdemo_hidden1) {
+  -| diffs s1 s0
+  -| diffs s2 s1
+  -| diffs s2 s0
+  |- (imp eqset s0 s1 (imp forall s1 (3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0) forall s0 (imp eqset s0 s1 (3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0))))
+} = {
+  ax12w 3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 3and inset s1 s1 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1 3and inset s0 ax12wdemo_hidden1 forall s0 inset s2 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 s0 s1 ax12wdemo_hidden1
+  3anbi13d eqset s1 ax12wdemo_hidden1 inset s0 s1 inset s0 ax12wdemo_hidden1 forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 forall s0 inset s2 s0
+  a1i iff forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 eqset s1 ax12wdemo_hidden1
+  cbvalvw forall s2 inset s1 s0 forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
+  albidv eqset s1 ax12wdemo_hidden1 inset s1 s0 inset ax12wdemo_hidden1 s0 s2
+  elequ1 s1 ax12wdemo_hidden1 s0
+  elequ2 s1 ax12wdemo_hidden1 s0
+  3anbi123d eqset s0 s1 inset s0 s1 inset s1 s1 forall s0 inset s2 s0 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1
+  syl5bb forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 eqset s0 s1 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1
+  albidv eqset s0 s1 forall s2 inset ax12wdemo_hidden1 s0 forall s2 inset ax12wdemo_hidden1 s1 ax12wdemo_hidden1
+  albidv eqset s0 s1 inset ax12wdemo_hidden1 s0 inset ax12wdemo_hidden1 s1 s2
+  elequ2 s0 s1 ax12wdemo_hidden1
+  cbvalvw forall s2 inset s1 s0 forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
+  albidv eqset s1 ax12wdemo_hidden1 inset s1 s0 inset ax12wdemo_hidden1 s0 s2
+  elequ1 s1 ax12wdemo_hidden1 s0
+  a1i iff forall s0 inset s2 s0 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 eqset s0 s1
+  cbvalvw inset s2 s0 inset s2 ax12wdemo_hidden0 s0 ax12wdemo_hidden0
+  elequ2 s0 ax12wdemo_hidden0 s2
+  elequ1 s0 s1 s1
+  diff-3andiii inset s1 s1 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1 s0
+  diff-3andiii inset s0 ax12wdemo_hidden1 forall s0 inset s2 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 s1
+  diff-3andiii inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 ax12wdemo_hidden1
+  diff-forallii inset s1 s0 ax12wdemo_hidden1 s2
+  diff-forallii inset ax12wdemo_hidden1 s0 s1 s2
+  diff-forallii inset s2 ax12wdemo_hidden0 s0 ax12wdemo_hidden0
+  diff-forallii forall s2 inset ax12wdemo_hidden1 s1 s0 ax12wdemo_hidden1
+  diff-forallii inset s2 s0 s1 s0
+  diff-forallii forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
+  diff-forallii inset s2 s0 ax12wdemo_hidden1 s0
+  diff-forallii forall s2 inset s1 s0 ax12wdemo_hidden1 s1
+  diff-forallii inset ax12wdemo_hidden1 s1 s0 s2
+  diff-forallii inset ax12wdemo_hidden1 s0 s1 s2
+  diff-forallii inset s1 s0 ax12wdemo_hidden1 s2
+  diff-eqsetii s2 s1 ax12wdemo_hidden1
+  diff-eqsetii ax12wdemo_hidden1 s0 s1
+  diff-eqsetii s2 s0 s1
+  diff-insetii ax12wdemo_hidden0 s2 s0
+  diff-insetii s0 s2 ax12wdemo_hidden0
+  diff-insetii s0 s1 s1
+  diff-insetii s1 s0 ax12wdemo_hidden1
+  diff-insetii ax12wdemo_hidden1 s0 s1
+  diff-insetii ax12wdemo_hidden1 s1 s0
+  diff-insetii s1 ax12wdemo_hidden1 s0
+  diff-insetii s1 s2 s0
+  diff-insetii ax12wdemo_hidden1 s2 s0
+  diff-insetii s0 ax12wdemo_hidden1 s1
+  diffs-exi s2 s1
+  diffs-exi s2 s0
+  diffs-exi s1 s0
+  diffs-exi ax12wdemo_hidden1 s0
+  diffs-exi ax12wdemo_hidden1 s1
+  diffs-exi ax12wdemo_hidden1 s2
+  diffs-exi ax12wdemo_hidden0 s0
+  df-ax12wdemo_hidden1 s0
+  df-ax12wdemo_hidden1 s1
+  df-ax12wdemo_hidden1 s2
+  df-ax12wdemo_hidden0 s0
+  df-ax12wdemo_hidden0 s2
+}
+
+// 17609
+thm ax13w(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  -| diffs s2 s0
+  |- (imp not eqset s0 s1 (imp eqset s1 s2 forall s0 eqset s1 s2))
+} = {
+  ax5d not eqset s0 s1 eqset s1 s2 s0
+  diff-eqsetii s0 s1 s2
+  diffs-exi s1 s0
+  diffs-exi s2 s0
+}
+
+// 17618
+thm ax13dgen1(setvar s0, setvar s2) {
+  |- (imp not eqset s0 s0 (imp eqset s0 s2 forall s0 eqset s0 s2))
+} = {
+  pm2.24i eqset s0 s0 imp eqset s0 s2 forall s0 eqset s0 s2
+  equid s0
+}
+
+// 17626
+thm ax13dgen2(setvar s0, setvar s1) {
+  |- (imp not eqset s0 s1 (imp eqset s1 s0 forall s0 eqset s1 s0))
+} = {
+  syl5 eqset s1 s0 eqset s0 s1 not eqset s0 s1 forall s0 eqset s1 s0
+  pm2.21 eqset s0 s1 forall s0 eqset s1 s0
+  equcomi s1 s0
+}
+
+// 17634
+thm ax13dgen3(setvar s0, setvar s1) {
+  |- (imp not eqset s0 s1 (imp eqset s1 s1 forall s0 eqset s1 s1))
+} = {
+  2a1i forall s0 eqset s1 s1 not eqset s0 s1 eqset s1 s1
+  ax-gen eqset s1 s1 s0
+  equid s1
+}
+
+// 17645
+thm ax13dgen4(setvar s0) {
+  |- (imp not eqset s0 s0 (imp eqset s0 s0 forall s0 eqset s0 s0))
+} = {
+  pm2.21 eqset s0 s0 forall s0 eqset s0 s0
+}
+

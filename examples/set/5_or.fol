@@ -1,0 +1,951 @@
+
+import '4_and.fol'
+
+/*******************************************************************************
+  Logical disjunction
+*******************************************************************************/
+
+// 7179
+thm pm4.64(wff w0, wff w1) {
+  |- (iff (imp not w0 w1) (or w0 w1))
+} = {
+  bicomi or w0 w1 imp not w0 w1
+  df-or w0 w1
+}
+
+// 7184
+thm pm4.66(wff w0, wff w1) {
+  |- (iff (imp not w0 not w1) (or w0 not w1))
+} = {
+  pm4.64 w0 not w1
+}
+
+// 7189
+thm pm2.53(wff w0, wff w1) {
+  |- (imp (or w0 w1) (imp not w0 w1))
+} = {
+  biimpi or w0 w1 imp not w0 w1
+  df-or w0 w1
+}
+
+// 7194
+thm pm2.54(wff w0, wff w1) {
+  |- (imp (imp not w0 w1) (or w0 w1))
+} = {
+  biimpri or w0 w1 imp not w0 w1
+  df-or w0 w1
+}
+
+// 7199
+thm imor(wff w0, wff w1) {
+  |- (iff (imp w0 w1) (or not w0 w1))
+} = {
+  bitr4i imp w0 w1 imp not not w0 w1 or not w0 w1
+  df-or not w0 w1
+  imbi1i w0 not not w0 w1
+  notnotb w0
+}
+
+// 7206
+thm imori(wff w0, wff w1) {
+  -| (imp w0 w1)
+  |- (or not w0 w1)
+} = {
+  mpbi imp w0 w1 or not w0 w1
+  imor w0 w1
+}
+
+// 7214
+thm imorri(wff w0, wff w1) {
+  -| (or not w0 w1)
+  |- (imp w0 w1)
+} = {
+  mpbir imp w0 w1 or not w0 w1
+  imor w0 w1
+}
+
+// 7220
+thm pm4.62(wff w0, wff w1) {
+  |- (iff (imp w0 not w1) (or not w0 not w1))
+} = {
+  imor w0 not w1
+}
+
+// 7228
+thm jaoi(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp w2 w1)
+  |- (imp (or w0 w2) w1)
+} = {
+  pm2.61d2 or w0 w2 w0 w1
+  syl6 or w0 w2 not w0 w2 w1
+  pm2.53 w0 w2
+}
+
+// 7236
+thm jao1i(wff w0, wff w1, wff w2) {
+  -| (imp w1 (imp w2 w0))
+  |- (imp (or w0 w1) (imp w2 w0))
+} = {
+  jaoi w0 imp w2 w0 w1
+  ax-1 w0 w2
+}
+
+// 7245
+thm jaod(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w0 (imp w3 w2))
+  |- (imp w0 (imp (or w1 w3) w2))
+} = {
+  com12 or w1 w3 w0 w2
+  jaoi w1 imp w0 w2 w3
+  com12 w0 w3 w2
+  com12 w0 w1 w2
+}
+
+// 7251
+thm mpjaod(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w0 (imp w3 w2))
+  -| (imp w0 (or w1 w3))
+  |- (imp w0 w2)
+} = {
+  mpd w0 or w1 w3 w2
+  jaod w0 w1 w2 w3
+}
+
+// 7259
+thm ori(wff w0, wff w1) {
+  -| (or w0 w1)
+  |- (imp not w0 w1)
+} = {
+  mpbi or w0 w1 imp not w0 w1
+  df-or w0 w1
+}
+
+// 7267
+thm orri(wff w0, wff w1) {
+  -| (imp not w0 w1)
+  |- (or w0 w1)
+} = {
+  mpbir or w0 w1 imp not w0 w1
+  df-or w0 w1
+}
+
+// 7275
+thm orrd(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp not w1 w2))
+  |- (imp w0 (or w1 w2))
+} = {
+  syl w0 imp not w1 w2 or w1 w2
+  pm2.54 w1 w2
+}
+
+// 7283
+thm ord(wff w0, wff w1, wff w2) {
+  -| (imp w0 (or w1 w2))
+  |- (imp w0 (imp not w1 w2))
+} = {
+  sylib w0 or w1 w2 imp not w1 w2
+  df-or w1 w2
+}
+
+// 7291
+thm orci(wff w0, wff w1) {
+  -| w0
+  |- (or w0 w1)
+} = {
+  orri w0 w1
+  pm2.24i w0 w1
+}
+
+// 7296
+thm olci(wff w0, wff w1) {
+  -| w0
+  |- (or w1 w0)
+} = {
+  orri w1 w0
+  a1i w0 not w1
+}
+
+// 7302
+thm orc(wff w0, wff w1) {
+  |- (imp w0 (or w0 w1))
+} = {
+  orrd w0 w0 w1
+  pm2.24 w0 w1
+}
+
+// 7307
+thm olc(wff w0, wff w1) {
+  |- (imp w0 (or w1 w0))
+} = {
+  orrd w0 w1 w0
+  ax-1 w0 not w1
+}
+
+// 7312
+thm pm1.4(wff w0, wff w1) {
+  |- (imp (or w0 w1) (or w1 w0))
+} = {
+  jaoi w0 or w1 w0 w1
+  orc w1 w0
+  olc w0 w1
+}
+
+// 7318
+thm orcom(wff w0, wff w1) {
+  |- (iff (or w0 w1) (or w1 w0))
+} = {
+  impbii or w0 w1 or w1 w0
+  pm1.4 w1 w0
+  pm1.4 w0 w1
+}
+
+// 7325
+thm orcomd(wff w0, wff w1, wff w2) {
+  -| (imp w0 (or w1 w2))
+  |- (imp w0 (or w2 w1))
+} = {
+  sylib w0 or w1 w2 or w2 w1
+  orcom w1 w2
+}
+
+// 7333
+thm orcoms(wff w0, wff w1, wff w2) {
+  -| (imp (or w0 w1) w2)
+  |- (imp (or w1 w0) w2)
+} = {
+  syl or w1 w0 or w0 w1 w2
+  pm1.4 w1 w0
+}
+
+// 7342
+thm orcd(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  |- (imp w0 (or w1 w2))
+} = {
+  syl w0 w1 or w1 w2
+  orc w1 w2
+}
+
+// 7348
+thm olcd(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  |- (imp w0 (or w2 w1))
+} = {
+  orcomd w0 w1 w2
+  orcd w0 w1 w2
+}
+
+// 7359
+thm orcs(wff w0, wff w1, wff w2) {
+  -| (imp (or w0 w1) w2)
+  |- (imp w0 w2)
+} = {
+  syl w0 or w0 w1 w2
+  orc w0 w1
+}
+
+// 7367
+thm olcs(wff w0, wff w1, wff w2) {
+  -| (imp (or w0 w1) w2)
+  |- (imp w1 w2)
+} = {
+  orcs w1 w0 w2
+  orcoms w0 w1 w2
+}
+
+// 7377
+thm mtord(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 not w2)
+  -| (imp w0 not w3)
+  -| (imp w0 (imp w1 (or w2 w3)))
+  |- (imp w0 not w1)
+} = {
+  mtod w0 w1 w3
+  mpid w0 w1 not w2 w3
+  syl6ib w0 w1 or w2 w3 imp not w2 w3
+  df-or w2 w3
+}
+
+// 7386
+thm pm3.2ni(wff w0, wff w1) {
+  -| not w0
+  -| not w1
+  |- not (or w0 w1)
+} = {
+  mto or w0 w1 w0
+  jaoi w0 w0 w1
+  pm2.21i w1 w0
+  id w0
+}
+
+// 7392
+thm pm2.45(wff w0, wff w1) {
+  |- (imp not (or w0 w1) not w0)
+} = {
+  con3i w0 or w0 w1
+  orc w0 w1
+}
+
+// 7397
+thm pm2.46(wff w0, wff w1) {
+  |- (imp not (or w0 w1) not w1)
+} = {
+  con3i w1 or w0 w1
+  olc w1 w0
+}
+
+// 7402
+thm pm2.47(wff w0, wff w1) {
+  |- (imp not (or w0 w1) (or not w0 w1))
+} = {
+  orcd not or w0 w1 not w0 w1
+  pm2.45 w0 w1
+}
+
+// 7407
+thm pm2.48(wff w0, wff w1) {
+  |- (imp not (or w0 w1) (or w0 not w1))
+} = {
+  olcd not or w0 w1 not w1 w0
+  pm2.46 w0 w1
+}
+
+// 7412
+thm pm2.49(wff w0, wff w1) {
+  |- (imp not (or w0 w1) (or not w0 not w1))
+} = {
+  olcd not or w0 w1 not w1 not w0
+  pm2.46 w0 w1
+}
+
+// 7417
+thm norbi(wff w0, wff w1) {
+  |- (imp not (or w0 w1) (iff w0 w1))
+} = {
+  pm5.21ni w0 or w0 w1 w1
+  olc w1 w0
+  orc w0 w1
+}
+
+// 7423
+thm nbior(wff w0, wff w1) {
+  |- (imp not (iff w0 w1) (or w0 w1))
+} = {
+  con1i or w0 w1 iff w0 w1
+  norbi w0 w1
+}
+
+// 7429
+thm orel1(wff w0, wff w1) {
+  |- (imp not w0 (imp (or w0 w1) w1))
+} = {
+  com12 or w0 w1 not w0 w1
+  pm2.53 w0 w1
+}
+
+// 7434
+thm pm2.25(wff w0, wff w1) {
+  |- (or w0 (imp (or w0 w1) w1))
+} = {
+  orri w0 imp or w0 w1 w1
+  orel1 w0 w1
+}
+
+// 7440
+thm orel2(wff w0, wff w1) {
+  |- (imp not w0 (imp (or w1 w0) w1))
+} = {
+  jaod not w0 w1 w1 w0
+  pm2.21 w0 w1
+  idd not w0 w1
+}
+
+// 7445
+thm pm2.67-2(wff w0, wff w1, wff w2) {
+  |- (imp (imp (or w0 w2) w1) (imp w0 w1))
+} = {
+  imim1i w0 or w0 w2 w1
+  orc w0 w2
+}
+
+// 7450
+thm pm2.67(wff w0, wff w1) {
+  |- (imp (imp (or w0 w1) w1) (imp w0 w1))
+} = {
+  pm2.67-2 w0 w1 w1
+}
+
+// 7457
+thm curryax(wff w0, wff w1) {
+  |- (or w0 (imp w0 w1))
+} = {
+  orri w0 imp w0 w1
+  pm2.21 w0 w1
+}
+
+// 7467
+thm exmid(wff w0) {
+  |- (or w0 not w0)
+} = {
+  orri w0 not w0
+  id not w0
+}
+
+// 7472
+thm exmidd(wff w0, wff w1) {
+  |- (imp w0 (or w1 not w1))
+} = {
+  a1i or w1 not w1 w0
+  exmid w1
+}
+
+// 7477
+thm pm2.1(wff w0) {
+  |- (or not w0 w0)
+} = {
+  imori w0 w0
+  id w0
+}
+
+// 7482
+thm pm2.13(wff w0) {
+  |- (or w0 not not not w0)
+} = {
+  orri w0 not not not w0
+  notnot not w0
+}
+
+// 7487
+thm pm2.621(wff w0, wff w1) {
+  |- (imp (imp w0 w1) (imp (or w0 w1) w1))
+} = {
+  jaod imp w0 w1 w0 w1 w1
+  idd imp w0 w1 w1
+  id imp w0 w1
+}
+
+// 7492
+thm pm2.62(wff w0, wff w1) {
+  |- (imp (or w0 w1) (imp (imp w0 w1) w1))
+} = {
+  com12 imp w0 w1 or w0 w1 w1
+  pm2.621 w0 w1
+}
+
+// 7497
+thm pm2.68(wff w0, wff w1) {
+  |- (imp (imp (imp w0 w1) w1) (or w0 w1))
+} = {
+  orrd imp imp w0 w1 w1 w0 w1
+  jarl w0 w1 w1
+}
+
+// 7503
+thm dfor2(wff w0, wff w1) {
+  |- (iff (or w0 w1) (imp (imp w0 w1) w1))
+} = {
+  impbii or w0 w1 imp imp w0 w1 w1
+  pm2.68 w0 w1
+  pm2.62 w0 w1
+}
+
+// 7508
+thm pm2.07(wff w0) {
+  |- (imp w0 (or w0 w0))
+} = {
+  olc w0 w0
+}
+
+// 7513
+thm pm1.2(wff w0) {
+  |- (imp (or w0 w0) w0)
+} = {
+  jaoi w0 w0 w0
+  id w0
+}
+
+// 7519
+thm oridm(wff w0) {
+  |- (iff (or w0 w0) w0)
+} = {
+  impbii or w0 w0 w0
+  pm2.07 w0
+  pm1.2 w0
+}
+
+// 7524
+thm pm4.25(wff w0) {
+  |- (iff w0 (or w0 w0))
+} = {
+  bicomi or w0 w0 w0
+  oridm w0
+}
+
+// 7529
+thm pm2.4(wff w0, wff w1) {
+  |- (imp (or w0 (or w0 w1)) (or w0 w1))
+} = {
+  jaoi w0 or w0 w1 or w0 w1
+  id or w0 w1
+  orc w0 w1
+}
+
+// 7534
+thm pm2.41(wff w0, wff w1) {
+  |- (imp (or w1 (or w0 w1)) (or w0 w1))
+} = {
+  jaoi w1 or w0 w1 or w0 w1
+  id or w0 w1
+  olc w1 w0
+}
+
+// 7542
+thm orim12i(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 w1)
+  -| (imp w2 w3)
+  |- (imp (or w0 w2) (or w1 w3))
+} = {
+  jaoi w0 or w1 w3 w2
+  olcd w2 w3 w1
+  orcd w0 w1 w3
+}
+
+// 7550
+thm orim1i(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  |- (imp (or w0 w2) (or w1 w2))
+} = {
+  orim12i w0 w1 w2 w2
+  id w2
+}
+
+// 7555
+thm orim2i(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  |- (imp (or w2 w0) (or w2 w1))
+} = {
+  orim12i w2 w2 w0 w1
+  id w2
+}
+
+// 7567
+thm orim12dALT(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w0 (imp w3 w4))
+  |- (imp w0 (imp (or w1 w3) (or w2 w4)))
+} = {
+  syl56 or w1 w3 imp not w1 w3 w0 imp not w2 w4 or w2 w4
+  pm2.54 w2 w4
+  imim12d w0 not w2 not w1 w3 w4
+  con3d w0 w1 w2
+  pm2.53 w1 w3
+}
+
+// 7577
+thm orbi2i(wff w0, wff w1, wff w2) {
+  -| (iff w0 w1)
+  |- (iff (or w2 w0) (or w2 w1))
+} = {
+  impbii or w2 w0 or w2 w1
+  orim2i w1 w0 w2
+  biimpri w0 w1
+  orim2i w0 w1 w2
+  biimpi w0 w1
+}
+
+// 7582
+thm orbi1i(wff w0, wff w1, wff w2) {
+  -| (iff w0 w1)
+  |- (iff (or w0 w2) (or w1 w2))
+} = {
+  3bitri or w0 w2 or w2 w0 or w2 w1 or w1 w2
+  orcom w2 w1
+  orbi2i w0 w1 w2
+  orcom w0 w2
+}
+
+// 7591
+thm orbi12i(wff w0, wff w1, wff w2, wff w3) {
+  -| (iff w0 w1)
+  -| (iff w2 w3)
+  |- (iff (or w0 w2) (or w1 w3))
+} = {
+  bitri or w0 w2 or w0 w3 or w1 w3
+  orbi1i w0 w1 w3
+  orbi2i w2 w3 w0
+}
+
+// 7599
+thm orbi2d(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff (or w3 w1) (or w3 w2)))
+} = {
+  3bitr4g w0 imp not w3 w1 imp not w3 w2 or w3 w1 or w3 w2
+  df-or w3 w2
+  df-or w3 w1
+  imbi2d w0 w1 w2 not w3
+}
+
+// 7604
+thm orbi1d(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff (or w1 w3) (or w2 w3)))
+} = {
+  3bitr4g w0 or w3 w1 or w3 w2 or w1 w3 or w2 w3
+  orcom w2 w3
+  orcom w1 w3
+  orbi2d w0 w1 w2 w3
+}
+
+// 7610
+thm orbi1(wff w0, wff w1, wff w2) {
+  |- (imp (iff w0 w1) (iff (or w0 w2) (or w1 w2)))
+} = {
+  orbi1d iff w0 w1 w0 w1 w2
+  id iff w0 w1
+}
+
+// 7618
+thm orbi12d(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  -| (imp w0 (iff w1 w2))
+  -| (imp w0 (iff w3 w4))
+  |- (imp w0 (iff (or w1 w3) (or w2 w4)))
+} = {
+  bitrd w0 or w1 w3 or w2 w3 or w2 w4
+  orbi2d w0 w3 w4 w2
+  orbi1d w0 w1 w2 w3
+}
+
+// 7624
+thm pm1.5(wff w0, wff w1, wff w2) {
+  |- (imp (or w0 (or w1 w2)) (or w1 (or w0 w2)))
+} = {
+  jaoi w0 or w1 or w0 w2 or w1 w2
+  orim2i w2 or w0 w2 w1
+  olc w2 w0
+  olcd w0 or w0 w2 w1
+  orc w0 w2
+}
+
+// 7629
+thm or12(wff w0, wff w1, wff w2) {
+  |- (iff (or w0 (or w1 w2)) (or w1 (or w0 w2)))
+} = {
+  impbii or w0 or w1 w2 or w1 or w0 w2
+  pm1.5 w1 w0 w2
+  pm1.5 w0 w1 w2
+}
+
+// 7635
+thm orass(wff w0, wff w1, wff w2) {
+  |- (iff (or (or w0 w1) w2) (or w0 (or w1 w2)))
+} = {
+  3bitri or or w0 w1 w2 or w2 or w0 w1 or w0 or w2 w1 or w0 or w1 w2
+  orbi2i or w2 w1 or w1 w2 w0
+  orcom w2 w1
+  or12 w2 w0 w1
+  orcom or w0 w1 w2
+}
+
+// 7640
+thm pm2.31(wff w0, wff w1, wff w2) {
+  |- (imp (or w0 (or w1 w2)) (or (or w0 w1) w2))
+} = {
+  biimpri or or w0 w1 w2 or w0 or w1 w2
+  orass w0 w1 w2
+}
+
+// 7645
+thm pm2.32(wff w0, wff w1, wff w2) {
+  |- (imp (or (or w0 w1) w2) (or w0 (or w1 w2)))
+} = {
+  biimpi or or w0 w1 w2 or w0 or w1 w2
+  orass w0 w1 w2
+}
+
+// 7650
+thm pm2.3(wff w0, wff w1, wff w2) {
+  |- (imp (or w0 (or w1 w2)) (or w0 (or w2 w1)))
+} = {
+  orim2i or w1 w2 or w2 w1 w0
+  pm1.4 w1 w2
+}
+
+// 7655
+thm or32(wff w0, wff w1, wff w2) {
+  |- (iff (or (or w0 w1) w2) (or (or w0 w2) w1))
+} = {
+  3bitri or or w0 w1 w2 or w0 or w1 w2 or w1 or w0 w2 or or w0 w2 w1
+  orcom w1 or w0 w2
+  or12 w0 w1 w2
+  orass w0 w1 w2
+}
+
+// 7659
+thm or4(wff w0, wff w1, wff w2, wff w3) {
+  |- (iff (or (or w0 w1) (or w2 w3)) (or (or w0 w2) (or w1 w3)))
+} = {
+  3bitr4i or w0 or w1 or w2 w3 or w0 or w2 or w1 w3 or or w0 w1 or w2 w3 or or w0 w2 or w1 w3
+  orass w0 w2 or w1 w3
+  orass w0 w1 or w2 w3
+  orbi2i or w1 or w2 w3 or w2 or w1 w3 w0
+  or12 w1 w2 w3
+}
+
+// 7665
+thm or42(wff w0, wff w1, wff w2, wff w3) {
+  |- (iff (or (or w0 w1) (or w2 w3)) (or (or w0 w2) (or w3 w1)))
+} = {
+  bitri or or w0 w1 or w2 w3 or or w0 w2 or w1 w3 or or w0 w2 or w3 w1
+  orbi2i or w1 w3 or w3 w1 or w0 w2
+  orcom w1 w3
+  or4 w0 w1 w2 w3
+}
+
+// 7671
+thm orordi(wff w0, wff w1, wff w2) {
+  |- (iff (or w0 (or w1 w2)) (or (or w0 w1) (or w0 w2)))
+} = {
+  bitr3i or w0 or w1 w2 or or w0 w0 or w1 w2 or or w0 w1 or w0 w2
+  or4 w0 w0 w1 w2
+  orbi1i or w0 w0 w0 or w1 w2
+  oridm w0
+}
+
+// 7677
+thm orordir(wff w0, wff w1, wff w2) {
+  |- (iff (or (or w0 w1) w2) (or (or w0 w2) (or w1 w2)))
+} = {
+  bitr3i or or w0 w1 w2 or or w0 w1 or w2 w2 or or w0 w2 or w1 w2
+  or4 w0 w1 w2 w2
+  orbi2i or w2 w2 w2 or w0 w1
+  oridm w2
+}
+
+// 7683
+thm orimdi(wff w0, wff w1, wff w2) {
+  |- (iff (or w0 (imp w1 w2)) (imp (or w0 w1) (or w0 w2)))
+} = {
+  3bitr4i imp not w0 imp w1 w2 imp imp not w0 w1 imp not w0 w2 or w0 imp w1 w2 imp or w0 w1 or w0 w2
+  imbi12i or w0 w1 imp not w0 w1 or w0 w2 imp not w0 w2
+  df-or w0 w2
+  df-or w0 w1
+  df-or w0 imp w1 w2
+  imdi not w0 w1 w2
+}
+
+// 7690
+thm pm2.76(wff w0, wff w1, wff w2) {
+  |- (imp (or w0 (imp w1 w2)) (imp (or w0 w1) (or w0 w2)))
+} = {
+  biimpi or w0 imp w1 w2 imp or w0 w1 or w0 w2
+  orimdi w0 w1 w2
+}
+
+// 7696
+thm pm2.85(wff w0, wff w1, wff w2) {
+  |- (imp (imp (or w0 w1) (or w0 w2)) (or w0 (imp w1 w2)))
+} = {
+  biimpri or w0 imp w1 w2 imp or w0 w1 or w0 w2
+  orimdi w0 w1 w2
+}
+
+// 7702
+thm pm2.75(wff w0, wff w1, wff w2) {
+  |- (imp (or w0 w1) (imp (or w0 (imp w1 w2)) (or w0 w2)))
+} = {
+  com12 or w0 imp w1 w2 or w0 w1 or w0 w2
+  pm2.76 w0 w1 w2
+}
+
+// 7709
+thm pm4.78(wff w0, wff w1, wff w2) {
+  |- (iff (or (imp w0 w1) (imp w0 w2)) (imp w0 (or w1 w2)))
+} = {
+  3bitr4ri or not w0 or w1 w2 or or not w0 w1 or not w0 w2 imp w0 or w1 w2 or imp w0 w1 imp w0 w2
+  orbi12i imp w0 w1 or not w0 w1 imp w0 w2 or not w0 w2
+  imor w0 w2
+  imor w0 w1
+  imor w0 or w1 w2
+  orordi not w0 w1 w2
+}
+
+// 7715
+thm biort(wff w0, wff w1) {
+  |- (imp w0 (iff w0 (or w0 w1)))
+} = {
+  impbid2 w0 w0 or w0 w1
+  ax-1 w0 or w0 w1
+  orc w0 w1
+}
+
+// 7721
+thm biorf(wff w0, wff w1) {
+  |- (imp not w0 (iff w1 (or w0 w1)))
+} = {
+  impbid2 not w0 w1 or w0 w1
+  orel1 w0 w1
+  olc w1 w0
+}
+
+// 7726
+thm biortn(wff w0, wff w1) {
+  |- (imp w0 (iff w1 (or not w0 w1)))
+} = {
+  syl w0 not not w0 iff w1 or not w0 w1
+  biorf not w0 w1
+  notnot w0
+}
+
+// 7733
+thm biorfi(wff w0, wff w1) {
+  -| not w0
+  |- (iff w1 (or w1 w0))
+} = {
+  impbii w1 or w1 w0
+  ax-mp not w0 imp or w1 w0 w1
+  orel2 w0 w1
+  orc w1 w0
+}
+
+// 7741
+thm pm2.26(wff w0, wff w1) {
+  |- (or not w0 (imp (imp w0 w1) w1))
+} = {
+  imori w0 imp imp w0 w1 w1
+  pm2.27 w0 w1
+}
+
+// 7748
+thm pm2.63(wff w0, wff w1) {
+  |- (imp (or w0 w1) (imp (or not w0 w1) w1))
+} = {
+  jaod or w0 w1 not w0 w1 w1
+  idd or w0 w1 w1
+  pm2.53 w0 w1
+}
+
+// 7753
+thm pm2.64(wff w0, wff w1) {
+  |- (imp (or w0 w1) (imp (or w0 not w1) w0))
+} = {
+  com12 or w0 not w1 or w0 w1 w0
+  jao1i w0 not w1 or w0 w1
+  orel2 w1 w0
+}
+
+// 7758
+thm pm2.42(wff w0, wff w1) {
+  |- (imp (or not w0 (imp w0 w1)) (imp w0 w1))
+} = {
+  jaoi not w0 imp w0 w1 imp w0 w1
+  id imp w0 w1
+  pm2.21 w0 w1
+}
+
+// 7765
+thm pm5.11(wff w0, wff w1) {
+  |- (or (imp w0 w1) (imp not w0 w1))
+} = {
+  orri imp w0 w1 imp not w0 w1
+  pm2.5 w0 w1
+}
+
+// 7770
+thm pm5.12(wff w0, wff w1) {
+  |- (or (imp w0 w1) (imp w0 not w1))
+} = {
+  orri imp w0 w1 imp w0 not w1
+  pm2.51 w0 w1
+}
+
+// 7775
+thm pm5.14(wff w0, wff w1, wff w2) {
+  |- (or (imp w0 w1) (imp w1 w2))
+} = {
+  orri imp w0 w1 imp w1 w2
+  pm2.21d not imp w0 w1 w1 w2
+  con3i w1 imp w0 w1
+  ax-1 w1 w0
+}
+
+// 7780
+thm pm5.13(wff w0, wff w1) {
+  |- (or (imp w0 w1) (imp w1 w0))
+} = {
+  pm5.14 w0 w1 w0
+}
+
+// 7785
+thm pm5.55(wff w0, wff w1) {
+  |- (or (iff (or w0 w1) w0) (iff (or w0 w1) w1))
+} = {
+  orri iff or w0 w1 w0 iff or w0 w1 w1
+  con1i iff or w0 w1 w1 iff or w0 w1 w0
+  nsyl4 w0 iff or w0 w1 w0 iff or w0 w1 w1
+  bicomd not w0 w1 or w0 w1
+  biorf w0 w1
+  bicomd w0 w0 or w0 w1
+  biort w0 w1
+}
+
+// 7792
+thm pm4.72(wff w0, wff w1) {
+  |- (iff (imp w0 w1) (iff w1 (or w0 w1)))
+} = {
+  impbii imp w0 w1 iff w1 or w0 w1
+  syl5 w0 or w0 w1 iff w1 or w0 w1 w1
+  biimpr w1 or w0 w1
+  orc w0 w1
+  impbid2 imp w0 w1 w1 or w0 w1
+  pm2.621 w0 w1
+  olc w1 w0
+}
+
+// 7798
+thm imimorb(wff w0, wff w1, wff w2) {
+  |- (iff (imp (imp w1 w2) (imp w0 w2)) (imp w0 (or w1 w2)))
+} = {
+  bitr4i imp imp w1 w2 imp w0 w2 imp w0 imp imp w1 w2 w2 imp w0 or w1 w2
+  imbi2i or w1 w2 imp imp w1 w2 w2 w0
+  dfor2 w1 w2
+  bi2.04 imp w1 w2 w0 w2
+}
+
+// 7804
+thm oibabs(wff w0, wff w1) {
+  |- (iff (imp (or w0 w1) (iff w0 w1)) (iff w0 w1))
+} = {
+  impbii imp or w0 w1 iff w0 w1 iff w0 w1
+  ax-1 iff w0 w1 or w0 w1
+  ja or w0 w1 iff w0 w1 iff w0 w1
+  id iff w0 w1
+  norbi w0 w1
+}
+
+// 7812
+thm orbidi(wff w0, wff w1, wff w2) {
+  |- (iff (or w0 (iff w1 w2)) (iff (or w0 w1) (or w0 w2)))
+} = {
+  3bitr4i imp not w0 iff w1 w2 iff imp not w0 w1 imp not w0 w2 or w0 iff w1 w2 iff or w0 w1 or w0 w2
+  bibi12i or w0 w1 imp not w0 w1 or w0 w2 imp not w0 w2
+  df-or w0 w2
+  df-or w0 w1
+  df-or w0 iff w1 w2
+  pm5.74 not w0 w1 w2
+}
+
+// 7820
+thm pm5.7(wff w0, wff w1, wff w2) {
+  |- (iff (iff (or w0 w2) (or w1 w2)) (or w2 (iff w0 w1)))
+} = {
+  bitr2i or w2 iff w0 w1 iff or w2 w0 or w2 w1 iff or w0 w2 or w1 w2
+  bibi12i or w2 w0 or w0 w2 or w2 w1 or w1 w2
+  orcom w2 w1
+  orcom w2 w0
+  orbidi w2 w0 w1
+}
+

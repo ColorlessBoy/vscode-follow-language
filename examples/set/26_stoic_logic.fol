@@ -1,0 +1,121 @@
+import '6_mix.fol'
+import '11_xor.fol'
+import '9_3or_3and.fol'
+
+/*******************************************************************************
+  Stoic logic non-modal portion (Chrysippus of Soli)
+*******************************************************************************/
+
+// 14041
+thm mptnan(wff w0, wff w1) {
+  -| w0
+  -| not (and w0 w1)
+  |- not w1
+} = {
+  ax-mp w0 not w1
+  imnani w0 w1
+}
+
+// 14056
+thm mptxor(wff w0, wff w1) {
+  -| w0
+  -| (xor w0 w1)
+  |- not w1
+} = {
+  mptnan w0 w1
+  ax-mp xor w0 w1 not and w0 w1
+  xornan w0 w1
+}
+
+// 14076
+thm mtpor(wff w0, wff w1) {
+  -| not w0
+  -| (or w0 w1)
+  |- w1
+} = {
+  ax-mp not w0 w1
+  ori w0 w1
+}
+
+// 14100
+thm mtpxor(wff w0, wff w1) {
+  -| not w0
+  -| (xor w0 w1)
+  |- w1
+} = {
+  mtpor w0 w1
+  ax-mp xor w0 w1 or w0 w1
+  xoror w0 w1
+}
+
+// 14119
+thm stoic1a(wff w0, wff w1, wff w3) {
+  -| (imp (and w0 w1) w3)
+  |- (imp (and w0 not w3) not w1)
+} = {
+  con3dimp w0 w1 w3
+  ex w0 w1 w3
+}
+
+// 14124
+thm stoic1b(wff w0, wff w1, wff w3) {
+  -| (imp (and w0 w1) w3)
+  |- (imp (and w1 not w3) not w0)
+} = {
+  stoic1a w1 w0 w3
+  ancoms w0 w1 w3
+}
+
+// 14144
+thm stoic2a(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (and w0 w2) w3)
+  |- (imp (and w0 w1) w3)
+} = {
+  syldan w0 w1 w2 w3
+}
+
+// 14158
+thm stoic2b(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (3and w0 w1 w2) w3)
+  |- (imp (and w0 w1) w3)
+} = {
+  mpd3an3 w0 w1 w2 w3
+}
+
+// 14173
+thm stoic3(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (and w2 w3) w4)
+  |- (imp (3and w0 w1 w3) w4)
+} = {
+  3impa w0 w1 w3 w4
+  sylan and w0 w1 w2 w3 w4
+}
+
+// 14192
+thm stoic4a(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (3and w2 w0 w3) w4)
+  |- (imp (3and w0 w1 w3) w4)
+} = {
+  syl3anc 3and w0 w1 w3 w2 w0 w3 w4
+  simp3 w0 w1 w3
+  simp1 w0 w1 w3
+  3adant3 w0 w1 w2 w3
+}
+
+// 14204
+thm stoic4b(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  -| (imp (and w0 w1) w2)
+  -| (imp (and (3and w2 w0 w1) w3) w4)
+  |- (imp (3and w0 w1 w3) w4)
+} = {
+  syl31anc 3and w0 w1 w3 w2 w0 w1 w3 w4
+  simp3 w0 w1 w3
+  simp2 w0 w1 w3
+  simp1 w0 w1 w3
+  3adant3 w0 w1 w2 w3
+}
+

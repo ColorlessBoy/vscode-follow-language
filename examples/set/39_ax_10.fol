@@ -1,0 +1,125 @@
+import '37_ax_9.fol'
+
+/*******************************************************************************
+  Axiom scheme ax-10 (Quantified Negation)
+*******************************************************************************/
+
+// 17700
+thm hbn1(wff w0, setvar s0) {
+  |- (imp not forall s0 w0 forall s0 not forall s0 w0)
+} = {
+  ax-10 w0 s0
+}
+
+// 17706
+thm hbe1(wff w0, setvar s0) {
+  |- (imp exist s0 w0 forall s0 exist s0 w0)
+} = {
+  hbxfrbi exist s0 w0 not forall s0 not w0 s0
+  hbn1 not w0 s0
+  df-ex w0 s0
+}
+
+// 17711
+thm hbe1a(wff w0, setvar s0) {
+  |- (imp exist s0 forall s0 w0 forall s0 w0)
+} = {
+  sylbi exist s0 forall s0 w0 not forall s0 not forall s0 w0 forall s0 w0
+  con1i forall s0 w0 forall s0 not forall s0 w0
+  hbn1 w0 s0
+  df-ex forall s0 w0 s0
+}
+
+// 17716
+thm nf5-1(wff w0, setvar s0) {
+  |- (imp forall s0 (imp w0 forall s0 w0) notfree s0 w0)
+} = {
+  nfd forall s0 imp w0 forall s0 w0 w0 s0
+  syl6 forall s0 imp w0 forall s0 w0 exist s0 w0 exist s0 forall s0 w0 forall s0 w0
+  hbe1a w0 s0
+  exim w0 forall s0 w0 s0
+}
+
+// 17723
+thm nf5i(wff w0, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  |- notfree s0 w0
+} = {
+  mpg imp w0 forall s0 w0 notfree s0 w0 s0
+  nf5-1 w0 s0
+}
+
+// 17733
+thm nf5dh(wff w0, wff w1, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 (imp w1 forall s0 w1))
+  |- (imp w0 notfree s0 w1)
+} = {
+  syl w0 forall s0 imp w1 forall s0 w1 notfree s0 w1
+  nf5-1 w1 s0
+  alrimih w0 imp w1 forall s0 w1 s0
+}
+
+// 17743
+thm nf5dv(wff w0, wff w1, setvar s0) {
+  -| diff s0 w0
+  -| (imp w0 (imp w1 forall s0 w1))
+  |- (imp w0 notfree s0 w1)
+} = {
+  nf5dh w0 w1 s0
+  ax-5 w0 s0
+}
+
+// 17749
+thm nfe1(wff w0, setvar s0) {
+  |- notfree s0 exist s0 w0
+} = {
+  nf5i exist s0 w0 s0
+  hbe1 w0 s0
+}
+
+// 17756
+thm nfa1(wff w0, setvar s0) {
+  |- notfree s0 forall s0 w0
+} = {
+  nfxfr forall s0 w0 not exist s0 not w0 s0
+  nfn exist s0 not w0 s0
+  nfe1 not w0 s0
+  alex w0 s0
+}
+
+// 17762
+thm nfna1(wff w0, setvar s0) {
+  |- notfree s0 not forall s0 w0
+} = {
+  nfn forall s0 w0 s0
+  nfa1 w0 s0
+}
+
+// 17767
+thm nfia1(wff w0, wff w1, setvar s0) {
+  |- notfree s0 (imp forall s0 w0 forall s0 w1)
+} = {
+  nfim forall s0 w0 forall s0 w1 s0
+  nfa1 w1 s0
+  nfa1 w0 s0
+}
+
+// 17773
+thm nfnf1(wff w0, setvar s0) {
+  |- notfree s0 notfree s0 w0
+} = {
+  nfxfr notfree s0 w0 imp exist s0 w0 forall s0 w0 s0
+  nfim exist s0 w0 forall s0 w0 s0
+  nfa1 w0 s0
+  nfe1 w0 s0
+  df-nf w0 s0
+}
+
+// 17779
+thm modal5(wff w0, setvar s0) {
+  |- (imp not forall s0 not w0 forall s0 not forall s0 not w0)
+} = {
+  hbn1 not w0 s0
+}
+

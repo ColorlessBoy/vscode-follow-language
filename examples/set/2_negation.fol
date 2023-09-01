@@ -1,0 +1,799 @@
+import '1_implication.fol'
+
+/*******************************************************************************
+  Logical negation
+*******************************************************************************/
+
+// 1600
+thm con4(wff w0, wff w1) {
+  |- (imp (imp not w0 not w1) (imp w1 w0))
+} = {
+  ax-3 w0 w1
+}
+
+// 1610
+thm con4i(wff w0, wff w1) {
+  -| (imp not w0 not w1)
+  |- (imp w1 w0)
+} = {
+  ax-mp imp not w0 not w1 imp w1 w0
+  con4 w0 w1
+}
+
+// 1619
+thm con4d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp not w1 not w2))
+  |- (imp w0 (imp w2 w1))
+} = {
+  syl w0 imp not w1 not w2 imp w2 w1
+  con4 w1 w2
+}
+
+// 1628
+thm mt4(wff w0, wff w1) {
+  -| w0
+  -| (imp not w1 not w0)
+  |- w1
+} = {
+  ax-mp w0 w1
+  con4i w1 w0
+}
+
+// 1637
+thm pm2.21i(wff w0, wff w1) {
+  -| not w0
+  |- (imp w0 w1)
+} = {
+  con4i w1 w0
+  a1i not w0 not w1
+}
+
+// 1646
+thm pm2.24ii(wff w0, wff w1) {
+  -| w0
+  -| not w0
+  |- w1
+} = {
+  ax-mp w0 w1
+  pm2.21i w0 w1
+}
+
+// 1656
+thm pm2.21d(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w1)
+  |- (imp w0 (imp w1 w2))
+} = {
+  con4d w0 w2 w1
+  a1d w0 not w1 not w2
+}
+
+// 1666
+thm pm2.21ddALT(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp w0 not w1)
+  |- (imp w0 w2)
+} = {
+  mpd w0 w1 w2
+  pm2.21d w0 w1 w2
+}
+
+// 1674
+thm pm2.21(wff w0, wff w1) {
+  |- (imp not w0 (imp w0 w1))
+} = {
+  pm2.21d not w0 w0 w1
+  id not w0
+}
+
+// 1680
+thm pm2.24(wff w0, wff w1) {
+  |- (imp w0 (imp not w0 w1))
+} = {
+  com12 not w0 w0 w1
+  pm2.21 w0 w1
+}
+
+// 1685
+thm jarl(wff w0, wff w1, wff w2) {
+  |- (imp (imp (imp w0 w1) w2) (imp not w0 w2))
+} = {
+  imim1i not w0 imp w0 w1 w2
+  pm2.21 w0 w1
+}
+
+// 1693
+thm jarli(wff w0, wff w1, wff w2) {
+  -| (imp (imp w0 w1) w2)
+  |- (imp not w0 w2)
+} = {
+  syl not w0 imp w0 w1 w2
+  pm2.21 w0 w1
+}
+
+// 1701
+thm pm2.18(wff w0) {
+  |- (imp (imp not w0 w0) w0)
+} = {
+  pm2.43i imp not w0 w0 w0
+  con4d imp not w0 w0 w0 imp not w0 w0
+  a2i not w0 w0 not imp not w0 w0
+  pm2.21 w0 not imp not w0 w0
+}
+
+// 1708
+thm pm2.18i(wff w0) {
+  -| (imp not w0 w0)
+  |- w0
+} = {
+  ax-mp imp not w0 w0 w0
+  pm2.18 w0
+}
+
+// 1716
+thm pm2.18d(wff w0, wff w1) {
+  -| (imp w0 (imp not w1 w1))
+  |- (imp w0 w1)
+} = {
+  syl w0 imp not w1 w1 w1
+  pm2.18 w1
+}
+
+// 1728
+thm notnotr(wff w0) {
+  |- (imp not not w0 w0)
+} = {
+  jarli not w0 w0 w0
+  pm2.18 w0
+}
+
+// 1737
+thm notnotri(wff w0) {
+  -| not not w0
+  |- w0
+} = {
+  mt4 not not w0 w0
+  pm2.21i not w0 not not not w0
+}
+
+// 1754
+thm notnotriALT(wff w0) {
+  -| not not w0
+  |- w0
+} = {
+  pm2.18i w0
+  pm2.21i not w0 w0
+}
+
+// 1766
+thm notnotrd(wff w0, wff w1) {
+  -| (imp w0 not not w1)
+  |- (imp w0 w1)
+} = {
+  syl w0 not not w1 w1
+  notnotr w1
+}
+
+// 1773
+thm con2d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 not w2))
+  |- (imp w0 (imp w2 not w1))
+} = {
+  con4d w0 not w1 w2
+  syl5 not not w1 w1 w0 not w2
+  notnotr w1
+}
+
+// 1779
+thm con2(wff w0, wff w1) {
+  |- (imp (imp w0 not w1) (imp w1 not w0))
+} = {
+  con2d imp w0 not w1 w0 w1
+  id imp w0 not w1
+}
+
+// 1786
+thm mt2d(wff w0, wff w1, wff w2) {
+  -| (imp w0 w2)
+  -| (imp w0 (imp w1 not w2))
+  |- (imp w0 not w1)
+} = {
+  mpd w0 w2 not w1
+  con2d w0 w1 w2
+}
+
+// 1795
+thm mt2i(wff w0, wff w1, wff w2) {
+  -| w2
+  -| (imp w0 (imp w1 not w2))
+  |- (imp w0 not w1)
+} = {
+  mt2d w0 w1 w2
+  a1i w2 w0
+}
+
+// 1803
+thm nsyl3(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w1)
+  -| (imp w2 w1)
+  |- (imp w2 not w0)
+} = {
+  mt2d w2 w0 w1
+  a1i imp w0 not w1 w2
+}
+
+// 1812
+thm con2i(wff w0, wff w1) {
+  -| (imp w0 not w1)
+  |- (imp w1 not w0)
+} = {
+  nsyl3 w0 w1 w1
+  id w1
+}
+
+// 1821
+thm nsyl(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w1)
+  -| (imp w2 w1)
+  |- (imp w0 not w2)
+} = {
+  con2i w2 w0
+  nsyl3 w0 w1 w2
+}
+
+// 1830
+thm notnot(wff w0) {
+  |- (imp w0 not not w0)
+} = {
+  con2i not w0 w0
+  id not w0
+}
+
+// 1837
+thm notnoti(wff w0) {
+  -| w0
+  |- not not w0
+} = {
+  ax-mp w0 not not w0
+  notnot w0
+}
+
+// 1846
+thm notnotd(wff w0, wff w1) {
+  -| (imp w0 w1)
+  |- (imp w0 not not w1)
+} = {
+  syl w0 w1 not not w1
+  notnot w1
+}
+
+// 1853
+thm con1d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp not w1 w2))
+  |- (imp w0 (imp not w2 w1))
+} = {
+  con4d w0 w1 not w2
+  syl6 w0 not w1 w2 not not w2
+  notnot w2
+}
+
+// 1861
+thm mt3d(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w2)
+  -| (imp w0 (imp not w1 w2))
+  |- (imp w0 w1)
+} = {
+  mpd w0 not w2 w1
+  con1d w0 w1 w2
+}
+
+// 1870
+thm mt3i(wff w0, wff w1, wff w2) {
+  -| not w2
+  -| (imp w0 (imp not w1 w2))
+  |- (imp w0 w1)
+} = {
+  mt3d w0 w1 w2
+  a1i not w2 w0
+}
+
+// 1878
+thm nsyl2(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w1)
+  -| (imp not w2 w1)
+  |- (imp w0 w2)
+} = {
+  mt3d w0 w2 w1
+  a1i imp not w2 w1 w0
+}
+
+// 1885
+thm con1(wff w0, wff w1) {
+  |- (imp (imp not w0 w1) (imp not w1 w0))
+} = {
+  con1d imp not w0 w1 w0 w1
+  id imp not w0 w1
+}
+
+// 1894
+thm con1i(wff w0, wff w1) {
+  -| (imp not w0 w1)
+  |- (imp not w1 w0)
+} = {
+  nsyl2 not w1 w1 w0
+  id not w1
+}
+
+// 1902
+thm pm2.24i(wff w0, wff w1) {
+  -| w0
+  |- (imp not w0 w1)
+} = {
+  con1i w1 w0
+  a1i w0 not w1
+}
+
+// 1909
+thm pm2.24d(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  |- (imp w0 (imp not w1 w2))
+} = {
+  con1d w0 w2 w1
+  a1d w0 w1 not w2
+}
+
+// 1917
+thm con3d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 (imp not w2 not w1))
+} = {
+  con1d w0 not w1 w2
+  syl5 not not w1 w1 w0 w2
+  notnotr w1
+}
+
+// 1925
+thm con3(wff w0, wff w1) {
+  |- (imp (imp w0 w1) (imp not w1 not w0))
+} = {
+  con3d imp w0 w1 w0 w1
+  id imp w0 w1
+}
+
+// 1933
+thm con3i(wff w0, wff w1) {
+  -| (imp w0 w1)
+  |- (imp not w1 not w0)
+} = {
+  nsyl not w1 w1 w0
+  id not w1
+}
+
+// 1941
+thm con3rr3(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  |- (imp not w2 (imp w0 not w1))
+} = {
+  com12 w0 not w2 not w1
+  con3d w0 w1 w2
+}
+
+// 1950
+thm mt4d(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp w0 (imp not w2 not w1))
+  |- (imp w0 w2)
+} = {
+  mpd w0 w1 w2
+  con4d w0 w2 w1
+}
+
+// 1958
+thm mt4i(wff w0, wff w1, wff w2) {
+  -| w2
+  -| (imp w0 (imp not w1 not w2))
+  |- (imp w0 w1)
+} = {
+  mt4d w0 w2 w1
+  a1i w2 w0
+}
+
+// 1966
+thm nsyld(wff w0, wff w1, wff w2, wff w4) {
+  -| (imp w0 (imp w1 not w2))
+  -| (imp w0 (imp w4 w2))
+  |- (imp w0 (imp w1 not w4))
+} = {
+  syld w0 w1 not w2 not w4
+  con3d w0 w4 w2
+}
+
+// 1974
+thm nsyli(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w3 not w2)
+  |- (imp w0 (imp w3 not w1))
+} = {
+  syl5 w3 not w2 w0 not w1
+  con3d w0 w1 w2
+}
+
+// 1982
+thm nsyl4(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp not w0 w2)
+  |- (imp not w2 w1)
+} = {
+  syl not w2 w0 w1
+  con1i w0 w2
+}
+
+// 1989
+thm pm3.2im(wff w0, wff w1) {
+  |- (imp w0 (imp w1 not (imp w0 not w1)))
+} = {
+  con2d w0 imp w0 not w1 w1
+  pm2.27 w0 not w1
+}
+
+// 1994
+thm mth8(wff w0, wff w1) {
+  |- (imp w0 (imp not w1 not (imp w0 w1)))
+} = {
+  con3d w0 imp w0 w1 w1
+  pm2.27 w0 w1
+}
+
+// 2002
+thm jc(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp w0 w2)
+  |- (imp w0 not (imp w1 not w2))
+} = {
+  sylc w0 w1 w2 not imp w1 not w2
+  pm3.2im w1 w2
+}
+
+// 2010
+thm impi(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  |- (imp not (imp w0 not w1) w2)
+} = {
+  con1i w2 imp w0 not w1
+  con3rr3 w0 w1 w2
+}
+
+// 2018
+thm expi(wff w0, wff w1, wff w2) {
+  -| (imp not (imp w0 not w1) w2)
+  |- (imp w0 (imp w1 w2))
+} = {
+  syl6 w0 w1 not imp w0 not w1 w2
+  pm3.2im w0 w1
+}
+
+// 2025
+thm simprim(wff w0, wff w1) {
+  |- (imp not (imp w0 not w1) w1)
+} = {
+  impi w0 w1 w1
+  idd w0 w1
+}
+
+// 2031
+thm simplim(wff w0, wff w1) {
+  |- (imp not (imp w0 w1) w0)
+} = {
+  con1i w0 imp w0 w1
+  pm2.21 w0 w1
+}
+
+// 2036
+thm pm2.5(wff w0, wff w1) {
+  |- (imp not (imp w0 w1) (imp not w0 w1))
+} = {
+  pm2.24d not imp w0 w1 w0 w1
+  simplim w0 w1
+}
+
+// 2041
+thm pm2.51(wff w0, wff w1) {
+  |- (imp not (imp w0 w1) (imp w0 not w1))
+} = {
+  a1d not imp w0 w1 not w1 w0
+  con3i w1 imp w0 w1
+  ax-1 w1 w0
+}
+
+// 2046
+thm pm2.521(wff w0, wff w1) {
+  |- (imp not (imp w0 w1) (imp w1 w0))
+} = {
+  a1d not imp w0 w1 w0 w1
+  simplim w0 w1
+}
+
+// 2051
+thm pm2.52(wff w0, wff w1) {
+  |- (imp not (imp w0 w1) (imp not w0 not w1))
+} = {
+  con3d not imp w0 w1 w1 w0
+  pm2.521 w0 w1
+}
+
+// 2056
+thm expt(wff w0, wff w1, wff w2) {
+  |- (imp (imp not (imp w0 not w1) w2) (imp w0 (imp w1 w2)))
+} = {
+  com12 w0 imp not imp w0 not w1 w2 imp w1 w2
+  imim1d w0 w1 not imp w0 not w1 w2
+  pm3.2im w0 w1
+}
+
+// 2062
+thm impt(wff w0, wff w1, wff w2) {
+  |- (imp (imp w0 (imp w1 w2)) (imp not (imp w0 not w1) w2))
+} = {
+  mpdi imp w0 imp w1 w2 not imp w0 not w1 w1 w2
+  imim1i not imp w0 not w1 w0 imp w1 w2
+  simplim w0 not w1
+  simprim w0 w1
+}
+
+// 2070
+thm pm2.61d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w0 (imp not w1 w2))
+  |- (imp w0 w2)
+} = {
+  pm2.18d w0 w2
+  syld w0 not w2 w1 w2
+  con1d w0 w1 w2
+}
+
+// 2079
+thm pm2.61d1(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp not w1 w2)
+  |- (imp w0 w2)
+} = {
+  pm2.61d w0 w1 w2
+  a1i imp not w1 w2 w0
+}
+
+// 2088
+thm pm2.61d2(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp not w1 w2))
+  -| (imp w1 w2)
+  |- (imp w0 w2)
+} = {
+  pm2.61d w0 w1 w2
+  a1i imp w1 w2 w0
+}
+
+// 2098
+thm ja(wff w0, wff w1, wff w2) {
+  -| (imp not w0 w2)
+  -| (imp w1 w2)
+  |- (imp (imp w0 w1) w2)
+} = {
+  pm2.61d1 imp w0 w1 w0 w2
+  imim2i w1 w2 w0
+}
+
+// 2107
+thm jad(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp w0 (imp not w1 w3))
+  -| (imp w0 (imp w2 w3))
+  |- (imp w0 (imp (imp w1 w2) w3))
+} = {
+  com12 imp w1 w2 w0 w3
+  ja w1 w2 imp w0 w3
+  com12 w0 w2 w3
+  com12 w0 not w1 w3
+}
+
+// 2116
+thm pm2.61i(wff w0, wff w1) {
+  -| (imp w0 w1)
+  -| (imp not w0 w1)
+  |- w1
+} = {
+  ax-mp imp w0 w0 w1
+  ja w0 w0 w1
+  id w0
+}
+
+// 2126
+thm pm2.61ii(wff w0, wff w1, wff w2) {
+  -| (imp not w0 (imp not w1 w2))
+  -| (imp w0 w2)
+  -| (imp w1 w2)
+  |- w2
+} = {
+  pm2.61i w0 w2
+  pm2.61d2 not w0 w1 w2
+}
+
+// 2137
+thm pm2.61nii(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp not w0 w2)
+  -| (imp not w1 w2)
+  |- w2
+} = {
+  pm2.61i w0 w2
+  pm2.61d1 w0 w1 w2
+}
+
+// 2148
+thm pm2.61iii(wff w0, wff w1, wff w2, wff w3) {
+  -| (imp not w0 (imp not w1 (imp not w2 w3)))
+  -| (imp w0 w3)
+  -| (imp w1 w3)
+  -| (imp w2 w3)
+  |- w3
+} = {
+  pm2.61i w2 w3
+  pm2.61ii w0 w1 imp not w2 w3
+  a1d w1 w3 not w2
+  a1d w0 w3 not w2
+}
+
+// 2158
+thm pm2.01(wff w0) {
+  |- (imp (imp w0 not w0) not w0)
+} = {
+  ja w0 not w0 not w0
+  id not w0
+}
+
+// 2165
+thm pm2.01d(wff w0, wff w1) {
+  -| (imp w0 (imp w1 not w1))
+  |- (imp w0 not w1)
+} = {
+  pm2.61d1 w0 w1 not w1
+  id not w1
+}
+
+// 2171
+thm pm2.6(wff w0, wff w1) {
+  |- (imp (imp not w0 w1) (imp (imp w0 w1) w1))
+} = {
+  jad imp not w0 w1 w0 w1 w1
+  idd imp not w0 w1 w1
+  id imp not w0 w1
+}
+
+// 2177
+thm pm2.61(wff w0, wff w1) {
+  |- (imp (imp w0 w1) (imp (imp not w0 w1) w1))
+} = {
+  com12 imp not w0 w1 imp w0 w1 w1
+  pm2.6 w0 w1
+}
+
+// 2183
+thm pm2.65(wff w0, wff w1) {
+  |- (imp (imp w0 w1) (imp (imp w0 not w1) not w0))
+} = {
+  jad imp w0 w1 w0 not w1 not w0
+  con3 w0 w1
+  idd imp w0 w1 not w0
+}
+
+// 2191
+thm pm2.65i(wff w0, wff w1) {
+  -| (imp w0 w1)
+  -| (imp w0 not w1)
+  |- not w0
+} = {
+  pm2.61i w1 not w0
+  con3i w0 w1
+  con2i w0 w1
+}
+
+// 2201
+thm pm2.21dd(wff w0, wff w1, wff w2) {
+  -| (imp w0 w1)
+  -| (imp w0 not w1)
+  |- (imp w0 w2)
+} = {
+  pm2.21i w0 w2
+  pm2.65i w0 w1
+}
+
+// 2210
+thm pm2.65d(wff w0, wff w1, wff w2) {
+  -| (imp w0 (imp w1 w2))
+  -| (imp w0 (imp w1 not w2))
+  |- (imp w0 not w1)
+} = {
+  pm2.01d w0 w1
+  nsyld w0 w1 w2 w1
+}
+
+// 2225
+thm mto(wff w0, wff w1) {
+  -| not w1
+  -| (imp w0 w1)
+  |- not w0
+} = {
+  pm2.65i w0 w1
+  a1i not w1 w0
+}
+
+// 2234
+thm mtod(wff w0, wff w1, wff w2) {
+  -| (imp w0 not w2)
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 not w1)
+} = {
+  pm2.65d w0 w1 w2
+  a1d w0 not w2 w1
+}
+
+// 2243
+thm mtoi(wff w0, wff w1, wff w2) {
+  -| not w2
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 not w1)
+} = {
+  mtod w0 w1 w2
+  a1i not w2 w0
+}
+
+// 2253
+thm mt2(wff w0, wff w1) {
+  -| w1
+  -| (imp w0 not w1)
+  |- not w0
+} = {
+  pm2.65i w0 w1
+  a1i w1 w0
+}
+
+// 2263
+thm mt3(wff w0, wff w1) {
+  -| not w1
+  -| (imp not w0 w1)
+  |- w0
+} = {
+  notnotri w0
+  mto not w0 w1
+}
+
+// 2272
+thm peirce(wff w0, wff w1) {
+  |- (imp (imp (imp w0 w1) w0) w0)
+} = {
+  ja imp w0 w1 w0 w0
+  id w0
+  simplim w0 w1
+}
+
+// 2280
+thm looinv(wff w0, wff w1) {
+  |- (imp (imp (imp w0 w1) w1) (imp (imp w1 w0) w0))
+} = {
+  syl6 imp imp w0 w1 w1 imp w1 w0 imp imp w0 w1 w0 w0
+  peirce w0 w1
+  imim1 imp w0 w1 w1 w0
+}
+
+// 2288
+thm bijust0(wff w0) {
+  |- not (imp (imp w0 w0) not (imp w0 w0))
+} = {
+  mt2 imp imp w0 w0 not imp w0 w0 imp w0 w0
+  pm2.01 imp w0 w0
+  id w0
+}
+
+// 2293
+thm bijust(wff w0, wff w1) {
+  |- not (imp (imp not (imp (imp w0 w1) not (imp w1 w0)) not (imp (imp w0 w1) not (imp w1 w0))) not (imp not (imp (imp w0 w1) not (imp w1 w0)) not (imp (imp w0 w1) not (imp w1 w0))))
+} = {
+  bijust0 not imp imp w0 w1 not imp w1 w0
+}
+

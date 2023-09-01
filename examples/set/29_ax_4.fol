@@ -1,0 +1,998 @@
+import '28_ax_gen.fol'
+
+/*******************************************************************************
+  Axiom scheme ax-4 (Quantified Implication)
+*******************************************************************************/
+
+// 14619
+thm alim(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w0 w1) (imp forall s0 w0 forall s0 w1))
+} = {
+  ax-4 w0 w1 s0
+}
+
+// 14626
+thm alimi(wff w0, wff w1, setvar s0) {
+  -| (imp w0 w1)
+  |- (imp forall s0 w0 forall s0 w1)
+} = {
+  mpg imp w0 w1 imp forall s0 w0 forall s0 w1 s0
+  alim w0 w1 s0
+}
+
+// 14631
+thm 2alimi(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (imp w0 w1)
+  |- (imp forall s0 forall s1 w0 forall s0 forall s1 w1)
+} = {
+  alimi forall s1 w0 forall s1 w1 s0
+  alimi w0 w1 s1
+}
+
+// 14637
+thm ala1(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 w0 forall s0 (imp w1 w0))
+} = {
+  alimi w0 imp w1 w0 s0
+  ax-1 w0 w1
+}
+
+// 14642
+thm al2im(wff w0, wff w1, wff w2, setvar s0) {
+  |- (imp forall s0 (imp w0 (imp w1 w2)) (imp forall s0 w0 (imp forall s0 w1 forall s0 w2)))
+} = {
+  syl6 forall s0 imp w0 imp w1 w2 forall s0 w0 forall s0 imp w1 w2 imp forall s0 w1 forall s0 w2
+  alim w1 w2 s0
+  alim w0 imp w1 w2 s0
+}
+
+// 14650
+thm al2imi(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 (imp w1 w2))
+  |- (imp forall s0 w0 (imp forall s0 w1 forall s0 w2))
+} = {
+  mpg imp w0 imp w1 w2 imp forall s0 w0 imp forall s0 w1 forall s0 w2 s0
+  al2im w0 w1 w2 s0
+}
+
+// 14658
+thm alanimi(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp (and w0 w1) w2)
+  |- (imp (and forall s0 w0 forall s0 w1) forall s0 w2)
+} = {
+  impand forall s0 w0 forall s0 w1 forall s0 w2
+  al2imi w0 w1 w2 s0
+  ex w0 w1 w2
+}
+
+// 14667
+thm alimdh(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 (imp forall s0 w1 forall s0 w2))
+} = {
+  syl w0 forall s0 w0 imp forall s0 w1 forall s0 w2
+  al2imi w0 w1 w2 s0
+}
+
+// 14672
+thm albi(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff forall s0 w0 forall s0 w1))
+} = {
+  impbid forall s0 iff w0 w1 forall s0 w0 forall s0 w1
+  al2imi iff w0 w1 w1 w0 s0
+  biimpr w0 w1
+  al2imi iff w0 w1 w0 w1 s0
+  biimp w0 w1
+}
+
+// 14679
+thm albii(wff w0, wff w1, setvar s0) {
+  -| (iff w0 w1)
+  |- (iff forall s0 w0 forall s0 w1)
+} = {
+  mpg iff w0 w1 iff forall s0 w0 forall s0 w1 s0
+  albi w0 w1 s0
+}
+
+// 14687
+thm 2albii(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (iff w0 w1)
+  |- (iff forall s0 forall s1 w0 forall s0 forall s1 w1)
+} = {
+  albii forall s1 w0 forall s1 w1 s0
+  albii w0 w1 s1
+}
+
+// 14692
+thm sylgt(wff w0, wff w1, wff w2, setvar s0) {
+  |- (imp forall s0 (imp w1 w2) (imp (imp w0 forall s0 w1) (imp w0 forall s0 w2)))
+} = {
+  imim2d forall s0 imp w1 w2 forall s0 w1 forall s0 w2 w0
+  alim w1 w2 s0
+}
+
+// 14702
+thm sylg(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w1)
+  -| (imp w1 w2)
+  |- (imp w0 forall s0 w2)
+} = {
+  syl w0 forall s0 w1 forall s0 w2
+  alimi w1 w2 s0
+}
+
+// 14712
+thm alrimih(wff w0, wff w1, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 w1)
+  |- (imp w0 forall s0 w1)
+} = {
+  sylg w0 w0 w1 s0
+}
+
+// 14722
+thm hbxfrbi(wff w0, wff w1, setvar s0) {
+  -| (iff w0 w1)
+  -| (imp w1 forall s0 w1)
+  |- (imp w0 forall s0 w0)
+} = {
+  3imtr4i w1 forall s0 w1 w0 forall s0 w0
+  albii w0 w1 s0
+}
+
+// 14729
+thm alex(wff w0, setvar s0) {
+  |- (iff forall s0 w0 not exist s0 not w0)
+} = {
+  bitri forall s0 w0 forall s0 not not w0 not exist s0 not w0
+  alnex not w0 s0
+  albii w0 not not w0 s0
+  notnotb w0
+}
+
+// 14736
+thm exnal(wff w0, setvar s0) {
+  |- (iff exist s0 not w0 not forall s0 w0)
+} = {
+  con2bii forall s0 w0 exist s0 not w0
+  alex w0 s0
+}
+
+// 14741
+thm 2nalexn(wff w0, setvar s0, setvar s1) {
+  |- (iff not forall s0 forall s1 w0 exist s0 exist s1 not w0)
+} = {
+  bicomi exist s0 exist s1 not w0 not forall s0 forall s1 w0
+  xchbinxr exist s0 exist s1 not w0 forall s0 not exist s1 not w0 forall s0 forall s1 w0
+  albii forall s1 w0 not exist s1 not w0 s0
+  alex w0 s1
+  df-ex exist s1 not w0 s0
+}
+
+// 14747
+thm 2exnaln(wff w0, setvar s0, setvar s1) {
+  |- (iff exist s0 exist s1 w0 not forall s0 forall s1 not w0)
+} = {
+  xchbinxr exist s0 exist s1 w0 forall s0 not exist s1 w0 forall s0 forall s1 not w0
+  albii forall s1 not w0 not exist s1 w0 s0
+  alnex w0 s1
+  df-ex exist s1 w0 s0
+}
+
+// 14752
+thm 2nexaln(wff w0, setvar s0, setvar s1) {
+  |- (iff not exist s0 exist s1 w0 forall s0 forall s1 not w0)
+} = {
+  con1bii forall s0 forall s1 not w0 exist s0 exist s1 w0
+  bicomi exist s0 exist s1 w0 not forall s0 forall s1 not w0
+  2exnaln w0 s0 s1
+}
+
+// 14760
+thm alimex(wff w0, wff w1, setvar s0) {
+  |- (iff (imp w0 forall s0 w1) (imp exist s0 not w1 not w0))
+} = {
+  bitri imp w0 forall s0 w1 imp w0 not exist s0 not w1 imp exist s0 not w1 not w0
+  con2b w0 exist s0 not w1
+  imbi2i forall s0 w1 not exist s0 not w1 w0
+  alex w1 s0
+}
+
+// 14769
+thm aleximi(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 (imp w1 w2))
+  |- (imp forall s0 w0 (imp exist s0 w1 exist s0 w2))
+} = {
+  con4d forall s0 w0 exist s0 w2 exist s0 w1
+  3imtr3g forall s0 w0 forall s0 not w2 forall s0 not w1 not exist s0 w2 not exist s0 w1
+  alnex w1 s0
+  alnex w2 s0
+  al2imi w0 not w2 not w1 s0
+  con3d w0 w1 w2
+}
+
+// 14777
+thm alexbii(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 (iff w1 w2))
+  |- (imp forall s0 w0 (iff exist s0 w1 exist s0 w2))
+} = {
+  impbid forall s0 w0 exist s0 w1 exist s0 w2
+  aleximi w0 w2 w1 s0
+  biimprd w0 w1 w2
+  aleximi w0 w1 w2 s0
+  biimpd w0 w1 w2
+}
+
+// 14784
+thm exim(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w0 w1) (imp exist s0 w0 exist s0 w1))
+} = {
+  aleximi imp w0 w1 w0 w1 s0
+  id imp w0 w1
+}
+
+// 14791
+thm eximi(wff w0, wff w1, setvar s0) {
+  -| (imp w0 w1)
+  |- (imp exist s0 w0 exist s0 w1)
+} = {
+  mpg imp w0 w1 imp exist s0 w0 exist s0 w1 s0
+  exim w0 w1 s0
+}
+
+// 14796
+thm 2eximi(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (imp w0 w1)
+  |- (imp exist s0 exist s1 w0 exist s0 exist s1 w1)
+} = {
+  eximi exist s1 w0 exist s1 w1 s0
+  eximi w0 w1 s1
+}
+
+// 14804
+thm eximii(wff w0, wff w1, setvar s0) {
+  -| exist s0 w0
+  -| (imp w0 w1)
+  |- exist s0 w1
+} = {
+  ax-mp exist s0 w0 exist s0 w1
+  eximi w0 w1 s0
+}
+
+// 14810
+thm exa1(wff w0, wff w1, setvar s0) {
+  |- (imp exist s0 w0 exist s0 (imp w1 w0))
+} = {
+  eximi w0 imp w1 w0 s0
+  ax-1 w0 w1
+}
+
+// 14816
+thm 19.38(wff w0, wff w1, setvar s0) {
+  |- (imp (imp exist s0 w0 forall s0 w1) forall s0 (imp w0 w1))
+} = {
+  ja exist s0 w0 forall s0 w1 forall s0 imp w0 w1
+  ala1 w1 w0 s0
+  sylbir not exist s0 w0 forall s0 not w0 forall s0 imp w0 w1
+  alimi not w0 imp w0 w1 s0
+  pm2.21 w0 w1
+  alnex w0 s0
+}
+
+// 14823
+thm 19.38a(wff w0, wff w1, setvar s0) {
+  |- (imp notfree s0 w0 (iff (imp exist s0 w0 forall s0 w1) forall s0 (imp w0 w1)))
+} = {
+  impbid2 notfree s0 w0 imp exist s0 w0 forall s0 w1 forall s0 imp w0 w1
+  syl9 notfree s0 w0 exist s0 w0 forall s0 w0 forall s0 imp w0 w1 forall s0 w1
+  alim w0 w1 s0
+  nfrd notfree s0 w0 w0 s0
+  id notfree s0 w0
+  19.38 w0 w1 s0
+}
+
+// 14831
+thm 19.38b(wff w0, wff w1, setvar s0) {
+  |- (imp notfree s0 w1 (iff (imp exist s0 w0 forall s0 w1) forall s0 (imp w0 w1)))
+} = {
+  impbid2 notfree s0 w1 imp exist s0 w0 forall s0 w1 forall s0 imp w0 w1
+  syl9r forall s0 imp w0 w1 exist s0 w0 exist s0 w1 notfree s0 w1 forall s0 w1
+  nfrd notfree s0 w1 w1 s0
+  id notfree s0 w1
+  exim w0 w1 s0
+  19.38 w0 w1 s0
+}
+
+// 14838
+thm imnang(wff w0, wff w1, setvar s0) {
+  |- (iff forall s0 (imp w0 not w1) forall s0 not (and w0 w1))
+} = {
+  albii imp w0 not w1 not and w0 w1 s0
+  imnan w0 w1
+}
+
+// 14843
+thm alinexa(wff w0, wff w1, setvar s0) {
+  |- (iff forall s0 (imp w0 not w1) not exist s0 (and w0 w1))
+} = {
+  bitri forall s0 imp w0 not w1 forall s0 not and w0 w1 not exist s0 and w0 w1
+  alnex and w0 w1 s0
+  imnang w0 w1 s0
+}
+
+// 14848
+thm alexn(wff w0, setvar s0, setvar s1) {
+  |- (iff forall s0 exist s1 not w0 not exist s0 forall s1 w0)
+} = {
+  bitri forall s0 exist s1 not w0 forall s0 not forall s1 w0 not exist s0 forall s1 w0
+  alnex forall s1 w0 s0
+  albii exist s1 not w0 not forall s1 w0 s0
+  exnal w0 s1
+}
+
+// 14853
+thm 2exnexn(wff w0, setvar s0, setvar s1) {
+  |- (iff exist s0 forall s1 w0 not forall s0 exist s1 not w0)
+} = {
+  con2bii forall s0 exist s1 not w0 exist s0 forall s1 w0
+  alexn w0 s0 s1
+}
+
+// 14857
+thm exbi(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff exist s0 w0 exist s0 w1))
+} = {
+  alexbii iff w0 w1 w0 w1 s0
+  id iff w0 w1
+}
+
+// 14864
+thm exbii(wff w0, wff w1, setvar s0) {
+  -| (iff w0 w1)
+  |- (iff exist s0 w0 exist s0 w1)
+} = {
+  mpg iff w0 w1 iff exist s0 w0 exist s0 w1 s0
+  exbi w0 w1 s0
+}
+
+// 14872
+thm 2exbii(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (iff w0 w1)
+  |- (iff exist s0 exist s1 w0 exist s0 exist s1 w1)
+} = {
+  exbii exist s1 w0 exist s1 w1 s0
+  exbii w0 w1 s1
+}
+
+// 14880
+thm 3exbii(wff w0, wff w1, setvar s0, setvar s1, setvar s2) {
+  -| (iff w0 w1)
+  |- (iff exist s0 exist s1 exist s2 w0 exist s0 exist s1 exist s2 w1)
+} = {
+  2exbii exist s2 w0 exist s2 w1 s0 s1
+  exbii w0 w1 s2
+}
+
+// 14887
+thm nfbiit(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (iff w0 w1) (iff notfree s0 w0 notfree s0 w1))
+} = {
+  3bitr4g forall s0 iff w0 w1 imp exist s0 w0 forall s0 w0 imp exist s0 w1 forall s0 w1 notfree s0 w0 notfree s0 w1
+  df-nf w1 s0
+  df-nf w0 s0
+  imbi12d forall s0 iff w0 w1 exist s0 w0 exist s0 w1 forall s0 w0 forall s0 w1
+  albi w0 w1 s0
+  exbi w0 w1 s0
+}
+
+// 14896
+thm nfbii(wff w0, wff w1, setvar s0) {
+  -| (iff w0 w1)
+  |- (iff notfree s0 w0 notfree s0 w1)
+} = {
+  mpg iff w0 w1 iff notfree s0 w0 notfree s0 w1 s0
+  nfbiit w0 w1 s0
+}
+
+// 14903
+thm nfxfr(wff w0, wff w1, setvar s0) {
+  -| (iff w0 w1)
+  -| notfree s0 w1
+  |- notfree s0 w0
+} = {
+  mpbir notfree s0 w0 notfree s0 w1
+  nfbii w0 w1 s0
+}
+
+// 14911
+thm nfxfrd(wff w0, wff w1, wff w2, setvar s0) {
+  -| (iff w0 w1)
+  -| (imp w2 notfree s0 w1)
+  |- (imp w2 notfree s0 w0)
+} = {
+  sylibr w2 notfree s0 w1 notfree s0 w0
+  nfbii w0 w1 s0
+}
+
+// 14918
+thm nfnbi(wff w0, setvar s0) {
+  |- (iff notfree s0 w0 notfree s0 not w0)
+} = {
+  3bitr4i or forall s0 w0 forall s0 not w0 or forall s0 not w0 forall s0 w0 notfree s0 w0 notfree s0 not w0
+  bitr4i notfree s0 not w0 or forall s0 not w0 forall s0 not not w0 or forall s0 not w0 forall s0 w0
+  orbi2i forall s0 w0 forall s0 not not w0 forall s0 not w0
+  albii w0 not not w0 s0
+  notnotb w0
+  nf3 not w0 s0
+  nf3 w0 s0
+  orcom forall s0 w0 forall s0 not w0
+}
+
+// 14926
+thm nfnt(wff w0, setvar s0) {
+  |- (imp notfree s0 w0 notfree s0 not w0)
+} = {
+  biimpi notfree s0 w0 notfree s0 not w0
+  nfnbi w0 s0
+}
+
+// 14934
+thm nfn(wff w0, setvar s0) {
+  -| notfree s0 w0
+  |- notfree s0 not w0
+} = {
+  ax-mp notfree s0 w0 notfree s0 not w0
+  nfnt w0 s0
+}
+
+// 14942
+thm nfnd(wff w0, wff w1, setvar s0) {
+  -| (imp w0 notfree s0 w1)
+  |- (imp w0 notfree s0 not w1)
+} = {
+  syl w0 notfree s0 w1 notfree s0 not w1
+  nfnt w1 s0
+}
+
+// 14948
+thm exanali(wff w0, wff w1, setvar s0) {
+  |- (iff exist s0 (and w0 not w1) not forall s0 (imp w0 w1))
+} = {
+  bitri exist s0 and w0 not w1 exist s0 not imp w0 w1 not forall s0 imp w0 w1
+  exnal imp w0 w1 s0
+  exbii and w0 not w1 not imp w0 w1 s0
+  annim w0 w1
+}
+
+// 14954
+thm exancom(wff w0, wff w1, setvar s0) {
+  |- (iff exist s0 (and w0 w1) exist s0 (and w1 w0))
+} = {
+  exbii and w0 w1 and w1 w0 s0
+  ancom w0 w1
+}
+
+// 14966
+thm exan(wff w0, wff w1, setvar s0) {
+  -| exist s0 w0
+  -| w1
+  |- exist s0 (and w0 w1)
+} = {
+  eximii w0 and w0 w1 s0
+  jctr w0 w1
+}
+
+// 14978
+thm exanOLD(wff w0, wff w1, setvar s0) {
+  -| (and exist s0 w0 w1)
+  |- exist s0 (and w0 w1)
+} = {
+  eximii w0 and w0 w1 s0
+  jctr w0 w1
+  simpri exist s0 w0 w1
+  simpli exist s0 w0 w1
+}
+
+// 14987
+thm exanOLDOLD(wff w0, wff w1, setvar s0) {
+  -| (and exist s0 w0 w1)
+  |- exist s0 (and w0 w1)
+} = {
+  ax-mp exist s0 w0 exist s0 and w0 w1
+  eximi w0 and w0 w1 s0
+  ax-mp w1 imp w0 and w0 w1
+  pm3.21 w1 w0
+  simpri exist s0 w0 w1
+  simpli exist s0 w0 w1
+}
+
+// 14999
+thm alrimdh(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w1 forall s0 w1)
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 (imp w1 forall s0 w2))
+} = {
+  syl5 w1 forall s0 w1 w0 forall s0 w2
+  alimdh w0 w1 w2 s0
+}
+
+// 15008
+thm eximdh(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 (imp w1 w2))
+  |- (imp w0 (imp exist s0 w1 exist s0 w2))
+} = {
+  syl w0 forall s0 w0 imp exist s0 w1 exist s0 w2
+  aleximi w0 w1 w2 s0
+}
+
+// 15017
+thm nexdh(wff w0, wff w1, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 not w1)
+  |- (imp w0 not exist s0 w1)
+} = {
+  sylib w0 forall s0 not w1 not exist s0 w1
+  alnex w1 s0
+  alrimih w0 not w1 s0
+}
+
+// 15026
+thm albidh(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff forall s0 w1 forall s0 w2))
+} = {
+  syl w0 forall s0 iff w1 w2 iff forall s0 w1 forall s0 w2
+  albi w1 w2 s0
+  alrimih w0 iff w1 w2 s0
+}
+
+// 15035
+thm exbidh(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 forall s0 w0)
+  -| (imp w0 (iff w1 w2))
+  |- (imp w0 (iff exist s0 w1 exist s0 w2))
+} = {
+  syl w0 forall s0 w0 iff exist s0 w1 exist s0 w2
+  alexbii w0 w1 w2 s0
+}
+
+// 15042
+thm exsimpl(wff w0, wff w1, setvar s0) {
+  |- (imp exist s0 (and w0 w1) exist s0 w0)
+} = {
+  eximi and w0 w1 w0 s0
+  simpl w0 w1
+}
+
+// 15048
+thm exsimpr(wff w0, wff w1, setvar s0) {
+  |- (imp exist s0 (and w0 w1) exist s0 w1)
+} = {
+  eximi and w0 w1 w1 s0
+  simpr w0 w1
+}
+
+// 15052
+thm 19.40(wff w0, wff w1, setvar s0) {
+  |- (imp exist s0 (and w0 w1) (and exist s0 w0 exist s0 w1))
+} = {
+  jca exist s0 and w0 w1 exist s0 w0 exist s0 w1
+  exsimpr w0 w1 s0
+  exsimpl w0 w1 s0
+}
+
+// 15058
+thm 19.26(wff w0, wff w1, setvar s0) {
+  |- (iff forall s0 (and w0 w1) (and forall s0 w0 forall s0 w1))
+} = {
+  impbii forall s0 and w0 w1 and forall s0 w0 forall s0 w1
+  alanimi w0 w1 and w0 w1 s0
+  id and w0 w1
+  jca forall s0 and w0 w1 forall s0 w0 forall s0 w1
+  alimi and w0 w1 w1 s0
+  simpr w0 w1
+  alimi and w0 w1 w0 s0
+  simpl w0 w1
+}
+
+// 15063
+thm 19.26-2(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (iff forall s0 forall s1 (and w0 w1) (and forall s0 forall s1 w0 forall s0 forall s1 w1))
+} = {
+  bitri forall s0 forall s1 and w0 w1 forall s0 and forall s1 w0 forall s1 w1 and forall s0 forall s1 w0 forall s0 forall s1 w1
+  19.26 forall s1 w0 forall s1 w1 s0
+  albii forall s1 and w0 w1 and forall s1 w0 forall s1 w1 s0
+  19.26 w0 w1 s1
+}
+
+// 15069
+thm 19.26-3an(wff w0, wff w1, wff w2, setvar s0) {
+  |- (iff forall s0 (3and w0 w1 w2) (3and forall s0 w0 forall s0 w1 forall s0 w2))
+} = {
+  3bitr4i and forall s0 and w0 w1 forall s0 w2 and and forall s0 w0 forall s0 w1 forall s0 w2 forall s0 3and w0 w1 w2 3and forall s0 w0 forall s0 w1 forall s0 w2
+  df-3and forall s0 w0 forall s0 w1 forall s0 w2
+  bitri forall s0 3and w0 w1 w2 forall s0 and and w0 w1 w2 and forall s0 and w0 w1 forall s0 w2
+  19.26 and w0 w1 w2 s0
+  albii 3and w0 w1 w2 and and w0 w1 w2 s0
+  df-3and w0 w1 w2
+  anbi1i forall s0 and w0 w1 and forall s0 w0 forall s0 w1 forall s0 w2
+  19.26 w0 w1 s0
+}
+
+// 15076
+thm 19.29(wff w0, wff w1, setvar s0) {
+  |- (imp (and forall s0 w0 exist s0 w1) exist s0 (and w0 w1))
+} = {
+  impand forall s0 w0 exist s0 w1 exist s0 and w0 w1
+  aleximi w0 w1 and w0 w1 s0
+  pm3.2 w0 w1
+}
+
+// 15081
+thm 19.29r(wff w0, wff w1, setvar s0) {
+  |- (imp (and exist s0 w0 forall s0 w1) exist s0 (and w0 w1))
+} = {
+  impcom forall s0 w1 exist s0 w0 exist s0 and w0 w1
+  aleximi w1 w0 and w0 w1 s0
+  pm3.21 w1 w0
+}
+
+// 15086
+thm 19.29r2(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (imp (and exist s0 exist s1 w0 forall s0 forall s1 w1) exist s0 exist s1 (and w0 w1))
+} = {
+  syl and exist s0 exist s1 w0 forall s0 forall s1 w1 exist s0 and exist s1 w0 forall s1 w1 exist s0 exist s1 and w0 w1
+  eximi and exist s1 w0 forall s1 w1 exist s1 and w0 w1 s0
+  19.29r w0 w1 s1
+  19.29r exist s1 w0 forall s1 w1 s0
+}
+
+// 15092
+thm 19.29x(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (imp (and exist s0 forall s1 w0 forall s0 exist s1 w1) exist s0 exist s1 (and w0 w1))
+} = {
+  syl and exist s0 forall s1 w0 forall s0 exist s1 w1 exist s0 and forall s1 w0 exist s1 w1 exist s0 exist s1 and w0 w1
+  eximi and forall s1 w0 exist s1 w1 exist s1 and w0 w1 s0
+  19.29 w0 w1 s1
+  19.29r forall s1 w0 exist s1 w1 s0
+}
+
+// 15101
+thm 19.35(wff w0, wff w1, setvar s0) {
+  |- (iff exist s0 (imp w0 w1) (imp forall s0 w0 exist s0 w1))
+} = {
+  impbii exist s0 imp w0 w1 imp forall s0 w0 exist s0 w1
+  ja forall s0 w0 exist s0 w1 exist s0 imp w0 w1
+  exa1 w1 w0 s0
+  sylbir not forall s0 w0 exist s0 not w0 exist s0 imp w0 w1
+  eximi not w0 imp w0 w1 s0
+  pm2.21 w0 w1
+  exnal w0 s0
+  com12 forall s0 w0 exist s0 imp w0 w1 exist s0 w1
+  aleximi w0 imp w0 w1 w1 s0
+  pm2.27 w0 w1
+}
+
+// 15109
+thm 19.35i(wff w0, wff w1, setvar s0) {
+  -| exist s0 (imp w0 w1)
+  |- (imp forall s0 w0 exist s0 w1)
+} = {
+  mpbi exist s0 imp w0 w1 imp forall s0 w0 exist s0 w1
+  19.35 w0 w1 s0
+}
+
+// 15117
+thm 19.35ri(wff w0, wff w1, setvar s0) {
+  -| (imp forall s0 w0 exist s0 w1)
+  |- exist s0 (imp w0 w1)
+} = {
+  mpbir exist s0 imp w0 w1 imp forall s0 w0 exist s0 w1
+  19.35 w0 w1 s0
+}
+
+// 15122
+thm 19.25(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (imp forall s1 exist s0 (imp w0 w1) (imp exist s1 forall s0 w0 exist s1 exist s0 w1))
+} = {
+  aleximi exist s0 imp w0 w1 forall s0 w0 exist s0 w1 s1
+  biimpi exist s0 imp w0 w1 imp forall s0 w0 exist s0 w1
+  19.35 w0 w1 s0
+}
+
+// 15128
+thm 19.30(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (or w0 w1) (or forall s0 w0 exist s0 w1))
+} = {
+  orrd forall s0 or w0 w1 forall s0 w0 exist s0 w1
+  syl5bir not forall s0 w0 exist s0 not w0 forall s0 or w0 w1 exist s0 w1
+  aleximi or w0 w1 not w0 w1 s0
+  pm2.53 w0 w1
+  exnal w0 s0
+}
+
+// 15134
+thm 19.43(wff w0, wff w1, setvar s0) {
+  |- (iff exist s0 (or w0 w1) (or exist s0 w0 exist s0 w1))
+} = {
+  bitr4i exist s0 or w0 w1 imp not exist s0 w0 exist s0 w1 or exist s0 w0 exist s0 w1
+  df-or exist s0 w0 exist s0 w1
+  3bitri exist s0 or w0 w1 exist s0 imp not w0 w1 imp forall s0 not w0 exist s0 w1 imp not exist s0 w0 exist s0 w1
+  imbi1i forall s0 not w0 not exist s0 w0 exist s0 w1
+  alnex w0 s0
+  19.35 not w0 w1 s0
+  exbii or w0 w1 imp not w0 w1 s0
+  df-or w0 w1
+}
+
+// 15142
+thm 19.43OLD(wff w0, wff w1, setvar s0) {
+  |- (iff exist s0 (or w0 w1) (or exist s0 w0 exist s0 w1))
+} = {
+  3bitr4i not forall s0 not or w0 w1 not and not exist s0 w0 not exist s0 w1 exist s0 or w0 w1 or exist s0 w0 exist s0 w1
+  oran exist s0 w0 exist s0 w1
+  df-ex or w0 w1 s0
+  notbii forall s0 not or w0 w1 and not exist s0 w0 not exist s0 w1
+  3bitri forall s0 not or w0 w1 forall s0 and not w0 not w1 and forall s0 not w0 forall s0 not w1 and not exist s0 w0 not exist s0 w1
+  anbi12i forall s0 not w0 not exist s0 w0 forall s0 not w1 not exist s0 w1
+  alnex w1 s0
+  alnex w0 s0
+  19.26 not w0 not w1 s0
+  albii not or w0 w1 and not w0 not w1 s0
+  ioran w0 w1
+}
+
+// 15148
+thm 19.33(wff w0, wff w1, setvar s0) {
+  |- (imp (or forall s0 w0 forall s0 w1) forall s0 (or w0 w1))
+} = {
+  jaoi forall s0 w0 forall s0 or w0 w1 forall s0 w1
+  alimi w1 or w0 w1 s0
+  olc w1 w0
+  alimi w0 or w0 w1 s0
+  orc w0 w1
+}
+
+// 15154
+thm 19.33b(wff w0, wff w1, setvar s0) {
+  |- (imp not (and exist s0 w0 exist s0 w1) (iff forall s0 (or w0 w1) (or forall s0 w0 forall s0 w1)))
+} = {
+  impbid1 not and exist s0 w0 exist s0 w1 forall s0 or w0 w1 or forall s0 w0 forall s0 w1
+  19.33 w0 w1 s0
+  sylbi not and exist s0 w0 exist s0 w1 or not exist s0 w0 not exist s0 w1 imp forall s0 or w0 w1 or forall s0 w0 forall s0 w1
+  jaoi not exist s0 w0 imp forall s0 or w0 w1 or forall s0 w0 forall s0 w1 not exist s0 w1
+  syl6com forall s0 or w0 w1 not exist s0 w1 forall s0 w0 or forall s0 w0 forall s0 w1
+  orc forall s0 w0 forall s0 w1
+  ord forall s0 or w0 w1 exist s0 w1 forall s0 w0
+  orcomd forall s0 or w0 w1 forall s0 w0 exist s0 w1
+  19.30 w0 w1 s0
+  syl6com forall s0 or w0 w1 not exist s0 w0 forall s0 w1 or forall s0 w0 forall s0 w1
+  olc forall s0 w1 forall s0 w0
+  syl5bir not exist s0 w0 forall s0 not w0 forall s0 or w0 w1 forall s0 w1
+  al2imi or w0 w1 not w0 w1 s0
+  pm2.53 w0 w1
+  alnex w0 s0
+  ianor exist s0 w0 exist s0 w1
+}
+
+// 15164
+thm 19.40-2(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (imp exist s0 exist s1 (and w0 w1) (and exist s0 exist s1 w0 exist s0 exist s1 w1))
+} = {
+  syl exist s0 exist s1 and w0 w1 exist s0 and exist s1 w0 exist s1 w1 and exist s0 exist s1 w0 exist s0 exist s1 w1
+  19.40 exist s1 w0 exist s1 w1 s0
+  eximi exist s1 and w0 w1 and exist s1 w0 exist s1 w1 s0
+  19.40 w0 w1 s1
+}
+
+// 15171
+thm 19.40b(wff w0, wff w1, setvar s0) {
+  |- (imp (or forall s0 w0 forall s0 w1) (iff (and exist s0 w0 exist s0 w1) exist s0 (and w0 w1)))
+} = {
+  impbid1 or forall s0 w0 forall s0 w1 and exist s0 w0 exist s0 w1 exist s0 and w0 w1
+  19.40 w0 w1 s0
+  orcoms forall s0 w1 forall s0 w0 imp and exist s0 w0 exist s0 w1 exist s0 and w0 w1
+  jaoa forall s0 w1 exist s0 w0 exist s0 and w0 w1 forall s0 w0 exist s0 w1
+  aleximi w0 w1 and w0 w1 s0
+  pm3.2 w0 w1
+  aleximi w1 w0 and w0 w1 s0
+  pm3.21 w1 w0
+}
+
+// 15178
+thm albiim(wff w0, wff w1, setvar s0) {
+  |- (iff forall s0 (iff w0 w1) (and forall s0 (imp w0 w1) forall s0 (imp w1 w0)))
+} = {
+  bitri forall s0 iff w0 w1 forall s0 and imp w0 w1 imp w1 w0 and forall s0 imp w0 w1 forall s0 imp w1 w0
+  19.26 imp w0 w1 imp w1 w0 s0
+  albii iff w0 w1 and imp w0 w1 imp w1 w0 s0
+  dfbi2 w0 w1
+}
+
+// 15185
+thm 2albiim(wff w0, wff w1, setvar s0, setvar s1) {
+  |- (iff forall s0 forall s1 (iff w0 w1) (and forall s0 forall s1 (imp w0 w1) forall s0 forall s1 (imp w1 w0)))
+} = {
+  bitri forall s0 forall s1 iff w0 w1 forall s0 and forall s1 imp w0 w1 forall s1 imp w1 w0 and forall s0 forall s1 imp w0 w1 forall s0 forall s1 imp w1 w0
+  19.26 forall s1 imp w0 w1 forall s1 imp w1 w0 s0
+  albii forall s1 iff w0 w1 and forall s1 imp w0 w1 forall s1 imp w1 w0 s0
+  albiim w0 w1 s1
+}
+
+// 15192
+thm exintrbi(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w0 w1) (iff exist s0 w0 exist s0 (and w0 w1)))
+} = {
+  alexbii imp w0 w1 w0 and w0 w1 s0
+  rbaibr and w0 w1 w0 imp w0 w1
+  abai w0 w1
+}
+
+// 15198
+thm exintr(wff w0, wff w1, setvar s0) {
+  |- (imp forall s0 (imp w0 w1) (imp exist s0 w0 exist s0 (and w0 w1)))
+} = {
+  aleximi imp w0 w1 w0 and w0 w1 s0
+  ancl w0 w1
+}
+
+// 15204
+thm alsyl(wff w0, wff w1, wff w2, setvar s0) {
+  |- (imp (and forall s0 (imp w0 w1) forall s0 (imp w1 w2)) forall s0 (imp w0 w2))
+} = {
+  alanimi imp w0 w1 imp w1 w2 imp w0 w2 s0
+  pm3.33 w0 w1 w2
+}
+
+// 15217
+thm nfimd(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 notfree s0 w1)
+  -| (imp w0 notfree s0 w2)
+  |- (imp w0 notfree s0 (imp w1 w2))
+} = {
+  nfd w0 imp w1 w2 s0
+  syl56 exist s0 imp w1 w2 imp forall s0 w1 exist s0 w2 w0 imp exist s0 w1 forall s0 w2 forall s0 imp w1 w2
+  19.38 w1 w2 s0
+  imim12d w0 exist s0 w1 forall s0 w1 exist s0 w2 forall s0 w2
+  nfrd w0 w2 s0
+  nfrd w0 w1 s0
+  biimpi exist s0 imp w1 w2 imp forall s0 w1 exist s0 w2
+  19.35 w1 w2 s0
+}
+
+// 15225
+thm nfimt(wff w0, wff w1, setvar s0) {
+  |- (imp (and notfree s0 w0 notfree s0 w1) notfree s0 (imp w0 w1))
+} = {
+  nfimd and notfree s0 w0 notfree s0 w1 w0 w1 s0
+  simpr notfree s0 w0 notfree s0 w1
+  simpl notfree s0 w0 notfree s0 w1
+}
+
+// 15235
+thm nfim(wff w0, wff w1, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  |- notfree s0 (imp w0 w1)
+} = {
+  mp2an notfree s0 w0 notfree s0 w1 notfree s0 imp w0 w1
+  nfimt w0 w1 s0
+}
+
+// 15245
+thm nfand(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 notfree s0 w1)
+  -| (imp w0 notfree s0 w2)
+  |- (imp w0 notfree s0 (and w1 w2))
+} = {
+  nfxfrd and w1 w2 not imp w1 not w2 w0 s0
+  nfnd w0 imp w1 not w2 s0
+  nfimd w0 w1 not w2 s0
+  nfnd w0 w2 s0
+  df-and w1 w2
+}
+
+// 15252
+thm nf3and(wff w0, wff w1, wff w2, wff w3, setvar s0) {
+  -| (imp w0 notfree s0 w1)
+  -| (imp w0 notfree s0 w2)
+  -| (imp w0 notfree s0 w3)
+  |- (imp w0 notfree s0 (3and w1 w2 w3))
+} = {
+  nfxfrd 3and w1 w2 w3 and and w1 w2 w3 w0 s0
+  nfand w0 and w1 w2 w3 s0
+  nfand w0 w1 w2 s0
+  df-3and w1 w2 w3
+}
+
+// 15263
+thm nfan(wff w0, wff w1, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  |- notfree s0 (and w0 w1)
+} = {
+  mptru notfree s0 and w0 w1
+  nfand true w0 w1 s0
+  a1i notfree s0 w1 true
+  a1i notfree s0 w0 true
+}
+
+// 15268
+thm nfnan(wff w0, wff w1, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  |- notfree s0 (nand w0 w1)
+} = {
+  nfxfr nand w0 w1 not and w0 w1 s0
+  nfn and w0 w1 s0
+  nfan w0 w1 s0
+  df-nand w0 w1
+}
+
+// 15275
+thm nf3an(wff w0, wff w1, wff w2, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  -| notfree s0 w2
+  |- notfree s0 (3and w0 w1 w2)
+} = {
+  nfxfr 3and w0 w1 w2 and and w0 w1 w2 s0
+  nfan and w0 w1 w2 s0
+  nfan w0 w1 s0
+  df-3and w0 w1 w2
+}
+
+// 15285
+thm nfbid(wff w0, wff w1, wff w2, setvar s0) {
+  -| (imp w0 notfree s0 w1)
+  -| (imp w0 notfree s0 w2)
+  |- (imp w0 notfree s0 (iff w1 w2))
+} = {
+  nfxfrd iff w1 w2 and imp w1 w2 imp w2 w1 w0 s0
+  nfand w0 imp w1 w2 imp w2 w1 s0
+  nfimd w0 w2 w1 s0
+  nfimd w0 w1 w2 s0
+  dfbi2 w1 w2
+}
+
+// 15297
+thm nfbi(wff w0, wff w1, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  |- notfree s0 (iff w0 w1)
+} = {
+  mptru notfree s0 iff w0 w1
+  nfbid true w0 w1 s0
+  a1i notfree s0 w1 true
+  a1i notfree s0 w0 true
+}
+
+// 15303
+thm nfor(wff w0, wff w1, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  |- notfree s0 (or w0 w1)
+} = {
+  nfxfr or w0 w1 imp not w0 w1 s0
+  nfim not w0 w1 s0
+  nfn w0 s0
+  df-or w0 w1
+}
+
+// 15310
+thm nf3or(wff w0, wff w1, wff w2, setvar s0) {
+  -| notfree s0 w0
+  -| notfree s0 w1
+  -| notfree s0 w2
+  |- notfree s0 (3or w0 w1 w2)
+} = {
+  nfxfr 3or w0 w1 w2 or or w0 w1 w2 s0
+  nfor or w0 w1 w2 s0
+  nfor w0 w1 s0
+  df-3or w0 w1 w2
+}
+

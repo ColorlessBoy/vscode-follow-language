@@ -1,0 +1,68 @@
+import '36_ax_8.fol'
+
+/*******************************************************************************
+  Axiom scheme ax-9 (Right Equality for Binary Predicate)
+*******************************************************************************/
+
+// 17361
+thm ax9v(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  |- (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1))
+} = {
+  a1ii (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1)) (diffs s1 s0)
+  ax-9 s0 s1 s2
+}
+
+// 17370
+thm ax9v1(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  -| diffs s2 s0
+  |- (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1))
+} = {
+  a1ii (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1)) (diffs s2 s0)
+  ax9v s0 s1 s2
+}
+
+// 17379
+thm ax9v2(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  -| diffs s2 s1
+  |- (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1))
+} = {
+  a1ii (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1)) (diffs s2 s1)
+  ax9v s0 s1 s2
+}
+
+const setvar ax9_hidden0
+axiom df-ax9_hidden0(setvar s0) { |- diffs ax9_hidden0 s0 }
+// 17389
+thm ax9(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1))
+} = {
+  sylbi eqset s0 s1 exist ax9_hidden0 and eqset ax9_hidden0 s0 eqset ax9_hidden0 s1 imp inset s2 s0 inset s2 s1
+  exlimiv and eqset ax9_hidden0 s0 eqset ax9_hidden0 s1 imp inset s2 s0 inset s2 s1 ax9_hidden0
+  sylan9 eqset ax9_hidden0 s0 inset s2 s0 inset s2 ax9_hidden0 eqset ax9_hidden0 s1 inset s2 s1
+  ax9v1 ax9_hidden0 s1 s2
+  equcoms imp inset s2 s0 inset s2 ax9_hidden0 s0 ax9_hidden0
+  ax9v2 s0 ax9_hidden0 s2
+  equvinv s0 s1 ax9_hidden0
+  diff-impii inset s2 s0 inset s2 s1 ax9_hidden0
+  diff-insetii ax9_hidden0 s2 s0
+  diff-insetii ax9_hidden0 s2 s1
+  diffs-exi ax9_hidden0 s1
+  diffs-exi ax9_hidden0 s2
+  df-ax9_hidden0 s0
+  df-ax9_hidden0 s1
+  df-ax9_hidden0 s2
+}
+
+// 17396
+thm elequ2(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (iff inset s2 s0 inset s2 s1))
+} = {
+  impbid eqset s0 s1 inset s2 s0 inset s2 s1
+  equcoms imp inset s2 s1 inset s2 s0 s1 s0
+  ax9 s1 s0 s2
+  ax9 s0 s1 s2
+}
+

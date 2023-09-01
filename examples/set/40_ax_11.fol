@@ -1,0 +1,123 @@
+import '39_ax_10.fol'
+
+/*******************************************************************************
+  Axiom scheme ax-11 (Quantifier Commutation)
+*******************************************************************************/
+
+// 17800
+thm alcoms(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (imp forall s0 forall s1 w0 w1)
+  |- (imp forall s1 forall s0 w0 w1)
+} = {
+  syl forall s1 forall s0 w0 forall s0 forall s1 w0 w1
+  ax-11 w0 s1 s0
+}
+
+// 17805
+thm alcom(wff w0, setvar s0, setvar s1) {
+  |- (iff forall s0 forall s1 w0 forall s1 forall s0 w0)
+} = {
+  impbii forall s0 forall s1 w0 forall s1 forall s0 w0
+  ax-11 w0 s1 s0
+  ax-11 w0 s0 s1
+}
+
+// 17810
+thm alrot3(wff w0, setvar s0, setvar s1, setvar s2) {
+  |- (iff forall s0 forall s1 forall s2 w0 forall s1 forall s2 forall s0 w0)
+} = {
+  bitri forall s0 forall s1 forall s2 w0 forall s1 forall s0 forall s2 w0 forall s1 forall s2 forall s0 w0
+  albii forall s0 forall s2 w0 forall s2 forall s0 w0 s1
+  alcom w0 s0 s2
+  alcom forall s2 w0 s0 s1
+}
+
+// 17815
+thm alrot4(wff w0, setvar s0, setvar s1, setvar s2, setvar s3) {
+  |- (iff forall s0 forall s1 forall s2 forall s3 w0 forall s2 forall s3 forall s0 forall s1 w0)
+} = {
+  bitri forall s0 forall s1 forall s2 forall s3 w0 forall s0 forall s2 forall s3 forall s1 w0 forall s2 forall s3 forall s0 forall s1 w0
+  alrot3 forall s1 w0 s0 s2 s3
+  albii forall s1 forall s2 forall s3 w0 forall s2 forall s3 forall s1 w0 s0
+  alrot3 w0 s1 s2 s3
+}
+
+// 17822
+thm excom(wff w0, setvar s0, setvar s1) {
+  |- (iff exist s0 exist s1 w0 exist s1 exist s0 w0)
+} = {
+  3bitr4i not forall s0 forall s1 not w0 not forall s1 forall s0 not w0 exist s0 exist s1 w0 exist s1 exist s0 w0
+  2exnaln w0 s1 s0
+  2exnaln w0 s0 s1
+  notbii forall s0 forall s1 not w0 forall s1 forall s0 not w0
+  alcom not w0 s0 s1
+}
+
+// 17831
+thm excomim(wff w0, setvar s0, setvar s1) {
+  |- (imp exist s0 exist s1 w0 exist s1 exist s0 w0)
+} = {
+  biimpi exist s0 exist s1 w0 exist s1 exist s0 w0
+  excom w0 s0 s1
+}
+
+// 17837
+thm excom13(wff w0, setvar s0, setvar s1, setvar s2) {
+  |- (iff exist s0 exist s1 exist s2 w0 exist s2 exist s1 exist s0 w0)
+} = {
+  3bitri exist s0 exist s1 exist s2 w0 exist s1 exist s0 exist s2 w0 exist s1 exist s2 exist s0 w0 exist s2 exist s1 exist s0 w0
+  excom exist s0 w0 s1 s2
+  exbii exist s0 exist s2 w0 exist s2 exist s0 w0 s1
+  excom w0 s0 s2
+  excom exist s2 w0 s0 s1
+}
+
+// 17841
+thm exrot3(wff w0, setvar s0, setvar s1, setvar s2) {
+  |- (iff exist s0 exist s1 exist s2 w0 exist s1 exist s2 exist s0 w0)
+} = {
+  bitri exist s0 exist s1 exist s2 w0 exist s2 exist s1 exist s0 w0 exist s1 exist s2 exist s0 w0
+  excom exist s0 w0 s2 s1
+  excom13 w0 s0 s1 s2
+}
+
+// 17845
+thm exrot4(wff w0, setvar s0, setvar s1, setvar s2, setvar s3) {
+  |- (iff exist s0 exist s1 exist s2 exist s3 w0 exist s2 exist s3 exist s0 exist s1 w0)
+} = {
+  bitri exist s0 exist s1 exist s2 exist s3 w0 exist s0 exist s3 exist s2 exist s1 w0 exist s2 exist s3 exist s0 exist s1 w0
+  excom13 exist s1 w0 s0 s3 s2
+  exbii exist s1 exist s2 exist s3 w0 exist s3 exist s2 exist s1 w0 s0
+  excom13 w0 s1 s2 s3
+}
+
+// 17852
+thm hbal(wff w0, setvar s0, setvar s1) {
+  -| (imp w0 forall s0 w0)
+  |- (imp forall s1 w0 forall s0 forall s1 w0)
+} = {
+  syl forall s1 w0 forall s1 forall s0 w0 forall s0 forall s1 w0
+  ax-11 w0 s1 s0
+  alimi w0 forall s0 w0 s1
+}
+
+// 17861
+thm hbald(wff w0, wff w1, setvar s0, setvar s1) {
+  -| (imp w0 forall s1 w0)
+  -| (imp w0 (imp w1 forall s0 w1))
+  |- (imp w0 (imp forall s1 w1 forall s0 forall s1 w1))
+} = {
+  syl6 w0 forall s1 w1 forall s1 forall s0 w1 forall s0 forall s1 w1
+  ax-11 w1 s1 s0
+  alimdh w0 w1 forall s0 w1 s1
+}
+
+// 17867
+thm nfa2(wff w0, setvar s0, setvar s1) {
+  |- notfree s0 forall s1 forall s0 w0
+} = {
+  nfxfr forall s1 forall s0 w0 forall s0 forall s1 w0 s0
+  nfa1 forall s1 w0 s0
+  alcom w0 s1 s0
+}
+

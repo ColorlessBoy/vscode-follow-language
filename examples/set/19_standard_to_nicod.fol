@@ -1,0 +1,138 @@
+import '10_nand.fol'
+
+/*******************************************************************************
+  Derive Nicod's axiom from the standard axioms
+*******************************************************************************/
+
+// 13037
+thm nic-dfim(wff w0, wff w1) {
+  |- (nand (nand (nand w0 (nand w1 w1)) (imp w0 w1)) (nand (nand (nand w0 (nand w1 w1)) (nand w0 (nand w1 w1))) (nand (imp w0 w1) (imp w0 w1))))
+} = {
+  mpbi iff nand w0 nand w1 w1 imp w0 w1 nand nand nand w0 nand w1 w1 imp w0 w1 nand nand nand w0 nand w1 w1 nand w0 nand w1 w1 nand imp w0 w1 imp w0 w1
+  nanbi nand w0 nand w1 w1 imp w0 w1
+  bicomi imp w0 w1 nand w0 nand w1 w1
+  nanim w0 w1
+}
+
+// 13047
+thm nic-dfneg(wff w0) {
+  |- (nand (nand (nand w0 w0) not w0) (nand (nand (nand w0 w0) (nand w0 w0)) (nand not w0 not w0)))
+} = {
+  mpbi iff nand w0 w0 not w0 nand nand nand w0 w0 not w0 nand nand nand w0 w0 nand w0 w0 nand not w0 not w0
+  nanbi nand w0 w0 not w0
+  bicomi not w0 nand w0 w0
+  nannot w0
+}
+
+// 13062
+thm nic-mp(wff w0, wff w1, wff w2) {
+  -| w0
+  -| (nand w0 (nand w2 w1))
+  |- w1
+} = {
+  ax-mp w0 w1
+  simprd w0 w2 w1
+  mpbi nand w0 nand w2 w1 imp w0 and w2 w1
+  nannan w0 w2 w1
+}
+
+// 13067
+thm nic-mpALT(wff w0, wff w1, wff w2) {
+  -| w0
+  -| (nand w0 (nand w2 w1))
+  |- w1
+} = {
+  ax-mp w0 w1
+  simprd w0 w2 w1
+  mpbir imp w0 and w2 w1 not and w0 not and w2 w1
+  iman w0 and w2 w1
+  mpbi nand w0 nand w2 w1 not and w0 not and w2 w1
+  xchbinx nand w0 nand w2 w1 and w0 nand w2 w1 and w0 not and w2 w1
+  anbi2i nand w2 w1 not and w2 w1 w0
+  df-nand w2 w1
+  df-nand w0 nand w2 w1
+}
+
+// 13082
+thm nic-ax(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  |- (nand (nand w0 (nand w2 w1)) (nand (nand w4 (nand w4 w4)) (nand (nand w3 w2) (nand (nand w0 w3) (nand w0 w3)))))
+} = {
+  mpbir nand nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 imp nand w0 nand w2 w1 and nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  nannan nand w0 nand w2 w1 nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  jctil nand w0 nand w2 w1 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
+  mpbir nand w4 nand w4 w4 imp w4 and w4 w4
+  nannan w4 w4 w4
+  biimpi w4 and w4 w4
+  pm4.24 w4
+  3syl nand w0 nand w2 w1 imp w0 and w2 w1 imp w0 w2 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  sylib imp w0 w2 imp nand w3 w2 nand w0 w3 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  nanim nand w3 w2 nand w0 w3
+  syl5bir nand w3 w2 imp w3 not w2 imp w0 w2 nand w0 w3
+  syl6ibr imp w0 w2 imp w3 not w2 imp w3 not w0 nand w0 w3
+  3bitr4ri imp w0 not w3 not and w0 w3 imp w3 not w0 nand w0 w3
+  df-nand w0 w3
+  con2b w3 w0
+  imnan w0 w3
+  imim2d imp w0 w2 not w2 not w0 w3
+  con3 w0 w2
+  bitr4i imp w3 not w2 not and w3 w2 nand w3 w2
+  df-nand w3 w2
+  imnan w3 w2
+  imim2i and w2 w1 w2 w0
+  simpl w2 w1
+  biimpi nand w0 nand w2 w1 imp w0 and w2 w1
+  nannan w0 w2 w1
+}
+
+// 13092
+thm nic-axALT(wff w0, wff w1, wff w2, wff w3, wff w4) {
+  |- (nand (nand w0 (nand w2 w1)) (nand (nand w4 (nand w4 w4)) (nand (nand w3 w2) (nand (nand w0 w3) (nand w0 w3)))))
+} = {
+  mpbir nand nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 not and nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  df-nand nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  mpbir not and nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 imp imp w0 and w2 w1 and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  bitr4i not and nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 not and imp w0 and w2 w1 not and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0 imp imp w0 and w2 w1 and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  iman imp w0 and w2 w1 and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  notbii and nand w0 nand w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 and imp w0 and w2 w1 not and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  anbi12i nand w0 nand w2 w1 imp w0 and w2 w1 nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 not and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  xchbinx nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 and nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 and imp w4 and w4 w4 imp imp w3 not w2 imp w3 not w0
+  anbi12i nand w4 nand w4 w4 imp w4 and w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3 imp imp w3 not w2 imp w3 not w0
+  3bitr4i not and nand w3 w2 nand nand w0 w3 nand w0 w3 not and imp w3 not w2 not imp w3 not w0 nand nand w3 w2 nand nand w0 w3 nand w0 w3 imp imp w3 not w2 imp w3 not w0
+  iman imp w3 not w2 imp w3 not w0
+  df-nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  notbii and nand w3 w2 nand nand w0 w3 nand w0 w3 and imp w3 not w2 not imp w3 not w0
+  anbi12i nand w3 w2 imp w3 not w2 nand nand w0 w3 nand w0 w3 not imp w3 not w0
+  xchbinx nand nand w0 w3 nand w0 w3 and nand w0 w3 nand w0 w3 imp w3 not w0
+  3bitri and nand w0 w3 nand w0 w3 nand w0 w3 not and w0 w3 imp w3 not w0
+  bitr3i not and w0 w3 imp w0 not w3 imp w3 not w0
+  con2b w0 w3
+  imnan w0 w3
+  df-nand w0 w3
+  anidm nand w0 w3
+  df-nand nand w0 w3 nand w0 w3
+  bitr4i nand w3 w2 not and w3 w2 imp w3 not w2
+  imnan w3 w2
+  df-nand w3 w2
+  3bitr4i not and w4 nand w4 w4 not and w4 not and w4 w4 nand w4 nand w4 w4 imp w4 and w4 w4
+  iman w4 and w4 w4
+  df-nand w4 nand w4 w4
+  notbii and w4 nand w4 w4 and w4 not and w4 w4
+  anbi2i nand w4 w4 not and w4 w4 w4
+  df-nand w4 w4
+  df-nand nand w4 nand w4 w4 nand nand w3 w2 nand nand w0 w3 nand w0 w3
+  3bitr4i not and w0 nand w2 w1 not and w0 not and w2 w1 nand w0 nand w2 w1 imp w0 and w2 w1
+  iman w0 and w2 w1
+  df-nand w0 nand w2 w1
+  notbii and w0 nand w2 w1 and w0 not and w2 w1
+  anbi2i nand w2 w1 not and w2 w1 w0
+  df-nand w2 w1
+  jctil imp w0 and w2 w1 imp imp w3 not w2 imp w3 not w0 imp w4 and w4 w4
+  biimpri and w4 w4 w4
+  anidm w4
+  syl imp w0 and w2 w1 imp w0 w2 imp imp w3 not w2 imp w3 not w0
+  imim2d imp w0 w2 not w2 not w0 w3
+  con3 w0 w2
+  imim2i and w2 w1 w2 w0
+  simpl w2 w1
+}
+

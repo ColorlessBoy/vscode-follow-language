@@ -1,0 +1,702 @@
+import '33_ax_6.fol'
+
+/*******************************************************************************
+  Axiom scheme ax-7 (Equality)
+*******************************************************************************/
+
+// 16306
+thm ax7v(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  |- (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2))
+} = {
+  a1ii (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2)) (diffs s1 s0)
+  ax-7 s0 s1 s2
+}
+
+// 16315
+thm ax7v1(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diffs s1 s0
+  |- (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2))
+} = {
+  a1ii (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2)) (diffs s2 s0)
+  ax7v s0 s1 s2
+}
+
+// 16324
+thm ax7v2(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s1
+  -| diffs s1 s0
+  |- (imp eqset s0 s1 (imp  eqset s0 s2 eqset s1 s2))
+} = {
+  a1ii (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2)) (diffs s2 s1)
+  ax7v s0 s1 s2
+}
+
+const setvar equid_hidden0
+axiom df-equid_hidden0(setvar s0) { |- diffs equid_hidden0 s0 }
+// 16333
+thm equid(setvar s0) {
+  |- eqset s0 s0
+} = {
+  exlimiiv eqset equid_hidden0 s0 eqset s0 s0 equid_hidden0
+  ax6ev equid_hidden0 s0
+  pm2.43i eqset equid_hidden0 s0 eqset s0 s0
+  ax7v1 equid_hidden0 s0 s0
+  diff-eqsetii equid_hidden0 s0 s0
+  diffs-exi equid_hidden0 s0
+  df-equid_hidden0 s0
+}
+
+// 16342
+thm nfequid(setvar s0, setvar s1) {
+  |- notfree s1 eqset s0 s0
+} = {
+  nfth eqset s0 s0 s1
+  equid s0
+}
+
+// 16350
+thm equcomiv(setvar s0, setvar s1) {
+  -| diffs s1 s0
+  |- (imp eqset s0 s1 eqset s1 s0)
+} = {
+  mpi eqset s0 s1 eqset s0 s0 eqset s1 s0
+  ax7v2 s0 s1 s0
+  equid s0
+  diffs-exi s1 s0
+}
+
+// 16357
+thm ax6evr(setvar s0, setvar s1) {
+  -| diffs s1 s0
+  |- exist s0 eqset s1 s0
+} = {
+  eximii eqset s0 s1 eqset s1 s0 s0
+  equcomiv s0 s1
+  ax6ev s0 s1
+}
+
+const setvar ax7_hidden0
+axiom df-ax7_hidden0(setvar s0) { |- diffs ax7_hidden0 s0 }
+// 16371
+thm ax7(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (imp eqset s0 s2 eqset s1 s2))
+} = {
+  ex eqset s0 s1 eqset s0 s2 eqset s1 s2
+  exlimiiv eqset s0 ax7_hidden0 imp and eqset s0 s1 eqset s0 s2 eqset s1 s2 ax7_hidden0
+  ax6evr ax7_hidden0 s0
+  syl2and eqset s0 ax7_hidden0 eqset s0 s1 eqset ax7_hidden0 s1 eqset s0 s2 eqset ax7_hidden0 s2 eqset s1 s2
+  a1i imp and eqset ax7_hidden0 s1 eqset ax7_hidden0 s2 eqset s1 s2 eqset s0 ax7_hidden0
+  impand eqset ax7_hidden0 s1 eqset ax7_hidden0 s2 eqset s1 s2
+  ax7v1 ax7_hidden0 s1 s2
+  ax7v2 s0 ax7_hidden0 s2
+  ax7v2 s0 ax7_hidden0 s1
+  diff-impii and eqset s0 s1 eqset s0 s2 eqset s1 s2 ax7_hidden0
+  diff-eqsetii ax7_hidden0 s1 s2
+  diff-andii eqset s0 s1 eqset s0 s2 ax7_hidden0
+  diff-eqsetii ax7_hidden0 s0 s1
+  diff-eqsetii ax7_hidden0 s0 s2
+  diffs-exi ax7_hidden0 s0
+  diffs-exi ax7_hidden0 s1
+  diffs-exi ax7_hidden0 s2
+  df-ax7_hidden0 s0
+  df-ax7_hidden0 s1
+  df-ax7_hidden0 s2
+}
+
+// 16379
+thm equcomi(setvar s0, setvar s1) {
+  |- (imp eqset s0 s1 eqset s1 s0)
+} = {
+  mpi eqset s0 s1 eqset s0 s0 eqset s1 s0
+  ax7 s0 s1 s0
+  equid s0
+}
+
+// 16384
+thm equcom(setvar s0, setvar s1) {
+  |- (iff eqset s0 s1 eqset s1 s0)
+} = {
+  impbii eqset s0 s1 eqset s1 s0
+  equcomi s1 s0
+  equcomi s0 s1
+}
+
+// 16391
+thm equcomd(wff w0, setvar s0, setvar s1) {
+  -| (imp w0 eqset s0 s1)
+  |- (imp w0 eqset s1 s0)
+} = {
+  sylib w0 eqset s0 s1 eqset s1 s0
+  equcom s0 s1
+}
+
+// 16399
+thm equcoms(wff w0, setvar s0, setvar s1) {
+  -| (imp eqset s0 s1 w0)
+  |- (imp eqset s1 s0 w0)
+} = {
+  syl eqset s1 s0 eqset s0 s1 w0
+  equcomi s1 s0
+}
+
+// 16404
+thm equtr(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (imp eqset s1 s2 eqset s0 s2))
+} = {
+  equcoms imp eqset s1 s2 eqset s0 s2 s1 s0
+  ax7 s1 s0 s2
+}
+
+// 16409
+thm equtrr(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (imp eqset s2 s0 eqset s2 s1))
+} = {
+  com12 eqset s2 s0 eqset s0 s1 eqset s2 s1
+  equtr s2 s0 s1
+}
+
+// 16414
+thm equeuclr(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s2 (imp eqset s1 s2 eqset s1 s0))
+} = {
+  equcoms imp eqset s1 s2 eqset s1 s0 s2 s0
+  equtrr s2 s0 s1
+}
+
+// 16420
+thm equeucl(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s2 (imp  eqset s1 s2 eqset s0 s1))
+} = {
+  com12 eqset s1 s2 eqset s0 s2 eqset s0 s1
+  equeuclr s1 s0 s2
+}
+
+// 16425
+thm equequ1(setvar s0, setvar s1, setvar s2) {
+  |- (imp  eqset s0 s1 (iff  eqset s0 s2 eqset s1 s2))
+} = {
+  impbid eqset s0 s1 eqset s0 s2 eqset s1 s2
+  equtr s0 s1 s2
+  ax7 s0 s1 s2
+}
+
+// 16431
+thm equequ2(setvar s0, setvar s1, setvar s2) {
+  |- (imp eqset s0 s1 (iff eqset s2 s0 eqset s2 s1))
+} = {
+  impbid eqset s0 s1 eqset s2 s0 eqset s2 s1
+  equeuclr s0 s2 s1
+  equtrr s0 s1 s2
+}
+
+// 16437
+thm equtr2(setvar s0, setvar s1, setvar s2) {
+  |- (imp (and  eqset s0 s2 eqset s1 s2) eqset s0 s1)
+} = {
+  impand eqset s0 s2 eqset s1 s2 eqset s0 s1
+  equeucl s0 s1 s2
+}
+
+// 16445
+thm stdpc6(setvar s0) {
+  |- forall s0 eqset s0 s0
+} = {
+  ax-gen eqset s0 s0 s0
+  equid s0
+}
+
+// 16455
+thm equvinv(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diffs s2 s1
+  |- (iff eqset s0 s1 exist s2 (and eqset s2 s0 eqset s2 s1))
+} = {
+  bicomi exist s2 and eqset s2 s0 eqset s2 s1 eqset s0 s1
+  equsexvw eqset s2 s1 eqset s0 s1 s2 s0
+  equequ1 s2 s0 s1
+  diff-eqsetii s2 s0 s1
+  diffs-exi s2 s0
+}
+
+// 16461
+thm equvinva(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diffs s2 s1
+  |- (imp  eqset s0 s1 exist s2 (and  eqset s0 s2 eqset s1 s2))
+} = {
+  mpi eqset s0 s1 exist s2 eqset s1 s2 exist s2 and eqset s0 s2 eqset s1 s2
+  eximdv eqset s0 s1 eqset s1 s2 and eqset s0 s2 eqset s1 s2 s2
+  ancrd eqset s0 s1 eqset s1 s2 eqset s0 s2
+  equtr s0 s1 s2
+  ax6evr s2 s1
+  diff-eqsetii s2 s0 s1
+  diffs-exi s2 s1
+}
+
+// 16470
+thm equvelv(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diffs s2 s1
+  |- (iff forall s2 (imp eqset s2 s0 eqset s2 s1) eqset s0 s1)
+} = {
+  equsalvw eqset s2 s1 eqset s0 s1 s2 s0
+  equequ1 s2 s0 s1
+  diff-eqsetii s2 s0 s1
+  diffs-exi s2 s0
+}
+
+// 16479
+thm ax13b(wff w0, setvar s0, setvar s1, setvar s2) {
+  |- (iff (imp not eqset s0 s1 (imp  eqset s1 s2 w0)) (imp not eqset s0 s1 (imp not eqset s0 s2 (imp  eqset s1 s2 w0))))
+} = {
+  pm5.74i not eqset s0 s1 imp eqset s1 s2 w0 imp not eqset s0 s2 imp eqset s1 s2 w0
+  impbid2 not eqset s0 s1 imp eqset s1 s2 w0 imp not eqset s0 s2 imp eqset s1 s2 w0
+  syl6 not eqset s0 s1 imp not eqset s0 s2 imp eqset s1 s2 w0 imp eqset s1 s2 imp eqset s1 s2 w0 imp eqset s1 s2 w0
+  pm2.43 eqset s1 s2 w0
+  imim1d not eqset s0 s1 eqset s1 s2 not eqset s0 s2 imp eqset s1 s2 w0
+  con3rr3 eqset s1 s2 eqset s0 s2 eqset s0 s1
+  equeuclr s1 s0 s2
+  ax-1 imp eqset s1 s2 w0 not eqset s0 s2
+}
+
+// 16495
+thm spfw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| (imp not w1 forall s0 not w1)
+  -| (imp forall s0 w0 forall s1 forall s0 w0)
+  -| (imp not w0 forall s1 not w0)
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (imp forall s0 w0 w0)
+} = {
+  syl forall s0 w0 forall s1 w1 w0
+  spimw w1 w0 s1 s0
+  equcoms imp w1 w0 s0 s1
+  biimprd eqset s0 s1 w0 w1
+  cbvaliw w0 w1 s0 s1
+  biimpd eqset s0 s1 w0 w1
+  diffs-exi s1 s0
+}
+
+// 16515
+thm spw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (imp forall s0 w0 w0)
+} = {
+  spfw w0 w1 s0 s1
+  ax-5 not w0 s1
+  ax-5 forall s0 w0 s1
+  ax-5 not w1 s0
+  diff-noti w0 s1
+  diff-forallii w0 s1 s0
+  diff-noti w1 s0
+}
+
+// 16529
+thm cbvalw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| (imp forall s0 w0 forall s1 forall s0 w0)
+  -| (imp not w1 forall s0 not w1)
+  -| (imp forall s1 w1 forall s0 forall s1 w1)
+  -| (imp not w0 forall s1 not w0)
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (iff forall s0 w0 forall s1 w1)
+} = {
+  impbii forall s0 w0 forall s1 w1
+  cbvaliw w1 w0 s1 s0
+  equcoms imp w1 w0 s0 s1
+  biimprd eqset s0 s1 w0 w1
+  cbvaliw w0 w1 s0 s1
+  biimpd eqset s0 s1 w0 w1
+  diffs-exi s1 s0
+}
+
+// 16543
+thm cbvalvw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (iff forall s0 w0 forall s1 w1)
+} = {
+  cbvalw w0 w1 s0 s1
+  ax-5 not w0 s1
+  ax-5 forall s1 w1 s0
+  ax-5 not w1 s0
+  ax-5 forall s0 w0 s1
+  diff-noti w0 s1
+  diff-forallii w1 s0 s1
+  diff-forallii w0 s1 s0
+  diff-noti w1 s0
+  diffs-exi s1 s0
+}
+
+// 16551
+thm cbvexvw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (iff exist s0 w0 exist s1 w1)
+} = {
+  3bitr4i not forall s0 not w0 not forall s1 not w1 exist s0 w0 exist s1 w1
+  df-ex w1 s1
+  df-ex w0 s0
+  notbii forall s0 not w0 forall s1 not w1
+  cbvalvw not w0 not w1 s0 s1
+  notbid eqset s0 s1 w0 w1
+  diff-noti w0 s1
+  diff-noti w1 s0
+}
+
+// 16564
+thm alcomiw(wff w0, wff w1, setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s1
+  -| diffs s1 s0
+  -| diff s1 w1
+  -| diff s2 w0
+  -| (imp eqset s1 s2 (iff w0 w1))
+  |- (imp forall s0 forall s1 w0 forall s1 forall s0 w0)
+} = {
+  3syl forall s0 forall s1 w0 forall s0 forall s2 w1 forall s1 forall s0 forall s2 w1 forall s1 forall s0 w0
+  2alimi forall s2 w1 w0 s1 s0
+  spimvw w1 w0 s2 s1
+  equcoms imp w1 w0 s1 s2
+  biimprd eqset s1 s2 w0 w1
+  ax-5 forall s0 forall s2 w1 s1
+  alimi forall s1 w0 forall s2 w1 s0
+  cbvalivw w0 w1 s1 s2
+  biimpd eqset s1 s2 w0 w1
+  diff-forallii forall s2 w1 s1 s0
+  diff-forallii w1 s1 s2
+  diffs-exi s2 s1
+}
+
+// 16584
+thm hbn1fw(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diffs s1 s0
+  -| (imp forall s0 w0 forall s1 forall s0 w0)
+  -| (imp not w1 forall s0 not w1)
+  -| (imp forall s1 w1 forall s0 forall s1 w1)
+  -| (imp not w0 forall s1 not w0)
+  -| (imp not forall s1 w1 forall s0 not forall s1 w1)
+  -| (imp eqset s0 s1 (iff w0 w1))
+  |- (imp not forall s0 w0 forall s0 not forall s0 w0)
+} = {
+  hbxfrbi not forall s0 w0 not forall s1 w1 s0
+  notbii forall s0 w0 forall s1 w1
+  cbvalw w0 w1 s0 s1
+}
+
+// 16595
+thm hbn1w(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (imp not forall s0 w0 forall s0 not forall s0 w0)
+} = {
+  hbn1fw w0 w1 s0 s1
+  ax-5 not forall s1 w1 s0
+  ax-5 not w0 s1
+  ax-5 forall s1 w1 s0
+  ax-5 not w1 s0
+  ax-5 forall s0 w0 s1
+  diff-noti forall s1 w1 s0
+  diff-noti w0 s1
+  diff-forallii w1 s0 s1
+  diff-noti w1 s0
+  diff-forallii w0 s1 s0
+  diffs-exi s1 s0
+}
+
+// 16603
+thm hba1w(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (imp forall s0 w0 forall s0 forall s0 w0)
+} = {
+  3syl forall s0 w0 not forall s0 not forall s0 w0 forall s0 not forall s0 not forall s0 w0 forall s0 forall s0 w0
+  alimi not forall s0 not forall s0 w0 forall s0 w0 s0
+  con1i forall s0 w0 forall s0 not forall s0 w0
+  hbn1w w0 w1 s0 s1
+  hbn1w not forall s0 w0 not forall s1 w1 s0 s1
+  a1i iff not forall s0 w0 not forall s1 w1 eqset s0 s1
+  notbii forall s0 w0 forall s1 w1
+  cbvalvw w0 w1 s0 s1
+  con2i forall s0 not forall s0 w0 forall s0 w0
+  spw not forall s0 w0 not forall s1 w1 s0 s1
+  a1i iff not forall s0 w0 not forall s1 w1 eqset s0 s1
+  notbii forall s0 w0 forall s1 w1
+  cbvalvw w0 w1 s0 s1
+  diff-noti forall s0 w0 s1
+  diff-noti forall s1 w1 s0
+  diff-forallii w0 s1 s0
+  diff-forallii w1 s0 s1
+  diffs-exi s1 s0
+}
+
+// 16612
+thm hbe1w(wff w0, wff w1, setvar s0, setvar s1) {
+  -| diff s1 w0
+  -| diffs s1 s0
+  -| diff s0 w1
+  -| (imp  eqset s0 s1 (iff w0 w1))
+  |- (imp exist s0 w0 forall s0 exist s0 w0)
+} = {
+  hbxfrbi exist s0 w0 not forall s0 not w0 s0
+  hbn1w not w0 not w1 s0 s1
+  notbid eqset s0 s1 w0 w1
+  df-ex w0 s0
+  diff-noti w0 s1
+  diff-noti w1 s0
+}
+
+// 16626
+thm hbalw(wff w0, wff w1, setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diff s0 w1
+  -| diffs s1 s0
+  -| diff s2 w0
+  -| (imp  eqset s0 s2 (iff w0 w1))
+  -| (imp w0 forall s0 w0)
+  |- (imp forall s1 w0 forall s0 forall s1 w0)
+} = {
+  syl forall s1 w0 forall s1 forall s0 w0 forall s0 forall s1 w0
+  alcomiw w0 w1 s1 s0 s2
+  alimi w0 forall s0 w0 s1
+  diffs-exi s1 s0
+}
+
+const setvar spaev_hidden0
+axiom df-spaev_hidden0(setvar s0) { |- diffs spaev_hidden0 s0 }
+// 16648
+thm spaev(setvar s0, setvar s1) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 eqset s0 s1)
+} = {
+  spw eqset s0 s1 eqset spaev_hidden0 s1 s0 spaev_hidden0
+  equequ1 s0 spaev_hidden0 s1
+  diff-eqsetii spaev_hidden0 s0 s1
+  diff-eqsetii s0 spaev_hidden0 s1
+  diffs-exi spaev_hidden0 s0
+  diffs-exi s1 s0
+  df-spaev_hidden0 s0
+  df-spaev_hidden0 s1
+}
+
+const setvar cbvaev_hidden0
+axiom df-cbvaev_hidden0(setvar s0) { |- diffs cbvaev_hidden0 s0 }
+// 16659
+thm cbvaev(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s1
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 eqset s2 s1)
+} = {
+  syl forall s0 eqset s0 s1 forall cbvaev_hidden0 eqset cbvaev_hidden0 s1 forall s2 eqset s2 s1
+  cbvalivw eqset cbvaev_hidden0 s1 eqset s2 s1 cbvaev_hidden0 s2
+  ax7 cbvaev_hidden0 s2 s1
+  cbvalivw eqset s0 s1 eqset cbvaev_hidden0 s1 s0 cbvaev_hidden0
+  ax7 s0 cbvaev_hidden0 s1
+  diff-eqsetii s2 cbvaev_hidden0 s1
+  diff-eqsetii cbvaev_hidden0 s2 s1
+  diff-eqsetii cbvaev_hidden0 s0 s1
+  diff-eqsetii s0 cbvaev_hidden0 s1
+  diffs-exi cbvaev_hidden0 s0
+  diffs-exi cbvaev_hidden0 s2
+  diffs-exi s1 s0
+  df-cbvaev_hidden0 s0
+  df-cbvaev_hidden0 s1
+  df-cbvaev_hidden0 s2
+}
+
+// 16672
+thm aevlem0(setvar s0, setvar s1, setvar s2) {
+  -| diffs s2 s0
+  -| diffs s2 s1
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 eqset s2 s0)
+} = {
+  sylc forall s0 eqset s0 s1 forall s2 eqset s0 s1 forall s2 eqset s2 s1 forall s2 eqset s2 s0
+  al2imi eqset s0 s1 eqset s2 s1 eqset s2 s0 s2
+  equeuclr s0 s2 s1
+  cbvaev s0 s1 s2
+  alrimiv forall s0 eqset s0 s1 eqset s0 s1 s2
+  spaev s0 s1
+  diff-forallii eqset s0 s1 s2 s0
+  diff-eqsetii s2 s0 s1
+}
+
+const setvar aevlem_hidden0
+axiom df-aevlem_hidden0(setvar s0) { |- diffs aevlem_hidden0 s0 }
+// 16684
+thm aevlem(setvar s0, setvar s1, setvar s2, setvar s3) {
+  -| diffs s1 s0
+  -| diffs s2 s3
+  |- (imp forall s0 eqset s0 s1 forall s2 eqset s2 s3)
+} = {
+  4syl forall s0 eqset s0 s1 forall aevlem_hidden0 eqset aevlem_hidden0 s1 forall s0 eqset s0 aevlem_hidden0 forall s3 eqset s3 aevlem_hidden0 forall s2 eqset s2 s3
+  aevlem0 s3 aevlem_hidden0 s2
+  cbvaev s0 aevlem_hidden0 s3
+  aevlem0 aevlem_hidden0 s1 s0
+  cbvaev s0 s1 aevlem_hidden0
+  diffs-exi s1 s0
+  diffs-exi aevlem_hidden0 s0
+  diffs-exi aevlem_hidden0 s1
+  diffs-exi aevlem_hidden0 s2
+  diffs-exi aevlem_hidden0 s3
+  df-aevlem_hidden0 s0
+  df-aevlem_hidden0 s1
+  df-aevlem_hidden0 s2
+  df-aevlem_hidden0 s3
+}
+
+const setvar aeveq_hidden0
+axiom df-aeveq_hidden0(setvar s0) { |- diffs aeveq_hidden0 s0 }
+// 16694
+thm aeveq(setvar s0, setvar s1, setvar s2, setvar s3) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 eqset s2 s3)
+} = {
+  3syl forall s0 eqset s0 s1 forall aeveq_hidden0 eqset aeveq_hidden0 s2 exist aeveq_hidden0 eqset s2 s3 eqset s2 s3
+  ax5e eqset s2 s3 aeveq_hidden0
+  mpi forall aeveq_hidden0 eqset aeveq_hidden0 s2 exist aeveq_hidden0 eqset aeveq_hidden0 s3 exist aeveq_hidden0 eqset s2 s3
+  aleximi eqset aeveq_hidden0 s2 eqset aeveq_hidden0 s3 eqset s2 s3 aeveq_hidden0
+  ax7 aeveq_hidden0 s2 s3
+  ax6ev aeveq_hidden0 s3
+  aevlem s0 s1 aeveq_hidden0 s2
+  diff-eqsetii aeveq_hidden0 s2 s3
+  diffs-exi aeveq_hidden0 s3
+  df-aeveq_hidden0 s2
+  df-aeveq_hidden0 s3
+}
+
+// 16709
+const setvar aev_hidden0 aev_hidden1
+axiom df-aev_hidden0(setvar s0) { |- diffs aev_hidden0 s0 }
+axiom df-aev_hidden1(setvar s0) { |- diffs aev_hidden1 s0 }
+// 16709
+thm aev(setvar s0, setvar s1, setvar s2, setvar s3, setvar s4) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 eqset s4 s3)
+} = {
+  syl forall s0 eqset s0 s1 forall aev_hidden0 eqset aev_hidden0 aev_hidden1 forall s2 eqset s4 s3
+  alrimiv forall aev_hidden0 eqset aev_hidden0 aev_hidden1 eqset s4 s3 s2
+  aeveq aev_hidden0 aev_hidden1 s4 s3
+  aevlem s0 s1 aev_hidden0 aev_hidden1
+  diff-forallii eqset aev_hidden0 aev_hidden1 s2 aev_hidden0
+  diff-eqsetii s2 aev_hidden0 aev_hidden1
+  diffs-exi aev_hidden0 s2
+  diffs-exi aev_hidden1 s2
+  df-aev_hidden0 aev_hidden1
+  df-aev_hidden1 aev_hidden0
+  df-aev_hidden0 s2
+  df-aev_hidden1 s2
+}
+
+const setvar hbaevg_hidden0 hbaevg_hidden1
+axiom df-hbaevg_hidden0(setvar s0) { |- diffs hbaevg_hidden0 s0 }
+axiom df-hbaevg_hidden1(setvar s0) { |- diffs hbaevg_hidden1 s0 }
+// 16720
+thm hbaevg(setvar s0, setvar s1, setvar s2, setvar s3, setvar s4) {
+  -| diffs s3 s4
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 forall s4 eqset s4 s3)
+} = {
+  syl forall s0 eqset s0 s1 forall hbaevg_hidden0 eqset hbaevg_hidden0 hbaevg_hidden1 forall s2 forall s4 eqset s4 s3
+  alrimiv forall hbaevg_hidden0 eqset hbaevg_hidden0 hbaevg_hidden1 forall s4 eqset s4 s3 s2
+  aevlem hbaevg_hidden0 hbaevg_hidden1 s4 s3
+  aevlem s0 s1 hbaevg_hidden0 hbaevg_hidden1
+  diffs-exi s3 s4
+  diff-forallii eqset hbaevg_hidden0 hbaevg_hidden1 s2 hbaevg_hidden0
+  diff-eqsetii s2 hbaevg_hidden0 hbaevg_hidden1
+  diffs-exi hbaevg_hidden0 s2
+  diffs-exi hbaevg_hidden1 s2
+  df-hbaevg_hidden0 hbaevg_hidden1
+  df-hbaevg_hidden1 hbaevg_hidden0
+  df-hbaevg_hidden0 s2
+  df-hbaevg_hidden1 s2
+}
+
+// 16732
+thm hbaev(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 forall s0 eqset s0 s1)
+} = {
+  hbaevg s0 s1 s2 s1 s0
+}
+
+const setvar hbnaevg_hidden0 hbnaevg_hidden1
+axiom df-hbnaevg_hidden0(setvar s0) { |- diffs hbnaevg_hidden0 s0 }
+axiom df-hbnaevg_hidden1(setvar s0) { |- diffs hbnaevg_hidden1 s0 }
+// 16742
+thm hbnaevg(setvar s0, setvar s1, setvar s2, setvar s3, setvar s4) {
+  -| diffs s3 s4
+  -| diffs s1 s0
+  |- (imp not forall s0 eqset s0 s1 forall s2 not forall s4 eqset s4 s3)
+} = {
+  a1ii (imp not forall s0 eqset s0 s1 forall s2 not forall s4 eqset s4 s3) (diffs s1 s0)
+  3syl not forall s0 eqset s0 s1 not forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 forall s2 not forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 forall s2 not forall s4 eqset s4 s3
+  alimi not forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 not forall s4 eqset s4 s3 s2
+  con3i forall s4 eqset s4 s3 forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1
+  aev s4 s3 hbnaevg_hidden0 hbnaevg_hidden1 hbnaevg_hidden0
+  ax-5 not forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 s2
+  con3i forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 forall s0 eqset s0 s1
+  aev hbnaevg_hidden0 hbnaevg_hidden1 s0 s1 s0
+  diff-noti forall hbnaevg_hidden0 eqset hbnaevg_hidden0 hbnaevg_hidden1 s2
+  diff-forallii eqset hbnaevg_hidden0 hbnaevg_hidden1 s2 hbnaevg_hidden0
+  diff-eqsetii s2 hbnaevg_hidden0 hbnaevg_hidden1
+  diffs-exi hbnaevg_hidden0 s2
+  diffs-exi hbnaevg_hidden1 s2
+  df-hbnaevg_hidden1 hbnaevg_hidden0
+  df-hbnaevg_hidden0 s2
+  df-hbnaevg_hidden1 s2
+}
+
+// 16755
+thm hbnaev(setvar s0, setvar s1, setvar s2) {
+  -| diffs s1 s0
+  |- (imp not forall s0 eqset s0 s1 forall s2 not forall s0 eqset s0 s1)
+} = {
+  hbnaevg s0 s1 s2 s1 s0
+}
+
+const setvar aev2_hidden0 aev2_hidden1
+axiom df-aev2_hidden() { |- diffs aev2_hidden1 aev2_hidden0 }
+// 16781
+thm aev2(setvar s0, setvar s1, setvar s2, setvar s3, setvar s4, setvar s5) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 forall s5 eqset s4 s3)
+} = {
+  sylg forall s0 eqset s0 s1 forall aev2_hidden0 eqset aev2_hidden0 aev2_hidden1 forall s5 eqset s4 s3 s2
+  aev aev2_hidden0 aev2_hidden1 s5 s3 s4
+  hbaevg s0 s1 s2 aev2_hidden1 aev2_hidden0
+  df-aev2_hidden
+}
+
+const setvar aev2ALT_hidden0 aev2ALT_hidden1
+axiom df-aev2ALT_hidden0(setvar s0) { |- diffs aev2ALT_hidden0 s0 }
+axiom df-aev2ALT_hidden1(setvar s0) { |- diffs aev2ALT_hidden1 s0 }
+// 16789
+thm aev2ALT(setvar s0, setvar s1, setvar s2, setvar s4, setvar s5, setvar s6) {
+  -| diffs s1 s0
+  |- (imp forall s0 eqset s0 s1 forall s2 forall s6 eqset s5 s4)
+} = {
+  syl forall s0 eqset s0 s1 forall aev2ALT_hidden0 eqset aev2ALT_hidden0 aev2ALT_hidden1 forall s2 forall s6 eqset s5 s4
+  alrimiv forall aev2ALT_hidden0 eqset aev2ALT_hidden0 aev2ALT_hidden1 forall s6 eqset s5 s4 s2
+  aev aev2ALT_hidden0 aev2ALT_hidden1 s6 s4 s5
+  aev s0 s1 aev2ALT_hidden0 aev2ALT_hidden1 aev2ALT_hidden0
+  diff-forallii eqset aev2ALT_hidden0 aev2ALT_hidden1 s2 aev2ALT_hidden0
+  diff-eqsetii s2 aev2ALT_hidden0 aev2ALT_hidden1
+  diffs-exi aev2ALT_hidden0 s2
+  diffs-exi aev2ALT_hidden1 s2
+  df-aev2ALT_hidden1 aev2ALT_hidden0
+  df-aev2ALT_hidden0 s2
+  df-aev2ALT_hidden1 s2
+}

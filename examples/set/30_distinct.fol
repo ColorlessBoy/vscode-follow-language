@@ -1,0 +1,153 @@
+import '6_mix.fol'
+
+thm diff-noti(wff w0, setvar s0) {
+  -| diff s0 w0
+  |- diff s0 not w0
+} = {
+  mpbi diff s0 w0 diff s0 not w0
+  diff-not w0 s0
+}
+
+thm diff-impii(wff w0, wff w1, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  |- diff s0 imp w0 w1
+} = {
+  mpbir diff s0 imp w0 w1 and diff s0 w0 diff s0 w1
+  diff-imp w0 w1 s0
+  pm3.2i diff s0 w0 diff s0 w1
+}
+
+thm diff-iffii(wff w0, wff w1, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  |- diff s0 iff w0 w1
+} = {
+  mpbir diff s0 iff w0 w1 and diff s0 w0 diff s0 w1
+  diff-iff w0 w1 s0
+  pm3.2i diff s0 w0 diff s0 w1
+}
+
+thm diff-andii(wff w0, wff w1, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  |- diff s0 and w0 w1
+} = {
+  mpbir diff s0 and w0 w1 and diff s0 w0 diff s0 w1
+  diff-and w0 w1 s0
+  pm3.2i diff s0 w0 diff s0 w1
+}
+
+thm diff-3andiii(wff w0, wff w1, wff w2, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  -| diff s0 w2
+  |- diff s0 3and w0 w1 w2
+} = {
+  mpbir diff s0 3and w0 w1 w2 and diff s0 w0 and diff s0 w1 diff s0 w2
+  diff-3and w0 w1 w2 s0
+  pm3.2i diff s0 w0 and diff s0 w1 diff s0 w2
+  pm3.2i diff s0 w1 diff s0 w2
+}
+
+thm diff-orii(wff w0, wff w1, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  |- diff s0 or w0 w1
+} = {
+  mpbir diff s0 or w0 w1 and diff s0 w0 diff s0 w1
+  diff-or w0 w1 s0
+  pm3.2i diff s0 w0 diff s0 w1
+}
+
+thm diff-3oriii(wff w0, wff w1, wff w2, setvar s0) {
+  -| diff s0 w0
+  -| diff s0 w1
+  -| diff s0 w2
+  |- diff s0 3or w0 w1 w2
+} = {
+  mpbir diff s0 3or w0 w1 w2 and diff s0 w0 and diff s0 w1 diff s0 w2
+  diff-3or w0 w1 w2 s0
+  pm3.2i diff s0 w0 and diff s0 w1 diff s0 w2
+  pm3.2i diff s0 w1 diff s0 w2
+}
+
+thm diffs-exi(setvar s0, setvar s1) {
+  -| diffs s0 s1
+  |- diffs s1 s0
+} = {
+  mpbi diffs s0 s1 diffs s1 s0
+  diffs-ex s0 s1
+}
+
+thm diff-forallii(wff w0, setvar s0, setvar s1) {
+  -| diffs s0 s1
+  -| diff s0 w0
+  |- diff s0 forall s1 w0
+} = {
+  mpbir diff s0 forall s1 w0 and diffs s0 s1 diff s0 w0
+  diff-forall w0 s0 s1
+  pm3.2i diffs s0 s1 diff s0 w0
+}
+
+thm diff-existii(wff w0, setvar s0, setvar s1) {
+  -| diffs s0 s1
+  -| diff s0 w0
+  |- diff s0 exist s1 w0
+} = {
+  mpbir diff s0 exist s1 w0 and diffs s0 s1 diff s0 w0
+  diff-exist w0 s0 s1
+  pm3.2i diffs s0 s1 diff s0 w0
+}
+
+thm diff-eqsetii(setvar s0, setvar s1, setvar s2) {
+  -| diffs s0 s1
+  -| diffs s0 s2
+  |- diff s0 eqset s1 s2
+} = {
+  mpbir diff s0 eqset s1 s2 and diffs s0 s1 diffs s0 s2
+  diff-eqset s0 s1 s2
+  pm3.2i diffs s0 s1 diffs s0 s2
+}
+
+thm diff-subsii(wff w0, setvar s0, setvar s1, setvar s2) {
+  -| diffs s0 s1
+  -| diffs s0 s2
+  -| diff s0 w0
+  |- diff s0 subs s1 s2 w0
+} = {
+  mpbir (diff s0 subs s1 s2 w0) (and diffs s0 s1 and diffs s0 s2 diff s0 w0)
+  diff-subs w0 s0 s1 s2
+  pm3.2i diffs s0 s1 and diffs s0 s2 diff s0 w0
+  pm3.2i diffs s0 s2 diff s0 w0
+}
+
+thm diff-insetii(setvar s0, setvar s1, setvar s2) {
+  -| diffs s0 s1
+  -| diffs s0 s2
+  |- diff s0 inset s1 s2
+} = {
+  mpbir diff s0 inset s1 s2 and diffs s0 s1 diffs s0 s2
+  diff-inset s0 s1 s2
+  pm3.2i diffs s0 s1 diffs s0 s2
+}
+
+thm diff-moii(wff w0, setvar s0, setvar s1) {
+  -| diffs s0 s1
+  -| diff s0 w0
+  |- diff s0 mo s1 w0
+} = {
+  mpbir diff s0 mo s1 w0 and diffs s0 s1 diff s0 w0
+  diff-mo w0 s0 s1
+  pm3.2i diffs s0 s1 diff s0 w0
+}
+
+thm diff-euii(wff w0, setvar s0, setvar s1) {
+  -| diffs s0 s1
+  -| diff s0 w0
+  |- diff s0 eu s1 w0
+} = {
+  mpbir diff s0 eu s1 w0 and diffs s0 s1 diff s0 w0
+  diff-eu w0 s0 s1
+  pm3.2i diffs s0 s1 diff s0 w0
+}
