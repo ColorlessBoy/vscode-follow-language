@@ -103,9 +103,9 @@ thm merlem7(wff w0, wff w1, wff w2, wff w3, wff w4) {
 thm merlem8(wff w1, wff w2, wff w3, wff w4) {
   |- (imp (imp (imp w1 w2) w3) (imp (imp (imp w2 w4) (imp not w3 not w1)) w3))
 } = {
-  ax-mp imp imp imp imp imp w0 w0 imp not w0 not w0 w0 w0 imp imp w0 w0 imp w0 w0 imp imp imp w1 w2 w3 imp imp imp w2 w4 imp not w3 not w1 w3
-  merlem7 imp imp imp imp imp w0 w0 imp not w0 not w0 w0 w0 imp imp w0 w0 imp w0 w0 w1 w2 w3 w4
-  meredith w0 w0 w0 w0 w0
+  ax-mp imp imp imp imp imp hw0 hw0 imp not hw0 not hw0 hw0 hw0 imp imp hw0 hw0 imp hw0 hw0 imp imp imp w1 w2 w3 imp imp imp w2 w4 imp not w3 not w1 w3
+  merlem7 imp imp imp imp imp hw0 hw0 imp not hw0 not hw0 hw0 hw0 imp imp hw0 hw0 imp hw0 hw0 w1 w2 w3 w4
+  meredith hw0 hw0 hw0 hw0 hw0
 }
 
 // 12884

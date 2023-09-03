@@ -1,5 +1,4 @@
 type wff
-var wff w0 w1 w2 w3 w4 w5 w6 w7 w8 w9 w10
 prop wff not(wff w0)
 prop wff imp(wff w0, wff w1)
 prop wff iff(wff w0, wff w1)

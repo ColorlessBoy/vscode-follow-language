@@ -77,74 +77,71 @@ thm ax12dgen(wff w0, setvar s0) {
   ala1 w0 eqset s0 s0 s0
 }
 
-const setvar ax12wdemo_hidden0 ax12wdemo_hidden1
-axiom df-ax12wdemo_hidden0(setvar s0) { |- diffs ax12wdemo_hidden0 s0 }
-axiom df-ax12wdemo_hidden1(setvar s0) { |- diffs ax12wdemo_hidden1 s0 }
 // 17591
-thm ax12wdemo(setvar s0, setvar s1, setvar s2, setvar ax12wdemo_hidden0, setvar ax12wdemo_hidden1) {
+thm ax12wdemo(setvar s0, setvar s1, setvar s2) {
   -| diffs s1 s0
   -| diffs s2 s1
   -| diffs s2 s0
   |- (imp eqset s0 s1 (imp forall s1 (3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0) forall s0 (imp eqset s0 s1 (3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0))))
 } = {
-  ax12w 3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 3and inset s1 s1 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1 3and inset s0 ax12wdemo_hidden1 forall s0 inset s2 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 s0 s1 ax12wdemo_hidden1
-  3anbi13d eqset s1 ax12wdemo_hidden1 inset s0 s1 inset s0 ax12wdemo_hidden1 forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 forall s0 inset s2 s0
-  a1i iff forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 eqset s1 ax12wdemo_hidden1
-  cbvalvw forall s2 inset s1 s0 forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
-  albidv eqset s1 ax12wdemo_hidden1 inset s1 s0 inset ax12wdemo_hidden1 s0 s2
-  elequ1 s1 ax12wdemo_hidden1 s0
-  elequ2 s1 ax12wdemo_hidden1 s0
-  3anbi123d eqset s0 s1 inset s0 s1 inset s1 s1 forall s0 inset s2 s0 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1
-  syl5bb forall s1 forall s2 inset s1 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 eqset s0 s1 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1
-  albidv eqset s0 s1 forall s2 inset ax12wdemo_hidden1 s0 forall s2 inset ax12wdemo_hidden1 s1 ax12wdemo_hidden1
-  albidv eqset s0 s1 inset ax12wdemo_hidden1 s0 inset ax12wdemo_hidden1 s1 s2
-  elequ2 s0 s1 ax12wdemo_hidden1
-  cbvalvw forall s2 inset s1 s0 forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
-  albidv eqset s1 ax12wdemo_hidden1 inset s1 s0 inset ax12wdemo_hidden1 s0 s2
-  elequ1 s1 ax12wdemo_hidden1 s0
-  a1i iff forall s0 inset s2 s0 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 eqset s0 s1
-  cbvalvw inset s2 s0 inset s2 ax12wdemo_hidden0 s0 ax12wdemo_hidden0
-  elequ2 s0 ax12wdemo_hidden0 s2
+  ax12w 3and inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 3and inset s1 s1 forall hs0 inset s2 hs0 forall hs1 forall s2 inset hs1 s1 3and inset s0 hs1 forall s0 inset s2 s0 forall hs1 forall s2 inset hs1 s0 s0 s1 hs1
+  3anbi13d eqset s1 hs1 inset s0 s1 inset s0 hs1 forall s1 forall s2 inset s1 s0 forall hs1 forall s2 inset hs1 s0 forall s0 inset s2 s0
+  a1i iff forall s1 forall s2 inset s1 s0 forall hs1 forall s2 inset hs1 s0 eqset s1 hs1
+  cbvalvw forall s2 inset s1 s0 forall s2 inset hs1 s0 s1 hs1
+  albidv eqset s1 hs1 inset s1 s0 inset hs1 s0 s2
+  elequ1 s1 hs1 s0
+  elequ2 s1 hs1 s0
+  3anbi123d eqset s0 s1 inset s0 s1 inset s1 s1 forall s0 inset s2 s0 forall hs0 inset s2 hs0 forall s1 forall s2 inset s1 s0 forall hs1 forall s2 inset hs1 s1
+  syl5bb forall s1 forall s2 inset s1 s0 forall hs1 forall s2 inset hs1 s0 eqset s0 s1 forall hs1 forall s2 inset hs1 s1
+  albidv eqset s0 s1 forall s2 inset hs1 s0 forall s2 inset hs1 s1 hs1
+  albidv eqset s0 s1 inset hs1 s0 inset hs1 s1 s2
+  elequ2 s0 s1 hs1
+  cbvalvw forall s2 inset s1 s0 forall s2 inset hs1 s0 s1 hs1
+  albidv eqset s1 hs1 inset s1 s0 inset hs1 s0 s2
+  elequ1 s1 hs1 s0
+  a1i iff forall s0 inset s2 s0 forall hs0 inset s2 hs0 eqset s0 s1
+  cbvalvw inset s2 s0 inset s2 hs0 s0 hs0
+  elequ2 s0 hs0 s2
   elequ1 s0 s1 s1
-  diff-3andiii inset s1 s1 forall ax12wdemo_hidden0 inset s2 ax12wdemo_hidden0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s1 s0
-  diff-3andiii inset s0 ax12wdemo_hidden1 forall s0 inset s2 s0 forall ax12wdemo_hidden1 forall s2 inset ax12wdemo_hidden1 s0 s1
-  diff-3andiii inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 ax12wdemo_hidden1
-  diff-forallii inset s1 s0 ax12wdemo_hidden1 s2
-  diff-forallii inset ax12wdemo_hidden1 s0 s1 s2
-  diff-forallii inset s2 ax12wdemo_hidden0 s0 ax12wdemo_hidden0
-  diff-forallii forall s2 inset ax12wdemo_hidden1 s1 s0 ax12wdemo_hidden1
+  diff-3andiii inset s1 s1 forall hs0 inset s2 hs0 forall hs1 forall s2 inset hs1 s1 s0
+  diff-3andiii inset s0 hs1 forall s0 inset s2 s0 forall hs1 forall s2 inset hs1 s0 s1
+  diff-3andiii inset s0 s1 forall s0 inset s2 s0 forall s1 forall s2 inset s1 s0 hs1
+  diff-forallii inset s1 s0 hs1 s2
+  diff-forallii inset hs1 s0 s1 s2
+  diff-forallii inset s2 hs0 s0 hs0
+  diff-forallii forall s2 inset hs1 s1 s0 hs1
   diff-forallii inset s2 s0 s1 s0
-  diff-forallii forall s2 inset ax12wdemo_hidden1 s0 s1 ax12wdemo_hidden1
-  diff-forallii inset s2 s0 ax12wdemo_hidden1 s0
-  diff-forallii forall s2 inset s1 s0 ax12wdemo_hidden1 s1
-  diff-forallii inset ax12wdemo_hidden1 s1 s0 s2
-  diff-forallii inset ax12wdemo_hidden1 s0 s1 s2
-  diff-forallii inset s1 s0 ax12wdemo_hidden1 s2
-  diff-eqsetii s2 s1 ax12wdemo_hidden1
-  diff-eqsetii ax12wdemo_hidden1 s0 s1
+  diff-forallii forall s2 inset hs1 s0 s1 hs1
+  diff-forallii inset s2 s0 hs1 s0
+  diff-forallii forall s2 inset s1 s0 hs1 s1
+  diff-forallii inset hs1 s1 s0 s2
+  diff-forallii inset hs1 s0 s1 s2
+  diff-forallii inset s1 s0 hs1 s2
+  diff-eqsetii s2 s1 hs1
+  diff-eqsetii hs1 s0 s1
   diff-eqsetii s2 s0 s1
-  diff-insetii ax12wdemo_hidden0 s2 s0
-  diff-insetii s0 s2 ax12wdemo_hidden0
+  diff-insetii hs0 s2 s0
+  diff-insetii s0 s2 hs0
   diff-insetii s0 s1 s1
-  diff-insetii s1 s0 ax12wdemo_hidden1
-  diff-insetii ax12wdemo_hidden1 s0 s1
-  diff-insetii ax12wdemo_hidden1 s1 s0
-  diff-insetii s1 ax12wdemo_hidden1 s0
+  diff-insetii s1 s0 hs1
+  diff-insetii hs1 s0 s1
+  diff-insetii hs1 s1 s0
+  diff-insetii s1 hs1 s0
   diff-insetii s1 s2 s0
-  diff-insetii ax12wdemo_hidden1 s2 s0
-  diff-insetii s0 ax12wdemo_hidden1 s1
+  diff-insetii hs1 s2 s0
+  diff-insetii s0 hs1 s1
   diffs-exi s2 s1
   diffs-exi s2 s0
   diffs-exi s1 s0
-  diffs-exi ax12wdemo_hidden1 s0
-  diffs-exi ax12wdemo_hidden1 s1
-  diffs-exi ax12wdemo_hidden1 s2
-  diffs-exi ax12wdemo_hidden0 s0
-  df-ax12wdemo_hidden1 s0
-  df-ax12wdemo_hidden1 s1
-  df-ax12wdemo_hidden1 s2
-  df-ax12wdemo_hidden0 s0
-  df-ax12wdemo_hidden0 s2
+  diffs-exi hs1 s0
+  diffs-exi hs1 s1
+  diffs-exi hs1 s2
+  diffs-exi hs0 s0
+  df-hs1-s s0
+  df-hs1-s s1
+  df-hs1-s s2
+  df-hs0-s s0
+  df-hs0-s s2
 }
 
 // 17609

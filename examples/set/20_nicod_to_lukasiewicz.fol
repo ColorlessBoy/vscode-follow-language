@@ -9,8 +9,8 @@ thm nic-imp(wff w0, wff w1, wff w2, wff w3) {
   -| (nand w0 (nand w2 w1))
   |- (nand (nand w3 w2) (nand (nand w0 w3) (nand w0 w3)))
 } = {
-  nic-mp nand w0 nand w2 w1 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
-  nic-ax w0 w1 w2 w3 w4
+  nic-mp nand w0 nand w2 w1 nand nand w3 w2 nand nand w0 w3 nand w0 w3 nand hw4 nand hw4 hw4
+  nic-ax w0 w1 w2 w3 hw4
 }
 
 // 13122
@@ -33,22 +33,22 @@ thm nic-idlem2(wff w0, wff w1, wff w2, wff w3, wff w4, wff w5) {
 }
 
 // 13140
-thm nic-id(wff w4) {
-  |- (nand w4 (nand w4 w4))
+thm nic-id(wff w0) {
+  |- (nand w0 (nand w0 w0))
 } = {
-  nic-mp nand nand nand nand w0 w1 nand nand w1 w0 nand w1 w0 nand w2 nand w2 w2 nand w1 nand w1 w1 nand w4 nand w4 w4 nand w2 nand w2 w2
-  nic-idlem2 nand nand w0 w1 nand nand w1 w0 nand w1 w0 nand w2 w2 w2 nand nand nand w0 w1 nand nand w1 w0 nand w1 w0 nand w2 nand w2 w2 w1 nand nand w2 nand w2 w2 nand w4 nand w4 w4
-  nic-idlem1 nand w0 w1 nand w1 w0 nand w1 w0 nand w2 nand w2 w2 w4
-  nic-idlem2 w3 w3 w3 nand nand w0 w1 nand nand w1 w0 nand w1 w0 w2 nand w1 nand w1 w1
-  nic-ax w1 w1 w1 w0 w3
+  nic-mp nand nand nand nand hw0 hw1 nand nand hw1 hw0 nand hw1 hw0 nand hw2 nand hw2 hw2 nand hw1 nand hw1 hw1 nand w0 nand w0 w0 nand hw2 nand hw2 hw2
+  nic-idlem2 nand nand hw0 hw1 nand nand hw1 hw0 nand hw1 hw0 nand hw2 hw2 hw2 nand nand nand hw0 hw1 nand nand hw1 hw0 nand hw1 hw0 nand hw2 nand hw2 hw2 hw1 nand nand hw2 nand hw2 hw2 nand w0 nand w0 w0
+  nic-idlem1 nand hw0 hw1 nand hw1 hw0 nand hw1 hw0 nand hw2 nand hw2 hw2 w0
+  nic-idlem2 hw3 hw3 hw3 nand nand hw0 hw1 nand nand hw1 hw0 nand hw1 hw0 hw2 nand hw1 nand hw1 hw1
+  nic-ax hw1 hw1 hw1 hw0 hw3
 }
 
 // 13147
-thm nic-swap(wff w0, wff w3) {
-  |- (nand (nand w3 w0) (nand (nand w0 w3) (nand w0 w3)))
+thm nic-swap(wff w0, wff w1) {
+  |- (nand (nand w1 w0) (nand (nand w0 w1) (nand w0 w1)))
 } = {
-  nic-mp nand w0 nand w0 w0 nand nand w3 w0 nand nand w0 w3 nand w0 w3 nand w4 nand w4 w4
-  nic-ax w0 w0 w0 w3 w4
+  nic-mp nand w0 nand w0 w0 nand nand w1 w0 nand nand w0 w1 nand w0 w1 nand hw4 nand hw4 hw4
+  nic-ax w0 w0 w0 w1 hw4
   nic-id w0
 }
 
@@ -188,9 +188,9 @@ thm nic-luk1(wff w0, wff w1, wff w2) {
   nic-idbl nand w0 nand w2 w2 imp w0 w2
   nic-bi1 nand w0 nand w2 w2 imp w0 w2
   nic-dfim w0 w2
-  nic-idel nand w0 nand w1 w1 nand w4 nand w4 w4 nand nand nand w2 w2 w1 nand nand w0 nand w2 w2 nand w0 nand w2 w2
-  nic-isw2 nand nand nand w2 w2 w1 nand nand w0 nand w2 w2 nand w0 nand w2 w2 nand w0 nand w1 w1 nand w4 nand w4 w4
-  nic-ax w0 w1 w1 nand w2 w2 w4
+  nic-idel nand w0 nand w1 w1 nand hw4 nand hw4 hw4 nand nand nand w2 w2 w1 nand nand w0 nand w2 w2 nand w0 nand w2 w2
+  nic-isw2 nand nand nand w2 w2 w1 nand nand w0 nand w2 w2 nand w0 nand w2 w2 nand w0 nand w1 w1 nand hw4 nand hw4 hw4
+  nic-ax w0 w1 w1 nand w2 w2 hw4
   nic-bi2 nand w0 nand w1 w1 imp w0 w1
   nic-dfim w0 w1
 }

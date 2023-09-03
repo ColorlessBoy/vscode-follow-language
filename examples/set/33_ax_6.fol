@@ -23,17 +23,15 @@ thm ax6ev(setvar s0, setvar s1) {
   ax6v s0 s1
 }
 
-const setvar exgen_hidden0
-axiom df-exgen_hidden0(setvar s0) { |- diffs exgen_hidden0 s0}
 // 15989
 thm exgen(wff w0, setvar s0) {
   -| w0
   |- exist s0 w0
 } = {
-  eximii eqset s0 exgen_hidden0 w0 s0
-  a1i w0 eqset s0 exgen_hidden0
-  ax6ev s0 exgen_hidden0
-  df-exgen_hidden0 s0
+  eximii eqset s0 hs0 w0 s0
+  a1i w0 eqset s0 hs0
+  ax6ev s0 hs0
+  df-hs0-s s0
 }
 
 // 15998
@@ -284,16 +282,14 @@ thm spnfw(wff w0, setvar s0, setvar s1) {
   idd eqset s0 s1 w0
 }
 
-const setvar spfalw_hidden0
-axiom df-spfalw_hidden0(setvar s0) { |- diffs spfalw_hidden0 s0 }
 // 16188
 thm spfalw(wff w0, setvar s0) {
   -| not w0
   |- (imp forall s0 w0 w0)
 } = {
-  spnfw w0 s0 spfalw_hidden0
+  spnfw w0 s0 hs0
   hbth not w0 s0
-  df-spfalw_hidden0 s0
+  df-hs0-s s0
 }
 
 // 16196

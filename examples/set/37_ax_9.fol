@@ -33,27 +33,25 @@ thm ax9v2(setvar s0, setvar s1, setvar s2) {
   ax9v s0 s1 s2
 }
 
-const setvar ax9_hidden0
-axiom df-ax9_hidden0(setvar s0) { |- diffs ax9_hidden0 s0 }
 // 17389
 thm ax9(setvar s0, setvar s1, setvar s2) {
   |- (imp eqset s0 s1 (imp inset s2 s0 inset s2 s1))
 } = {
-  sylbi eqset s0 s1 exist ax9_hidden0 and eqset ax9_hidden0 s0 eqset ax9_hidden0 s1 imp inset s2 s0 inset s2 s1
-  exlimiv and eqset ax9_hidden0 s0 eqset ax9_hidden0 s1 imp inset s2 s0 inset s2 s1 ax9_hidden0
-  sylan9 eqset ax9_hidden0 s0 inset s2 s0 inset s2 ax9_hidden0 eqset ax9_hidden0 s1 inset s2 s1
-  ax9v1 ax9_hidden0 s1 s2
-  equcoms imp inset s2 s0 inset s2 ax9_hidden0 s0 ax9_hidden0
-  ax9v2 s0 ax9_hidden0 s2
-  equvinv s0 s1 ax9_hidden0
-  diff-impii inset s2 s0 inset s2 s1 ax9_hidden0
-  diff-insetii ax9_hidden0 s2 s0
-  diff-insetii ax9_hidden0 s2 s1
-  diffs-exi ax9_hidden0 s1
-  diffs-exi ax9_hidden0 s2
-  df-ax9_hidden0 s0
-  df-ax9_hidden0 s1
-  df-ax9_hidden0 s2
+  sylbi eqset s0 s1 exist hs0 and eqset hs0 s0 eqset hs0 s1 imp inset s2 s0 inset s2 s1
+  exlimiv and eqset hs0 s0 eqset hs0 s1 imp inset s2 s0 inset s2 s1 hs0
+  sylan9 eqset hs0 s0 inset s2 s0 inset s2 hs0 eqset hs0 s1 inset s2 s1
+  ax9v1 hs0 s1 s2
+  equcoms imp inset s2 s0 inset s2 hs0 s0 hs0
+  ax9v2 s0 hs0 s2
+  equvinv s0 s1 hs0
+  diff-impii inset s2 s0 inset s2 s1 hs0
+  diff-insetii hs0 s2 s0
+  diff-insetii hs0 s2 s1
+  diffs-exi hs0 s1
+  diffs-exi hs0 s2
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-s s2
 }
 
 // 17396

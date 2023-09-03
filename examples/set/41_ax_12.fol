@@ -17,54 +17,48 @@ thm ax12v(wff w0, setvar s0, setvar s1) {
   ax-5 w0 s1
 }
 
-const setvar ax12v2_hidden0
-axiom df-ax12v2_hidden0_s(setvar s0) { |- diffs ax12v2_hidden0 s0 }
-axiom df-ax12v2_hidden0_w(wff w0) { |- diff ax12v2_hidden0 w0}
 // 17941
 thm ax12v2(wff w0, setvar s0, setvar s1) {
   -| diffs s1 s0
   |- (imp eqset s0 s1 (imp w0 forall s0 (imp eqset s0 s1 w0)))
 } = {
-  exlimiiv eqset s1 ax12v2_hidden0 imp eqset s0 s1 imp w0 forall s0 imp eqset s0 s1 w0 ax12v2_hidden0
-  ax6evr ax12v2_hidden0 s1
-  syld eqset s1 ax12v2_hidden0 eqset s0 s1 eqset s0 ax12v2_hidden0 imp w0 forall s0 imp eqset s0 s1 w0
-  syl9r eqset s0 ax12v2_hidden0 w0 forall s0 imp eqset s0 ax12v2_hidden0 w0 eqset s1 ax12v2_hidden0 forall s0 imp eqset s0 s1 w0
-  alimdv eqset s1 ax12v2_hidden0 imp eqset s0 ax12v2_hidden0 w0 imp eqset s0 s1 w0 s0
-  imim1d eqset s1 ax12v2_hidden0 eqset s0 s1 eqset s0 ax12v2_hidden0 w0
-  equtrr s1 ax12v2_hidden0 s0
-  ax12v w0 s0 ax12v2_hidden0
-  diff-impii eqset s0 s1 imp w0 forall s0 imp eqset s0 s1 w0 ax12v2_hidden0
-  diff-impii w0 forall s0 imp eqset s0 s1 w0 ax12v2_hidden0
-  diff-forallii imp eqset s0 s1 w0 ax12v2_hidden0 s0
-  diff-impii eqset s0 s1 w0 ax12v2_hidden0
-  diff-eqsetii s0 s1 ax12v2_hidden0
-  diff-eqsetii ax12v2_hidden0 s0 s1
+  exlimiiv eqset s1 hs0 imp eqset s0 s1 imp w0 forall s0 imp eqset s0 s1 w0 hs0
+  ax6evr hs0 s1
+  syld eqset s1 hs0 eqset s0 s1 eqset s0 hs0 imp w0 forall s0 imp eqset s0 s1 w0
+  syl9r eqset s0 hs0 w0 forall s0 imp eqset s0 hs0 w0 eqset s1 hs0 forall s0 imp eqset s0 s1 w0
+  alimdv eqset s1 hs0 imp eqset s0 hs0 w0 imp eqset s0 s1 w0 s0
+  imim1d eqset s1 hs0 eqset s0 s1 eqset s0 hs0 w0
+  equtrr s1 hs0 s0
+  ax12v w0 s0 hs0
+  diff-impii eqset s0 s1 imp w0 forall s0 imp eqset s0 s1 w0 hs0
+  diff-impii w0 forall s0 imp eqset s0 s1 w0 hs0
+  diff-forallii imp eqset s0 s1 w0 hs0 s0
+  diff-impii eqset s0 s1 w0 hs0
+  diff-eqsetii s0 s1 hs0
+  diff-eqsetii hs0 s0 s1
   diffs-exi s1 s0
-  diffs-exi ax12v2_hidden0 s1
-  diffs-exi ax12v2_hidden0 s0
-  df-ax12v2_hidden0_s s0
-  df-ax12v2_hidden0_s s1
-  df-ax12v2_hidden0_w w0
+  diffs-exi hs0 s1
+  diffs-exi hs0 s0
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-w w0
 }
 
-const setvar 19.8a_hidden0
-axiom df-19.8a_hidden0_s(setvar s0) { |- diffs 19.8a_hidden0 s0 }
-axiom df-19.8a_hidden0_w(wff w0) { |- diff 19.8a_hidden0 w0}
 // 17954
 thm 19.8a(wff w0, setvar s0) {
   |- (imp w0 exist s0 w0)
 } = {
-  exlimiiv eqset s0 19.8a_hidden0 imp w0 exist s0 w0 19.8a_hidden0
-  ax6evr 19.8a_hidden0 s0
-  syl6mpi eqset s0 19.8a_hidden0 w0 forall s0 imp eqset s0 19.8a_hidden0 w0 exist s0 eqset s0 19.8a_hidden0 exist s0 w0
-  exim eqset s0 19.8a_hidden0 w0 s0
-  ax6ev s0 19.8a_hidden0
-  ax12v w0 s0 19.8a_hidden0
-  diff-impii w0 exist s0 w0 19.8a_hidden0
-  diff-existii w0 19.8a_hidden0 s0
-  diffs-exi 19.8a_hidden0 s0
-  df-19.8a_hidden0_s s0
-  df-19.8a_hidden0_w w0
+  exlimiiv eqset s0 hs0 imp w0 exist s0 w0 hs0
+  ax6evr hs0 s0
+  syl6mpi eqset s0 hs0 w0 forall s0 imp eqset s0 hs0 w0 exist s0 eqset s0 hs0 exist s0 w0
+  exim eqset s0 hs0 w0 s0
+  ax6ev s0 hs0
+  ax12v w0 s0 hs0
+  diff-impii w0 exist s0 w0 hs0
+  diff-existii w0 hs0 s0
+  diffs-exi hs0 s0
+  df-hs0-s s0
+  df-hs0-w w0
 }
 
 // 17963
@@ -719,47 +713,41 @@ thm sbbidOLD(wff w0, wff w1, wff w2, setvar s0, setvar s1) {
   biimpd w0 w1 w2
 }
 
-const setvar sbequ1_hidden0
-axiom df-sbequ1_hidden0_s(setvar s0) { |- diffs sbequ1_hidden0 s0 }
-axiom df-sbequ1_hidden0_w(wff w0) { |- diff sbequ1_hidden0 w0}
 // 18513
 thm sbequ1(wff w0, setvar s0, setvar s1) {
   |- (imp eqset s0 s1 (imp w0 subs s0 s1 w0))
 } = {
-  syl6ibr eqset s0 s1 w0 forall sbequ1_hidden0 imp eqset sbequ1_hidden0 s1 forall s0 imp eqset s0 sbequ1_hidden0 w0 subs s0 s1 w0
-  df-sb w0 s0 s1 sbequ1_hidden0
-  alrimdv eqset s0 s1 w0 imp eqset sbequ1_hidden0 s1 forall s0 imp eqset s0 sbequ1_hidden0 w0 sbequ1_hidden0
-  com23 eqset s0 s1 eqset sbequ1_hidden0 s1 w0 forall s0 imp eqset s0 sbequ1_hidden0 w0
-  syl6 eqset s0 s1 eqset sbequ1_hidden0 s1 eqset s0 sbequ1_hidden0 imp w0 forall s0 imp eqset s0 sbequ1_hidden0 w0
-  ax12v w0 s0 sbequ1_hidden0
-  equeucl s0 sbequ1_hidden0 s1
-  diff-eqsetii sbequ1_hidden0 s0 s1
-  df-sbequ1_hidden0_s s0
-  df-sbequ1_hidden0_s s1
-  df-sbequ1_hidden0_w w0
+  syl6ibr eqset s0 s1 w0 forall hs0 imp eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 subs s0 s1 w0
+  df-sb w0 s0 s1 hs0
+  alrimdv eqset s0 s1 w0 imp eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 hs0
+  com23 eqset s0 s1 eqset hs0 s1 w0 forall s0 imp eqset s0 hs0 w0
+  syl6 eqset s0 s1 eqset hs0 s1 eqset s0 hs0 imp w0 forall s0 imp eqset s0 hs0 w0
+  ax12v w0 s0 hs0
+  equeucl s0 hs0 s1
+  diff-eqsetii hs0 s0 s1
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-w w0
 }
 
-const setvar sbequ2_hidden0
-axiom df-sbequ2_hidden0_s(setvar s0) { |- diffs sbequ2_hidden0 s0 }
-axiom df-sbequ2_hidden0_w(wff w0) { |- diff sbequ2_hidden0 w0}
 // 18523
 thm sbequ2(wff w0, setvar s0, setvar s1) {
   |- (imp eqset s0 s1 (imp subs s0 s1 w0 w0))
 } = {
-  syl5com eqset s0 s1 exist sbequ2_hidden0 and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 subs s0 s1 w0 w0
-  sylib subs s0 s1 w0 forall sbequ2_hidden0 imp and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 w0 imp exist sbequ2_hidden0 and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 w0
-  19.23v and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 w0 sbequ2_hidden0
-  sylbi subs s0 s1 w0 forall sbequ2_hidden0 imp eqset sbequ2_hidden0 s1 forall s0 imp eqset s0 sbequ2_hidden0 w0 forall sbequ2_hidden0 imp and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 w0
-  alimi imp eqset sbequ2_hidden0 s1 forall s0 imp eqset s0 sbequ2_hidden0 w0 imp and eqset s0 sbequ2_hidden0 eqset s1 sbequ2_hidden0 w0 sbequ2_hidden0
-  impcomd imp eqset sbequ2_hidden0 s1 forall s0 imp eqset s0 sbequ2_hidden0 w0 eqset s1 sbequ2_hidden0 eqset s0 sbequ2_hidden0 w0
-  imim12i eqset s1 sbequ2_hidden0 eqset sbequ2_hidden0 s1 forall s0 imp eqset s0 sbequ2_hidden0 w0 imp eqset s0 sbequ2_hidden0 w0
-  sp imp eqset s0 sbequ2_hidden0 w0 s0
-  equcomi s1 sbequ2_hidden0
-  df-sb w0 s0 s1 sbequ2_hidden0
-  equvinva s0 s1 sbequ2_hidden0
-  df-sbequ2_hidden0_s s0
-  df-sbequ2_hidden0_s s1
-  df-sbequ2_hidden0_w w0
+  syl5com eqset s0 s1 exist hs0 and eqset s0 hs0 eqset s1 hs0 subs s0 s1 w0 w0
+  sylib subs s0 s1 w0 forall hs0 imp and eqset s0 hs0 eqset s1 hs0 w0 imp exist hs0 and eqset s0 hs0 eqset s1 hs0 w0
+  19.23v and eqset s0 hs0 eqset s1 hs0 w0 hs0
+  sylbi subs s0 s1 w0 forall hs0 imp eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 forall hs0 imp and eqset s0 hs0 eqset s1 hs0 w0
+  alimi imp eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 imp and eqset s0 hs0 eqset s1 hs0 w0 hs0
+  impcomd imp eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 eqset s1 hs0 eqset s0 hs0 w0
+  imim12i eqset s1 hs0 eqset hs0 s1 forall s0 imp eqset s0 hs0 w0 imp eqset s0 hs0 w0
+  sp imp eqset s0 hs0 w0 s0
+  equcomi s1 hs0
+  df-sb w0 s0 s1 hs0
+  equvinva s0 s1 hs0
+  df-hs0-s s0
+  df-hs0-s s1
+  df-hs0-w w0
 }
 
 // 18535
@@ -839,24 +827,21 @@ thm sbid2vw(wff w0, setvar s0, setvar s6) {
   sbco2vv w0 s6 s6 s0
 }
 
-const setvar axc16g_hidden0
-axiom df-axc16g_hidden0_s(setvar s0) { |- diffs axc16g_hidden0 s0 }
-axiom df-axc16g_hidden0_w(wff w0) { |- diff axc16g_hidden0 w0}
 // 18593
 thm axc16g(wff w0, setvar s0, setvar s1, setvar s2) {
   -| diffs s1 s0
   |- (imp forall s0 eqset s0 s1 (imp w0 forall s2 w0))
 } = {
-  syl forall s0 eqset s0 s1 forall s2 eqset s2 axc16g_hidden0 imp w0 forall s2 w0
-  syld forall s2 eqset s2 axc16g_hidden0 w0 forall s2 imp eqset s2 axc16g_hidden0 w0 forall s2 w0
-  al2imi eqset s2 axc16g_hidden0 imp eqset s2 axc16g_hidden0 w0 w0 s2
-  pm2.27 eqset s2 axc16g_hidden0 w0
-  sps eqset s2 axc16g_hidden0 imp w0 forall s2 imp eqset s2 axc16g_hidden0 w0 s2
-  ax12v w0 s2 axc16g_hidden0
-  aevlem s0 s1 s2 axc16g_hidden0
-  diffs-exi axc16g_hidden0 s2
-  df-axc16g_hidden0_s s2
-  df-axc16g_hidden0_w w0
+  syl forall s0 eqset s0 s1 forall s2 eqset s2 hs0 imp w0 forall s2 w0
+  syld forall s2 eqset s2 hs0 w0 forall s2 imp eqset s2 hs0 w0 forall s2 w0
+  al2imi eqset s2 hs0 imp eqset s2 hs0 w0 w0 s2
+  pm2.27 eqset s2 hs0 w0
+  sps eqset s2 hs0 imp w0 forall s2 imp eqset s2 hs0 w0 s2
+  ax12v w0 s2 hs0
+  aevlem s0 s1 s2 hs0
+  diffs-exi hs0 s2
+  df-hs0-s s2
+  df-hs0-w w0
 }
 
 // 18602
@@ -1082,24 +1067,21 @@ thm dfsb7(wff w0, setvar s0, setvar s1, setvar s6) {
   diffs-exi s1 s6
 }
 
-const setvar sbn_hidden0
-axiom df-sbn_hidden0_s(setvar s0) { |- diffs sbn_hidden0 s0 }
-axiom df-sbn_hidden0_w(wff w0) { |- diff sbn_hidden0 w0}
 // 18793
 thm sbn(wff w0, setvar s0, setvar s6) {
   |- (iff subs s0 s6 not w0 not subs s0 s6 w0)
 } = {
-  3bitri subs s0 s6 not w0 forall sbn_hidden0 imp eqset sbn_hidden0 s6 forall s0 imp eqset s0 sbn_hidden0 not w0 forall sbn_hidden0 imp eqset sbn_hidden0 s6 not exist s0 and eqset s0 sbn_hidden0 w0 not subs s0 s6 w0
-  xchbinxr forall sbn_hidden0 imp eqset sbn_hidden0 s6 not exist s0 and eqset s0 sbn_hidden0 w0 exist sbn_hidden0 and eqset sbn_hidden0 s6 exist s0 and eqset s0 sbn_hidden0 w0 subs s0 s6 w0
-  dfsb7 w0 s0 sbn_hidden0 s6
-  alinexa eqset sbn_hidden0 s6 exist s0 and eqset s0 sbn_hidden0 w0 sbn_hidden0
-  albii imp eqset sbn_hidden0 s6 forall s0 imp eqset s0 sbn_hidden0 not w0 imp eqset sbn_hidden0 s6 not exist s0 and eqset s0 sbn_hidden0 w0 sbn_hidden0
-  imbi2i forall s0 imp eqset s0 sbn_hidden0 not w0 not exist s0 and eqset s0 sbn_hidden0 w0 eqset sbn_hidden0 s6
-  alinexa eqset s0 sbn_hidden0 w0 s0
-  df-sb not w0 s0 s6 sbn_hidden0
-  df-sbn_hidden0_s s0
-  df-sbn_hidden0_s s6
-  df-sbn_hidden0_w w0
+  3bitri subs s0 s6 not w0 forall hs0 imp eqset hs0 s6 forall s0 imp eqset s0 hs0 not w0 forall hs0 imp eqset hs0 s6 not exist s0 and eqset s0 hs0 w0 not subs s0 s6 w0
+  xchbinxr forall hs0 imp eqset hs0 s6 not exist s0 and eqset s0 hs0 w0 exist hs0 and eqset hs0 s6 exist s0 and eqset s0 hs0 w0 subs s0 s6 w0
+  dfsb7 w0 s0 hs0 s6
+  alinexa eqset hs0 s6 exist s0 and eqset s0 hs0 w0 hs0
+  albii imp eqset hs0 s6 forall s0 imp eqset s0 hs0 not w0 imp eqset hs0 s6 not exist s0 and eqset s0 hs0 w0 hs0
+  imbi2i forall s0 imp eqset s0 hs0 not w0 not exist s0 and eqset s0 hs0 w0 eqset hs0 s6
+  alinexa eqset s0 hs0 w0 s0
+  df-sb not w0 s0 s6 hs0
+  df-hs0-s s0
+  df-hs0-s s6
+  df-hs0-w w0
 }
 
 // 18804

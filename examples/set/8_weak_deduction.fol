@@ -1,4 +1,5 @@
 import '6_mix.fol'
+import '7_ifp.fol'
 
 /*******************************************************************************
   The weak deduction theorem for propositional calculus
