@@ -622,7 +622,9 @@ export class FollowParserListener implements ANTLRFollowParserListener {
       for (var i = 0; i < argsCount; i++) {
         args.push(stack.pop() || '');
       }
-      if (op === 'diffs' && args[0] === args[1]) {
+      if (op === 'diffsc' && args[1]?.split(' ').includes(args[0])) {
+        return false;
+      } else if (op === 'diffs' && args[0] === args[1]) {
         return false;
       } else if (op === 'diff' && args[1]?.split(' ').includes(args[0])) {
         return false;
