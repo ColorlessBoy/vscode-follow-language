@@ -1233,10 +1233,10 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
       this.generateStr();
     }
     var str = 'thm ' + this.token.text + ' {';
+    str += '  \n  |- ' + this.targetStr + '  \n}';
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str += '  \n  |- ' + this.targetStr + '  \n}';
     str = '```  \n' + str + '  \n```';
 
     var proofState = this.untilNowProofState.join('  \n');

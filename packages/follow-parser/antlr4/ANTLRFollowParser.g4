@@ -20,7 +20,7 @@ paramBlock : LPAREN (paramPair (COMMA paramPair)*)? RPAREN ;
 paramPair : typeID argID;
 assumeBlock : KW_ASSUME (assumeID)+ ;
 targetBlock : KW_TARGET (targetID)+ ;
-contentBlock : LBRACE (assumeBlock)* targetBlock RBRACE ;
+contentBlock : LBRACE (assumeBlock | targetBlock)+ RBRACE ;
 proofBlock : LBRACE (proofID)* RBRACE ;
 
 typeDef : ID ;
