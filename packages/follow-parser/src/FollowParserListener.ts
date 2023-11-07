@@ -834,13 +834,13 @@ export class AxiomDefASTNodeImpl extends BaseASTNodeImpl implements AxiomDefASTN
     }
 
     str += ' {';
+    if (this.target.length > 0) {
+      str += '  \n  |- ' + this.targetStr;
+    }
     if (this.assumptionStrList.length > 0) {
       for (const assumptionStr of this.assumptionStrList) {
         str += '  \n  -| ' + assumptionStr;
       }
-    }
-    if (this.target.length > 0) {
-      str += '  \n  |- ' + this.targetStr;
     }
     str += '  \n}';
     return str;
@@ -1233,11 +1233,11 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
       this.generateStr();
     }
     var str = 'thm ' + this.token.text + ' {';
-    str += '  \n  |- ' + this.targetStr + '  \n}';
+    str += '  \n  |- ' + this.targetStr;
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str = '```  \n' + str + '  \n```';
+    str = '```  \n}  \n' + str + '  \n```';
 
     var proofState = this.untilNowProofState.join('  \n');
     str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
