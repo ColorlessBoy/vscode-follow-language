@@ -957,13 +957,13 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
     }
 
     str += ' {';
+    if (this.target.length > 0) {
+      str += '  \n  |- ' + this.targetStr;
+    }
     if (this.assumptionStrList.length > 0) {
       for (const assumptionStr of this.assumptionStrList) {
         str += '  \n  -| ' + assumptionStr;
       }
-    }
-    if (this.target.length > 0) {
-      str += '  \n  |- ' + this.targetStr;
     }
     str += '  \n}';
     str = '```  \n' + str + '  \n```';
@@ -972,6 +972,11 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
 
   public getProofState(untilNowAssumptionStrSet: Set<string>, untilNowTargetStrSet: Set<string>): string[] {
     var proofState: string[] = new Array();
+    if (untilNowTargetStrSet.has(this.targetStr)) {
+      proofState.push(' [Y] |- ' + this.targetStr);
+    } else {
+      proofState.push(' [N] |- ' + this.targetStr);
+    }
     for (const assumption of untilNowAssumptionStrSet) {
       if (this.assumptionStrList.includes(assumption)) {
         proofState.push(' [Y] -| ' + assumption);
@@ -982,20 +987,15 @@ export class TheoremDefASTNodeImpl extends BaseASTNodeImpl implements TheoremDef
         proofState.push(' [N] -| ' + assumption);
       }
     }
-    if (untilNowTargetStrSet.has(this.targetStr)) {
-      proofState.push(' [Y] |- ' + this.targetStr);
-    } else {
-      proofState.push(' [N] |- ' + this.targetStr);
-    }
     proofState.push('---');
-    for (const assumption of untilNowAssumptionStrSet) {
-      if (!this.assumptionStrList.includes(assumption)) {
-        proofState.push(' [*] -| ' + assumption);
-      }
-    }
     for (const target of untilNowTargetStrSet) {
       if (target !== this.targetStr) {
         proofState.push(' [*] |- ' + target);
+      }
+    }
+    for (const assumption of untilNowAssumptionStrSet) {
+      if (!this.assumptionStrList.includes(assumption)) {
+        proofState.push(' [*] -| ' + assumption);
       }
     }
     return proofState;
@@ -1164,10 +1164,10 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
       this.generateStr();
     }
     var str = 'axiom ' + this.token.text + ' {';
+    str += '  \n  |- ' + this.targetStr + '  \n}';
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str += '  \n  |- ' + this.targetStr + '  \n}';
     str = '```  \n' + str + '  \n```';
 
     var proofState = this.untilNowProofState.join('  \n');
