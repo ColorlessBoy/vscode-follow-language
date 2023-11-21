@@ -34,7 +34,10 @@
         "rules": {
           "operator": "#17B169",
           "string": "#FF8C00",
-          "number": "#F9629F"
+          "number": "#F9629F",
+          "type": "#00bbf0",
+          "method": "#fdb44b",
+          "function": "#fdb44b"
         }
       }
     },
