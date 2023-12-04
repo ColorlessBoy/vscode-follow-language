@@ -31,8 +31,8 @@ propID : ID ;
 axiomID : ID ;
 theoremID : ID ;
 argID : ID ;
-assumeID : ID | LPAREN | RPAREN ;
-targetID : ID | LPAREN | RPAREN ;
-proofID : ID | LPAREN | RPAREN ;
+assumeID : ID | LPAREN | RPAREN | COMMA ;
+targetID : ID | LPAREN | RPAREN | COMMA ;
+proofID : ID | LPAREN | RPAREN | COMMA ;
 
 

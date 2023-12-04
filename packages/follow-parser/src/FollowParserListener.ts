@@ -179,7 +179,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var assumeList: Array<ASTNode> = new Array();
     for (const assumeID of ctx.assumeID()) {
       const token = assumeID.start;
-      if (token.text === '(' || token.text === ')') {
+      if (token.text === '(' || token.text === ')' || token.text === ',') {
         continue;
       }
       if (this.defMissingCheck(token)) {
@@ -202,7 +202,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
 
     for (const targetID of ctx.targetID()) {
       const token = targetID.start;
-      if (token.text === '(' || token.text === ')') {
+      if (token.text === '(' || token.text === ')' || token.text === ',') {
         continue;
       }
       if (this.defMissingCheck(token)) {
@@ -269,7 +269,7 @@ export class FollowParserListener implements ANTLRFollowParserListener {
     var proofList: ASTNode[] = new Array();
     for (const proofOp of ctx.proofID()) {
       const token = proofOp.start;
-      if (token.text === '(' || token.text === ')') {
+      if (token.text === '(' || token.text === ')' || token.text === ',') {
         continue;
       }
       if (this.defMissingCheck(token)) {
