@@ -1237,7 +1237,7 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str = str + '```  \n}  \n' + '  \n```';
+    str = str + '  \n}  \n' + '  \n';
 
     var proofState = this.untilNowProofState.join('  \n');
     str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
