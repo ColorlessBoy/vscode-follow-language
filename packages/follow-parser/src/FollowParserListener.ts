@@ -1164,11 +1164,11 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
       this.generateStr();
     }
     var str = 'axiom ' + this.token.text + ' {';
-    str += '  \n  |- ' + this.targetStr + '  \n}';
+    str += '  \n  |- ' + this.targetStr;
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str = '```  \n' + str + '  \n```';
+    str = '```  \n' + str + '  \n  \n```';
 
     var proofState = this.untilNowProofState.join('  \n');
     str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
@@ -1237,7 +1237,7 @@ export class TheoremASTNodeImpl extends BaseASTNodeImpl implements TheoremASTNod
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str = str + '  \n}  \n' + '  \n';
+    str = '```  \n' + str + '  \n}  \n```' + '  \n';
 
     var proofState = this.untilNowProofState.join('  \n');
     str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
