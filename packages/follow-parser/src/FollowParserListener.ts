@@ -1168,7 +1168,7 @@ export class AxiomASTNodeImpl extends BaseASTNodeImpl implements AxiomASTNode {
     for (const assumptionStr of this.assumptionStrList) {
       str += '  \n  -| ' + assumptionStr;
     }
-    str = '```  \n' + str + '  \n  \n```';
+    str = '```  \n' + str + '  \n}  \n```';
 
     var proofState = this.untilNowProofState.join('  \n');
     str += ['  \n```', 'Current proof state:', proofState, '```'].join('  \n');
