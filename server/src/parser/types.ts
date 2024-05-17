@@ -221,6 +221,7 @@ export enum CNodeTypes {
 }
 export interface CNode {
   cnodetype: CNodeTypes;
+  astNode: Node;
 }
 
 export type CompilerNode = TypeCNode | TermCNode | AxiomCNode | ThmCNode;

@@ -19,9 +19,11 @@ import {
   URI,
   SemanticTokensBuilder,
   SemanticTokens,
+  Range,
+  Hover,
 } from 'vscode-languageserver/node';
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import {
   Scanner,
   Parser,
@@ -36,7 +38,9 @@ import {
   AxiomCNode,
   TermOpCNode,
   ThmCNode,
+  ProofOpCNode,
 } from './parser';
+import { statSync } from 'fs';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -302,8 +306,108 @@ function getErrorMsg(errorType: ErrorTypes): string {
 }
 
 connection.onHover((event) => {
+  const uri = event.textDocument.uri;
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument === undefined) {
+    return null;
+  }
+  let tool = toolMap.get(uri);
+  if (tool === undefined) {
+    tool = processTextDocument(textDocument);
+  }
+  const position = event.position;
+  const cNode = findCNodeByPostion(tool.compiler, position);
+  if (cNode) {
+    if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
+      const content = findOpCNodePosition(cNode as AxiomCNode | ThmCNode, position);
+      const hover: Hover = {
+        contents: content,
+      };
+      return hover;
+    }
+  }
   return null;
 });
+function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): string {
+  if (positionInRange(cNode.astNode.name.range, position)) {
+    const assumeStr = cNode.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
+    const targetStr = cNode.targets.map((t) => '|- ' + t.termContent).join('\n\n');
+    return [assumeStr, targetStr].join('\n\n  ');
+  }
+  for (const target of cNode.targets) {
+    if (positionInRange(target.range, position)) {
+      return findTermOpCNodeByPosition(target, position);
+    }
+  }
+  for (const assumption of cNode.assumptions) {
+    if (positionInRange(assumption.range, position)) {
+      return findTermOpCNodeByPosition(assumption, position);
+    }
+  }
+  if ('proofs' in cNode) {
+    const proofs = (cNode as ThmCNode).proofs;
+    const process = (cNode as ThmCNode).proofProcess;
+    for (let i = 0; i < proofs.length; i++) {
+      const proof = proofs[i];
+      if (positionInRange(proof.range, position)) {
+        return findProofByPosition(proof, process[i], position);
+      }
+    }
+  }
+  return '';
+}
+function findProofByPosition(proof: ProofOpCNode, state: TermOpCNode[], position: Position): string {
+  if (positionInRange(proof.root.range, position)) {
+    const assumeStr = proof.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
+    const targetStr = proof.targets.map((t) => '|- ' + t.termContent).join('\n\n');
+    const stateStr = state.map((e) => '|* ' + e.termContent).join('\n\n');
+    return [assumeStr, targetStr, '---', stateStr].join('\n\n  ');
+  }
+  for (const child of proof.children) {
+    if (positionInRange(child.range, position)) {
+      return findTermOpCNodeByPosition(child, position);
+    }
+  }
+  return '';
+}
+function findTermOpCNodeByPosition(termCNode: TermOpCNode, position: Position): string {
+  if (positionInRange(termCNode.root.range, position)) {
+    return termCNode.termContent;
+  }
+  for (const child of termCNode.children) {
+    if (positionInRange(child.root.range, position)) {
+      return findTermOpCNodeByPosition(child, position);
+    }
+  }
+  return '';
+}
+function findCNodeByPostion(compiler: Compiler, position: Position): CNode | undefined {
+  const cNodeList = compiler.cNodeList;
+  let left = 0;
+  let right = cNodeList.length - 1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midCNode = cNodeList[mid];
+    const range = midCNode.astNode.range;
+    if (positionInRange(range, position)) {
+      return midCNode;
+    } else if (range.end.line < position.line || range.end.character <= position.character) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+}
+function positionInRange(range: Range, position: Position): Boolean {
+  if (
+    (range.start.line < position.line ||
+      (range.start.line === position.line && range.start.character <= position.character)) &&
+    (range.end.line > position.line || (range.end.line === position.line && range.end.character > position.character))
+  ) {
+    return true;
+  }
+  return false;
+}
 
 connection.onDefinition((event) => {
   return null;
