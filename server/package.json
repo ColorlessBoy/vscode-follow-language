@@ -15,13 +15,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/charcodes": "^0.2.2",
     "@types/node": "^20.5.0",
     "esbuild": "^0.19.2",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "follow-parser": "workspace:*",
+    "charcodes": "^0.2.0",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   }
