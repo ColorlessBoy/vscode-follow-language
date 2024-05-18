@@ -18,7 +18,6 @@ import {
   DiagnosticSeverity,
   URI,
   SemanticTokensBuilder,
-  SemanticTokens,
   Range,
   Hover,
 } from 'vscode-languageserver/node';
@@ -40,7 +39,6 @@ import {
   ThmCNode,
   ProofOpCNode,
 } from './parser';
-import { statSync } from 'fs';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -81,7 +79,7 @@ let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
 
-let toolMap: Map<URI, { scanner: Scanner; parser: Parser; compiler: Compiler }> = new Map();
+let compilerMap: Map<URI, { scanner: Scanner; parser: Parser; compiler: Compiler }> = new Map();
 
 connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
@@ -209,14 +207,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 function processTextDocument(textDocument: TextDocument) {
   const uri = textDocument.uri;
-  let tool = toolMap.get(uri);
+  let tool = compilerMap.get(uri);
   if (tool === undefined) {
     tool = {
       scanner: new Scanner(),
       parser: new Parser(),
       compiler: new Compiler(),
     };
-    toolMap.set(uri, tool);
+    compilerMap.set(uri, tool);
   }
   const { scanner, parser, compiler } = tool;
 
@@ -311,7 +309,7 @@ connection.onHover((event) => {
   if (textDocument === undefined) {
     return null;
   }
-  let tool = toolMap.get(uri);
+  let tool = compilerMap.get(uri);
   if (tool === undefined) {
     tool = processTextDocument(textDocument);
   }
@@ -375,7 +373,7 @@ function findTermOpCNodeByPosition(termCNode: TermOpCNode, position: Position): 
     return termCNode.termContent;
   }
   for (const child of termCNode.children) {
-    if (positionInRange(child.root.range, position)) {
+    if (positionInRange(child.range, position)) {
       return findTermOpCNodeByPosition(child, position);
     }
   }
@@ -391,7 +389,10 @@ function findCNodeByPostion(compiler: Compiler, position: Position): CNode | und
     const range = midCNode.astNode.range;
     if (positionInRange(range, position)) {
       return midCNode;
-    } else if (range.end.line < position.line || range.end.character <= position.character) {
+    } else if (
+      range.end.line < position.line ||
+      (range.end.line === position.line && range.end.character <= position.character)
+    ) {
       left = mid + 1;
     } else {
       right = mid - 1;
@@ -428,7 +429,7 @@ connection.languages.semanticTokens.on((event) => {
     const builder = new SemanticTokensBuilder();
     return builder.build();
   }
-  let tool = toolMap.get(uri);
+  let tool = compilerMap.get(uri);
   if (tool === undefined) {
     tool = processTextDocument(textDocument);
   }
@@ -444,7 +445,7 @@ connection.languages.semanticTokens.onDelta((event) => {
     const builder = new SemanticTokensBuilder();
     return builder.buildEdits();
   }
-  let tool = toolMap.get(uri);
+  let tool = compilerMap.get(uri);
   if (tool === undefined) {
     tool = processTextDocument(textDocument);
   }
