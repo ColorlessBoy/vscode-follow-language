@@ -257,6 +257,7 @@ export interface ThmCNode extends CNode {
   proofs: ProofOpCNode[];
   proofProcess: TermOpCNode[][];
   isValid: Boolean;
+  suggestions: Map<string, TermOpCNode>[][];
 }
 
 export interface TermOpCNode {
@@ -267,6 +268,7 @@ export interface TermOpCNode {
   type: string;
   termContent: string;
   funContent: string;
+  virtual?: boolean;
 }
 
 export interface ProofOpCNode {

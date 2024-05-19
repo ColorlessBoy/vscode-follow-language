@@ -23,6 +23,7 @@ import {
 } from 'vscode-languageserver/node';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
+import { TextEdit } from 'vscode-languageserver-textdocument';
 import {
   Scanner,
   Parser,
@@ -38,6 +39,8 @@ import {
   TermOpCNode,
   ThmCNode,
   ProofOpCNode,
+  AxiomASTNode,
+  ThmASTNode,
 } from './parser';
 
 const semanticTokensLegend: SemanticTokensLegend = {
@@ -99,7 +102,7 @@ connection.onInitialize((params: InitializeParams) => {
       textDocumentSync: TextDocumentSyncKind.Incremental,
       // Tell the client that this server supports code completion.
       completionProvider: {
-        resolveProvider: true,
+        resolveProvider: false,
       },
       hoverProvider: true,
       definitionProvider: true,
@@ -551,11 +554,15 @@ function buildSemanticTokenOfAxiom(builder: SemanticTokensBuilder, cNode: AxiomC
     buildSemanticTokenOfArgName(builder, pair.name);
   }
   const paramSet: Set<string> = new Set(cNode.astNode.params.map((p) => p.name.content));
-  for (const target of cNode.targets) {
-    buildSemanticOpCNode(builder, target, paramSet);
-  }
-  for (const assumption of cNode.assumptions) {
-    buildSemanticOpCNode(builder, assumption, paramSet);
+  const bodyArray = [...cNode.assumptions, ...cNode.targets];
+  bodyArray.sort((a, b) => {
+    return a.range.start.line < b.range.start.line ||
+      (a.range.start.line === b.range.start.line && a.range.start.character <= b.range.start.character)
+      ? -1
+      : 1;
+  });
+  for (const opCNode of bodyArray) {
+    buildSemanticOpCNode(builder, opCNode, paramSet);
   }
   for (const tokens of cNode.astNode.diffs) {
     for (const token of tokens) {
@@ -574,16 +581,20 @@ function buildSemanticTokenOfThm(builder: SemanticTokensBuilder, cNode: ThmCNode
     buildSemanticTokenOfArgName(builder, pair.name);
   }
   const paramSet: Set<string> = new Set(cNode.astNode.params.map((p) => p.name.content));
-  for (const target of cNode.targets) {
-    buildSemanticOpCNode(builder, target, paramSet);
-  }
-  for (const assumption of cNode.assumptions) {
-    buildSemanticOpCNode(builder, assumption, paramSet);
-  }
+  const bodyArray = [...cNode.assumptions, ...cNode.targets];
+  bodyArray.sort((a, b) => {
+    return a.range.start.line < b.range.start.line ||
+      (a.range.start.line === b.range.start.line && a.range.start.character <= b.range.start.character)
+      ? -1
+      : 1;
+  });
   for (const tokens of cNode.astNode.diffs) {
     for (const token of tokens) {
       buildSemanticTokenOfArgName(builder, token);
     }
+  }
+  for (const opCNode of bodyArray) {
+    buildSemanticOpCNode(builder, opCNode, paramSet);
   }
   for (const proof of cNode.proofs) {
     const root = proof.root;
@@ -605,29 +616,75 @@ connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): Com
   // The pass parameter contains the position of the text document in
   // which code complete got requested. For the example we ignore this
   // info and always provide the same completion items.
-  return [
-    {
-      label: 'TypeScript',
-      kind: CompletionItemKind.Text,
-      data: 1,
-    },
-    {
-      label: 'JavaScript',
-      kind: CompletionItemKind.Text,
-      data: 2,
-    },
-  ];
+  const uri = _textDocumentPosition.textDocument.uri;
+  const textDocument = documents.get(uri);
+  if (textDocument === undefined) {
+    return [];
+  }
+  let tool = compilerMap.get(uri);
+  if (tool === undefined) {
+    tool = processTextDocument(textDocument);
+  }
+  const position = _textDocumentPosition.position;
+  const cNode = findCNodeByPostion(tool.compiler, position);
+  const items: CompletionItem[] = [];
+  if (cNode && cNode.cnodetype === CNodeTypes.THM) {
+    const proofs = (cNode as ThmCNode).proofs;
+    if (proofs.length === 0) {
+      return [];
+    }
+    const suggestions = (cNode as ThmCNode).suggestions;
+    for (let i = 0; i < proofs.length; i++) {
+      const proof = proofs[i];
+      const suggestion = suggestions[i];
+      if (suggestion.length > 0 && proof.range.start.line === position.line) {
+        for (const singleSuggestion of suggestion) {
+          if (singleSuggestion.size > 0) {
+            const newText = proofRelacementForSuggestion(proof, singleSuggestion);
+            items.push({
+              label: newText,
+              kind: CompletionItemKind.Function,
+              textEdit: { range: proof.range, newText: newText },
+            });
+          }
+        }
+        return items;
+      }
+    }
+  }
+  return items;
 });
+
+function proofRelacementForSuggestion(proof: ProofOpCNode, suggestion: Map<string, TermOpCNode>): string {
+  let rst = proof.root.content + '(';
+  const astNode = proof.definition.astNode as AxiomASTNode | ThmASTNode;
+  const params = astNode.params;
+  const children = proof.children;
+  const newChildren: string[] = [];
+  let count = 1;
+  for (let i = 0; i < params.length; i++) {
+    const argName = params[i].name.content;
+    const child = children[i];
+    const suggest = suggestion.get(argName);
+    if (suggest) {
+      newChildren.push(suggest.funContent);
+    } else if (child.virtual === true) {
+      newChildren.push('');
+      count += 1;
+    } else {
+      newChildren.push(child.funContent);
+    }
+  }
+  rst += newChildren.join(', ') + ')';
+  return rst;
+}
 
 // This handler resolves additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
-  if (item.data === 1) {
+  if (item.data === 0) {
     item.detail = 'TypeScript details';
     item.documentation = 'TypeScript documentation';
-  } else if (item.data === 2) {
-    item.detail = 'JavaScript details';
-    item.documentation = 'JavaScript documentation';
   }
   return item;
 });

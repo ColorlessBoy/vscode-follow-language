@@ -14,9 +14,9 @@ axiom ax.3(prop p1, prop p2) {
   |- imp(imp(not(p1), not(p2)), imp(p2, p1))
 }
 axiom ax.mp(prop p1, prop p2) {
-  |- p1
-  -| imp(p2, p1)
   -| p2
+  -| imp(p2, p1)
+  |- p1
 }
 axiom df.iff(prop p1, prop p2) {
   |- not(imp(
@@ -25,11 +25,47 @@ axiom df.iff(prop p1, prop p2) {
         not(imp(imp(p1, p2), not(imp(p2, p1)))), iff(p1, p2)
       ))
     ))
-  -| p1
 }
 axiom df.and(prop p1, prop p2) {
   |- iff(and(p1, p2), not(imp(p1, not(p2))))
 }
 axiom df.or(prop p1, prop p2) {
   |- iff(or(p1, p2), imp(not(p1), p2))
+}
+
+thm id(prop p1) {
+  |- imp(p1, p1)
+} = {
+  ax.mp(imp(p1, p1), imp(p1, imp(p1, p1)))
+  ax.1(p1, p1)
+  ax.mp(imp(imp(p1, imp(p1, p1)), imp(p1, p1)), imp(p1, imp(imp(p1, p1), p1)))
+  ax.2(p1, imp(p1, p1), p1)
+  ax.1(p1, imp(p1, p1))
+}
+
+thm mpd(prop p0, prop p1, prop p2) {
+  -| imp(p0, p2)
+  -| imp(p0, imp(p2, p1))
+  |- imp(p0, p1)
+} = {
+  ax.mp(imp(p0, p1), imp(p0, p2))
+  ax.mp(imp(imp(p0, p2), imp(p0, p1)), imp(p0, imp(p2, p1)))
+  ax.2(p0, p2, p1)
+}
+
+thm a1i(prop p1, prop p2) {
+  -| p2
+  |- imp(p1, p2)
+} = {
+  ax.mp(imp(p1,p2), p2)
+  ax.1(p2, p1)
+}
+
+thm syl(prop p1, prop p2, prop p3) {
+  |- imp(p1, p2)
+  -| imp(p1, p3)
+  -| imp(p3, p2)
+} = {
+  mpd(p1, p2, p3)
+  a1i(p1, imp(p3,p2))
 }
