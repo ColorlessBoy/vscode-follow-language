@@ -21,9 +21,11 @@ import {
   Range,
   Hover,
 } from 'vscode-languageserver/node';
+import * as fs from 'fs';
+import * as vscode from 'vscode';
+import * as path from 'path';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
-import { TextEdit } from 'vscode-languageserver-textdocument';
 import {
   Scanner,
   Parser,
@@ -41,7 +43,10 @@ import {
   ProofOpCNode,
   AxiomASTNode,
   ThmASTNode,
+  CONTENT_FILE,
 } from './parser';
+import { CompilerWithImport } from './parser/compilerWithImport';
+import { json } from 'stream/consumers';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -82,7 +87,7 @@ let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
 
-let compilerMap: Map<URI, { scanner: Scanner; parser: Parser; compiler: Compiler }> = new Map();
+let compilerMap: Map<string, CompilerWithImport> = new Map(); // folder - compiler
 
 connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
@@ -135,7 +140,12 @@ connection.onInitialized(() => {
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders((_event) => {
-      connection.console.log('Workspace folder change event received.');
+      for (const addFolder of _event.added) {
+        initContentJsonFile(addFolder.uri);
+      }
+      for (const removeFolder of _event.removed) {
+        compilerMap.delete(removeFolder.uri);
+      }
     });
   }
   const registrationOptions: SemanticTokensRegistrationOptions = {
@@ -148,6 +158,38 @@ connection.onInitialized(() => {
   };
   void connection.client.register(SemanticTokensRegistrationType.type, registrationOptions);
 });
+
+async function readContentJsonFile(dir: string): Promise<string[]> {
+  try {
+    const data = await fs.promises.readFile(path.join(dir, CONTENT_FILE), 'utf8');
+    const jsonData = JSON.parse(data);
+    // 验证 jsonData 是否包含 "content" 键，并且其值是字符串列表
+    if (jsonData.hasOwnProperty('content') && Array.isArray(jsonData.content)) {
+      const content: string[] = [];
+      for (const item of jsonData.content) {
+        const absPath = path.resolve(path.join(dir, item));
+        if (typeof item === 'string' && fs.existsSync(absPath)) {
+          content.push(absPath);
+        }
+      }
+    }
+    return [];
+  } catch (err) {
+    return [];
+  }
+}
+async function initContentJsonFile(folder: string) {
+  const compiler = new CompilerWithImport();
+  compilerMap.set(folder, compiler);
+  const depFileList = await readContentJsonFile(folder);
+  compiler.setImportList(depFileList);
+  for (const file of depFileList) {
+    try {
+      const code = fs.readFileSync(file, 'utf8');
+      compiler.compileCode(file, code);
+    } catch (err) {}
+  }
+}
 
 // The example settings
 interface ExampleSettings {
@@ -210,16 +252,13 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
 function processTextDocument(textDocument: TextDocument) {
   const uri = textDocument.uri;
-  let tool = compilerMap.get(uri);
-  if (tool === undefined) {
-    tool = {
-      scanner: new Scanner(),
-      parser: new Parser(),
-      compiler: new Compiler(),
-    };
-    compilerMap.set(uri, tool);
+  let compiler = compilerMap.get(uri);
+  if (compiler === undefined) {
+    compiler = new CompilerWithImport();
+    compilerMap.set(uri, compiler);
   }
-  const { scanner, parser, compiler } = tool;
+  const scanner = new Scanner();
+  const parser = new Parser();
 
   const tokens = scanner.scan(textDocument.getText());
   const astNodes = parser.parse(tokens);

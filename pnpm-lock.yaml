@@ -42,6 +42,9 @@ importers:
 
   server:
     dependencies:
+      '@types/vscode':
+        specifier: ^1.80.0
+        version: 1.89.0
       charcodes:
         specifier: ^0.2.0
         version: 0.2.0
