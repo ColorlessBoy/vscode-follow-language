@@ -380,7 +380,7 @@ function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): 
   if (positionInRange(cNode.astNode.name.range, position)) {
     const assumeStr = cNode.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
     const targetStr = cNode.targets.map((t) => '|- ' + t.termContent).join('\n\n');
-    return [assumeStr, targetStr].join('\n\n  ');
+    return [targetStr, assumeStr].join('\n\n  ');
   }
   for (const target of cNode.targets) {
     if (positionInRange(target.range, position)) {
@@ -406,10 +406,14 @@ function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): 
 }
 function findProofByPosition(proof: ProofOpCNode, state: TermOpCNode[], position: Position): string {
   if (positionInRange(proof.root.range, position)) {
+    const diffStr = proof.diffError?.map((s) => 'diff(' + s + ')');
     const assumeStr = proof.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
     const targetStr = proof.targets.map((t) => '|- ' + t.termContent).join('\n\n');
     const stateStr = state.map((e) => '|* ' + e.termContent).join('\n\n');
-    return [assumeStr, targetStr, '---', stateStr].join('\n\n  ');
+    if (diffStr) {
+      return [targetStr, assumeStr, diffStr, '---', stateStr].join('\n\n  ');
+    }
+    return [targetStr, assumeStr, '---', stateStr].join('\n\n  ');
   }
   for (const child of proof.children) {
     if (positionInRange(child.range, position)) {
