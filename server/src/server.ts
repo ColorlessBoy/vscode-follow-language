@@ -16,20 +16,17 @@ import {
   SemanticTokenTypes,
   SemanticTokenModifiers,
   DiagnosticSeverity,
-  URI,
   SemanticTokensBuilder,
   Range,
   Hover,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
-import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import {
   Scanner,
   Parser,
-  Compiler,
   Error,
   ErrorTypes,
   CNode,
@@ -44,9 +41,8 @@ import {
   AxiomASTNode,
   ThmASTNode,
   CONTENT_FILE,
+  CompilerWithImport,
 } from './parser';
-import { CompilerWithImport } from './parser/compilerWithImport';
-import { json } from 'stream/consumers';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -133,20 +129,12 @@ connection.onInitialize((params: InitializeParams) => {
   return result;
 });
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
   if (hasConfigurationCapability) {
     // Register for all configuration changes.
     connection.client.register(DidChangeConfigurationNotification.type, undefined);
   }
   if (hasWorkspaceFolderCapability) {
-    connection.workspace.onDidChangeWorkspaceFolders((_event) => {
-      for (const addFolder of _event.added) {
-        initContentJsonFile(addFolder.uri);
-      }
-      for (const removeFolder of _event.removed) {
-        compilerMap.delete(removeFolder.uri);
-      }
-    });
   }
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: [{ language: 'follow' }],
@@ -161,7 +149,8 @@ connection.onInitialized(() => {
 
 async function readContentJsonFile(dir: string): Promise<string[]> {
   try {
-    const data = await fs.promises.readFile(path.join(dir, CONTENT_FILE), 'utf8');
+    const file = path.join(dir, CONTENT_FILE);
+    const data = fs.readFileSync(file, 'utf8');
     const jsonData = JSON.parse(data);
     // 验证 jsonData 是否包含 "content" 键，并且其值是字符串列表
     if (jsonData.hasOwnProperty('content') && Array.isArray(jsonData.content)) {
@@ -172,13 +161,13 @@ async function readContentJsonFile(dir: string): Promise<string[]> {
           content.push(absPath);
         }
       }
+      return content;
     }
-    return [];
-  } catch (err) {
-    return [];
-  }
+  } catch (err) {}
+  return [];
 }
-async function initContentJsonFile(folder: string) {
+async function initContentJsonFile(uri: string) {
+  const folder = uri.slice(7); // remove 'file://'
   const compiler = new CompilerWithImport();
   compilerMap.set(folder, compiler);
   const depFileList = await readContentJsonFile(folder);
@@ -244,25 +233,32 @@ documents.onDidChangeContent((change) => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  const { parser, compiler } = processTextDocument(textDocument);
+  const { parser, compiler } = await processTextDocument(textDocument);
   const diagnostics = [...getDiagnostics(parser.errors), ...getDiagnostics(compiler.errors)];
   const uri = textDocument.uri;
   connection.sendDiagnostics({ uri, diagnostics });
 }
 
-function processTextDocument(textDocument: TextDocument) {
-  const uri = textDocument.uri;
-  let compiler = compilerMap.get(uri);
+async function processTextDocument(textDocument: TextDocument) {
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7); // remove 'file://'
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+  let compiler = compilerMap.get(folderPath);
+  if (compiler === undefined) {
+    await initContentJsonFile('file://' + folderPath);
+    compiler = compilerMap.get(folderPath);
+  }
   if (compiler === undefined) {
     compiler = new CompilerWithImport();
-    compilerMap.set(uri, compiler);
+    compilerMap.set(folderPath, compiler);
   }
   const scanner = new Scanner();
   const parser = new Parser();
 
   const tokens = scanner.scan(textDocument.getText());
   const astNodes = parser.parse(tokens);
-  const compileNodes = compiler.compile(astNodes);
+  compiler.compile(filePath, astNodes);
   return { scanner, parser, compiler };
 }
 
@@ -346,17 +342,18 @@ function getErrorMsg(errorType: ErrorTypes): string {
 }
 
 connection.onHover((event) => {
-  const uri = event.textDocument.uri;
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument === undefined) {
     return null;
   }
-  let tool = compilerMap.get(uri);
-  if (tool === undefined) {
-    tool = processTextDocument(textDocument);
-  }
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+
   const position = event.position;
-  const cNode = findCNodeByPostion(tool.compiler, position);
+  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNode = findCNodeByPostion(cNodeList, position);
   if (cNode) {
     if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
       const content = findOpCNodePosition(cNode as AxiomCNode | ThmCNode, position);
@@ -421,8 +418,7 @@ function findTermOpCNodeByPosition(termCNode: TermOpCNode, position: Position): 
   }
   return '';
 }
-function findCNodeByPostion(compiler: Compiler, position: Position): CNode | undefined {
-  const cNodeList = compiler.cNodeList;
+function findCNodeByPostion(cNodeList: CNode[], position: Position): CNode | undefined {
   let left = 0;
   let right = cNodeList.length - 1;
   while (left <= right) {
@@ -464,34 +460,47 @@ connection.onRenameRequest((event) => {
   return null;
 });
 
-connection.languages.semanticTokens.on((event) => {
-  const uri = event.textDocument.uri;
+connection.languages.semanticTokens.on(async (event) => {
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument === undefined) {
     const builder = new SemanticTokensBuilder();
     return builder.build();
   }
-  let tool = compilerMap.get(uri);
-  if (tool === undefined) {
-    tool = processTextDocument(textDocument);
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+  const compiler = compilerMap.get(folderPath);
+  let cNodeList = compiler?.cNodeListMap.get(filePath);
+
+  if (cNodeList === undefined) {
+    const { compiler } = await processTextDocument(textDocument);
+    cNodeList = compiler.cNodeListMap.get(filePath) || [];
   }
 
-  const semanticTokens = buildSemanticToken(tool.compiler.cNodeList);
+  const semanticTokens = buildSemanticToken(cNodeList);
   return semanticTokens;
 });
 
-connection.languages.semanticTokens.onDelta((event) => {
-  const uri = event.textDocument.uri;
+connection.languages.semanticTokens.onDelta(async (event) => {
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument === undefined) {
     const builder = new SemanticTokensBuilder();
-    return builder.buildEdits();
+    return builder.build();
   }
-  let tool = compilerMap.get(uri);
-  if (tool === undefined) {
-    tool = processTextDocument(textDocument);
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+  const compiler = compilerMap.get(folderPath);
+  let cNodeList = compiler?.cNodeListMap.get(filePath);
+
+  if (cNodeList === undefined) {
+    const { compiler } = await processTextDocument(textDocument);
+    cNodeList = compiler.cNodeListMap.get(filePath) || [];
   }
-  const semanticTokens = buildSemanticTokenDelta(tool.compiler.cNodeList, event.previousResultId);
+
+  const semanticTokens = buildSemanticTokenDelta(cNodeList, event.previousResultId);
   return semanticTokens;
 });
 
@@ -651,21 +660,28 @@ connection.onDidChangeWatchedFiles((_change) => {
 });
 
 // This handler provides the initial list of the completion items.
-connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams): Promise<CompletionItem[]> => {
   // The pass parameter contains the position of the text document in
   // which code complete got requested. For the example we ignore this
   // info and always provide the same completion items.
-  const uri = _textDocumentPosition.textDocument.uri;
-  const textDocument = documents.get(uri);
+  const textDocument = documents.get(_textDocumentPosition.textDocument.uri);
   if (textDocument === undefined) {
     return [];
   }
-  let tool = compilerMap.get(uri);
-  if (tool === undefined) {
-    tool = processTextDocument(textDocument);
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+  const compiler = compilerMap.get(folderPath);
+  let cNodeList = compiler?.cNodeListMap.get(filePath);
+
+  if (cNodeList === undefined) {
+    const { compiler } = await processTextDocument(textDocument);
+    cNodeList = compiler.cNodeListMap.get(filePath) || [];
   }
+
   const position = _textDocumentPosition.position;
-  const cNode = findCNodeByPostion(tool.compiler, position);
+  const cNode = findCNodeByPostion(cNodeList, position);
   const items: CompletionItem[] = [];
   if (cNode && cNode.cnodetype === CNodeTypes.THM) {
     const proofs = (cNode as ThmCNode).proofs;
