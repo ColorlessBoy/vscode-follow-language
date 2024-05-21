@@ -1,8 +1,0 @@
-
-thm contradiction(prop p1, prop p2) {
-  |- imp(not(p1), imp(p1, p2))
-} = {
-  syl(not(p1), imp(p1,p2), imp(not(p2), not(p1)))
-  ax-1(not(p1), not(p2))
-  ax-3(p2, p1)
-}

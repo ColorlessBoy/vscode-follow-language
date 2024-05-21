@@ -166,8 +166,7 @@ async function readContentJsonFile(dir: string): Promise<string[]> {
   } catch (err) {}
   return [];
 }
-async function initContentJsonFile(uri: string) {
-  const folder = uri.slice(7); // remove 'file://'
+async function initContentJsonFile(folder: string) {
   const compiler = new CompilerWithImport();
   compilerMap.set(folder, compiler);
   const depFileList = await readContentJsonFile(folder);
@@ -233,10 +232,22 @@ documents.onDidChangeContent((change) => {
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  const { parser, compiler } = await processTextDocument(textDocument);
-  const diagnostics = [...getDiagnostics(parser.errors), ...getDiagnostics(compiler.errors)];
-  const uri = textDocument.uri;
-  connection.sendDiagnostics({ uri, diagnostics });
+  const name = textDocument.uri;
+  if (name.endsWith(CONTENT_FILE)) {
+    reloadContentJsonFile(textDocument);
+  } else {
+    const { parser, compiler } = await processTextDocument(textDocument);
+    const diagnostics = [...getDiagnostics(parser.errors), ...getDiagnostics(compiler.errors)];
+    const uri = textDocument.uri;
+    connection.sendDiagnostics({ uri, diagnostics });
+  }
+}
+
+async function reloadContentJsonFile(textDocument: TextDocument) {
+  const uri = textDocument.uri.slice(7); // remove 'file://'
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+  await initContentJsonFile(folderPath);
 }
 
 async function processTextDocument(textDocument: TextDocument) {
@@ -246,7 +257,7 @@ async function processTextDocument(textDocument: TextDocument) {
   const folderPath: string = path.dirname(filePath);
   let compiler = compilerMap.get(folderPath);
   if (compiler === undefined) {
-    await initContentJsonFile('file://' + folderPath);
+    await initContentJsonFile(folderPath);
     compiler = compilerMap.get(folderPath);
   }
   if (compiler === undefined) {
