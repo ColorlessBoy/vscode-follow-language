@@ -1,0 +1,12 @@
+
+/*
+  # iff
+*/
+
+thm iff.intro(prop p0, prop p1) {
+  |- imp(imp(p0, p1),
+    imp(imp(p1, p0), iff(p0, p1))
+  )
+} = {
+
+}

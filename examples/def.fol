@@ -7,22 +7,19 @@ term prop iff(prop p0, prop p1) {(p0 ↔ p1)}
 term prop true { T }
 term prop false { F }
 
-axiom ax-1(prop p0, prop p1) {
+axiom ax.1(prop p0, prop p1) {
   |- imp(p0, imp(p1, p0))
 }
-axiom ax-2(prop p0, prop p1, prop p2) {
+axiom ax.2(prop p0, prop p1, prop p2) {
   |- imp(imp(p0, imp(p1, p2)), imp(imp(p0, p1), imp(p0, p2)))
 }
-axiom ax-3(prop p0, prop p1) {
+axiom ax.3(prop p0, prop p1) {
   |- imp(imp(not(p0), not(p1)), imp(p1, p0))
 }
-axiom ax-mp(prop p0, prop p1) {
+axiom ax.mp(prop p0, prop p1) {
   |- p0
   -| p1
   -| imp(p1, p0)
-}
-axiom df.not(prop p0) {
-  |- imp(not(p0), false)
 }
 axiom df.iff(prop p0, prop p1) {
   |- not(imp(
@@ -37,4 +34,10 @@ axiom df.and(prop p0, prop p1) {
 }
 axiom df.or(prop p0, prop p1) {
   |- iff(or(p0, p1), imp(not(p0), p1))
+}
+axiom df.true() {
+  |- true
+}
+axiom df.false() {
+  |- not(false)
 }
