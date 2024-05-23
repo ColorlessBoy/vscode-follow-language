@@ -1,34 +1,40 @@
 type prop 
-term prop imp(prop p1, prop p2) {(p1 -> p2)}
-term prop not(prop p1) {¬ p1}
-term prop or(prop p1, prop p2) {(p1 ∨ p2)}
-term prop and(prop p1, prop p2) {(p1 ∧ p2)}
-term prop iff(prop p1, prop p2) {(p1 ↔ p2)}
-axiom ax-1(prop p1, prop p2) {
-  |- imp(p1, imp(p2, p1))
+term prop imp(prop p0, prop p1) {(p0 -> p1)}
+term prop not(prop p0) {¬ p0}
+term prop or(prop p0, prop p1) {(p0 ∨ p1)}
+term prop and(prop p0, prop p1) {(p0 ∧ p1)}
+term prop iff(prop p0, prop p1) {(p0 ↔ p1)}
+term prop true { T }
+term prop false { F }
+
+axiom ax-1(prop p0, prop p1) {
+  |- imp(p0, imp(p1, p0))
 }
-axiom ax-2(prop p1, prop p2, prop p3) {
-  |- imp(imp(p1, imp(p2, p3)), imp(imp(p1, p2), imp(p1, p3)))
+axiom ax-2(prop p0, prop p1, prop p2) {
+  |- imp(imp(p0, imp(p1, p2)), imp(imp(p0, p1), imp(p0, p2)))
 }
-axiom ax-3(prop p1, prop p2) {
-  |- imp(imp(not(p1), not(p2)), imp(p2, p1))
+axiom ax-3(prop p0, prop p1) {
+  |- imp(imp(not(p0), not(p1)), imp(p1, p0))
 }
-axiom ax-mp(prop p1, prop p2) {
-  -| p2
-  -| imp(p2, p1)
-  |- p1
+axiom ax-mp(prop p0, prop p1) {
+  |- p0
+  -| p1
+  -| imp(p1, p0)
 }
-axiom df.iff(prop p1, prop p2) {
+axiom df.not(prop p0) {
+  |- imp(not(p0), false)
+}
+axiom df.iff(prop p0, prop p1) {
   |- not(imp(
-      imp(iff(p1, p2), not(imp(imp(p1, p2), not(imp(p2, p1))))), 
+      imp(iff(p0, p1), not(imp(imp(p0, p1), not(imp(p1, p0))))), 
       not(imp(
-        not(imp(imp(p1, p2), not(imp(p2, p1)))), iff(p1, p2)
+        not(imp(imp(p0, p1), not(imp(p1, p0)))), iff(p0, p1)
       ))
     ))
 }
-axiom df.and(prop p1, prop p2) {
-  |- iff(and(p1, p2), not(imp(p1, not(p2))))
+axiom df.and(prop p0, prop p1) {
+  |- iff(and(p0, p1), not(imp(p0, not(p1))))
 }
-axiom df.or(prop p1, prop p2) {
-  |- iff(or(p1, p2), imp(not(p1), p2))
+axiom df.or(prop p0, prop p1) {
+  |- iff(or(p0, p1), imp(not(p0), p1))
 }

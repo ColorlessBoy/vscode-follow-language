@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "publisher": "Peng Lingwei",
   "description": "Language support for Follow",
+  "icon": "./follow-icon-128.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/ColorlessBoy/vscode-follow-language.git"
@@ -19,7 +20,8 @@
   "license": "ISC",
   "main": "./client/build/extension.js",
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Education"
   ],
   "engines": {
     "vscode": "^1.74.0"

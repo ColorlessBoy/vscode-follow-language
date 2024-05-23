@@ -581,7 +581,10 @@ function buildSemanticTokenOfTerm(builder: SemanticTokensBuilder, cNode: TermCNo
   buildSemanticTokenOfKeyword(builder, cNode.astNode.keyword);
   buildSemanticTokenOfType(builder, cNode.astNode.type);
   const name = cNode.astNode.name;
-  const nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
+  let nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
+  if (cNode.astNode.params.length === 0) {
+    nameType = semanticTokensMap.get(SemanticTokenTypes.number) || 0;
+  }
   builder.push(name.range.start.line, name.range.start.character, name.content.length, nameType, 0);
 
   for (const pair of cNode.astNode.params) {
@@ -599,7 +602,10 @@ function buildSemanticOpCNode(builder: SemanticTokensBuilder, cNode: TermOpCNode
   if (paramSet.has(cNode.root.content)) {
     buildSemanticTokenOfArgName(builder, cNode.root);
   } else {
-    const nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
+    let nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
+    if (cNode.children.length === 0) {
+      nameType = semanticTokensMap.get(SemanticTokenTypes.number) || 0;
+    }
     builder.push(cNode.root.range.start.line, cNode.root.range.start.character, cNode.root.content.length, nameType, 0);
     for (const child of cNode.children) {
       buildSemanticOpCNode(builder, child, paramSet);
