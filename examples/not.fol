@@ -2,20 +2,20 @@
 # not 
 */
 
-thm contradiction.1(prop p0, prop p1) {
+thm absurd.1(prop p0, prop p1) {
   |- imp(not(p0), imp(p0, p1))
 } = {
   syl(not(p0), imp(p0,p1), imp(not(p1), not(p0)))
   ax.1(not(p0), not(p1))
   ax.3(p1, p0)
 }
-thm contradiction.2(prop p0, prop p1) {
+thm absurd.2(prop p0, prop p1) {
   |- imp(p0, imp(not(p0), p1))
 } = {
   com12(p0, not(p0), p1)
-  contradiction.1(p0, p1)
+  absurd.1(p0, p1)
 }
-thm contradiction.3(prop p0) {
+thm absurd.3(prop p0) {
   |- imp(imp(not(p0), p0), p0)
 } = {
   mpd(imp(not(p0),p0), p0, imp(not(p0), p0))
@@ -23,15 +23,15 @@ thm contradiction.3(prop p0) {
   syl(imp(not(p0),p0), imp(imp(not(p0),p0),p0), imp(not(p0), not(imp(not(p0),p0))))
   ax.3(p0, imp(not(p0),p0))
   a2i(not(p0), p0, not(imp(not(p0),p0)))
-  contradiction.1(p0, not(imp(not(p0),p0)))
+  absurd.1(p0, not(imp(not(p0),p0)))
 }
 
 thm false-means-everything(prop p0) {
   |- imp(false, p0)
 } = {
   ax.mp(imp(false,p0), not(false))
-  df.false
-  contradiction.1(false, p0)
+  false.def
+  absurd.1(false, p0)
 }
 
 thm a3i(prop p0, prop p1) {
@@ -48,7 +48,7 @@ thm notnot.1(prop p0) {
   mpd(not(not(p0)), p0, not(not(p0)))
   id(not(not(p0)))
   syl(not(not(p0)), imp(not(not(p0)),p0), imp(not(p0), not(not(not(p0)))))
-  contradiction.1(not(p0), not(not(not(p0))))
+  absurd.1(not(p0), not(not(not(p0))))
   ax.3(p0, not(not(p0)))
 }
 thm notnot.2(prop p0) {
@@ -58,7 +58,7 @@ thm notnot.2(prop p0) {
   notnot.1(not(p0))
 }
 
-thm contraposition.1(prop p0, prop p1) {
+thm contra.1(prop p0, prop p1) {
   |- imp( imp(not(p0),p1), imp(not(p1), p0) )
 } = {
   syl(imp(not(p0),p1), imp(not(p1),p0), imp(not(p0), not(not(p1))))
@@ -67,8 +67,22 @@ thm contraposition.1(prop p0, prop p1) {
   a1i(not(p0), imp(p1,not(not(p1))))
   notnot.2(p1)
 }
+thm contra.1i(prop p0, prop p1) {
+  |- imp(not(p0), p1)
+  -| imp(not(p1), p0)
+} = {
+  ax.mp(imp(not(p0),p1), imp(not(p1), p0))
+  contra.1(p1, p0)
+}
+thm contra.1d(prop p0, prop p1, prop p2) {
+  |- imp(p0, imp(not(p1), p2))
+  -| imp(p0, imp(not(p2), p1))
+} = {
+  syl(p0, imp(not(p1),p2), imp(not(p2), p1))
+  contra.1(p2, p1)
+}
 
-thm contraposition.2(prop p0, prop p1) {
+thm contra.2(prop p0, prop p1) {
   |- imp( imp(p0,not(p1)), imp(p1, not(p0)) )
 } = {
   syl(imp(p0,not(p1)), imp(p1,not(p0)), imp(not(not(p0)), not(p1)))
@@ -76,18 +90,61 @@ thm contraposition.2(prop p0, prop p1) {
   syl.d.2(p0, not(not(p0)), not(p1))
   notnot.1(p0)
 }
+thm contra.2i(prop p0, prop p1) {
+  |- imp(p0, not(p1))
+  -| imp(p1, not(p0))
+} = {
+  ax.mp(imp(p0,not(p1)), imp(p1, not(p0)))
+  contra.2(p1, p0)
+}
+thm contra.2d(prop p0, prop p1, prop p2) {
+  |- imp(p0, imp(p1, not(p2)))
+  -| imp(p0, imp(p2, not(p1)))
+} = {
+  syl(p0, imp(p1,not(p2)), imp(p2, not(p1)))
+  contra.2(p2, p1)
+}
 
-thm contraposition.3(prop p0, prop p1) {
+
+thm contra.3(prop p0, prop p1) {
   |- imp( imp(p0,p1), imp(not(p1), not(p0)) )
 } = {
   syl(imp(p0,p1), imp(not(p1),not(p0)), imp(not(not(p0)), p1))
-  contraposition.1(not(p0), p1)
+  contra.1(not(p0), p1)
   syl.d.2(p0, not(not(p0)), p1)
   notnot.1(p0)
 }
+thm contra.3i(prop p0, prop p1) {
+  |- imp(not(p0), not(p1))
+  -| imp(p1, p0)
+} = {
+  ax.mp(imp(not(p0),not(p1)), imp(p1, p0))
+  contra.3(p1, p0)
+}
+thm contra.3d(prop p0, prop p1, prop p2) {
+  |- imp(p0, imp(not(p1), not(p2)))
+  -| imp(p0, imp(p2, p1))
+} = {
+  syl(p0, imp(not(p1),not(p2)), imp(p2, p1))
+  contra.3(p2, p1)
+}
 
-thm contraposition.4(prop p0, prop p1) {
+thm contra.4(prop p0, prop p1) {
   |- imp( imp(not(p1), not(p0)), imp(p0,p1) )
 } = {
   ax.3(p1, p0)
+}
+thm contra.4i(prop p0, prop p1) {
+  |- imp(p1, p0)
+  -| imp(not(p0), not(p1))
+} = {
+  ax.mp(imp(p1, p0), imp(not(p0),not(p1)))
+  contra.4(p1, p0)
+}
+thm contra.4d(prop p0, prop p1, prop p2) {
+  |- imp(p0, imp(p1, p2))
+  -| imp(p0, imp(not(p2), not(p1)))
+} = {
+  syl(p0, imp(p1,p2), imp(not(p2), not(p1)))
+  contra.4(p1, p2)
 }

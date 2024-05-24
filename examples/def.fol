@@ -1,5 +1,5 @@
 type prop 
-term prop imp(prop p0, prop p1) {(p0 -> p1)}
+term prop imp(prop p0, prop p1) {(p0 → p1)}
 term prop not(prop p0) {¬ p0}
 term prop or(prop p0, prop p1) {(p0 ∨ p1)}
 term prop and(prop p0, prop p1) {(p0 ∧ p1)}
@@ -21,23 +21,83 @@ axiom ax.mp(prop p0, prop p1) {
   -| p1
   -| imp(p1, p0)
 }
-axiom df.iff(prop p0, prop p1) {
-  |- not(imp(
-      imp(iff(p0, p1), not(imp(imp(p0, p1), not(imp(p1, p0))))), 
-      not(imp(
-        not(imp(imp(p0, p1), not(imp(p1, p0)))), iff(p0, p1)
-      ))
-    ))
+axiom and.def.1(prop p0, prop p1) {
+  |- imp(and(p0, p1), not(imp(p0, not(p1))))
 }
-axiom df.and(prop p0, prop p1) {
-  |- iff(and(p0, p1), not(imp(p0, not(p1))))
+axiom and.def.2(prop p0, prop p1) {
+  |- imp(not(imp(p0, not(p1))), and(p0, p1))
 }
-axiom df.or(prop p0, prop p1) {
-  |- iff(or(p0, p1), imp(not(p0), p1))
+axiom or.def.1(prop p0, prop p1) {
+  |- imp(or(p0, p1), imp(not(p0), p1))
 }
-axiom df.true() {
+axiom or.def.2(prop p0, prop p1) {
+  |- imp(imp(not(p0), p1), or(p0, p1))
+}
+axiom iff.def.1(prop p0, prop p1) {
+  |- imp(iff(p0, p1), and(imp(p0, p1), imp(p1, p0)))
+}
+axiom iff.def.2(prop p0, prop p1) {
+  |- imp(and(imp(p0, p1), imp(p1, p0)), iff(p0, p1))
+}
+axiom true.def() {
   |- true
 }
-axiom df.false() {
+axiom false.def() {
   |- not(false)
+}
+
+type set
+term prop forall(set s0, prop p0) { ∀(s0, p0) }
+term prop exist(set s0, prop p0) { ∃(s0, p0) }
+term prop eq(set s0, set s1) { (s0 = s1) }
+axiom ax.gen(set s0, prop p0) {
+  |- forall(s0, p0)
+  -| p0
+}
+axiom ax.4(set s0, prop p0, prop p1) {
+  |- imp(forall(s0, imp(p0, p1)), imp(forall(s0, p0), forall(s0, p1)))
+}
+axiom ax.5(set s0, prop p0) {
+  |- imp(p0, forall(s0, p0))
+  diff s0 p0
+}
+axiom exist.def(set s0, prop p0) { |- iff(exist(s0, p0), not(forall(s0, not(p0)))) }
+axiom ax.6(set s0, set s1) { |- exist(s0, eq(s0, s1)) }
+axiom ax.7(set s0, set s1, set s2) { |- imp(eq(s0, s1), imp(eq(s0, s2), eq(s1, s2)))}
+axiom ax.10(set s0, prop p0) {
+  |- imp(not(forall(s0, p0)), forall(s0, not(forall(s0, p0))))
+}
+axiom ax.11(set s0, set s1, prop p0) {
+  |- imp(forall(s0, forall(s1, p0)), forall(s1, forall(s0, p0)))
+}
+axiom ax.12(set s0, set s1, prop p0) {
+  |- imp(imp(eq(s0, s1), p0), forall(s0, imp(eq(s0, s1), p0)))
+  diff s0 p0
+}
+
+term prop neq(set s0, set s1) { (s0 ≠ s1) }
+
+axiom neq.def(set s0, set s1) {
+  |- iff(neq(s0, s1), not(eq(s0, s1)))
+}
+// [t / s] p0
+// t : target
+// s : source
+term prop subs(set t, set s, prop p) { ([ t / s ] p) } 
+axiom subs.def(set t, set s, prop p, set hs) {
+  |- iff(subs(t, s, p), forall(hs, imp(eq(hs, t), forall(s, imp(eq(s, hs), p)))))
+  diff hs t
+  diff hs s
+  diff hs p
+}
+
+// abs
+term set abs(set s0, prop p0) { {s0 | p0} }
+term prop in(set s0, set s1) { (s0 ∈ s1) }
+axiom abs.def(set s0, set s1, prop p0) {
+  |- iff(in(s0, abs(s1, p0)), subs(s0, s1, p0))
+}
+axiom zfc.ax.ext(set s0, set s1, set s2) {
+  |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
+  diff s0 s1 s2
 }
