@@ -21,11 +21,13 @@ import {
   TypeCNode,
   ProofOpCNode,
   ThmCNode,
+  TokenTypes,
 } from './types';
 
 export class CompilerWithImport {
   public cNodeListMap: Map<string, CNode[]> = new Map();
   public cNodeMapMap: Map<string, Map<string, CNode>> = new Map();
+  public tokenListMap: Map<string, Token[]> = new Map();
   public errors: Error[] = [];
   public depFileList: string[] = [];
   public currentCNodeList: CNode[] = [];
@@ -35,14 +37,20 @@ export class CompilerWithImport {
   public setImportList(importList: string[]) {
     this.depFileList = importList;
   }
-  public compileCode(filename: string, code: string): CNode[] {
+  public compileCode(filename: string, code: string) {
     const scanner = new Scanner();
     const parser = new Parser();
     const tokens = scanner.scan(code);
+    this.tokenListMap.set(filename, tokens);
     const astNode = parser.parse(tokens);
-    return this.compile(filename, astNode);
+    const cNdoes = this.compile(filename, astNode);
+    return {
+      cNodes: cNdoes,
+      errors: [...parser.errors, ...this.errors],
+      tokens: tokens,
+    };
   }
-  public compile(filename: string, astNode: ASTNode[]): CNode[] {
+  private compile(filename: string, astNode: ASTNode[]): CNode[] {
     const cNodeList: CNode[] = [];
     const cNodeMap: Map<string, CNode> = new Map();
     this.currentCNodeList = cNodeList;
@@ -114,6 +122,7 @@ export class CompilerWithImport {
     for (const token of node.content) {
       const index = argIndexMap.get(token.content);
       if (index !== undefined) {
+        token.type = TokenTypes.ARGNAME;
         content.push(index);
       } else {
         const last = content.pop();
@@ -436,6 +445,11 @@ export class CompilerWithImport {
         });
       }
     }
+    if (definition2.cnodetype === CNodeTypes.AXIOM) {
+      root.type = TokenTypes.AXIOMNAME;
+    } else {
+      root.type = TokenTypes.THMNAME;
+    }
 
     const children: (TermOpCNode | undefined)[] = opNode.children.map((c) => this.compileTermOpNode(c, blockArgDefMap));
     const argMap: Map<string, TermOpCNode> = new Map();
@@ -629,6 +643,11 @@ export class CompilerWithImport {
         });
       }
       return;
+    }
+    if (wantArgs.length === 0) {
+      root.type = TokenTypes.CONSTNAME;
+    } else {
+      root.type = TokenTypes.TERMNAME;
     }
     const children: (TermOpCNode | undefined)[] = opNode.children.map((c) => this.compileTermOpNode(c, argDefMap));
     for (let idx = 0; idx < children.length; idx++) {

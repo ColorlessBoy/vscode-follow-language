@@ -43,6 +43,14 @@ export enum TokenTypes {
   WORD,
   COMMENT,
   SEP,
+  IGNORE,
+
+  TYPENAME,
+  ARGNAME,
+  TERMNAME,
+  CONSTNAME,
+  AXIOMNAME,
+  THMNAME,
 }
 
 export interface Token {
@@ -282,3 +290,5 @@ export interface ProofOpCNode {
   useVirtual: boolean;
   diffError?: string[];
 }
+
+export const CONTENT_FILE = 'content.follow.json';

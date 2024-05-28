@@ -25,8 +25,6 @@ import * as path from 'path';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  Scanner,
-  Parser,
   Error,
   ErrorTypes,
   CNode,
@@ -42,6 +40,7 @@ import {
   ThmASTNode,
   CONTENT_FILE,
   CompilerWithImport,
+  TokenTypes,
 } from './parser';
 
 const semanticTokensLegend: SemanticTokensLegend = {
@@ -236,8 +235,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   if (name.endsWith(CONTENT_FILE)) {
     reloadContentJsonFile(textDocument);
   } else {
-    const { parser, compiler } = await processTextDocument(textDocument);
-    const diagnostics = [...getDiagnostics(parser.errors), ...getDiagnostics(compiler.errors)];
+    const { errors } = await processTextDocument(textDocument);
+    const diagnostics = getDiagnostics(errors);
     const uri = textDocument.uri;
     connection.sendDiagnostics({ uri, diagnostics });
   }
@@ -264,13 +263,7 @@ async function processTextDocument(textDocument: TextDocument) {
     compiler = new CompilerWithImport();
     compilerMap.set(folderPath, compiler);
   }
-  const scanner = new Scanner();
-  const parser = new Parser();
-
-  const tokens = scanner.scan(textDocument.getText());
-  const astNodes = parser.parse(tokens);
-  compiler.compile(filePath, astNodes);
-  return { scanner, parser, compiler };
+  return compiler.compileCode(filePath, textDocument.getText());
 }
 
 function getDiagnostics(errors: Error[]): Diagnostic[] {
@@ -486,14 +479,14 @@ connection.languages.semanticTokens.on(async (event) => {
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   const compiler = compilerMap.get(folderPath);
-  let cNodeList = compiler?.cNodeListMap.get(filePath);
+  let tokenList = compiler?.tokenListMap.get(filePath);
 
-  if (cNodeList === undefined) {
-    const { compiler } = await processTextDocument(textDocument);
-    cNodeList = compiler.cNodeListMap.get(filePath) || [];
+  if (tokenList === undefined) {
+    const { tokens } = await processTextDocument(textDocument);
+    tokenList = tokens;
   }
 
-  const semanticTokens = buildSemanticToken(cNodeList);
+  const semanticTokens = buildSemanticToken(tokenList);
   return semanticTokens;
 });
 
@@ -508,171 +501,160 @@ connection.languages.semanticTokens.onDelta(async (event) => {
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   const compiler = compilerMap.get(folderPath);
-  let cNodeList = compiler?.cNodeListMap.get(filePath);
+  let tokenList = compiler?.tokenListMap.get(filePath);
 
-  if (cNodeList === undefined) {
-    const { compiler } = await processTextDocument(textDocument);
-    cNodeList = compiler.cNodeListMap.get(filePath) || [];
+  if (tokenList === undefined) {
+    const { tokens } = await processTextDocument(textDocument);
+    tokenList = tokens;
   }
 
-  const semanticTokens = buildSemanticTokenDelta(cNodeList, event.previousResultId);
+  const semanticTokens = buildSemanticTokenDelta(tokenList, event.previousResultId);
   return semanticTokens;
 });
 
-function buildSemanticToken(cNodeList: CNode[]) {
+function buildSemanticToken(tokens: Token[]) {
   const builder = new SemanticTokensBuilder();
-  for (const cNode of cNodeList) {
-    switch (cNode.cnodetype) {
-      case CNodeTypes.TYPE:
-        buildSemanticTokenOfTypeBlock(builder, cNode as TypeCNode);
+  for (const token of tokens) {
+    switch (token.type) {
+      case TokenTypes.KEY:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.keyword) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.TERM:
-        buildSemanticTokenOfTerm(builder, cNode as TermCNode);
+      case TokenTypes.TYPENAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.type) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.AXIOM:
-        buildSemanticTokenOfAxiom(builder, cNode as AxiomCNode);
+      case TokenTypes.ARGNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.parameter) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.THM:
-        buildSemanticTokenOfThm(builder, cNode as ThmCNode);
+      case TokenTypes.TERMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.method) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.CONSTNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.number) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.AXIOMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.function) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.THMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.function) || 0,
+          0,
+        );
         break;
     }
   }
   return builder.build();
 }
 
-function buildSemanticTokenDelta(cNodeList: CNode[], previousResultId: string) {
+function buildSemanticTokenDelta(tokens: Token[], previousResultId: string) {
   const builder = new SemanticTokensBuilder();
   builder.previousResult(previousResultId);
-  for (const cNode of cNodeList) {
-    switch (cNode.cnodetype) {
-      case CNodeTypes.TYPE:
-        buildSemanticTokenOfTypeBlock(builder, cNode as TypeCNode);
+  for (const token of tokens) {
+    switch (token.type) {
+      case TokenTypes.KEY:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.keyword) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.TERM:
-        buildSemanticTokenOfTerm(builder, cNode as TermCNode);
+      case TokenTypes.TYPENAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.type) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.AXIOM:
-        buildSemanticTokenOfAxiom(builder, cNode as AxiomCNode);
+      case TokenTypes.ARGNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.parameter) || 0,
+          0,
+        );
         break;
-      case CNodeTypes.THM:
-        buildSemanticTokenOfThm(builder, cNode as ThmCNode);
+      case TokenTypes.TERMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.method) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.CONSTNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.number) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.AXIOMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.function) || 0,
+          0,
+        );
+        break;
+      case TokenTypes.THMNAME:
+        builder.push(
+          token.range.start.line,
+          token.range.start.character,
+          token.content.length,
+          semanticTokensMap.get(SemanticTokenTypes.function) || 0,
+          0,
+        );
         break;
     }
   }
   return builder.buildEdits();
-}
-function buildSemanticTokenOfKeyword(builder: SemanticTokensBuilder, keyword: Token) {
-  const keywordType = semanticTokensMap.get(SemanticTokenTypes.keyword) || 0;
-  builder.push(keyword.range.start.line, keyword.range.start.character, keyword.content.length, keywordType, 0);
-}
-function buildSemanticTokenOfType(builder: SemanticTokensBuilder, type: Token) {
-  const typeType = semanticTokensMap.get(SemanticTokenTypes.type) || 0;
-  builder.push(type.range.start.line, type.range.start.character, type.content.length, typeType, 0);
-}
-function buildSemanticTokenOfArgName(builder: SemanticTokensBuilder, name: Token) {
-  const nameType = semanticTokensMap.get(SemanticTokenTypes.parameter) || 0;
-  builder.push(name.range.start.line, name.range.start.character, name.content.length, nameType, 0);
-}
-function buildSemanticTokenOfTypeBlock(builder: SemanticTokensBuilder, cNode: TypeCNode) {
-  buildSemanticTokenOfKeyword(builder, cNode.astNode.keyword);
-  buildSemanticTokenOfType(builder, cNode.type);
-}
-function buildSemanticTokenOfTerm(builder: SemanticTokensBuilder, cNode: TermCNode) {
-  buildSemanticTokenOfKeyword(builder, cNode.astNode.keyword);
-  buildSemanticTokenOfType(builder, cNode.astNode.type);
-  const name = cNode.astNode.name;
-  let nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
-  if (cNode.astNode.params.length === 0) {
-    nameType = semanticTokensMap.get(SemanticTokenTypes.number) || 0;
-  }
-  builder.push(name.range.start.line, name.range.start.character, name.content.length, nameType, 0);
-
-  for (const pair of cNode.astNode.params) {
-    buildSemanticTokenOfType(builder, pair.type);
-    buildSemanticTokenOfArgName(builder, pair.name);
-  }
-  const paramSet: Set<string> = new Set(cNode.astNode.params.map((p) => p.name.content));
-  for (const word of cNode.astNode.content) {
-    if (paramSet.has(word.content)) {
-      buildSemanticTokenOfArgName(builder, word);
-    }
-  }
-}
-function buildSemanticOpCNode(builder: SemanticTokensBuilder, cNode: TermOpCNode, paramSet: Set<string>) {
-  if (paramSet.has(cNode.root.content)) {
-    buildSemanticTokenOfArgName(builder, cNode.root);
-  } else {
-    let nameType = semanticTokensMap.get(SemanticTokenTypes.method) || 0;
-    if (cNode.children.length === 0) {
-      nameType = semanticTokensMap.get(SemanticTokenTypes.number) || 0;
-    }
-    builder.push(cNode.root.range.start.line, cNode.root.range.start.character, cNode.root.content.length, nameType, 0);
-    for (const child of cNode.children) {
-      buildSemanticOpCNode(builder, child, paramSet);
-    }
-  }
-}
-function buildSemanticTokenOfAxiom(builder: SemanticTokensBuilder, cNode: AxiomCNode) {
-  buildSemanticTokenOfKeyword(builder, cNode.astNode.keyword);
-  const name = cNode.astNode.name;
-  const nameType = semanticTokensMap.get(SemanticTokenTypes.function) || 0;
-  builder.push(name.range.start.line, name.range.start.character, name.content.length, nameType, 0);
-
-  for (const pair of cNode.astNode.params) {
-    buildSemanticTokenOfType(builder, pair.type);
-    buildSemanticTokenOfArgName(builder, pair.name);
-  }
-  const paramSet: Set<string> = new Set(cNode.astNode.params.map((p) => p.name.content));
-  const bodyArray = [...cNode.assumptions, ...cNode.targets];
-  bodyArray.sort((a, b) => {
-    return a.range.start.line < b.range.start.line ||
-      (a.range.start.line === b.range.start.line && a.range.start.character <= b.range.start.character)
-      ? -1
-      : 1;
-  });
-  for (const opCNode of bodyArray) {
-    buildSemanticOpCNode(builder, opCNode, paramSet);
-  }
-  for (const tokens of cNode.astNode.diffs) {
-    for (const token of tokens) {
-      buildSemanticTokenOfArgName(builder, token);
-    }
-  }
-}
-function buildSemanticTokenOfThm(builder: SemanticTokensBuilder, cNode: ThmCNode) {
-  buildSemanticTokenOfKeyword(builder, cNode.astNode.keyword);
-  const name = cNode.astNode.name;
-  const nameType = semanticTokensMap.get(SemanticTokenTypes.function) || 0;
-  builder.push(name.range.start.line, name.range.start.character, name.content.length, nameType, 0);
-
-  for (const pair of cNode.astNode.params) {
-    buildSemanticTokenOfType(builder, pair.type);
-    buildSemanticTokenOfArgName(builder, pair.name);
-  }
-  const paramSet: Set<string> = new Set(cNode.astNode.params.map((p) => p.name.content));
-  const bodyArray = [...cNode.assumptions, ...cNode.targets];
-  bodyArray.sort((a, b) => {
-    return a.range.start.line < b.range.start.line ||
-      (a.range.start.line === b.range.start.line && a.range.start.character <= b.range.start.character)
-      ? -1
-      : 1;
-  });
-  for (const tokens of cNode.astNode.diffs) {
-    for (const token of tokens) {
-      buildSemanticTokenOfArgName(builder, token);
-    }
-  }
-  for (const opCNode of bodyArray) {
-    buildSemanticOpCNode(builder, opCNode, paramSet);
-  }
-  for (const proof of cNode.proofs) {
-    const root = proof.root;
-    const rootType = semanticTokensMap.get(SemanticTokenTypes.function) || 0;
-    builder.push(root.range.start.line, root.range.start.character, root.content.length, rootType, 0);
-    for (const arg of proof.children) {
-      buildSemanticOpCNode(builder, arg, paramSet);
-    }
-  }
 }
 
 connection.onDidChangeWatchedFiles((_change) => {
@@ -697,8 +679,8 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
   let cNodeList = compiler?.cNodeListMap.get(filePath);
 
   if (cNodeList === undefined) {
-    const { compiler } = await processTextDocument(textDocument);
-    cNodeList = compiler.cNodeListMap.get(filePath) || [];
+    const { cNodes } = await processTextDocument(textDocument);
+    cNodeList = cNodes;
   }
 
   const position = _textDocumentPosition.position;
