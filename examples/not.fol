@@ -81,7 +81,6 @@ thm contra.1d(prop p0, prop p1, prop p2) {
   syl(p0, imp(not(p1),p2), imp(not(p2), p1))
   contra.1(p2, p1)
 }
-
 thm contra.2(prop p0, prop p1) {
   |- imp( imp(p0,not(p1)), imp(p1, not(p0)) )
 } = {
@@ -104,8 +103,6 @@ thm contra.2d(prop p0, prop p1, prop p2) {
   syl(p0, imp(p1,not(p2)), imp(p2, not(p1)))
   contra.2(p2, p1)
 }
-
-
 thm contra.3(prop p0, prop p1) {
   |- imp( imp(p0,p1), imp(not(p1), not(p0)) )
 } = {
@@ -128,7 +125,6 @@ thm contra.3d(prop p0, prop p1, prop p2) {
   syl(p0, imp(not(p1),not(p2)), imp(p2, p1))
   contra.3(p2, p1)
 }
-
 thm contra.4(prop p0, prop p1) {
   |- imp( imp(not(p1), not(p0)), imp(p0,p1) )
 } = {
@@ -147,4 +143,14 @@ thm contra.4d(prop p0, prop p1, prop p2) {
 } = {
   syl(p0, imp(p1,p2), imp(not(p2), not(p1)))
   contra.4(p1, p2)
+}
+thm absurd.1d(prop p0, prop p1, prop p2) {
+  |- imp(p0, p1)
+  -| imp(p0, imp(p2, p1))
+  -| imp(p0, imp(not(p2), p1))
+} = {
+  syl(p0, p1, imp(not(p1), p1))
+  absurd.3(p1)
+  syld(p0, not(p1), p1, p2)
+  contra.1d(p0, p1, p2)
 }

@@ -1,0 +1,54 @@
+
+thm or.left(prop p0, prop p1) {
+    |- imp(p0, or(p0, p1))
+} = {
+    syl(p0, or(p0,p1), imp(not(p0),p1))
+    or.def.2(p0, p1)
+    absurd.2(p0, p1)
+}
+
+thm or.right(prop p0, prop p1) {
+    |- imp(p1, or(p0, p1))
+} = {
+    syl(p1, or(p0,p1), imp(not(p0),p1))
+    or.def.2(p0, p1)
+    ax.1(p1, not(p0))
+}
+
+thm or.com(prop p0, prop p1) {
+    |- imp(or(p0, p1), or(p1, p0))
+} = {
+    syl(or(p0,p1), or(p1,p0), imp(not(p0), p1))
+    or.def.1(p0, p1)
+    syl(imp(not(p0),p1), or(p1,p0), imp(not(p1), p0))
+    or.def.2(p1, p0)
+    syl(imp(not(p0),p1), imp(not(p1),p0), imp(not(p1), p0))
+    contra.1(p0, p1)
+    id(imp(not(p1),p0))
+}
+thm or.cases(prop p0, prop p1, prop p2) {
+    |- imp(or(p0, p1), p2)
+    -| imp(p0, p2)
+    -| imp(p1, p2)
+} = {
+    syl(or(p0,p1), p2, imp(not(p0), p1))
+    or.def.1(p0, p1)
+    absurd.1d(imp(not(p0),p1), p2, p0)
+    a1i(imp(not(p0),p1), imp(p0,p2))
+    syl.d.1(not(p0), p1, p2)
+}
+thm or.and(prop p0, prop p1, prop p2) {
+    |- imp(or(p0, and(p1, p2)), and(or(p0, p1), or(p0, p2)))
+} = {
+    and.intro.d(or(p0,and(p1,p2)), or(p0,p1), or(p0,p2))
+    or.cases(p0, and(p1,p2), or(p0,p1))
+    or.left(p0, p1)
+    syl(and(p1,p2), or(p0,p1), p1)
+    or.right(p0, p1)
+    and.left(p1, p2)
+    or.cases(p0, and(p1,p2), or(p0,p2))
+    or.left(p0, p2)
+    syl(and(p1,p2), or(p0,p2), p2)
+    and.right(p1, p2)
+    or.right(p0, p2)
+}

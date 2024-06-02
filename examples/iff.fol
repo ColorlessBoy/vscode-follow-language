@@ -1,0 +1,35 @@
+
+thm iff.imp.1(prop p0, prop p1) {
+    |- imp(iff(p0,p1), imp(p0,p1))
+} = {
+    syl(iff(p0,p1), imp(p0,p1), and(imp(p0,p1),imp(p1,p0)))
+    iff.def.1(p0, p1)
+    and.left(imp(p0,p1), imp(p1,p0))
+}
+
+thm iff.imp.2(prop p0, prop p1) {
+    |- imp(iff(p0,p1), imp(p1,p0))
+} = {
+    syl(iff(p0,p1), imp(p1,p0), and(imp(p0,p1),imp(p1,p0)))
+    iff.def.1(p0, p1)
+    and.right(imp(p0,p1), imp(p1,p0))
+}
+
+thm iff.intro(prop p0, prop p1) {
+    |- imp(imp(p0,p1), imp(imp(p1,p0), iff(p0,p1)))
+} = {
+    and.expo(imp(p0,p1), imp(p1,p0), iff(p0,p1))
+    iff.def.2(p0, p1)
+}
+
+thm iff.comm(prop p0, prop p1) {
+    |- imp(iff(p0, p1), iff(p1, p0))
+} = {
+    syl(iff(p0,p1), iff(p1,p0), and(imp(p0,p1), imp(p1,p0)))
+    iff.def.1(p0, p1)
+    and.impo(imp(p0,p1), imp(p1,p0), iff(p1,p0))
+    com12(imp(p0,p1), imp(p1,p0), iff(p1,p0))
+    and.expo(imp(p1,p0), imp(p0,p1), iff(p1,p0))
+    iff.def.2(p1, p0)
+}
+
