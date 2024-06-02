@@ -1,3 +1,5 @@
+import { Parser } from './parser';
+import { Scanner } from './scanner';
 import {
   ASTNode,
   AxiomASTNode,
@@ -26,7 +28,21 @@ export class Compiler {
   public cNodeList: CNode[] = [];
   public cNodeMap: Map<string, CNode> = new Map();
   public errors: Error[] = [];
-  public compile(astNode: ASTNode[]): CNode[] {
+  public tokens: Token[] = [];
+  public compileCode(code: string) {
+    const scanner = new Scanner();
+    const parser = new Parser();
+    this.tokens = scanner.scan(code);
+    const astNodes = parser.parse(this.tokens);
+    const cNodes = this.compile(astNodes);
+    this.errors = [...parser.errors, ...this.errors];
+    return {
+      cNodes: cNodes,
+      errors: this.errors,
+      tokens: this.tokens,
+    };
+  }
+  private compile(astNode: ASTNode[]): CNode[] {
     this.cNodeList = [];
     this.cNodeMap = new Map();
     this.errors = [];
@@ -252,7 +268,7 @@ export class Compiler {
       diffMap: diffMap,
       proofs: proofs,
       proofProcess: processes,
-      isValid: this.checkProofValidation(assumptions, processes.at(-1)),
+      isValid: this.checkProofValidation(processes.at(-1)),
       suggestions: suggestions,
     };
     this.cNodeList.push(thmCNode);
@@ -264,7 +280,7 @@ export class Compiler {
       });
     }
   }
-  private checkProofValidation(conditions: TermOpCNode[], targets: TermOpCNode[] | undefined): Boolean {
+  private checkProofValidation(targets: TermOpCNode[] | undefined): Boolean {
     if (targets === undefined) {
       return false;
     }
@@ -348,9 +364,7 @@ export class Compiler {
     }
     return suggestArgMap;
   }
-  private getNextProof0(
-    targets: TermOpCNode[],
-    proof: ProofOpCNode,
+  private getNextProof0(targets: TermOpCNode[], proof: ProofOpCNode,
     assumptionSet: Set<string>,
   ): TermOpCNode[] | undefined {
     const proofTargetSet = new Set(proof.targets.map((e) => e.funContent));
@@ -405,7 +419,7 @@ export class Compiler {
         });
       }
     }
-    if (definition2.cnodetype === CNodeTypes.AXIOM) {
+    if(definition2.cnodetype === CNodeTypes.AXIOM) {
       root.type = TokenTypes.AXIOMNAME;
     } else {
       root.type = TokenTypes.THMNAME;
@@ -633,7 +647,7 @@ export class Compiler {
       }
       return;
     }
-    if (wantArgs.length === 0) {
+    if(wantArgs.length === 0) {
       root.type = TokenTypes.CONSTNAME;
     } else {
       root.type = TokenTypes.TERMNAME;
