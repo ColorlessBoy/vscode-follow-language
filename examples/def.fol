@@ -91,7 +91,7 @@ axiom subs.def(set t, set s, prop p, set hs) {
   diff hs p
 }
 
-// abs
+// abstraction
 term set abs(set s0, prop p0) { {s0 | p0} }
 term prop in(set s0, set s1) { (s0 ∈ s1) }
 axiom abs.def(set s0, set s1, prop p0) {
