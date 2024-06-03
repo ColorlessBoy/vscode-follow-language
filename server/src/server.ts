@@ -161,6 +161,10 @@ async function readContentJsonFile(dir: string): Promise<string[]> {
     if (jsonData.hasOwnProperty('content') && Array.isArray(jsonData.content)) {
       const content: string[] = [];
       for (const item of jsonData.content) {
+        if ((item as string).includes('\\') || (item as string).includes('/')) {
+          // 只支持一级目录
+          continue;
+        }
         const absPath = path.resolve(path.join(dir, item));
         if (typeof item === 'string' && fs.existsSync(absPath)) {
           content.push(absPath);
