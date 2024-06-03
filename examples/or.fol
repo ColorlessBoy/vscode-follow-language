@@ -52,3 +52,17 @@ thm or.and(prop p0, prop p1, prop p2) {
     and.right(p1, p2)
     or.right(p0, p2)
 }
+
+thm and.or(prop p0, prop p1, prop p2) {
+    |- imp(and(p0, or(p1, p2)), or(and(p0, p1), and(p0, p2)))
+} = {
+    and.impo(p0, or(p1,p2), or(and(p0,p1),and(p0,p2)))
+    com12(p0, or(p1,p2), or(and(p0,p1),and(p0,p2)))
+    or.cases(p1, p2, imp(p0,or(and(p0,p1),and(p0,p2))))
+    com12(p1, p0, or(and(p0,p1),and(p0,p2)))
+    and.expo(p0, p1, or(and(p0,p1),and(p0,p2)))
+    or.left(and(p0,p1), and(p0,p2))
+    com12(p2, p0, or(and(p0,p1),and(p0,p2)))
+    and.expo(p0, p2, or(and(p0,p1),and(p0,p2)))
+    or.right(and(p0,p1), and(p0,p2))
+}
