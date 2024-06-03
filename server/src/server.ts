@@ -455,25 +455,27 @@ function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position)
     }),
   ];
   // 寻找前一个proof操作，用于hoverV2
-  if ('proofs' in cNode) {
+  if (cNode.cnodetype === CNodeTypes.THM) {
     const proofs = (cNode as ThmCNode).proofs;
     const processes = (cNode as ThmCNode).proofProcess;
-    let i = 0;
-    if (proofs[0].range.start.line <= position.line) {
-      for (; i < proofs.length; i++) {
-        if (proofs[i].range.start.line >= position.line) {
-          break;
+    if (proofs.length > 0) {
+      let i = 0;
+      if (proofs[0].range.start.line <= position.line) {
+        for (; i < proofs.length; i++) {
+          if (proofs[i].range.start.line >= position.line) {
+            break;
+          }
         }
       }
+      rst.push(
+        ...processes.slice(0, i).map((process, index) => {
+          return {
+            line: proofs[index].range.start.line,
+            value: process.map((t) => t.termContent).join(';') || 'Success!',
+          };
+        }),
+      );
     }
-    rst.push(
-      ...processes.slice(0, i).map((process, index) => {
-        return {
-          line: proofs[index].range.start.line,
-          value: process.map((t) => t.termContent).join(';') || 'Success!',
-        };
-      }),
-    );
   }
   return rst;
 }

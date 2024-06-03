@@ -119,7 +119,6 @@ export class Parser {
       });
       return;
     }
-
     const eqNode = tokens.at(i);
     if (eqNode === undefined || eqNode.content !== '=') {
       this.errors.push({
@@ -129,7 +128,6 @@ export class Parser {
     } else {
       i += 1;
     }
-
     // proof.
     let proofTokens: Token[] = [];
     if (i < tokens.length) {
@@ -150,7 +148,6 @@ export class Parser {
       }
       i = j;
     }
-    rightBrace = tokens.at(i);
 
     const proof = this.parseOpNode(proofTokens);
     // empty proof 继续进入compile阶段，被当成axiom
@@ -171,7 +168,7 @@ export class Parser {
     }
 
     const nodetype: NodeTypes.THM = NodeTypes.THM;
-    const range = new RangeImpl(keyword.range.start, rightBrace?.range.end || end);
+    const range = new RangeImpl(keyword.range.start, tokens.at(-1)?.range.end || end);
     const astNode: ThmASTNode = {
       nodetype: nodetype,
       range: range,
@@ -403,7 +400,7 @@ export class Parser {
             children: children,
             range: range,
           };
-          if(children.length === 0) {
+          if (children.length === 0) {
             root.type = TokenTypes.CONSTNAME;
           } else {
             root.type = TokenTypes.TERMNAME;
@@ -536,7 +533,7 @@ export class Parser {
         i += 2;
         continue;
       }
-      tokens[i+1].type = TokenTypes.ARGNAME;
+      tokens[i + 1].type = TokenTypes.ARGNAME;
       params.push({
         type: tokens[i],
         name: tokens[i + 1],
@@ -588,7 +585,7 @@ export class Parser {
     const tokenBlocks: Token[][] = [];
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
-      if(token.type === TokenTypes.IGNORE) {
+      if (token.type === TokenTypes.IGNORE) {
         continue;
       } else if (token.type === TokenTypes.COMMENT) {
         this.commentTokens.push(token);

@@ -1,0 +1,9 @@
+
+thm exist.def.1(set s0, prop p0) { 
+  |- exist(s0, p0)
+  -| not(forall(s0, not(p0)))
+} = {
+  ax.mp(exist(s0,p0), not(forall(s0, not(p0))))
+  iff.imp.1i(not(forall(s0,not(p0))), exist(s0,p0))
+  iff.
+}

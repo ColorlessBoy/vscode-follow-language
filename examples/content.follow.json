@@ -1,3 +1,13 @@
 {
-  "content": ["def.fol", "imply.fol", "not.fol", "and.fol", "or.fol", "iff.fol", "forall.fol", "zfc-extensionality.fol"]
+  "content": [
+    "def.fol",
+    "imply.fol",
+    "not.fol",
+    "and.fol",
+    "or.fol",
+    "iff.fol",
+    "forall.fol",
+    "exist.fol",
+    "zfc-extensionality.fol"
+  ]
 }

@@ -1,0 +1,8 @@
+
+
+thm zfc.ext2(set s0, set s1, set s2) {
+  |- exist(s0, imp(iff(in(s0, s1), in(s0, s2)), eq(s1, s2)))
+  diff s0 s1 s2
+} = {
+  
+}
