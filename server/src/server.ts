@@ -19,6 +19,11 @@ import {
   SemanticTokensBuilder,
   Range,
   Hover,
+  integer,
+  TextEdit,
+  TextDocumentEdit,
+  WorkspaceEdit,
+  Location,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -41,6 +46,7 @@ import {
   CONTENT_FILE,
   CompilerWithImport,
   TokenTypes,
+  TermASTNode,
 } from './parser';
 
 const semanticTokensLegend: SemanticTokensLegend = {
@@ -456,17 +462,262 @@ function positionInRange(range: Range, position: Position): Boolean {
   return false;
 }
 
-connection.onDefinition((event) => {
+connection.onDefinition((params) => {
+  const { textDocument, position } = params;
+  const document = documents.get(textDocument.uri);
+  if (textDocument === undefined || document === undefined) {
+    return null;
+  }
+  // const uri = Uri.parse(textDocument.uri);
+  // file://
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+
+  const compiler = compilerMap.get(folderPath);
+  if (compiler === undefined) {
+    return null;
+  }
+  const tokenList = compiler.tokenListMap.get(filePath) || [];
+  const targetToken = findTokenByPostiion(tokenList, position);
+  if (targetToken === undefined) {
+    return null;
+  }
+
+  for (const [filePath, cNodeMap] of compiler.cNodeMapMap) {
+    const uri = 'file://' + filePath;
+    const document = documents.get(textDocument.uri);
+    if (document === undefined) {
+      continue;
+    }
+    const cNode = cNodeMap.get(targetToken.content);
+    if (cNode) {
+      const locations: Location[] = [];
+      switch (cNode.cnodetype) {
+        case CNodeTypes.TYPE:
+          locations.push(Location.create(uri, (cNode as TypeCNode).type.range));
+          break;
+        case CNodeTypes.TERM:
+          locations.push(Location.create(uri, (cNode.astNode as TermASTNode).name.range));
+          break;
+        case CNodeTypes.AXIOM:
+          locations.push(Location.create(uri, (cNode.astNode as AxiomASTNode).name.range));
+          break;
+        case CNodeTypes.THM:
+          locations.push(Location.create(uri, (cNode.astNode as ThmASTNode).name.range));
+          break;
+      }
+      return locations;
+    }
+  }
   return null;
 });
 
-connection.onReferences((event) => {
-  return null;
+connection.onReferences((params) => {
+  const { textDocument, position } = params;
+  const document = documents.get(textDocument.uri);
+  if (textDocument === undefined || document === undefined) {
+    return null;
+  }
+  // const uri = Uri.parse(textDocument.uri);
+  // file://
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+
+  const compiler = compilerMap.get(folderPath);
+  if (compiler === undefined) {
+    return null;
+  }
+  const tokenList = compiler.tokenListMap.get(filePath) || [];
+  const targetToken = findTokenByPostiion(tokenList, position);
+  if (targetToken === undefined) {
+    return null;
+  }
+  if (targetToken.type === TokenTypes.ARGNAME) {
+    // 函数内部的变量替换
+    const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+    const cNode = findCNodeByPostion(cNodeList, position);
+    if (cNode) {
+      const tokens = getTokensFromRange(tokenList, cNode.astNode.range);
+      const locations: Location[] = [];
+      tokens.forEach((token) => {
+        if (token.content === targetToken.content) {
+          locations.push({
+            uri: uri,
+            range: token.range,
+          });
+        }
+      });
+      if (locations.length === 0) {
+        return null;
+      }
+      return locations;
+    }
+  }
+  // 非函数内部替换
+  const locations: Location[] = [];
+  compiler.tokenListMap.forEach((tokens, filePath) => {
+    const uri = 'file://' + filePath;
+    const document = documents.get(textDocument.uri);
+    if (document === undefined) {
+      return;
+    }
+    tokens.forEach((token) => {
+      if (token.content === targetToken.content) {
+        locations.push({
+          uri: uri,
+          range: token.range,
+        });
+      }
+    });
+  });
+  return locations;
 });
 
-connection.onRenameRequest((event) => {
-  return null;
+connection.onRenameRequest((params) => {
+  const { textDocument, position, newName } = params;
+  const document = documents.get(textDocument.uri);
+  if (textDocument === undefined || document === undefined) {
+    return null;
+  }
+  // const uri = Uri.parse(textDocument.uri);
+  // file://
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+
+  const compiler = compilerMap.get(folderPath);
+  if (compiler === undefined) {
+    return null;
+  }
+  const tokenList = compiler.tokenListMap.get(filePath) || [];
+  const targetToken = findTokenByPostiion(tokenList, position);
+  if (targetToken === undefined) {
+    return null;
+  }
+  if (targetToken.type === TokenTypes.ARGNAME) {
+    // 函数内部的变量替换
+    const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+    const cNode = findCNodeByPostion(cNodeList, position);
+    if (cNode) {
+      const tokens = getTokensFromRange(tokenList, cNode.astNode.range);
+      const edits: TextEdit[] = [];
+      tokens.forEach((token) => {
+        if (token.content === targetToken.content) {
+          edits.push(TextEdit.replace(token.range, newName));
+        }
+      });
+      if (edits.length === 0) {
+        return null;
+      }
+      const textDocumentEdit: TextDocumentEdit = {
+        textDocument: { uri: textDocument.uri, version: document.version },
+        edits: edits,
+      };
+      const workspaceEdit: WorkspaceEdit = {
+        documentChanges: [textDocumentEdit],
+      };
+      return workspaceEdit;
+    }
+  }
+  // 非函数内部替换
+  const workspaceEdit: WorkspaceEdit = {
+    documentChanges: [],
+  };
+  compiler.tokenListMap.forEach((tokens, filePath) => {
+    const uri = 'file://' + filePath;
+    const document = documents.get(textDocument.uri);
+    if (document === undefined) {
+      return;
+    }
+    const edits: TextEdit[] = [];
+    tokens.forEach((token) => {
+      if (token.content === targetToken.content) {
+        edits.push(TextEdit.replace(token.range, newName));
+      }
+    });
+    if (edits.length === 0) {
+      return;
+    }
+    const textDocumentEdit: TextDocumentEdit = {
+      textDocument: { uri: uri, version: document.version },
+      edits: edits,
+    };
+    workspaceEdit.documentChanges?.push(textDocumentEdit);
+  });
+  return workspaceEdit;
 });
+
+function getTokensFromRange(tokenList: Token[], range: Range): Token[] {
+  const leftFirst = findLeftFirstIndex(tokenList, range.start);
+  const rightLast = findRightLastIndex(tokenList, range.end);
+  if (leftFirst < rightLast) {
+    return tokenList.slice(leftFirst, rightLast);
+  }
+  return [];
+}
+
+function findLeftFirstIndex(tokenList: Token[], position: Position) {
+  let left = 0;
+  let right = tokenList.length - 1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midToken = tokenList[mid];
+    const range = midToken.range;
+    if (positionInRange(range, position)) {
+      right = mid - 1;
+    } else if (
+      range.end.line < position.line ||
+      (range.end.line === position.line && range.end.character <= position.character)
+    ) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return left;
+}
+function findRightLastIndex(tokenList: Token[], position: Position) {
+  let left = 0;
+  let right = tokenList.length - 1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midToken = tokenList[mid];
+    const range = midToken.range;
+    if (positionInRange(range, position)) {
+      right = mid - 1;
+    } else if (
+      range.end.line < position.line ||
+      (range.end.line === position.line && range.end.character <= position.character)
+    ) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return right;
+}
+
+function findTokenByPostiion(tokenList: Token[], position: Position) {
+  let left = 0;
+  let right = tokenList.length - 1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midToken = tokenList[mid];
+    const range = midToken.range;
+    if (positionInRange(range, position)) {
+      return midToken;
+    } else if (
+      range.end.line < position.line ||
+      (range.end.line === position.line && range.end.character <= position.character)
+    ) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+}
 
 connection.languages.semanticTokens.on(async (event) => {
   const textDocument = documents.get(event.textDocument.uri);
