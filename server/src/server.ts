@@ -351,6 +351,39 @@ function getErrorMsg(errorType: ErrorTypes): string {
   return '';
 }
 
+type HoverV2Content = { line: number; value: string };
+type HoverV2 = {
+  contents: HoverV2Content[];
+};
+// onHoverV2
+connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams) => {
+  const textDocument = documents.get(event.textDocument.uri);
+  if (textDocument === undefined) {
+    return null;
+  }
+  // const uri = Uri.parse(textDocument.uri);
+  const uri = textDocument.uri.slice(7);
+  const filePath: string = path.resolve(uri);
+  const folderPath: string = path.dirname(filePath);
+
+  const position = event.position;
+  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNode = findCNodeByPostion(cNodeList, position);
+  if (cNode) {
+    if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
+      const contents = findOpCNodePositionV2(cNode as AxiomCNode | ThmCNode, position);
+      if (contents.length === 0) {
+        return null;
+      }
+      const hover: HoverV2 = {
+        contents: contents,
+      };
+      return hover;
+    }
+  }
+  return null;
+});
+
 connection.onHover((event) => {
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument === undefined) {
@@ -368,7 +401,10 @@ connection.onHover((event) => {
     if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
       const content = findOpCNodePosition(cNode as AxiomCNode | ThmCNode, position);
       const hover: Hover = {
-        contents: content,
+        contents: {
+          kind: 'markdown',
+          value: content,
+        },
       };
       return hover;
     }
@@ -377,9 +413,9 @@ connection.onHover((event) => {
 });
 function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): string {
   if (positionInRange(cNode.astNode.name.range, position)) {
-    const assumeStr = cNode.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
-    const targetStr = cNode.targets.map((t) => '|- ' + t.termContent).join('\n\n');
-    return [targetStr, assumeStr].join('\n\n  ');
+    const assumeStr = cNode.assumptions.map((a) => '-| ' + a.termContent).join('\n');
+    const targetStr = cNode.targets.map((t) => '|- ' + t.termContent).join('\n');
+    return [targetStr, assumeStr].join('\n');
   }
   for (const target of cNode.targets) {
     if (positionInRange(target.range, position)) {
@@ -403,12 +439,51 @@ function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): 
   }
   return '';
 }
+function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position): HoverV2Content[] {
+  const rst = [
+    ...cNode.targets.map((t) => {
+      return {
+        line: t.range.start.line,
+        value: t.termContent,
+      };
+    }),
+    ...cNode.assumptions.map((t) => {
+      return {
+        line: t.range.start.line,
+        value: t.termContent,
+      };
+    }),
+  ];
+  // 寻找前一个proof操作，用于hoverV2
+  if ('proofs' in cNode) {
+    const proofs = (cNode as ThmCNode).proofs;
+    const processes = (cNode as ThmCNode).proofProcess;
+    let i = 0;
+    if (proofs[0].range.start.line <= position.line) {
+      for (; i < proofs.length; i++) {
+        if (proofs[i].range.start.line >= position.line) {
+          break;
+        }
+      }
+    }
+    rst.push(
+      ...processes.slice(0, i).map((process, index) => {
+        return {
+          line: proofs[index].range.start.line,
+          value: process.map((t) => t.termContent).join(';') || 'Success!',
+        };
+      }),
+    );
+  }
+  return rst;
+}
+
 function findProofByPosition(proof: ProofOpCNode, state: TermOpCNode[], position: Position): string {
   if (positionInRange(proof.root.range, position)) {
     const diffStr = proof.diffError?.map((s) => 'diff(' + s + ')');
     const assumeStr = proof.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
     const targetStr = proof.targets.map((t) => '|- ' + t.termContent).join('\n\n');
-    const stateStr = state.map((e) => '|* ' + e.termContent).join('\n\n');
+    const stateStr = state.map((e) => '? ' + e.termContent).join('\n\n');
     if (diffStr) {
       return [targetStr, assumeStr, diffStr, '---', stateStr].join('\n\n  ');
     }
