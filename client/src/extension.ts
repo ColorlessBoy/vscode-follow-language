@@ -39,6 +39,7 @@ export function activate(context: ExtensionContext) {
     const contents = response.contents;
     if (contents === undefined || contents.length === 0) {
       editor.setDecorations(decorationType, []);
+      return;
     }
     const decorationOptions: DecorationOptions[] = contents.map((content) => {
       return {

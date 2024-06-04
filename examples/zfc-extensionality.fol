@@ -4,5 +4,8 @@ thm zfc.ext2(set s0, set s1, set s2) {
   |- exist(s0, imp(iff(in(s0, s1), in(s0, s2)), eq(s1, s2)))
   diff s0 s1 s2
 } = {
-  
+  forall.exist.then.existimp.i(s0, iff(in(s0,s1),in(s0,s2)), eq(s1,s2))
+  syl(forall(s0,iff(in(s0,s1),in(s0,s2))), exist(s0,eq(s1,s2)), eq(s1, s2))
+  zfc.ax.ext(s0, s1, s2)
+  exist.use(s0, eq(s1,s2))
 }

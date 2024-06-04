@@ -47,6 +47,7 @@ axiom false.def() {
 }
 
 type set
+term set hs0
 term prop forall(set s0, prop p0) { ∀(s0, p0) }
 term prop exist(set s0, prop p0) { ∃(s0, p0) }
 term prop eq(set s0, set s1) { (s0 = s1) }
@@ -71,8 +72,7 @@ axiom ax.11(set s0, set s1, prop p0) {
   |- imp(forall(s0, forall(s1, p0)), forall(s1, forall(s0, p0)))
 }
 axiom ax.12(set s0, set s1, prop p0) {
-  |- imp(imp(eq(s0, s1), p0), forall(s0, imp(eq(s0, s1), p0)))
-  diff s0 p0
+  |- imp(eq(s0, s1), imp(p0, forall(s0, imp(eq(s0, s1), p0))))
 }
 
 term prop neq(set s0, set s1) { (s0 ≠ s1) }
