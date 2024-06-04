@@ -1,0 +1,9 @@
+
+
+thm a4i(set s0, prop p0, prop p1) {
+  |- imp(forall(s0, p0), forall(s0, p1))
+  -| forall(s0, imp(p0, p1))
+} = {
+  ax.mp(imp(forall(s0,p0),forall(s0,p1)), forall(s0, imp(p0, p1)))
+  ax.4(s0, p0, p1)
+}

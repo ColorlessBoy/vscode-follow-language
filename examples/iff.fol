@@ -46,7 +46,7 @@ thm iff.intro(prop p0, prop p1) {
     iff.forintro(p0, p1)
 }
 
-thm iff.comm(prop p0, prop p1) {
+thm iff.forcomm(prop p0, prop p1) {
     |- imp(iff(p0, p1), iff(p1, p0))
 } = {
     syl(iff(p0,p1), iff(p1,p0), and(imp(p0,p1), imp(p1,p0)))
@@ -57,6 +57,24 @@ thm iff.comm(prop p0, prop p1) {
     iff.def.2(p1, p0)
 }
 
-thm iff.comm2(prop p0, prop p1) {
-    |- imp(iff(p0, p1), iff(p1, p0))
+thm iff.comm(prop p0, prop p1) {
+    |- iff(p0, p1)
+    -| iff(p1, p0)
 } = {
+    ax.mp(iff(p0,p1), iff(p1,p0))
+    iff.forcomm(p1, p0)
+}
+
+thm iff.syl(prop p0, prop p1, prop p2) {
+    |- iff(p0, p1)
+    -| iff(p0, p2)
+    -| iff(p2, p1)
+} = {
+    iff.intro(p0, p1)
+    syl(p0, p1, p2)
+    iff.imp.1i(p0, p2)
+    iff.imp.1i(p2, p1)
+    syl(p1, p0, p2)
+    iff.imp.2i(p1, p2)
+    iff.imp.2i(p2, p0)
+}

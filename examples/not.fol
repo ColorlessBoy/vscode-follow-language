@@ -154,3 +154,11 @@ thm absurd.1d(prop p0, prop p1, prop p2) {
   syld(p0, not(p1), p1, p2)
   contra.1d(p0, p1, p2)
 }
+
+thm ja(prop p0, prop p1, prop p2) {
+  |- imp(imp(p0, p1), p2)
+  -| imp(not(p0), p2)
+  -| imp(p1, p2)
+} = {
+  
+}
