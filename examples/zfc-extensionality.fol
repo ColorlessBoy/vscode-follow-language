@@ -9,3 +9,44 @@ thm zfc.ext2(set s0, set s1, set s2) {
   zfc.ax.ext(s0, s1, s2)
   exist.use(s0, eq(s1,s2))
 }
+
+thm iff.ax8(set s0, set s1, set s2) {
+  |- imp(eq(s0, s1), iff(in(s0, s2), in(s1, s2)))
+} = {
+  syladd(eq(s0,s1), iff(in(s0,s2),in(s1,s2)), imp(in(s0,s2),in(s1,s2)), imp(in(s1,s2),in(s0,s2)))
+  iff.forintro(in(s0,s2), in(s1,s2))
+  ax.8(s0, s1, s2)
+  syl(eq(s0,s1), imp(in(s1,s2),in(s0,s2)), eq(s1,s0))
+  ax.8(s1, s0, s2)
+  eq.comm(s0, s1)
+}
+thm iff.ax9(set s0, set s1, set s2) {
+  |- imp(eq(s0, s1), iff(in(s2, s0), in(s2, s1)))
+} = {
+  syladd(eq(s0,s1), iff(in(s2,s0),in(s2,s1)), imp(in(s2,s0), in(s2,s1)), imp(in(s2,s1),in(s2,s0)))
+  iff.forintro(in(s2,s0), in(s2,s1))
+  ax.9(s0, s1, s2)
+  syl(eq(s0,s1), imp(in(s2,s1),in(s2,s0)), eq(s1,s0))
+  ax.9(s1, s0, s2)
+  eq.comm(s0, s1)
+}
+
+thm zfc.ext3(set s0, set s1, set s2) {
+  |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
+  diff s0 s1
+  diff s0 s2
+} = {
+  ax.mp(imp(forall(s0,iff(in(s0,s1),in(s0,s2))),eq(s1,s2)), exist(hs0, eq(hs0, s1)))
+  ax.6(hs0, s1)
+  exist.imp(hs0, eq(hs0,s1), imp(forall(s0,iff(in(s0,s1),in(s0,s2))),eq(s1,s2)))
+  syld(eq(hs0,s1), forall(s0,iff(in(s0,s1),in(s0,s2))), eq(s1,s2), eq(hs0, s2))
+  ax.7(hs0, s1, s2)
+  syl6(eq(hs0,s1), forall(s0,iff(in(s0,s1),in(s0,s2))), eq(hs0,s2), forall(s0,iff(in(s0,hs0), in(s0,s2))))
+  zfc.ax.ext(s0, hs0, s2)
+  a4d(s0, eq(hs0,s1), iff(in(s0,s1),in(s0,s2)), iff(in(s0,hs0),in(s0,s2)))
+  agend(s0, eq(hs0,s1), imp(iff(in(s0,s1),in(s0,s2)),iff(in(s0,hs0),in(s0,s2))))
+  iff.syl.d.2.d(eq(hs0,s1), in(s0,s1), in(s0,hs0), in(s0,s2))
+  syl(eq(hs0,s1), iff(in(s0,s1),in(s0,hs0)), eq(s1,hs0))
+  iff.ax9(s1, hs0, s0)
+  eq.comm(hs0, s1)
+}

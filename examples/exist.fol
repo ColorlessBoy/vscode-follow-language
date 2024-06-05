@@ -1,119 +1,119 @@
 
-thm exist.def.1(set s0, prop p0) {
-  |- imp(exist(s0, p0), not(forall(s0, not(p0))))
+thm exist.def.1(set s0, prop p1) {
+  |- imp(exist(s0, p1), not(forall(s0, not(p1))))
 } = {
-  iff.imp.1i(exist(s0,p0), not(forall(s0,not(p0))))
-  exist.def(s0, p0)
+  iff.imp.1i(exist(s0,p1), not(forall(s0,not(p1))))
+  exist.def(s0, p1)
 }
-thm exist.def.2(set s0, prop p0) {
-  |- imp(not(forall(s0, not(p0))), exist(s0, p0))
+thm exist.def.2(set s0, prop p1) {
+  |- imp(not(forall(s0, not(p1))), exist(s0, p1))
 } = {
-  iff.imp.2i(not(forall(s0,not(p0))), exist(s0,p0))
-  exist.def(s0, p0)
+  iff.imp.2i(not(forall(s0,not(p1))), exist(s0,p1))
+  exist.def(s0, p1)
 }
-thm exist.def.i(set s0, prop p0) { 
-  |- exist(s0, p0)
-  -| not(forall(s0, not(p0)))
+thm exist.def.i(set s0, prop p1) { 
+  |- exist(s0, p1)
+  -| not(forall(s0, not(p1)))
 } = {
-  ax.mp(exist(s0,p0), not(forall(s0, not(p0))))
-  iff.imp.1i(not(forall(s0,not(p0))), exist(s0,p0))
-  iff.comm(not(forall(s0,not(p0))), exist(s0,p0))
-  exist.def(s0, p0)
+  ax.mp(exist(s0,p1), not(forall(s0, not(p1))))
+  iff.imp.1i(not(forall(s0,not(p1))), exist(s0,p1))
+  iff.comm(not(forall(s0,not(p1))), exist(s0,p1))
+  exist.def(s0, p1)
 }
 
-thm forall.imp.exist.exist(set s0, prop p0, prop p1) {
-  |- imp(forall(s0, imp(p0, p1)), imp(exist(s0, p0), exist(s0, p1)))
+thm forall.imp.exist.exist(set s0, prop p1, prop p2) {
+  |- imp(forall(s0, imp(p1, p2)), imp(exist(s0, p1), exist(s0, p2)))
 } = {
-  syl5(forall(s0,imp(p0,p1)), exist(s0,p0), exist(s0,p1), not(forall(s0, not(p0))))
-  exist.def.1(s0, p0)
-  syl6(forall(s0,imp(p0,p1)), not(forall(s0,not(p0))), exist(s0,p1), not(forall(s0, not(p1))))
+  syl5(forall(s0,imp(p1,p2)), exist(s0,p1), exist(s0,p2), not(forall(s0, not(p1))))
+  exist.def.1(s0, p1)
+  syl6(forall(s0,imp(p1,p2)), not(forall(s0,not(p1))), exist(s0,p2), not(forall(s0, not(p2))))
+  exist.def.2(s0, p2)
+  contra.3d(forall(s0,imp(p1,p2)), forall(s0,not(p1)), forall(s0,not(p2)))
+  syl(forall(s0,imp(p1,p2)), imp(forall(s0,not(p2)),forall(s0,not(p1))), forall(s0, imp(not(p2), not(p1))))
+  ax.4(s0, not(p2), not(p1))
+  a4i(s0, imp(p1,p2), imp(not(p2),not(p1)))
+  ax.gen(s0, imp(imp(p1,p2),imp(not(p2),not(p1))))
+  contra.3(p1, p2)
+}
+
+thm forall.imp.exist.exist.i(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, p1), exist(s0, p2))
+  -| forall(s0, imp(p1, p2))
+} = {
+  ax.mp(imp(exist(s0,p1),exist(s0,p2)), forall(s0, imp(p1, p2)))
+  forall.imp.exist.exist(s0, p1, p2)
+}
+
+thm forall.existimp.exist(set s0, prop p1, prop p2) {
+  |- imp(forall(s0, p1), imp(exist(s0, imp(p1, p2)), exist(s0, p2)))
+} = {
+  syl(forall(s0,p1), imp(exist(s0,imp(p1,p2)),exist(s0,p2)), forall(s0, imp(imp(p1, p2), p2)))
+  forall.imp.exist.exist(s0, imp(p1,p2), p2)
+  a4i(s0, p1, imp(imp(p1,p2),p2))
+  ax.gen(s0, imp(p1,imp(imp(p1,p2),p2)))
+  com12(p1, imp(p1,p2), p2)
+  id(imp(p1,p2))
+}
+
+thm exist.forall.forall.imp(set s0, prop p1, prop p2) {
+  |- imp(imp(exist(s0, p1), forall(s0, p2)), forall(s0, imp(p1, p2)))
+} = {
+  ja(exist(s0,p1), forall(s0,p2), forall(s0,imp(p1,p2)))
+  a4i(s0, p2, imp(p1,p2))
+  ax.gen(s0, imp(p2,imp(p1,p2)))
+  ax.1(p2, p1)
+  contra.1i(exist(s0,p1), forall(s0,imp(p1,p2)))
+  syl(not(forall(s0,imp(p1,p2))), exist(s0,p1), not(forall(s0, not(p1))))
   exist.def.2(s0, p1)
-  contra.3d(forall(s0,imp(p0,p1)), forall(s0,not(p0)), forall(s0,not(p1)))
-  syl(forall(s0,imp(p0,p1)), imp(forall(s0,not(p1)),forall(s0,not(p0))), forall(s0, imp(not(p1), not(p0))))
-  ax.4(s0, not(p1), not(p0))
-  a4i(s0, imp(p0,p1), imp(not(p1),not(p0)))
-  ax.gen(s0, imp(imp(p0,p1),imp(not(p1),not(p0))))
-  contra.3(p0, p1)
+  contra.3i(forall(s0,imp(p1,p2)), forall(s0,not(p1)))
+  a4i(s0, not(p1), imp(p1,p2))
+  ax.gen(s0, imp(not(p1),imp(p1,p2)))
+  absurd.1(p1, p2)
 }
 
-thm forall.imp.exist.exist.i(set s0, prop p0, prop p1) {
-  |- imp(exist(s0, p0), exist(s0, p1))
-  -| forall(s0, imp(p0, p1))
+thm forall.exist.then.existimp(set s0, prop p1, prop p2) {
+  |- imp(imp(forall(s0, p1), exist(s0, p2)), exist(s0, imp(p1, p2)))
 } = {
-  ax.mp(imp(exist(s0,p0),exist(s0,p1)), forall(s0, imp(p0, p1)))
-  forall.imp.exist.exist(s0, p0, p1)
+  ja(forall(s0,p1), exist(s0,p2), exist(s0,imp(p1,p2)))  
+  forall.imp.exist.exist.i(s0, p2, imp(p1,p2))
+  ax.gen(s0, imp(p2,imp(p1,p2)))
+  ax.1(p2, p1)
+  syl(not(forall(s0,p1)), exist(s0,imp(p1,p2)), not(forall(s0, not(imp(p1, p2)))))
+  exist.def.2(s0, imp(p1,p2))
+  contra.3i(forall(s0,p1), forall(s0,not(imp(p1,p2))))
+  a4i(s0, not(imp(p1,p2)), p1)
+  ax.gen(s0, imp(not(imp(p1,p2)),p1))
+  contra.1i(imp(p1,p2), p1)
+  absurd.1(p1, p2)
 }
 
-thm forall.existimp.exist(set s0, prop p0, prop p1) {
-  |- imp(forall(s0, p0), imp(exist(s0, imp(p0, p1)), exist(s0, p1)))
+thm forall.exist.then.existimp.i(set s0, prop p1, prop p2) {
+  |- exist(s0, imp(p1, p2))
+  -| imp(forall(s0, p1), exist(s0, p2))
 } = {
-  syl(forall(s0,p0), imp(exist(s0,imp(p0,p1)),exist(s0,p1)), forall(s0, imp(imp(p0, p1), p1)))
-  forall.imp.exist.exist(s0, imp(p0,p1), p1)
-  a4i(s0, p0, imp(imp(p0,p1),p1))
-  ax.gen(s0, imp(p0,imp(imp(p0,p1),p1)))
-  com12(p0, imp(p0,p1), p1)
-  id(imp(p0,p1))
+  ax.mp(exist(s0,imp(p1,p2)), imp(forall(s0, p1), exist(s0, p2)))
+  forall.exist.then.existimp(s0, p1, p2)
 }
 
-thm exist.forall.forall.imp(set s0, prop p0, prop p1) {
-  |- imp(imp(exist(s0, p0), forall(s0, p1)), forall(s0, imp(p0, p1)))
-} = {
-  ja(exist(s0,p0), forall(s0,p1), forall(s0,imp(p0,p1)))
-  a4i(s0, p1, imp(p0,p1))
-  ax.gen(s0, imp(p1,imp(p0,p1)))
-  ax.1(p1, p0)
-  contra.1i(exist(s0,p0), forall(s0,imp(p0,p1)))
-  syl(not(forall(s0,imp(p0,p1))), exist(s0,p0), not(forall(s0, not(p0))))
-  exist.def.2(s0, p0)
-  contra.3i(forall(s0,imp(p0,p1)), forall(s0,not(p0)))
-  a4i(s0, not(p0), imp(p0,p1))
-  ax.gen(s0, imp(not(p0),imp(p0,p1)))
-  absurd.1(p0, p1)
-}
-
-thm forall.exist.then.existimp(set s0, prop p0, prop p1) {
-  |- imp(imp(forall(s0, p0), exist(s0, p1)), exist(s0, imp(p0, p1)))
-} = {
-  ja(forall(s0,p0), exist(s0,p1), exist(s0,imp(p0,p1)))  
-  forall.imp.exist.exist.i(s0, p1, imp(p0,p1))
-  ax.gen(s0, imp(p1,imp(p0,p1)))
-  ax.1(p1, p0)
-  syl(not(forall(s0,p0)), exist(s0,imp(p0,p1)), not(forall(s0, not(imp(p0, p1)))))
-  exist.def.2(s0, imp(p0,p1))
-  contra.3i(forall(s0,p0), forall(s0,not(imp(p0,p1))))
-  a4i(s0, not(imp(p0,p1)), p0)
-  ax.gen(s0, imp(not(imp(p0,p1)),p0))
-  contra.1i(imp(p0,p1), p0)
-  absurd.1(p0, p1)
-}
-
-thm forall.exist.then.existimp.i(set s0, prop p0, prop p1) {
-  |- exist(s0, imp(p0, p1))
-  -| imp(forall(s0, p0), exist(s0, p1))
-} = {
-  ax.mp(exist(s0,imp(p0,p1)), imp(forall(s0, p0), exist(s0, p1)))
-  forall.exist.then.existimp(s0, p0, p1)
-}
-
-thm exist.ax5(set s0, prop p0) {
-  |- imp(exist(s0, p0), p0)
-  diff s0 p0
-} = {
-  syl(exist(s0,p0), p0, not(forall(s0, not(p0))))
-  exist.def.1(s0, p0)
-  contra.1i(forall(s0,not(p0)), p0)
-  ax.5(s0, not(p0))
-}
-
-thm exist.imp(set s0, prop p0, prop p1) {
-  |- imp(exist(s0, p0), p1)
-  -| imp(p0, p1)
+thm exist.ax5(set s0, prop p1) {
+  |- imp(exist(s0, p1), p1)
   diff s0 p1
 } = {
-  syl(exist(s0,p0), p1, exist(s0, p1))
-  forall.imp.exist.exist.i(s0, p0, p1)
-  ax.gen(s0, imp(p0,p1))
-  exist.ax5(s0, p1)
+  syl(exist(s0,p1), p1, not(forall(s0, not(p1))))
+  exist.def.1(s0, p1)
+  contra.1i(forall(s0,not(p1)), p1)
+  ax.5(s0, not(p1))
+}
+
+thm exist.imp(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, p1), p2)
+  -| imp(p1, p2)
+  diff s0 p2
+} = {
+  syl(exist(s0,p1), p2, exist(s0, p2))
+  forall.imp.exist.exist.i(s0, p1, p2)
+  ax.gen(s0, imp(p1,p2))
+  exist.ax5(s0, p2)
 }
 
 thm eq.id(set s0) {
@@ -146,16 +146,16 @@ thm ax6r(set s0, set s1) {
 }
 
 
-thm exist.use(set s0, prop p0) {
-  |- imp(p0, exist(s0, p0))
+thm exist.use(set s0, prop p1) {
+  |- imp(p1, exist(s0, p1))
 } = {
-  ax.mp(imp(p0,exist(s0,p0)), exist(hs0, eq(s0, hs0)))
+  ax.mp(imp(p1,exist(s0,p1)), exist(hs0, eq(s0, hs0)))
   ax6r(hs0, s0)
-  exist.imp(hs0, eq(s0,hs0), imp(p0,exist(s0,p0)))
-  syl6(eq(s0,hs0), p0, exist(s0,p0), forall(s0, imp(eq(s0,hs0), p0)))
-  ax.12(s0, hs0, p0)
-  ax.mp(imp(forall(s0,imp(eq(s0,hs0),p0)),exist(s0,p0)), exist(s0, eq(s0, hs0)))
+  exist.imp(hs0, eq(s0,hs0), imp(p1,exist(s0,p1)))
+  syl6(eq(s0,hs0), p1, exist(s0,p1), forall(s0, imp(eq(s0,hs0), p1)))
+  ax.12(s0, hs0, p1)
+  ax.mp(imp(forall(s0,imp(eq(s0,hs0),p1)),exist(s0,p1)), exist(s0, eq(s0, hs0)))
   ax.6(s0, hs0)
-  com12(exist(s0,eq(s0,hs0)), forall(s0,imp(eq(s0,hs0),p0)), exist(s0,p0))
-  forall.imp.exist.exist(s0, eq(s0,hs0), p0)
+  com12(exist(s0,eq(s0,hs0)), forall(s0,imp(eq(s0,hs0),p1)), exist(s0,p1))
+  forall.imp.exist.exist(s0, eq(s0,hs0), p1)
 }

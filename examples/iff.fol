@@ -13,6 +13,13 @@ thm iff.imp.1i(prop p0, prop p1) {
   ax.mp(imp(p0,p1), iff(p0, p1))
   iff.imp.1(p0, p1)
 }
+thm iff.imp.1d(prop p0, prop p1, prop p2) {
+    |- imp(p0, imp(p1, p2))
+    -| imp(p0, iff(p1, p2))
+} = {
+    syl(p0, imp(p1,p2), iff(p1, p2))
+    iff.imp.1(p1, p2)
+}
 
 thm iff.imp.2(prop p0, prop p1) {
   |- imp(iff(p0,p1), imp(p1,p0))
@@ -27,6 +34,13 @@ thm iff.imp.2i(prop p0, prop p1) {
 } = {
     ax.mp(imp(p0,p1), iff(p1,p0))
     iff.imp.2(p1, p0)
+}
+thm iff.imp.2d(prop p0, prop p1, prop p2) {
+    |- imp(p0, imp(p1, p2))
+    -| imp(p0, iff(p2, p1))
+} = {
+    syl(p0, imp(p1,p2), iff(p2,p1))
+    iff.imp.2(p2, p1)
 }
 
 thm iff.forintro(prop p0, prop p1) {
@@ -78,3 +92,106 @@ thm iff.syl(prop p0, prop p1, prop p2) {
     iff.imp.2i(p1, p2)
     iff.imp.2i(p2, p0)
 }
+thm iff.syl.d.1(prop p0, prop p1, prop p2) {
+    |- imp(iff(p0, p1), iff(p0, p2))
+    -| iff(p1, p2)
+} = {
+    syl(iff(p0,p1), iff(p0,p2), and(imp(p0,p1), imp(p1,p0)))
+    iff.def.1(p0, p1)
+    and.impo(imp(p0,p1), imp(p1,p0), iff(p0,p2))
+    syl(imp(p0,p1), imp(imp(p1,p0),iff(p0,p2)), imp(p0,p2))
+    syl.d.1(p0, p1, p2)
+    iff.imp.1i(p1, p2)
+    syl5(imp(p0,p2), imp(p1,p0), iff(p0,p2), imp(p2,p0))
+    iff.forintro(p0, p2)
+    syl.d.2(p1, p2, p0)
+    iff.imp.2i(p2, p1)
+}
+thm iff.syl.d.2(prop p0, prop p1, prop p2) {
+    |- imp(iff(p0, p2), iff(p1, p2))
+    -| iff(p0, p1)
+} = {
+    syl(iff(p0,p2), iff(p1,p2), iff(p2,p0))
+    iff.forcomm(p0, p2)
+    syl(iff(p2,p0), iff(p1,p2), iff(p2,p1))
+    iff.forcomm(p2, p1)
+    iff.syl.d.1(p2, p0, p1)
+}
+
+thm iff.syld(prop p0, prop p1, prop p2, prop p3) {
+    |- imp(p0, iff(p1, p2))
+    -| imp(p0, iff(p1, p3))
+    -| imp(p0, iff(p3, p2))
+} = {
+    a2ii(p0, iff(p1,p2), imp(p2,p1))
+    a2ii(p0, imp(p2,p1), imp(p3,p1))
+    iff.imp.2d(p0, p3, p1)
+    syl(p0, imp(imp(p3,p1),imp(p2,p1)), imp(p2, p3))
+    imp.trans.1(p2, p3, p1)
+    iff.imp.2d(p0, p2, p3)
+    syl(p0, imp(imp(p2,p1),iff(p1,p2)), imp(p1,p2))
+    iff.forintro(p1, p2)
+    a2ii(p0, imp(p1,p2), imp(p3,p2))
+    iff.imp.1d(p0, p3, p2)
+    syl(p0, imp(imp(p3,p2),imp(p1,p2)), imp(p1,p3))
+    imp.trans.1(p1, p3, p2)
+    iff.imp.1d(p0, p1, p3)
+}
+
+thm iff.syl6(prop p0, prop p1, prop p2, prop p3) {
+    |- imp(p0, iff(p1, p2))
+    -| imp(p0, iff(p1, p3))
+    -| iff(p2, p3)
+} = {
+    syl(p0, iff(p1,p2), iff(p1,p3))
+    iff.syl.d.1(p1, p3, p2)
+    iff.comm(p3, p2)
+}
+
+thm iff.syl5(prop p0, prop p1, prop p2, prop p3) {
+    |- imp(p0, iff(p1, p2))
+    -| imp(p0, iff(p3, p2))
+    -| iff(p1, p3)
+} = {
+    syl(p0, iff(p1,p2), iff(p3,p2))
+    iff.syl.d.2(p3, p1, p2)
+    iff.comm(p3, p1)
+}
+
+thm iff.fortrans(prop p0, prop p1, prop p2) {
+    |- imp(iff(p0, p1), imp(iff(p1, p2), iff(p0, p2)))
+} = {
+    mpd(iff(p0,p1), imp(iff(p1,p2),iff(p0,p2)), imp(iff(p1,p2), imp(p2, p0)))
+    a2d(iff(p0,p1), iff(p1,p2), imp(p2,p0), iff(p0,p2))
+    syl5(iff(p0,p1), iff(p1,p2), imp(p2,p0), imp(p2, p1))
+    iff.imp.2(p1, p2)
+    syl(iff(p0,p1), imp(imp(p2,p1),imp(p2,p0)), imp(p1, p0))
+    iff.imp.2(p0, p1)
+    imp.trans.2(p2, p1, p0)
+    syl6(iff(p0,p1), iff(p1,p2), imp(imp(p2,p0),iff(p0,p2)), imp(p0, p2))
+    iff.forintro(p0, p2)
+    syl5(iff(p0,p1), iff(p1,p2), imp(p0,p2), imp(p1,p2))
+    iff.imp.1(p1, p2)
+    syl(iff(p0,p1), imp(imp(p1,p2),imp(p0,p2)), imp(p0,p1))
+    iff.imp.1(p0, p1)
+    imp.trans.1(p0, p1, p2)
+}
+
+thm iff.syl.d.1.d(prop p0, prop p1, prop p2, prop p3) {
+    |- imp(p0, imp(iff(p1, p2), iff(p1, p3)))
+    -| imp(p0, iff(p2, p3))
+} = {
+    syl(p0, imp(iff(p1,p2),iff(p1,p3)), iff(p2,p3))
+    com12(iff(p2,p3), iff(p1,p2), iff(p1,p3))
+    iff.fortrans(p1, p2, p3)
+}
+
+thm iff.syl.d.2.d(prop p0, prop p1, prop p2, prop p3) {
+    |- imp(p0, imp(iff(p1, p3), iff(p2, p3)))
+    -| imp(p0, iff(p1, p2))
+} = {
+    syl(p0, imp(iff(p1,p3),iff(p2,p3)), iff(p2, p1))
+    iff.fortrans(p2, p1, p3)
+    syl(p0, iff(p2,p1), iff(p1,p2))
+    iff.forcomm(p1, p2)
+}4

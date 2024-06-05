@@ -2,80 +2,80 @@
   # and 
 */
 
-thm and.left(prop p0, prop p1) {
-  |- imp(and(p0, p1), p0)
+thm and.left(prop p1, prop p2) {
+  |- imp(and(p1, p2), p1)
 } = {
-  syl(and(p0,p1), p0, not(imp(p0, not(p1))))
-  and.def.1(p0, p1)
-  contra.1i(imp(p0,not(p1)), p0)
-  absurd.1(p0, not(p1))
+  syl(and(p1,p2), p1, not(imp(p1, not(p2))))
+  and.def.1(p1, p2)
+  contra.1i(imp(p1,not(p2)), p1)
+  absurd.1(p1, not(p2))
 }
 
-thm and.right(prop p0, prop p1) {
-  |- imp(and(p0, p1), p1)
+thm and.right(prop p1, prop p2) {
+  |- imp(and(p1, p2), p2)
 } = {
-  syl(and(p0,p1), p1, not(imp(p0, not(p1))))
-  and.def.1(p0, p1)
-  contra.1i(imp(p0,not(p1)), p1)
-  ax.1(not(p1), p0)
+  syl(and(p1,p2), p2, not(imp(p1, not(p2))))
+  and.def.1(p1, p2)
+  contra.1i(imp(p1,not(p2)), p2)
+  ax.1(not(p2), p1)
 }
 
-thm and.forintro(prop p0, prop p1) {
-  |- imp(p0, imp(p1, and(p0, p1)))
+thm and.forintro(prop p1, prop p2) {
+  |- imp(p1, imp(p2, and(p1, p2)))
 } = {
-  syl6(p0, p1, and(p0,p1), not(imp(p0, not(p1))))
-  and.def.2(p0, p1)
-  syl(p0, imp(p1,not(imp(p0,not(p1)))), imp(imp(p0,not(p1)), not(p1)))
-  contra.2(imp(p0,not(p1)), p1)
-  com12(p0, imp(p0,not(p1)), not(p1))
-  id(imp(p0,not(p1)))
+  syl6(p1, p2, and(p1,p2), not(imp(p1, not(p2))))
+  and.def.2(p1, p2)
+  syl(p1, imp(p2,not(imp(p1,not(p2)))), imp(imp(p1,not(p2)), not(p2)))
+  contra.2(imp(p1,not(p2)), p2)
+  com12(p1, imp(p1,not(p2)), not(p2))
+  id(imp(p1,not(p2)))
 }
 
-thm and.intro(prop p0, prop p1) {
-  |- and(p0, p1)
-  -| p0
+thm and.intro(prop p1, prop p2) {
+  |- and(p1, p2)
   -| p1
+  -| p2
 } = {
-  ax.mp(and(p0,p1), p1)
-  ax.mp(imp(p1,and(p0,p1)), p0)
-  and.forintro(p0, p1)
+  ax.mp(and(p1,p2), p2)
+  ax.mp(imp(p2,and(p1,p2)), p1)
+  and.forintro(p1, p2)
 }
 
 // Importation inference.
-thm and.impo(prop p0, prop p1, prop p2) {
-  |- imp(and(p0, p1), p2)
-  -| imp(p0, imp(p1, p2))
+thm and.impo(prop p1, prop p2, prop p3) {
+  |- imp(and(p1, p2), p3)
+  -| imp(p1, imp(p2, p3))
 } = {
-  syl(and(p0,p1), p2, not(imp(p0,not(p1))))
-  and.def.1(p0, p1)
-  contra.1i(imp(p0,not(p1)), p2)
-  com12(not(p2), p0, not(p1))
-  contra.3d(p0, p2, p1)
+  syl(and(p1,p2), p3, not(imp(p1,not(p2))))
+  and.def.1(p1, p2)
+  contra.1i(imp(p1,not(p2)), p3)
+  com12(not(p3), p1, not(p2))
+  contra.3d(p1, p3, p2)
 }
 
 // Exportation inference
-thm and.expo(prop p0, prop p1, prop p2) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(and(p0, p1), p2)
+thm and.expo(prop p1, prop p2, prop p3) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(and(p1, p2), p3)
 } = {
-  syl6(p0, p1, p2, and(p0, p1))
-  and.forintro(p0, p1)
-}
-
-thm and.comm(prop p0, prop p1) {
-  |- imp(and(p0, p1), and(p1, p0))
-} = {
-  and.impo(p0, p1, and(p1,p0))
-  com12(p0, p1, and(p1,p0))
-  and.forintro(p1, p0)
-}
-
-thm and.intro.d(prop p0, prop p1, prop p2) {
-  |- imp(p0, and(p1, p2))
-  -| imp(p0, p1)
-  -| imp(p0, p2)
-} = {
-  mpd(p0, and(p1,p2), p2)
-  syl(p0, imp(p2,and(p1,p2)), p1)
+  syl6(p1, p2, p3, and(p1, p2))
   and.forintro(p1, p2)
+}
+
+thm and.comm(prop p1, prop p2) {
+  |- imp(and(p1, p2), and(p2, p1))
+} = {
+  and.impo(p1, p2, and(p2,p1))
+  com12(p1, p2, and(p2,p1))
+  and.forintro(p2, p1)
+}
+
+thm and.intro.d(prop p1, prop p2, prop p3) {
+  |- imp(p1, and(p2, p3))
+  -| imp(p1, p2)
+  -| imp(p1, p3)
+} = {
+  mpd(p1, and(p2,p3), p3)
+  syl(p1, imp(p3,and(p2,p3)), p2)
+  and.forintro(p2, p3)
 }

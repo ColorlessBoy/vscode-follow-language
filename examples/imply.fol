@@ -2,132 +2,160 @@
 # imply 
 */
 
-thm id(prop p0) {
-  |- imp(p0, p0)
+thm id(prop p1) {
+  |- imp(p1, p1)
 } = {
-  ax.mp(imp(p0, p0), imp(p0, imp(p0, p0)))
-  ax.1(p0, p0)
-  ax.mp(imp(imp(p0, imp(p0, p0)), imp(p0, p0)), imp(p0, imp(imp(p0, p0), p0)))
-  ax.2(p0, imp(p0, p0), p0)
-  ax.1(p0, imp(p0, p0))
+  ax.mp(imp(p1, p1), imp(p1, imp(p1, p1)))
+  ax.1(p1, p1)
+  ax.mp(imp(imp(p1, imp(p1, p1)), imp(p1, p1)), imp(p1, imp(imp(p1, p1), p1)))
+  ax.2(p1, imp(p1, p1), p1)
+  ax.1(p1, imp(p1, p1))
 }
 
-thm a1i(prop p0, prop p1) {
-  |- imp(p0, p1)
-  -| p1
+thm a1i(prop p1, prop p2) {
+  |- imp(p1, p2)
+  -| p2
 } = {
-  ax.mp(imp(p0,p1), p1)
-  ax.1(p1, p0)
-}
-
-thm mpd(prop p0, prop p1, prop p2) {
-  |- imp(p0, p1)
-  -| imp(p0, p2)
-  -| imp(p0, imp(p2, p1))
-} = {
-  ax.mp(imp(p0, p1), imp(p0, p2))
-  ax.mp(imp(imp(p0, p2), imp(p0, p1)), imp(p0, imp(p2, p1)))
-  ax.2(p0, p2, p1)
-}
-
-thm syl(prop p0, prop p1, prop p2) {
-  |- imp(p0, p1)
-  -| imp(p0, p2)
-  -| imp(p2, p1)
-} = {
-  mpd(p0, p1, p2)
-  a1i(p0, imp(p2,p1))
-}
-
-thm a2i(prop p0, prop p1, prop p2) {
-  |- imp(imp(p0, p1), imp(p0, p2))
-  -| imp(p0, imp(p1, p2))
-} = {
-  ax.mp(imp(imp(p0,p1),imp(p0,p2)), imp(p0,imp(p1,p2)))
-  ax.2(p0, p1, p2)
-}
-
-thm a1d(prop p0, prop p1, prop p2) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(p0, p2)
-} = {
-  syl(p0, imp(p1,p2), p2)
+  ax.mp(imp(p1,p2), p2)
   ax.1(p2, p1)
 }
 
-thm a2d(prop p0, prop p1, prop p2, prop p3) {
-  |- imp(p0, imp(imp(p1, p2), imp(p1, p3)))
-  -| imp(p0, imp(p1, imp(p2, p3)))
+thm mpd(prop p1, prop p2, prop p3) {
+  |- imp(p1, p2)
+  -| imp(p1, p3)
+  -| imp(p1, imp(p3, p2))
 } = {
-  syl(p0, imp(imp(p1,p2),imp(p1,p3)), imp(p1, imp(p2, p3)))
+  ax.mp(imp(p1, p2), imp(p1, p3))
+  ax.mp(imp(imp(p1, p3), imp(p1, p2)), imp(p1, imp(p3, p2)))
+  ax.2(p1, p3, p2)
+}
+
+thm syl(prop p1, prop p2, prop p3) {
+  |- imp(p1, p2)
+  -| imp(p1, p3)
+  -| imp(p3, p2)
+} = {
+  mpd(p1, p2, p3)
+  a1i(p1, imp(p3,p2))
+}
+
+thm a2i(prop p1, prop p2, prop p3) {
+  |- imp(imp(p1, p2), imp(p1, p3))
+  -| imp(p1, imp(p2, p3))
+} = {
+  ax.mp(imp(imp(p1,p2),imp(p1,p3)), imp(p1,imp(p2,p3)))
   ax.2(p1, p2, p3)
 }
 
-thm com12(prop p0, prop p1, prop p2) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(p1, imp(p0, p2))
+thm a2ii(prop p1, prop p2, prop p3) {
+  |- imp(p1, p2)
+  -| imp(p1, p3)
+  -| imp(p1, imp(p3, p2))
 } = {
-  syl(p0, imp(p1,p2), imp(p1,p0))
-  ax.1(p0, p1)
-  a2i(p1, p0, p2)
+  ax.mp(imp(p1,p2), imp(p1, p3))
+  a2i(p1, p3, p2)
 }
 
-thm imp.trans.2(prop p0, prop p1, prop p2) {
-  |- imp(imp(p1, p2), imp(imp(p0, p1), imp(p0, p2)))
-} = {
-  a2d(imp(p1,p2), p0, p1, p2)
-  ax.1(imp(p1,p2), p0)
-}
-
-thm imp.trans.1(prop p0, prop p1, prop p2) {
-  |- imp(imp(p0, p1), imp(imp(p1, p2), imp(p0, p2)))
-} = {
-  com12(imp(p0,p1), imp(p1,p2), imp(p0,p2))
-  imp.trans.2(p0, p1, p2)
-}
-
-thm syl.d.1(prop p0, prop p1, prop p2) {
-  |- imp(imp(p0, p1), imp(p0, p2))
-  -| imp(p1, p2)
-} = {
-  a2i(p0, p1, p2)
-  a1i(p0, imp(p1,p2))
-}
-
-thm syl.d.2(prop p0, prop p1, prop p2) {
-  |- imp(imp(p0, p2), imp(p1, p2))
-  -| imp(p1, p0)
-} = {
-  com12(imp(p0,p2), p1, p2)
-  syl(p1, imp(imp(p0,p2),p2), p0)
-  com12(p0, imp(p0,p2), p2)
-  id(imp(p0,p2))
-}
-
-thm syld(prop p0, prop p1, prop p2, prop p3) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(p0, imp(p1, p3))
-  -| imp(p0, imp(p3, p2))
-} = {
-  mpd(p0, imp(p1,p2), imp(p1,p3))
-  a2d(p0, p1, p3, p2)
-  a1d(p0, p1, imp(p3,p2))
-}
-
-thm syl5(prop p0, prop p1, prop p2, prop p3) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(p0, imp(p3, p2))
+thm a1d(prop p1, prop p2, prop p3) {
+  |- imp(p1, imp(p2, p3))
   -| imp(p1, p3)
 } = {
-  syld(p0, p1, p2, p3)
-  a1i(p0, imp(p1,p3))
+  syl(p1, imp(p2,p3), p3)
+  ax.1(p3, p2)
 }
 
-thm syl6(prop p0, prop p1, prop p2, prop p3) {
-  |- imp(p0, imp(p1, p2))
-  -| imp(p0, imp(p1, p3))
-  -| imp(p3, p2)
+thm a2d(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(imp(p2, p3), imp(p2, p4)))
+  -| imp(p1, imp(p2, imp(p3, p4)))
 } = {
-  syld(p0, p1, p2, p3)
-  a1i(p0, imp(p3,p2))
+  syl(p1, imp(imp(p2,p3),imp(p2,p4)), imp(p2, imp(p3, p4)))
+  ax.2(p2, p3, p4)
+}
+
+thm a2id(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p1, imp(p2, p4))
+  -| imp(p1, imp(p2, imp(p4, p3)))
+} = {
+  mpd(p1, imp(p2,p3), imp(p2,p4))
+  a2d(p1, p2, p4, p3)
+}
+
+thm com12(prop p1, prop p2, prop p3) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p2, imp(p1, p3))
+} = {
+  syl(p1, imp(p2,p3), imp(p2,p1))
+  ax.1(p1, p2)
+  a2i(p2, p1, p3)
+}
+
+thm imp.trans.2(prop p1, prop p2, prop p3) {
+  |- imp(imp(p2, p3), imp(imp(p1, p2), imp(p1, p3)))
+} = {
+  a2d(imp(p2,p3), p1, p2, p3)
+  ax.1(imp(p2,p3), p1)
+}
+
+thm imp.trans.1(prop p1, prop p2, prop p3) {
+  |- imp(imp(p1, p2), imp(imp(p2, p3), imp(p1, p3)))
+} = {
+  com12(imp(p1,p2), imp(p2,p3), imp(p1,p3))
+  imp.trans.2(p1, p2, p3)
+}
+
+thm syl.d.1(prop p1, prop p2, prop p3) {
+  |- imp(imp(p1, p2), imp(p1, p3))
+  -| imp(p2, p3)
+} = {
+  a2i(p1, p2, p3)
+  a1i(p1, imp(p2,p3))
+}
+
+thm syl.d.2(prop p1, prop p2, prop p3) {
+  |- imp(imp(p1, p3), imp(p2, p3))
+  -| imp(p2, p1)
+} = {
+  com12(imp(p1,p3), p2, p3)
+  syl(p2, imp(imp(p1,p3),p3), p1)
+  com12(p1, imp(p1,p3), p3)
+  id(imp(p1,p3))
+}
+
+thm syld(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p1, imp(p2, p4))
+  -| imp(p1, imp(p4, p3))
+} = {
+  mpd(p1, imp(p2,p3), imp(p2,p4))
+  a2d(p1, p2, p4, p3)
+  a1d(p1, p2, imp(p4,p3))
+}
+
+thm syl5(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p1, imp(p4, p3))
+  -| imp(p2, p4)
+} = {
+  syld(p1, p2, p3, p4)
+  a1i(p1, imp(p2,p4))
+}
+
+thm syl6(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p1, imp(p2, p4))
+  -| imp(p4, p3)
+} = {
+  syld(p1, p2, p3, p4)
+  a1i(p1, imp(p4,p3))
+}
+
+thm syladd(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, p2)
+  -| imp(p1, p3)
+  -| imp(p1, p4)
+  -| imp(p3, imp(p4, p2))
+} = {
+  a2ii(p1, p2, p4)
+  syl(p1, imp(p4,p2), p3)
 }
