@@ -108,3 +108,25 @@ axiom ax.9(set s0, set s1, set s2) {
   |- imp(eq(s0, s1), imp(in(s2, s0), in(s2, s1)))
 }
 
+term set singleton(set s0) { {s0} }
+term set pair(set s0, set s1) { {s0, s1} }
+term set opair(set s0, set s1) { (s0, s1) }
+
+axiom singleton.def.1(set s0) {
+  |- in(s0, singleton(s0))
+}
+axiom singleton.def.2(set s0, set s1) {
+  |- iff(in(s0, singleton(s1)), eq(s0, s1))
+}
+axiom pair.def.1(set s0, set s1) {
+  |- in(s0, pair(s0, s1))
+}
+axiom pair.def.2(set s0, set s1) {
+  |- in(s1, pair(s0, s1))
+}
+axiom pair.def.3(set s0, set s1, set s2) {
+  |- iff(in(s0, pair(s1, s2)), or(eq(s0, s1), eq(s0, s2)))
+}
+axiom opair.def(set s0, set s1) {
+  |- eq(opair(s0, s1), pair(singleton(s0), pair(s0, s1)))
+}

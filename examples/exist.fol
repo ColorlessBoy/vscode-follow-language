@@ -135,6 +135,44 @@ thm eq.comm(set s0, set s1) {
   com12(eq(s0,s0), eq(s0,s1), eq(s1,s0))
   ax.7(s0, s1, s0)
 }
+thm eq.comm.i(set s0, set s1) {
+  |- eq(s0, s1)
+  -| eq(s1, s0)
+} = {
+  ax.mp(eq(s0,s1), eq(s1,s0))
+  eq.comm(s1, s0)
+}
+thm eq.trans2(set s0, set s1, set s2) {
+  |- imp(eq(s0, s1), imp(eq(s2,s0), eq(s2,s1)))
+} = {
+  syl5(eq(s0,s1), eq(s2,s0), eq(s2,s1), eq(s0,s2))
+  eq.comm(s2, s0)
+  com12(eq(s0,s1), eq(s0,s2), eq(s2,s1))
+  ax.7(s0, s2, s1)
+}
+thm eq.trans2.i(set s0, set s1, set s2) {
+  |- eq(s0, s1)
+  -| eq(s0, s2)
+  -| eq(s2, s1)
+} = {
+  ax.mp(eq(s0,s1), eq(s0,s2))
+  ax.mp(imp(eq(s0,s2),eq(s0,s1)), eq(s2, s1))
+  eq.trans2(s2, s1, s0)
+}
+thm eq.trans3(set s0, set s1, set s2) {
+  |- imp(eq(s0,s1), imp(eq(s1,s2), eq(s0,s2)))
+} = {
+  com12(eq(s0,s1), eq(s1,s2), eq(s0,s2))
+  eq.trans2(s1, s2, s0)
+}
+thm eq.trans4(set s0, set s1, set s2) {
+  |- imp(eq(s1,s0),imp(eq(s2,s0),eq(s1,s2)))
+} = {
+  syl5(eq(s1,s0), eq(s2,s0), eq(s1,s2), eq(s0,s2))
+  eq.comm(s2, s0)
+  eq.trans3(s1, s0, s2)
+}
+
 thm ax6r(set s0, set s1) {
   |- exist(s0, eq(s1, s0))
 } = {
@@ -144,7 +182,6 @@ thm ax6r(set s0, set s1) {
   ax.gen(s0, imp(eq(s0,s1),eq(s1,s0)))
   eq.comm(s0, s1)
 }
-
 
 thm exist.use(set s0, prop p1) {
   |- imp(p1, exist(s0, p1))
@@ -158,4 +195,27 @@ thm exist.use(set s0, prop p1) {
   ax.6(s0, hs0)
   com12(exist(s0,eq(s0,hs0)), forall(s0,imp(eq(s0,hs0),p1)), exist(s0,p1))
   forall.imp.exist.exist(s0, eq(s0,hs0), p1)
+}
+
+thm forall.special(set s0, prop p0) {
+  |- imp(forall(s0, p0), p0)
+} = {
+  syl(forall(s0,p0), p0, forall(s0, not(not(p0))))
+  a4i(s0, p0, not(not(p0)))
+  ax.gen(s0, imp(p0,not(not(p0))))
+  notnot.2(p0)
+  syl(forall(s0,not(not(p0))), p0, not(not(p0)))
+  notnot.1(p0)
+  contra.2i(forall(s0,not(not(p0))), not(p0))
+  syl(not(p0), not(forall(s0,not(not(p0)))), exist(s0, not(p0)))
+  exist.def.1(s0, not(p0))
+  exist.use(s0, not(p0))
+}
+
+thm forall.special.i(set s0, prop p0) {
+  |- p0
+  -| forall(s0, p0)
+} = {
+  ax.mp(p0, forall(s0, p0))
+  forall.special(s0, p0)
 }

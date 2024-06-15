@@ -7,12 +7,27 @@ thm or.left(prop p1, prop p2) {
     absurd.2(p1, p2)
 }
 
+thm or.left.i(prop p1, prop p2) {
+    |- or(p1, p2)
+    -| p1
+} = {
+    ax.mp(or(p1,p2), p1)
+    or.left(p1, p2)
+}
+
 thm or.right(prop p1, prop p2) {
     |- imp(p2, or(p1, p2))
 } = {
     syl(p2, or(p1,p2), imp(not(p1),p2))
     or.def.2(p1, p2)
     ax.1(p2, not(p1))
+}
+thm or.right.i(prop p1, prop p2) {
+    |- or(p1, p2)
+    -| p2
+} = {
+    ax.mp(or(p1,p2), p2)
+    or.right(p1, p2)
 }
 
 thm or.com(prop p1, prop p2) {
@@ -64,5 +79,23 @@ thm and.or(prop p1, prop p2, prop p3) {
     com12(p3, p1, or(and(p1,p2),and(p1,p3)))
     and.expo(p1, p3, or(and(p1,p2),and(p1,p3)))
     or.right(and(p1,p2), and(p1,p3))
+}
+
+thm or.not(prop p1) {
+    |- or(p1, not(p1))
+} = {
+    ax.mp(or(p1,not(p1)), imp(not(p1), not(p1)))
+    or.def.2(p1, not(p1))
+    id(not(p1))
+}
+
+thm or.cases.i(prop p1, prop p2) {
+    |- p1
+    -| imp(p2, p1)
+    -| imp(not(p2), p1)
+} = {
+    ax.mp(p1, or(p2,not(p2)))
+    or.not(p2)
+    or.cases(p2, not(p2), p1)
 }
 

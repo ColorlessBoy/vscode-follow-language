@@ -194,4 +194,17 @@ thm iff.syl.d.2.d(prop p0, prop p1, prop p2, prop p3) {
     iff.fortrans(p2, p1, p3)
     syl(p0, iff(p2,p1), iff(p1,p2))
     iff.forcomm(p1, p2)
-}4
+}
+
+thm iff.imim1(prop p0, prop p1, prop p2) {
+    |- imp(p0, iff(p1, p2))
+    -| iff(imp(p0, p1), imp(p0, p2))
+} = {
+    syl(p0, iff(p1,p2), and(imp(p1,p2),imp(p2,p1)))
+    iff.def.2(p1, p2)
+    and.intro.d(p0, imp(p1,p2), imp(p2,p1))
+    ax2r.i(p0, p1, p2)
+    ax2r.i(p0, p2, p1)
+    iff.imp.1i(imp(p0,p1), imp(p0,p2))
+    iff.imp.2i(imp(p0,p2), imp(p0,p1))
+}

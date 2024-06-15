@@ -30,6 +30,13 @@ thm iff.ax9(set s0, set s1, set s2) {
   ax.9(s1, s0, s2)
   eq.comm(s0, s1)
 }
+thm iff.ax9.i(set s0, set s1, set s2) {
+  |- iff(in(s2, s0), in(s2, s1))
+  -| eq(s0, s1)
+} = {
+  ax.mp(iff(in(s2,s0),in(s2,s1)), eq(s0,s1))
+  iff.ax9(s0, s1, s2)
+}
 
 thm zfc.ext3(set s0, set s1, set s2) {
   |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
@@ -49,4 +56,486 @@ thm zfc.ext3(set s0, set s1, set s2) {
   syl(eq(hs0,s1), iff(in(s0,s1),in(s0,hs0)), eq(s1,hs0))
   iff.ax9(s1, hs0, s0)
   eq.comm(hs0, s1)
+}
+
+thm zfc.ext.i(set s0, set s1, set s2) {
+  |- eq(s0, s1)
+  -| iff(in(s2, s0), in(s2, s1))
+  diff s2 s0
+  diff s2 s1
+} = {
+  ax.mp(eq(s0,s1), forall(s2, iff(in(s2, s0), in(s2, s1))))
+  ax.gen(s2, iff(in(s2,s0),in(s2,s1)))
+  zfc.ext3(s2, s0, s1)
+}
+
+thm singleton.eq.pair(set s0) {
+  |- eq(singleton(s0), pair(s0, s0))
+} = {
+  zfc.ext.i(singleton(s0), pair(s0,s0), hs0)
+  iff.syl(in(hs0,singleton(s0)), in(hs0,pair(s0,s0)), eq(hs0, s0))
+  singleton.def.2(hs0, s0))
+  iff.syl(eq(hs0,s0), in(hs0,pair(s0,s0)), or(eq(hs0, s0), eq(hs0, s0)))
+  iff.comm(or(eq(hs0,s0),eq(hs0,s0)), in(hs0,pair(s0,s0)))
+  pair.def.3(hs0, s0, s0)
+  iff.intro(eq(hs0,s0), or(eq(hs0,s0),eq(hs0,s0)))
+  or.left(eq(hs0,s0), eq(hs0,s0))
+  or.cases(eq(hs0,s0), eq(hs0,s0), eq(hs0,s0))
+  id(eq(hs0,s0))
+}
+
+thm singleton.def.2.mp(set s0, set s1) {
+  |- eq(s0, s1)
+  -| in(s0, singleton(s1))
+} = {
+  ax.mp(eq(s0,s1), in(s0,singleton(s1)))
+  iff.imp.1i(in(s0,singleton(s1)), eq(s0,s1))
+  singleton.def.2(s0, s1)
+}
+
+thm singleton.def.2.mpr(set s0, set s1) {
+  |- in(s0, singleton(s1))
+  -| eq(s0, s1)
+} = {
+  ax.mp(in(s0,singleton(s1)), eq(s0, s1))
+  iff.imp.2i(eq(s0,s1), in(s0,singleton(s1)))
+  singleton.def.2(s0, s1)
+}
+
+thm ax9i(set s0, set s1, set s2) {
+  |- in(s0, s1)
+  -| in(s0, s2)
+  -| eq(s2, s1)
+} = {
+  ax.mp(in(s0,s1), in(s0,s2))
+  ax.mp(imp(in(s0,s2),in(s0,s1)), eq(s2,s1))
+  ax.9(s2, s1, s0)
+}
+
+
+thm singleton.eq(set s0, set s1) {
+  |- imp(eq(singleton(s0), singleton(s1)), eq(s0,s1))
+} = {
+  syl(eq(singleton(s0),singleton(s1)), eq(s0,s1), in(s0, singleton(s1)))
+  iff.imp.1i(in(s0,singleton(s1)), eq(s0,s1))
+  singleton.def.2(s0, s1)
+  mpd(eq(singleton(s0),singleton(s1)), in(s0,singleton(s1)), in(s0,singleton(s0)))
+  a1i(eq(singleton(s0),singleton(s1)), in(s0,singleton(s0)))
+  singleton.def.1(s0)
+  ax.9(singleton(s0), singleton(s1), s0)
+}
+
+thm eq.def.ii(set s0, set s1, set s3) {
+  |- eq(s0, s1)
+  -| eq(s0, s3)
+  -| eq(s3, s1)
+} = {
+  ax.mp(eq(s0,s1), eq(s3,s1))
+  ax.mp(imp(eq(s3,s1),eq(s0,s1)), eq(s3,s0))
+  ax.7(s3, s0, s1)
+  ax.mp(eq(s3,s0), eq(s0,s3))
+  eq.comm(s0, s3)
+}
+
+thm pair.comm(set s0, set s1) {
+  |- eq(pair(s0, s1), pair(s1, s0))
+} = {
+  zfc.ext.i(pair(s0,s1), pair(s1,s0), hs0)
+  iff.syl(in(hs0,pair(s0,s1)), in(hs0,pair(s1,s0)), or(eq(hs0,s0),eq(hs0,s1)))
+  pair.def.3(hs0, s0, s1)
+  iff.syl(or(eq(hs0,s0),eq(hs0,s1)), in(hs0,pair(s1,s0)), or(eq(hs0,s1), eq(hs0,s0)))
+  iff.comm(or(eq(hs0,s1),eq(hs0,s0)), in(hs0,pair(s1,s0)))
+  pair.def.3(hs0, s1, s0)
+  iff.intro(or(eq(hs0,s0),eq(hs0,s1)), or(eq(hs0,s1),eq(hs0,s0)))
+  or.cases(eq(hs0,s0), eq(hs0,s1), or(eq(hs0,s1),eq(hs0,s0)))
+  or.right(eq(hs0,s1), eq(hs0,s0))
+  or.left(eq(hs0,s1), eq(hs0,s0))
+  or.cases(eq(hs0,s1), eq(hs0,s0), or(eq(hs0,s0),eq(hs0,s1)))
+  or.right(eq(hs0,s0), eq(hs0,s1))
+  or.left(eq(hs0,s0), eq(hs0,s1))
+}
+thm pair.def.3i.1(set s0, set s1, set s2) {
+  |- in(s0, pair(s1, s2))
+  -| or(eq(s0, s1), eq(s0, s2))
+} = {
+  ax.mp(in(s0,pair(s1,s2)), or(eq(s0, s1), eq(s0, s2)))
+  iff.imp.2i(or(eq(s0,s1),eq(s0,s2)), in(s0,pair(s1,s2)))
+  pair.def.3(s0, s1, s2)
+}
+thm pair.def.3i.2(set s0, set s1, set s2) {
+  |- or(eq(s0, s1), eq(s0, s2))
+  -| in(s0, pair(s1, s2))
+} = {
+  ax.mp(or(eq(s0,s1),eq(s0,s2)), in(s0, pair(s1,s2)))
+  iff.imp.1i(in(s0,pair(s1,s2)), or(eq(s0,s1),eq(s0,s2)))
+  pair.def.3(s0, s1, s2)
+}
+thm pair.in.left(set s0, set s1) {
+  |- in(s0, pair(s0, s1))
+} = {
+  pair.def.3i.1(s0, s0, s1)
+  or.left.i(eq(s0,s0), eq(s0,s1))
+  eq.id(s0)
+}
+thm pair.in.right(set s0, set s1) {
+  |- in(s1, pair(s0, s1))
+} = {
+  pair.def.3i.1(s1, s0, s1)
+  or.right.i(eq(s1,s0), eq(s1,s1))
+  eq.id(s1)
+}
+
+thm singleton.eq.pair.left(set s0, set s1, set s2) {
+  |- eq(s0, s1)
+  -| eq(singleton(s0), pair(s1, s2))
+} = {
+  eq.comm.i(s0, s1)
+  singleton.def.2.mp(s1, s0)
+  ax9i(s1, singleton(s0), pair(s1,s2))
+  eq.comm.i(pair(s1,s2), singleton(s0))
+  pair.in.left(s1, s2)
+}
+thm singleton.eq.pair.right(set s0, set s1, set s2) {
+  |- eq(s0, s1)
+  -| eq(singleton(s0), pair(s2, s1))
+} = {
+  singleton.eq.pair.left(s0, s1, s2)
+  eq.trans2.i(singleton(s0), pair(s1,s2), pair(s2,s1))
+  pair.comm(s2, s1)
+}
+thm singleton.eq.pair.left.d(set s0, set s1, set s2) {
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s0, s1))
+} = {
+  syl(eq(singleton(s0),pair(s1,s2)), eq(s0,s1), eq(s1, s0))
+  eq.comm(s1, s0)
+  syl(eq(singleton(s0),pair(s1,s2)), eq(s1,s0), in(s1,singleton(s0)))
+  iff.imp.1i(in(s1,singleton(s0)), eq(s1,s0))
+  singleton.def.2(s1, s0)
+  mpd(eq(singleton(s0),pair(s1,s2)), in(s1,singleton(s0)), in(s1,pair(s1,s2)))
+  a1i(eq(singleton(s0),pair(s1,s2)), in(s1,pair(s1,s2)))
+  pair.in.left(s1, s2)
+  syl(eq(singleton(s0),pair(s1,s2)), imp(in(s1,pair(s1,s2)),in(s1,singleton(s0))), eq(pair(s1,s2), singleton(s0)))
+  eq.comm(singleton(s0), pair(s1,s2))
+  ax.9(pair(s1,s2), singleton(s0), s1)
+}
+thm singleton.eq.pair.right.d(set s0, set s1, set s2) {
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s0, s2))
+} = {
+  syl(eq(singleton(s0),pair(s1,s2)), eq(s0,s2), eq(singleton(s0),pair(s2,s1)))
+  singleton.eq.pair.left.d(s0, s2, s1)
+  ax.mp(imp(eq(singleton(s0),pair(s1,s2)),eq(singleton(s0),pair(s2,s1))), eq(pair(s1,s2), pair(s2, s1)))
+  pair.comm(s1, s2)
+  eq.trans2(pair(s1,s2), pair(s2,s1), singleton(s0))
+}
+thm singleton.eq.pair.pair.d(set s0, set s1, set s2) {
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s1, s2))
+} = {
+  syl(eq(singleton(s0),pair(s1,s2)), eq(s1,s2), and(eq(s0, s1), eq(s0,s2)))
+  and.intro.d(eq(singleton(s0),pair(s1,s2)), eq(s0,s1), eq(s0,s2))
+  singleton.eq.pair.left.d(s0, s1, s2)
+  singleton.eq.pair.right.d(s0, s1, s2)
+  and.impo(eq(s0,s1), eq(s0,s2), eq(s1,s2))
+  ax.7(s0, s1, s2)
+}
+
+thm pair.eq.0(set s0, set s1, set s2, set s3) {
+  |- or(eq(s0,s1), eq(s0,s2))
+  -| eq(pair(s0,s3), pair(s1,s2))
+} = {
+  pair.def.3i.2(s0, s1, s2)
+  ax.mp(in(s0,pair(s1,s2)), in(s0, pair(s0,s3)))
+  pair.in.left(s0, s3)
+  iff.imp.1i(in(s0,pair(s0,s3)), in(s0,pair(s1,s2)))
+  iff.ax9.i(pair(s0,s3), pair(s1,s2), s0)
+}
+
+thm pair.eq.1(set s0, set s1, set s2, set s3) {
+  |- eq(s0,s1)
+  -| eq(s2,s3)
+  -| eq(pair(s0,s2), pair(s1,s3))
+} = {
+  ax.mp(eq(s0,s1), or(eq(s0,s1), eq(s0,s3)))
+  pair.eq.0(s0, s1, s3, s2)
+  or.cases(eq(s0,s1), eq(s0,s3), eq(s0,s1))
+  id(eq(s0,s1))
+  ax.mp(imp(eq(s0,s3),eq(s0,s1)), or(eq(s1,s0),eq(s1,s2)))
+  pair.eq.0(s1, s0, s2, s3)
+  eq.comm.i(pair(s1,s3), pair(s0,s2))
+  or.cases(eq(s1,s0), eq(s1,s2), imp(eq(s0,s3),eq(s0,s1)))
+  com12(eq(s1,s0), eq(s0,s3), eq(s0,s1))
+  a1i(eq(s0,s3), imp(eq(s1,s0),eq(s0,s1)))
+  eq.comm(s1, s0)
+  syl(eq(s1,s2), imp(eq(s0,s3),eq(s0,s1)), eq(s3,s1))
+  eq.trans2(s3, s1, s0)
+  syl(eq(s1,s2), eq(s3,s1), eq(s1,s3))
+  eq.comm(s1, s3)
+  ax.mp(imp(eq(s1,s2),eq(s1,s3)), eq(s2,s3))
+  eq.trans2(s2, s3, s1)
+}
+thm pair.eq.2(set s0, set s1, set s2, set s3) {
+  |- eq(s0,s1)
+  -| eq(s2,s3)
+  -| eq(pair(s2,s0), pair(s3,s1))
+} = {
+  pair.eq.1(s0, s1, s2, s3)
+  eq.trans2.i(pair(s0,s2), pair(s1,s3), pair(s2,s0))
+  pair.comm(s0, s2)
+  eq.trans2.i(pair(s2,s0), pair(s1,s3), pair(s3,s1))
+  pair.comm(s3, s1)
+}
+thm pair.eq.3(set s0, set s1, set s2, set s3) {
+  |- imp(eq(s2,s3), eq(s0,s1))
+  -| eq(pair(s0,s2), pair(s1,s3))
+} = {
+  ax.mp(imp(eq(s2,s3),eq(s0,s1)), or(eq(s0,s1), eq(s0,s3)))
+  pair.eq.0(s0, s1, s3, s2)
+  or.cases(eq(s0,s1), eq(s0,s3), imp(eq(s2,s3),eq(s0,s1)))
+  ax.1(eq(s0,s1), eq(s2,s3))
+  com12(eq(s0,s3), eq(s2,s3), eq(s0,s1))
+  ax.mp(imp(eq(s2,s3),imp(eq(s0,s3),eq(s0,s1))), or(eq(s1,s0),eq(s1,s2)))
+  pair.eq.0(s1, s0, s2, s3)
+  eq.comm.i(pair(s1,s3), pair(s0,s2))
+  or.cases(eq(s1,s0), eq(s1,s2), imp(eq(s2,s3),imp(eq(s0,s3),eq(s0,s1))))
+  com12(eq(s1,s0), eq(s2,s3), imp(eq(s0,s3),eq(s0,s1)))
+  a1i(eq(s2,s3), imp(eq(s1,s0),imp(eq(s0,s3),eq(s0,s1))))
+  com12(eq(s1,s0), eq(s0,s3), eq(s0,s1))
+  a1i(eq(s0,s3), imp(eq(s1,s0),eq(s0,s1)))
+  eq.comm(s1, s0)
+  syl6(eq(s1,s2), eq(s2,s3), imp(eq(s0,s3),eq(s0,s1)), eq(s3,s1))
+  com12(eq(s1,s2), eq(s2,s3), eq(s3,s1))
+  eq.trans2(s3, s1, s0)
+  syl5(eq(s2,s3), eq(s1,s2), eq(s3,s1), eq(s2,s1))
+  eq.comm(s1, s2)
+  ax.7(s2, s3, s1)
+}
+thm pair.eq.4(set s0, set s1, set s2, set s3) {
+  |- imp(eq(s0,s1), eq(s2,s3))
+  -| eq(pair(s0,s1), pair(s2,s3))
+} = {
+  ax.mp(imp(eq(s0,s1),eq(s2,s3)), or(eq(s2,s0),eq(s2,s1)))
+  pair.eq.0(s2, s0, s1, s3)
+  eq.comm.i(pair(s2,s3), pair(s0,s1))
+  ax.mp(imp(or(eq(s2,s0),eq(s2,s1)),imp(eq(s0,s1),eq(s2,s3))), or(eq(s3,s0),eq(s3,s1)))
+  pair.eq.0(s3, s0, s1, s2)
+  eq.comm.i(pair(s3,s2), pair(s0,s1))
+  eq.trans2.i(pair(s0,s1), pair(s3,s2), pair(s2,s3))
+  pair.comm(s2, s3)
+  or.cases(eq(s3,s0), eq(s3,s1), imp(or(eq(s2,s0),eq(s2,s1)),imp(eq(s0,s1),eq(s2,s3))))
+  com12(eq(s3,s0), or(eq(s2,s0),eq(s2,s1)), imp(eq(s0,s1),eq(s2,s3)))
+  or.cases(eq(s2,s0), eq(s2,s1), imp(eq(s3,s0),imp(eq(s0,s1),eq(s2,s3))))
+  syl6(eq(s2,s0), eq(s3,s0), imp(eq(s0,s1),eq(s2,s3)), eq(s2,s3))
+  ax.1(eq(s2,s3), eq(s0,s1))
+  com12(eq(s2,s0), eq(s3,s0), eq(s2,s3))
+  syl(eq(s3,s0), imp(eq(s2,s0),eq(s2,s3)), eq(s0,s3))
+  eq.comm(s3, s0)
+  eq.trans2(s0, s3, s2)
+  syl6d(eq(s2,s1), eq(s3,s0), eq(s0,s1), eq(s2,s3), eq(s3,s1))
+  a1i(eq(s2,s1), imp(eq(s3,s0),imp(eq(s0,s1),eq(s3,s1))))
+  eq.trans3(s3, s0, s1)
+  syl5(eq(s2,s1), eq(s3,s1), eq(s2,s3), eq(s1,s3))
+  eq.comm(s3, s1)
+  eq.trans3(s2, s1, s3)
+  com12(eq(s3,s1), or(eq(s2,s0),eq(s2,s1)), imp(eq(s0,s1),eq(s2,s3)))
+  or.cases(eq(s2,s0), eq(s2,s1), imp(eq(s3,s1),imp(eq(s0,s1),eq(s2,s3))))
+  syl6(eq(s2,s1), eq(s3,s1), imp(eq(s0,s1),eq(s2,s3)), eq(s2,s3))
+  ax.1(eq(s2,s3), eq(s0,s1))
+  com12(eq(s2,s1), eq(s3,s1), eq(s2,s3))
+  syl(eq(s3,s1), imp(eq(s2,s1),eq(s2,s3)), eq(s1,s3))
+  eq.comm(s3, s1)
+  eq.trans2(s1, s3, s2)
+  syl6d(eq(s2,s0), eq(s3,s1), eq(s0,s1), eq(s2,s3), eq(s0, s3))
+  eq.trans3(s2, s0, s3)
+  a1i(eq(s2,s0), imp(eq(s3,s1),imp(eq(s0,s1),eq(s0,s3))))
+  syl(eq(s3,s1), imp(eq(s0,s1),eq(s0,s3)), eq(s1,s3))
+  eq.comm(s3, s1)
+  eq.trans2(s1, s3, s0)
+}
+thm pair.eq.pair.in.left(set s0, set s1, set s2, set s3) {
+  |- imp(eq(pair(s0,s1), pair(s2,s3)), or(eq(s0,s2), eq(s0,s3)))
+} = {
+  syl(eq(pair(s0,s1),pair(s2,s3)), or(eq(s0,s2),eq(s0,s3)), in(s0, pair(s2,s3)))
+  iff.imp.1i(in(s0,pair(s2,s3)), or(eq(s0,s2),eq(s0,s3)))
+  pair.def.3(s0, s2, s3)
+  mpd(eq(pair(s0,s1),pair(s2,s3)), in(s0,pair(s2,s3)), in(s0,pair(s0,s1)))
+  ax.9(pair(s0,s1), pair(s2,s3), s0)
+  a1i(eq(pair(s0,s1),pair(s2,s3)), in(s0,pair(s0,s1)))
+  pair.in.left(s0, s1)
+}
+thm pair.eq.pair.in.right(set s0, set s1, set s2, set s3) {
+  |- imp(eq(pair(s0,s1), pair(s2,s3)), or(eq(s1,s2), eq(s1,s3)))
+} = {
+  syl(eq(pair(s0,s1),pair(s2,s3)), or(eq(s1,s2),eq(s1,s3)), eq(pair(s1,s0), pair(s2,s3)))
+  pair.eq.pair.in.left(s1, s0, s2, s3)
+  ax.mp(imp(eq(pair(s0,s1),pair(s2,s3)),eq(pair(s1,s0),pair(s2,s3))), eq(pair(s0,s1),pair(s1,s0)))
+  pair.comm(s0, s1)
+  ax.7(pair(s0,s1), pair(s1,s0), pair(s2,s3))
+}
+
+thm pair.eq.2.d(set s0, set s1, set s2, set s3) {
+  |- imp(eq(pair(s0,s1), pair(s2,s3)), imp(eq(s0,s2),eq(s1,s3)))
+} = {
+  syl(eq(pair(s0,s1),pair(s2,s3)), imp(eq(s0,s2),eq(s1,s3)), and(or(eq(s1,s2), eq(s1,s3)), or(eq(s3,s0),eq(s3,s1))))
+  and.intro.d(eq(pair(s0,s1),pair(s2,s3)), or(eq(s1,s2),eq(s1,s3)), or(eq(s3,s0),eq(s3,s1)))
+  pair.eq.pair.in.right(s0, s1, s2, s3)
+  syl(eq(pair(s0,s1),pair(s2,s3)), or(eq(s3,s0),eq(s3,s1)), eq(pair(s2,s3),pair(s0,s1)))
+  eq.comm(pair(s0,s1), pair(s2,s3))
+  pair.eq.pair.in.right(s2, s3, s0, s1)
+  and.impo(or(eq(s1,s2),eq(s1,s3)), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s2),eq(s1,s3)))
+  or.cases(eq(s1,s2), eq(s1,s3), imp(or(eq(s3,s0),eq(s3,s1)),imp(eq(s0,s2),eq(s1,s3))))
+  com12(eq(s1,s3), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s2),eq(s1,s3)))
+  or.cases(eq(s3,s0), eq(s3,s1), imp(eq(s1,s3),imp(eq(s0,s2),eq(s1,s3))))
+  a1i(eq(s3,s1), imp(eq(s1,s3),imp(eq(s0,s2),eq(s1,s3))))
+  a1i(eq(s3,s0), imp(eq(s1,s3),imp(eq(s0,s2),eq(s1,s3))))
+  ax.1(eq(s1,s3), eq(s0,s2))
+  com12(eq(s1,s2), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s2),eq(s1,s3)))
+  or.cases(eq(s3,s0), eq(s3,s1), imp(eq(s1,s2),imp(eq(s0,s2),eq(s1,s3))))
+  com12(eq(s3,s1), eq(s1,s2), imp(eq(s0,s2),eq(s1,s3)))
+  a1i(eq(s1,s2), imp(eq(s3,s1),imp(eq(s0,s2),eq(s1,s3))))
+  com12(eq(s3,s1), eq(s0,s2), eq(s1,s3))
+  a1i(eq(s0,s2), imp(eq(s3,s1),eq(s1,s3)))
+  eq.comm(s3, s1)
+  syl6d(eq(s3,s0), eq(s1,s2), eq(s0,s2), eq(s1,s3), eq(s1,s0))
+  com12(eq(s3,s0), eq(s1,s0), eq(s1,s3))
+  eq.trans4(s0, s1, s3)
+  a1i(eq(s3,s0), imp(eq(s1,s2),imp(eq(s0,s2),eq(s1,s0))))
+  eq.trans4(s2, s1, s0)
+}
+
+thm pair.eq.4.d(set s0, set s1, set s2, set s3) {
+  |- imp(eq(pair(s0,s1), pair(s2,s3)), imp(eq(s0,s1), eq(s2,s3)))
+} = {
+  syl(eq(pair(s0,s1),pair(s2,s3)), imp(eq(s0,s1),eq(s2,s3)), and(or(eq(s2,s0), eq(s2,s1)), or(eq(s3,s0),eq(s3,s1))))
+  syl(eq(pair(s0,s1),pair(s2,s3)), and(or(eq(s2,s0),eq(s2,s1)),or(eq(s3,s0),eq(s3,s1))), eq(pair(s2,s3),pair(s0,s1)))
+  eq.comm(pair(s0,s1), pair(s2,s3))
+  and.intro.d(eq(pair(s2,s3),pair(s0,s1)), or(eq(s2,s0),eq(s2,s1)), or(eq(s3,s0),eq(s3,s1)))
+  pair.eq.pair.in.left(s2, s3, s0, s1)
+  pair.eq.pair.in.right(s2, s3, s0, s1)
+  and.impo(or(eq(s2,s0),eq(s2,s1)), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s1),eq(s2,s3)))
+  or.cases(eq(s2,s0), eq(s2,s1), imp(or(eq(s3,s0),eq(s3,s1)),imp(eq(s0,s1),eq(s2,s3))))
+  com12(eq(s2,s0), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s1),eq(s2,s3)))
+  or.cases(eq(s3,s0), eq(s3,s1), imp(eq(s2,s0),imp(eq(s0,s1),eq(s2,s3))))
+  syl6(eq(s3,s0), eq(s2,s0), imp(eq(s0,s1),eq(s2,s3)), eq(s2,s3))
+  ax.1(eq(s2,s3), eq(s0,s1))
+  com12(eq(s3,s0), eq(s2,s0), eq(s2,s3))
+  syl5(eq(s2,s0), eq(s3,s0), eq(s2,s3), eq(s0,s3))
+  eq.comm(s3, s0)
+  eq.trans3(s2, s0, s3)
+  syl6d(eq(s3,s1), eq(s2,s0), eq(s0,s1), eq(s2,s3), eq(s2,s1))
+  a1i(eq(s3,s1), imp(eq(s2,s0),imp(eq(s0,s1),eq(s2,s1))))
+  eq.trans3(s2, s0, s1)
+  syl(eq(s3,s1), imp(eq(s2,s1),eq(s2,s3)), eq(s1,s3))
+  eq.comm(s3, s1)
+  eq.trans2(s1, s3, s2)
+  com12(eq(s2,s1), or(eq(s3,s0),eq(s3,s1)), imp(eq(s0,s1),eq(s2,s3)))
+  or.cases(eq(s3,s0), eq(s3,s1), imp(eq(s2,s1),imp(eq(s0,s1),eq(s2,s3))))
+  syl6(eq(s3,s1), eq(s2,s1), imp(eq(s0,s1),eq(s2,s3)), eq(s2,s3))
+  syl(eq(s3,s1), imp(eq(s2,s1),eq(s2,s3)), eq(s1,s3))
+  eq.comm(s3, s1)
+  eq.trans2(s1, s3, s2)
+  ax.1(eq(s2,s3), eq(s0,s1))
+  syl6d(eq(s3,s0), eq(s2,s1), eq(s0,s1), eq(s2,s3), eq(s2, s0))
+  a1i(eq(s3,s0), imp(eq(s2,s1),imp(eq(s0,s1),eq(s2,s0))))
+  eq.trans4(s1, s2, s0)
+  com12(eq(s3,s0), eq(s2,s0), eq(s2,s3))
+  eq.trans4(s0, s2, s3)
+}
+
+thm pair.eq.5(set s0, set s1, set s2, set s3) {
+  |- or(and(eq(s0,s1),eq(s2,s3)), and(eq(s0,s3), eq(s1,s2)))
+  -| eq(pair(s0, s2), pair(s1, s3))
+} = {
+  ax.mp(or(and(eq(s0,s1),eq(s2,s3)),and(eq(s0,s3),eq(s1,s2))), or(eq(s0,s1),not(eq(s0,s1))))
+  or.not(eq(s0,s1))
+  or.cases(eq(s0,s1), not(eq(s0,s1)), or(and(eq(s0,s1),eq(s2,s3)),and(eq(s0,s3),eq(s1,s2))))
+  syl(eq(s0,s1), or(and(eq(s0,s1),eq(s2,s3)),and(eq(s0,s3),eq(s1,s2))), and(eq(s0,s1),eq(s2,s3)))
+  or.left(and(eq(s0,s1),eq(s2,s3)), and(eq(s0,s3),eq(s1,s2)))
+  and.intro.d(eq(s0,s1), eq(s0,s1), eq(s2,s3))
+  id(eq(s0,s1))
+  pair.eq.3(s2, s3, s0, s1)
+  eq.trans2.i(pair(s2,s0), pair(s3,s1), pair(s0,s2))
+  pair.comm(s2, s0)
+  eq.trans2.i(pair(s0,s2), pair(s3,s1), pair(s1,s3))
+  pair.comm(s1, s3)
+  syl(not(eq(s0,s1)), or(and(eq(s0,s1),eq(s2,s3)),and(eq(s0,s3),eq(s1,s2))), and(eq(s0,s3),eq(s1,s2)))
+  or.right(and(eq(s0,s1),eq(s2,s3)), and(eq(s0,s3),eq(s1,s2)))
+  ax.mp(imp(not(eq(s0,s1)),and(eq(s0,s3),eq(s1,s2))), or(eq(s0,s1),eq(s0,s3)))
+  pair.eq.0(s0, s1, s3, s2)
+  or.cases(eq(s0,s1), eq(s0,s3), imp(not(eq(s0,s1)),and(eq(s0,s3),eq(s1,s2))))
+  absurd.2(eq(s0,s1), and(eq(s0,s3),eq(s1,s2)))
+  com12(eq(s0,s3), not(eq(s0,s1)), and(eq(s0,s3),eq(s1,s2)))
+  a1i(not(eq(s0,s1)), imp(eq(s0,s3),and(eq(s0,s3),eq(s1,s2))))
+  and.intro.d(eq(s0,s3), eq(s0,s3), eq(s1,s2))
+  id(eq(s0,s3))
+  syl(eq(s0,s3), eq(s1,s2), eq(s2,s1))
+  eq.comm(s2, s1)
+  pair.eq.3(s2, s1, s0, s3)
+  eq.trans2.i(pair(s2,s0), pair(s1,s3), pair(s0, s2))
+  pair.comm(s2, s0)
+}
+
+thm opair.def.2(set s0, set s1, set s2, set s3) {
+  |- eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
+  -| eq(opair(s0,s1), opair(s2,s3))
+} = {
+  eq.trans2.i(pair(singleton(s0),pair(s0,s1)), pair(singleton(s2),pair(s2,s3)), opair(s0,s1))
+  eq.comm.i(pair(singleton(s0),pair(s0,s1)), opair(s0,s1))
+  opair.def(s0, s1)
+  eq.trans2.i(opair(s0,s1), pair(singleton(s2),pair(s2,s3)), opair(s2,s3))
+  opair.def(s2, s3)
+}
+
+thm opair.eq.1(set s0, set s1, set s2, set s3) {
+  |- eq(s0, s2)
+  -| eq(opair(s0, s1), opair(s2, s3))
+} = {
+  ax.mp(eq(s0,s2), 
+    or(and(eq(singleton(s0), singleton(s2)), eq(pair(s0,s1), pair(s2,s3))),
+      and(eq(singleton(s0), pair(s2,s3)), eq(singleton(s2), pair(s0,s1))),
+    )
+  )
+  pair.eq.5(singleton(s0),singleton(s2),pair(s0,s1),pair(s2,s3))
+  opair.def.2(s0, s1, s2, s3)
+  or.cases(and(eq(singleton(s0),singleton(s2)),eq(pair(s0,s1),pair(s2,s3))), and(eq(singleton(s0),pair(s2,s3)),eq(singleton(s2),pair(s0,s1))), eq(s0,s2))
+  and.impo(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s0,s2))
+  a1d(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s0,s2))
+  singleton.eq(s0, s2)
+  and.impo(eq(singleton(s0),pair(s2,s3)), eq(singleton(s2),pair(s0,s1)), eq(s0,s2))
+  a1d(eq(singleton(s0),pair(s2,s3)), eq(singleton(s2),pair(s0,s1)), eq(s0,s2))
+  syl(eq(singleton(s0),pair(s2,s3)), eq(s0,s2), in(s2, singleton(s0)))
+  syl(in(s2,singleton(s0)), eq(s0,s2), eq(s2,s0))
+  eq.comm(s2, s0)
+  iff.imp.1i(in(s2,singleton(s0)), eq(s2,s0))
+  singleton.def.2(s2, s0)
+  syl(eq(singleton(s0),pair(s2,s3)), in(s2,singleton(s0)), eq(pair(s2,s3),singleton(s0)))
+  eq.comm(singleton(s0), pair(s2,s3))
+  ax.mp(imp(eq(pair(s2,s3),singleton(s0)),in(s2,singleton(s0))), in(s2,pair(s2,s3)))
+  pair.in.left(s2, s3)
+  com12(in(s2,pair(s2,s3)), eq(pair(s2,s3),singleton(s0)), in(s2,singleton(s0)))
+  ax.9(pair(s2,s3), singleton(s0), s2)
+}
+
+thm opair.eq.2(set s0, set s1, set s2, set s3) {
+  |- eq(s1, s3)
+  -| eq(opair(s0, s1), opair(s2, s3))
+} = {
+  ax.mp(eq(s1,s3), 
+    or(and(eq(singleton(s0), singleton(s2)), eq(pair(s0,s1), pair(s2,s3))),
+      and(eq(singleton(s0), pair(s2,s3)), eq(singleton(s2), pair(s0,s1))),
+    )
+  )
+  pair.eq.5(singleton(s0),singleton(s2),pair(s0,s1),pair(s2,s3))
+  or.cases(and(eq(singleton(s0),singleton(s2)),eq(pair(s0,s1),pair(s2,s3))), and(eq(singleton(s0),pair(s2,s3)),eq(singleton(s2),pair(s0,s1))), eq(s1,s3))
+  opair.def.2(s0, s1, s2, s3)
+  and.impo(eq(singleton(s0),pair(s2,s3)), eq(singleton(s2),pair(s0,s1)), eq(s1,s3))
+  syl(eq(singleton(s0),pair(s2,s3)), imp(eq(singleton(s2),pair(s0,s1)),eq(s1,s3)), eq(s2,s3))
+  singleton.eq.pair.pair.d(s0, s2, s3)
+  syl5(eq(s2,s3), eq(singleton(s2),pair(s0,s1)), eq(s1,s3), eq(s2,s1))
+  singleton.eq.pair.right.d(s2, s0, s1)
+  com12(eq(s2,s3), eq(s2,s1), eq(s1,s3))
+  ax.7(s2, s1, s3)
+  and.impo(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s1,s3))
+  syl(eq(singleton(s0),singleton(s2)), imp(eq(pair(s0,s1),pair(s2,s3)),eq(s1,s3)), eq(s0,s2))
+  singleton.eq(s0, s2)
+  com12(eq(s0,s2), eq(pair(s0,s1),pair(s2,s3)), eq(s1,s3))
+  pair.eq.2.d(s0, s1, s2, s3)
 }
