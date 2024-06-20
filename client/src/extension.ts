@@ -33,7 +33,7 @@ export function activate(context: ExtensionContext) {
       textDocument: { uri: editor.document.uri.toString() },
       position: position,
     });
-    if (response === undefined || response.contents.length === 0) {
+    if (response === undefined) {
       editor.setDecorations(decorationType, []);
     }
     const contents = response.contents;

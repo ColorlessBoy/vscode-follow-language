@@ -60,7 +60,7 @@ axiom ax.4(set s0, prop p1, prop p2) {
 }
 axiom ax.5(set s0, prop p1) {
   |- imp(p1, forall(s0, p1))
-  diff s0 p1
+  diff (s0, p1)
 }
 axiom exist.def(set s0, prop p1) { |- iff(exist(s0, p1), not(forall(s0, not(p1)))) }
 axiom ax.6(set s0, set s1) { |- exist(s0, eq(s0, s1)) }
@@ -86,9 +86,7 @@ axiom neq.def(set s0, set s1) {
 term prop subs(set t, set s, prop p) { ([ t / s ] p) } 
 axiom subs.def(set t, set s, prop p, set hs) {
   |- iff(subs(t, s, p), forall(hs, imp(eq(hs, t), forall(s, imp(eq(s, hs), p)))))
-  diff hs t
-  diff hs s
-  diff hs p
+  diff (hs t) (hs s) (hs p)
 }
 
 // abstraction
@@ -99,7 +97,7 @@ axiom abs.def(set s0, set s1, prop p1) {
 }
 axiom zfc.ax.ext(set s0, set s1, set s2) {
   |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
-  diff s0 s1 s2
+  diff (s0, s1, s2)
 }
 axiom ax.8(set s0, set s1, set s2) {
   |- imp(eq(s0, s1), imp(in(s0, s2), in(s1, s2)))

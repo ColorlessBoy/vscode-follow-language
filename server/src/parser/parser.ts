@@ -320,38 +320,15 @@ export class Parser {
           }
         }
       } else {
-        const s: Set<string> = new Set();
-        const tmp: Token[] = [];
-        for (const word of stmt.slice(1)) {
-          if (word.type !== TokenTypes.WORD) {
-            this.errors.push({
-              type: ErrorTypes.DiffNotWord,
-              token: word,
-            });
-          } else if (s.has(word.content)) {
-            this.errors.push({
-              type: ErrorTypes.DupDiff,
-              token: word,
-            });
-          } else if (!paramSet.has(word.content)) {
-            // arg 的名字本来就不允许和 term 的名字一样，所以只需要限制 arg 之间就好了。
-            this.errors.push({
-              type: ErrorTypes.DiffIsNotArg,
-              token: word,
-            });
-          } else {
-            tmp.push(word);
-            s.add(word.content);
-            word.type = TokenTypes.ARGNAME;
-          }
-        }
-        if (tmp.length === 0) {
+        // parse `diff (s1, s2) (s3, s4)
+        const diffParts = this.parseDiff(stmt, paramSet);
+        if (diffParts.length === 0) {
           this.errors.push({
             type: ErrorTypes.EmptyBodyStmt,
             token: stmt[0],
           });
         } else {
-          diffs.push(tmp);
+          diffs.push(...diffParts);
         }
       }
     }
@@ -360,6 +337,48 @@ export class Parser {
       assumptions: assumptions,
       diffs: diffs,
     };
+  }
+  private parseDiff(tokens: Token[], paramSet: Set<string>): Token[][] {
+    const parts: Token[][] = [];
+    for (const token of tokens) {
+      if (token.content === '(') {
+        parts.push([]);
+        continue;
+      } else if (token.type === TokenTypes.WORD) {
+        if (!paramSet.has(token.content)) {
+          // arg 的名字本来就不允许和 term 的名字一样，所以只需要限制 arg 之间就好了。
+          this.errors.push({
+            type: ErrorTypes.DiffIsNotArg,
+            token: token,
+          });
+        } else {
+          const last = parts.at(-1);
+          if (last) {
+            const same = last.filter((t) => t.content === token.content);
+            if (same.length > 0) {
+              this.errors.push({
+                type: ErrorTypes.DupDiff,
+                token: token,
+              });
+            } else {
+              last.push(token);
+            }
+          } else {
+            parts.push([token]);
+          }
+        }
+      }
+    }
+    parts
+      .filter((part) => part.length === 1)
+      .forEach((part) => {
+        const token = part[0];
+        this.errors.push({
+          type: ErrorTypes.SingleDiff,
+          token: token,
+        });
+      });
+    return parts.filter((part) => part.length > 1);
   }
   private parseOpNode(tokens: Token[]): OpAstNode[] {
     let stack: (Token | OpAstNode)[] = [];

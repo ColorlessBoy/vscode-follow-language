@@ -315,6 +315,8 @@ function getErrorMsg(errorType: ErrorTypes): string {
       return 'EmptyBodyStmt';
     case ErrorTypes.DupDiff:
       return 'DupDiff';
+    case ErrorTypes.SingleDiff:
+      return 'SingleDiff';
     case ErrorTypes.DiffNotWord:
       return 'DiffNotWord';
     case ErrorTypes.TargetMissing:

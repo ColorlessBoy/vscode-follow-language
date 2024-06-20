@@ -8,6 +8,7 @@
     "iff.fol",
     "forall.fol",
     "exist.fol",
+    "eq.fol",
     "zfc-extensionality.fol"
   ]
 }

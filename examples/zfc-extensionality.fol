@@ -2,7 +2,7 @@
 
 thm zfc.ext2(set s0, set s1, set s2) {
   |- exist(s0, imp(iff(in(s0, s1), in(s0, s2)), eq(s1, s2)))
-  diff s0 s1 s2
+  diff (s0 s1 s2)
 } = {
   forall.exist.then.existimp.i(s0, iff(in(s0,s1),in(s0,s2)), eq(s1,s2))
   syl(forall(s0,iff(in(s0,s1),in(s0,s2))), exist(s0,eq(s1,s2)), eq(s1, s2))
@@ -40,8 +40,7 @@ thm iff.ax9.i(set s0, set s1, set s2) {
 
 thm zfc.ext3(set s0, set s1, set s2) {
   |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
-  diff s0 s1
-  diff s0 s2
+  diff (s0 s1) (s0 s2)
 } = {
   ax.mp(imp(forall(s0,iff(in(s0,s1),in(s0,s2))),eq(s1,s2)), exist(hs0, eq(hs0, s1)))
   ax.6(hs0, s1)
@@ -61,8 +60,7 @@ thm zfc.ext3(set s0, set s1, set s2) {
 thm zfc.ext.i(set s0, set s1, set s2) {
   |- eq(s0, s1)
   -| iff(in(s2, s0), in(s2, s1))
-  diff s2 s0
-  diff s2 s1
+  diff (s2 s0) (s2 s1)
 } = {
   ax.mp(eq(s0,s1), forall(s2, iff(in(s2, s0), in(s2, s1))))
   ax.gen(s2, iff(in(s2,s0),in(s2,s1)))
