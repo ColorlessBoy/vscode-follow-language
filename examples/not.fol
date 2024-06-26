@@ -57,6 +57,13 @@ thm notnot.2(prop p1) {
   a3i(p1, not(not(p1)))
   notnot.1(not(p1))
 }
+thm notnot.i(prop p1) {
+  |- not(not(p1))
+  -| p1
+} = {
+  ax.mp(not(not(p1)), p1)
+  notnot.2(p1)
+}
 
 thm contra.1(prop p1, prop p2) {
   |- imp( imp(not(p1),p2), imp(not(p2), p1) )
@@ -144,6 +151,17 @@ thm contra.4d(prop p1, prop p2, prop p3) {
   syl(p1, imp(p2,p3), imp(not(p3), not(p2)))
   contra.4(p2, p3)
 }
+thm contra(prop p1, prop p2) {
+  |- imp(imp(p1, p2), imp(not(p2), not(p1)))
+  |- imp(imp(not(p1), not(p2)), imp(p2, p1))
+  |- imp(imp(p1, not(p2)), imp(p2, not(p1)))
+  |- imp(imp(not(p1), p2), imp(not(p2), p1))
+} = {
+  contra.1(p1, p2)
+  contra.2(p1, p2)
+  contra.3(p1, p2)
+  contra.4(p2, p1)
+}
 thm absurd.1d(prop p1, prop p2, prop p3) {
   |- imp(p1, p2)
   -| imp(p1, imp(p3, p2))
@@ -163,4 +181,26 @@ thm ja(prop p1, prop p2, prop p3) {
   absurd.1d(imp(p1,p2), p3, p1)
   a1i(imp(p1,p2), imp(not(p1),p3))
   syl.d.1(p1, p2, p3)
+}
+
+thm contradiction(prop p0, prop p1) {
+  |- not(p0)
+  -| imp(p0, p1)
+  -| imp(p0, not(p1))
+} = {
+  ax.mp(not(p0), imp(p0,p1))
+  ja(p0, p1, not(p0))
+  id(not(p0))
+  contra.2i(p1, p0)
+}
+
+thm not.imp.left(prop p0, prop p1, prop p2) {
+    |- not(imp(p0, p1))
+    -| not(imp(p2, p1))
+    -| imp(p2, p0)
+} = {
+    ax.mp(not(imp(p0,p1)), not(imp(p2, p1)))
+    contra.3i(imp(p2,p1), imp(p0,p1))
+    ax.mp(imp(imp(p0,p1),imp(p2,p1)), imp(p2,p0))
+    imp.trans.1(p2, p0, p1)
 }

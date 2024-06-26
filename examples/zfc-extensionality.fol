@@ -67,7 +67,7 @@ thm zfc.ext.i(set s0, set s1, set s2) {
   zfc.ext3(s2, s0, s1)
 }
 
-thm singleton.eq.pair(set s0) {
+thm singleton.eq.pair.same(set s0) {
   |- eq(singleton(s0), pair(s0, s0))
 } = {
   zfc.ext.i(singleton(s0), pair(s0,s0), hs0)
@@ -235,6 +235,36 @@ thm singleton.eq.pair.pair.d(set s0, set s1, set s2) {
   and.impo(eq(s0,s1), eq(s0,s2), eq(s1,s2))
   ax.7(s0, s1, s2)
 }
+thm singleton.eq.pair.mpr(set s0, set s1, set s2) {
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s0, s1))
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s0, s2))
+  |- imp(eq(singleton(s0), pair(s1, s2)), eq(s1, s2))
+} = {
+  singleton.eq.pair.left.d(s0, s1, s2)
+  singleton.eq.pair.right.d(s0, s1, s2)
+  singleton.eq.pair.pair.d(s0, s1, s2)
+}
+thm singleton.eq.pair.mp(set s0, set s1, set s2) {
+  |- eq(singleton(s0), pair(s1, s2))
+  -| eq(s0,s1)
+  -| eq(s0,s2)
+} = {
+  zfc.ext.i(singleton(s0), pair(s1,s2), hs0)
+  iff.syl(in(hs0,singleton(s0)), in(hs0,pair(s1,s2)), or(eq(hs0,s1),eq(hs0,s2)))
+  iff.comm(or(eq(hs0,s1),eq(hs0,s2)), in(hs0,pair(s1,s2)))
+  pair.def.3(hs0, s1, s2)
+  iff.syl(in(hs0,singleton(s0)), or(eq(hs0,s1),eq(hs0,s2)), eq(hs0,s0))
+  singleton.def.2(hs0, s0)
+  iff.intro(eq(hs0,s0), or(eq(hs0,s1),eq(hs0,s2)))
+  or.cases(eq(hs0,s1), eq(hs0,s2), eq(hs0,s0))
+  syl(eq(hs0,s0), or(eq(hs0,s1),eq(hs0,s2)), eq(hs0,s1))
+  or.left(eq(hs0,s1), eq(hs0,s2))
+  ax.mp(imp(eq(hs0,s0),eq(hs0,s1)), eq(s0,s1))
+  ax.mp(imp(eq(hs0,s1),eq(hs0,s0)), eq(s0,s1))
+  ax.mp(imp(eq(hs0,s2),eq(hs0,s0)), eq(s0,s2))
+  eq.trans(s0, s1, hs0)
+  eq.trans(s0, s2, hs0)
+}
 
 thm pair.eq.0(set s0, set s1, set s2, set s3) {
   |- or(eq(s0,s1), eq(s0,s2))
@@ -394,9 +424,9 @@ thm pair.eq.2.d(set s0, set s1, set s2, set s3) {
   eq.comm(s3, s1)
   syl6d(eq(s3,s0), eq(s1,s2), eq(s0,s2), eq(s1,s3), eq(s1,s0))
   com12(eq(s3,s0), eq(s1,s0), eq(s1,s3))
-  eq.trans4(s0, s1, s3)
+  eq.trans4(s1, s0, s3)
   a1i(eq(s3,s0), imp(eq(s1,s2),imp(eq(s0,s2),eq(s1,s0))))
-  eq.trans4(s2, s1, s0)
+  eq.trans4(s1, s2, s0)
 }
 
 thm pair.eq.4.d(set s0, set s1, set s2, set s3) {
@@ -433,9 +463,9 @@ thm pair.eq.4.d(set s0, set s1, set s2, set s3) {
   ax.1(eq(s2,s3), eq(s0,s1))
   syl6d(eq(s3,s0), eq(s2,s1), eq(s0,s1), eq(s2,s3), eq(s2, s0))
   a1i(eq(s3,s0), imp(eq(s2,s1),imp(eq(s0,s1),eq(s2,s0))))
-  eq.trans4(s1, s2, s0)
+  eq.trans4(s2, s1, s0)
   com12(eq(s3,s0), eq(s2,s0), eq(s2,s3))
-  eq.trans4(s0, s2, s3)
+  eq.trans4(s2, s0, s3)
 }
 
 thm pair.eq.5(set s0, set s1, set s2, set s3) {

@@ -1,5 +1,5 @@
-import { Parser } from './parser';
-import { Scanner } from './scanner';
+import { Parser } from "./parser";
+import { Scanner } from "./scanner";
 import {
   ASTNode,
   AxiomASTNode,
@@ -22,13 +22,17 @@ import {
   ProofOpCNode,
   ThmCNode,
   TokenTypes,
-} from './types';
+} from "./types";
 
 export class Compiler {
   public cNodeList: CNode[] = [];
   public cNodeMap: Map<string, CNode> = new Map();
   public errors: Error[] = [];
   public tokens: Token[] = [];
+  constructor(
+    public outerGetDefinition?:
+      ((name: string) => CNode | undefined)
+  ) {}
   public compileCode(code: string) {
     const scanner = new Scanner();
     const parser = new Parser();
@@ -105,7 +109,7 @@ export class Compiler {
         const last = content.pop();
         if (last === undefined) {
           content.push(token.content);
-        } else if (typeof last === 'string') {
+        } else if (typeof last === "string") {
           content.push(last + token.content);
         } else {
           content.push(last, token.content);
@@ -229,36 +233,15 @@ export class Compiler {
       const proofOpCNode = this.compileProofOpNode(opNode, argDefMap);
       if (proofOpCNode) {
         proofs.push(proofOpCNode);
-        // check diff
-        const diffError: string[] = [];
-        for (const item of proofOpCNode.diffs) {
-          const bodyDiff = diffMap.get(item[0]);
-          if (bodyDiff === undefined) {
-            this.errors.push({
-              type: ErrorTypes.ProofDiffError,
-              token: proofOpCNode.root,
-            });
-            for (const v of item[1]) {
-              diffError.push(item[0], ',', v);
-            }
-            break;
-          }
-          for (const v of item[1]) {
-            if (!bodyDiff.has(v)) {
-              this.errors.push({
-                type: ErrorTypes.ProofDiffError,
-                token: proofOpCNode.root,
-              });
-              diffError.push(item[0], ',', v);
-              break;
-            }
-          }
-        }
-        proofOpCNode.diffError = diffError;
       }
     }
 
-    const { processes, suggestions } = this.getProofProcess(targets, proofs, assumptions);
+    const { processes, suggestions } = this.getProofProcess(
+      targets,
+      proofs,
+      assumptions,
+      diffMap
+    );
     const thmCNode: ThmCNode = {
       cnodetype: CNodeTypes.THM,
       astNode: node,
@@ -289,12 +272,22 @@ export class Compiler {
     }
     return false;
   }
-  private getProofProcess(targets: TermOpCNode[], proofs: ProofOpCNode[], assumptions: TermOpCNode[]) {
+  private getProofProcess(
+    targets: TermOpCNode[],
+    proofs: ProofOpCNode[],
+    assumptions: TermOpCNode[],
+    diffMap: Map<string, Set<string>>,
+  ) {
     const processes: TermOpCNode[][] = [];
     const suggestions: Map<string, TermOpCNode>[][] = [];
     const assumptionSet: Set<string> = new Set(assumptions.map((ass) => ass.funContent));
     let currentTarget = [...targets];
+    let currentDiffMap: Map<string, Set<string>> = new Map();
+    for (const item of diffMap) {
+      currentDiffMap.set(item[0], new Set(item[1]));
+    }
     for (const proof of proofs) {
+      // check target
       const nextTarget = this.getNextProof0(currentTarget, proof, assumptionSet);
       if (nextTarget === undefined) {
         this.errors.push({
@@ -311,9 +304,52 @@ export class Compiler {
         } else {
           suggestions.push([]);
         }
+        // check diff
+        proof.diffError = this.checkDiffCondition(proof.root, currentDiffMap, proof.diffs);
+        for (const item of proof.diffs) {
+          const currentSet = currentDiffMap.get(item[0]);
+          if (currentSet === undefined) {
+            currentDiffMap.set(item[0], new Set(item[1]));
+          } else {
+            item[1].forEach((s) => {
+              currentSet.add(s);
+            });
+          }
+        }
       }
     }
     return { processes, suggestions };
+  }
+  private checkDiffCondition(
+    root: Token,
+    targetDiffMap: Map<string, Set<string>>,
+    newDiffMap: Map<string, Set<string>>,
+  ) {
+    const diffError: string[] = [];
+    for (const item of newDiffMap) {
+      const bodyDiff = targetDiffMap.get(item[0]);
+      if (bodyDiff === undefined) {
+        this.errors.push({
+          type: ErrorTypes.ProofDiffError,
+          token: root,
+        });
+        for (const v of item[1]) {
+          diffError.push(item[0], ',', v);
+        }
+        break;
+      }
+      for (const v of item[1]) {
+        if (!bodyDiff.has(v)) {
+          this.errors.push({
+            type: ErrorTypes.ProofDiffError,
+            token: root,
+          });
+          diffError.push(item[0], ',', v);
+          break;
+        }
+      }
+    }
+    return diffError;
   }
   private getSuggestion2(proof: ProofOpCNode): Map<string, TermOpCNode> {
     const suggestions: Map<string, TermOpCNode> = new Map();
@@ -324,7 +360,10 @@ export class Compiler {
     }
     return suggestions;
   }
-  private getSuggestions(targets: TermOpCNode[], proof: ProofOpCNode): Map<string, TermOpCNode>[] {
+  private getSuggestions(
+    targets: TermOpCNode[],
+    proof: ProofOpCNode
+  ): Map<string, TermOpCNode>[] {
     const suggestions: Map<string, TermOpCNode>[] = [];
     for (const current of proof.targets) {
       for (const target of targets) {
@@ -336,7 +375,10 @@ export class Compiler {
     }
     return suggestions;
   }
-  private matchTermOpCNode(current: TermOpCNode, target: TermOpCNode): Map<string, TermOpCNode> | undefined {
+  private matchTermOpCNode(
+    current: TermOpCNode,
+    target: TermOpCNode
+  ): Map<string, TermOpCNode> | undefined {
     const pairStack: [TermOpCNode, TermOpCNode][] = [[current, target]];
     const suggestArgMap: Map<string, TermOpCNode> = new Map();
     while (pairStack.length > 0) {
@@ -364,8 +406,10 @@ export class Compiler {
     }
     return suggestArgMap;
   }
-  private getNextProof0(targets: TermOpCNode[], proof: ProofOpCNode,
-    assumptionSet: Set<string>,
+  private getNextProof0(
+    targets: TermOpCNode[],
+    proof: ProofOpCNode,
+    assumptionSet: Set<string>
   ): TermOpCNode[] | undefined {
     const proofTargetSet = new Set(proof.targets.map((e) => e.funContent));
     const nextTargets: TermOpCNode[] = [];
@@ -391,12 +435,27 @@ export class Compiler {
     }
     return nextTargets;
   }
-  private compileProofOpNode(opNode: OpAstNode, blockArgDefMap: Map<string, ParamPair>): ProofOpCNode | undefined {
+
+  private getDefinition(name: string): CNode | undefined {
+    let definition = this.cNodeMap.get(name);
+    if (definition) {
+      return definition;
+    }
+    if (this.outerGetDefinition) {
+      definition = this.outerGetDefinition(name);
+    }
+    return definition;
+  }
+  private compileProofOpNode(
+    opNode: OpAstNode,
+    blockArgDefMap: Map<string, ParamPair>
+  ): ProofOpCNode | undefined {
     const root = opNode.root;
-    const definition = this.cNodeMap.get(root.content);
+    const definition = this.getDefinition(root.content);
     if (
       definition === undefined ||
-      (definition.cnodetype !== CNodeTypes.AXIOM && definition.cnodetype !== CNodeTypes.THM)
+      (definition.cnodetype !== CNodeTypes.AXIOM &&
+        definition.cnodetype !== CNodeTypes.THM)
     ) {
       this.errors.push({
         type: ErrorTypes.AxiomThmDefMissing,
@@ -419,13 +478,15 @@ export class Compiler {
         });
       }
     }
-    if(definition2.cnodetype === CNodeTypes.AXIOM) {
+    if (definition2.cnodetype === CNodeTypes.AXIOM) {
       root.type = TokenTypes.AXIOMNAME;
     } else {
       root.type = TokenTypes.THMNAME;
     }
 
-    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) => this.compileTermOpNode(c, blockArgDefMap));
+    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) =>
+      this.compileTermOpNode(c, blockArgDefMap)
+    );
     const argMap: Map<string, TermOpCNode> = new Map();
     let useVirtual = false;
     for (let idx = 0; idx < wantArgs.length; idx++) {
@@ -460,8 +521,12 @@ export class Compiler {
       }
     }
 
-    const targets = definition2.targets.map((e) => this.replaceTermOpCNode(e, argMap));
-    const assumptions = definition2.assumptions.map((e) => this.replaceTermOpCNode(e, argMap));
+    const targets = definition2.targets.map((e) =>
+      this.replaceTermOpCNode(e, argMap)
+    );
+    const assumptions = definition2.assumptions.map((e) =>
+      this.replaceTermOpCNode(e, argMap)
+    );
     const blockArgSet: Set<string> = new Set();
     blockArgDefMap.forEach((pair) => blockArgSet.add(pair.name.content));
     const diffs = this.replaceDiffs(definition2.diffArray, argMap, blockArgSet);
@@ -481,7 +546,7 @@ export class Compiler {
   private replaceDiffs(
     diffs: string[][],
     argMap: Map<string, TermOpCNode>,
-    blockArgSet: Set<string>,
+    blockArgSet: Set<string>
   ): Map<string, Set<string>> {
     if (diffs.length === 0) {
       return new Map();
@@ -508,7 +573,7 @@ export class Compiler {
     for (const diffArray of rst) {
       for (let i = 0; i < diffArray.length - 1; i++) {
         const mapi = diffArray[i];
-        for (let j = 1; j < diffArray.length; j++) {
+        for (let j = i + 1; j < diffArray.length; j++) {
           const mapj = diffArray[j];
           for (const mi of mapi) {
             for (const mj of mapj) {
@@ -576,7 +641,10 @@ export class Compiler {
     }
     return rst;
   }
-  private replaceTermOpCNode(cNode: TermOpCNode, argMap: Map<string, TermOpCNode>): TermOpCNode {
+  private replaceTermOpCNode(
+    cNode: TermOpCNode,
+    argMap: Map<string, TermOpCNode>
+  ): TermOpCNode {
     const root = cNode.root;
     const definition = cNode.definition;
 
@@ -585,7 +653,9 @@ export class Compiler {
       // argument
       return termOpCNode;
     }
-    const children = cNode.children.map((e) => this.replaceTermOpCNode(e, argMap));
+    const children = cNode.children.map((e) =>
+      this.replaceTermOpCNode(e, argMap)
+    );
     const definition2 = definition as TermCNode;
     const opCNode: TermOpCNode = {
       root: root,
@@ -598,7 +668,10 @@ export class Compiler {
     };
     return opCNode;
   }
-  private compileTermOpNode(opNode: OpAstNode, argDefMap: Map<string, ParamPair>): TermOpCNode | undefined {
+  private compileTermOpNode(
+    opNode: OpAstNode,
+    argDefMap: Map<string, ParamPair>
+  ): TermOpCNode | undefined {
     const root = opNode.root;
     // arg
     const argDef = argDefMap.get(root.content);
@@ -623,7 +696,7 @@ export class Compiler {
       return opCNode;
     }
     // term
-    const definition = this.cNodeMap.get(root.content);
+    const definition = this.getDefinition(root.content);
     if (definition === undefined || definition.cnodetype !== CNodeTypes.TERM) {
       this.errors.push({
         type: ErrorTypes.TermDefMissing,
@@ -647,12 +720,14 @@ export class Compiler {
       }
       return;
     }
-    if(wantArgs.length === 0) {
+    if (wantArgs.length === 0) {
       root.type = TokenTypes.CONSTNAME;
     } else {
       root.type = TokenTypes.TERMNAME;
     }
-    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) => this.compileTermOpNode(c, argDefMap));
+    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) =>
+      this.compileTermOpNode(c, argDefMap)
+    );
     for (let idx = 0; idx < children.length; idx++) {
       const opCNode = children[idx];
       const wantArg = wantArgs[idx];
@@ -676,10 +751,10 @@ export class Compiler {
     return opCNode;
   }
   private getTermContent(term: TermCNode, children: TermOpCNode[]): string {
-    let s: string = '';
+    let s: string = "";
     for (let i = 0; i < term.content.length; i++) {
       const word = term.content[i];
-      if (typeof word === 'string') {
+      if (typeof word === "string") {
         s += word;
       } else {
         s += children[word].termContent;
@@ -690,12 +765,12 @@ export class Compiler {
   private getFunContent(term: TermCNode, children: TermOpCNode[]): string {
     let s: string = term.astNode.name.content;
     if (children.length > 0) {
-      s += '(' + children.map((c) => c.funContent).join(',') + ')';
+      s += "(" + children.map((c) => c.funContent).join(",") + ")";
     }
     return s;
   }
   private checkTypeDef(token: Token): boolean {
-    const defToken = this.cNodeMap.get(token.content);
+    const defToken = this.getDefinition(token.content);
     if (defToken === undefined) {
       this.errors.push({
         type: ErrorTypes.TypeDefMissing,
@@ -718,12 +793,15 @@ export class Compiler {
         token: token,
       });
       return false;
-    } else if (this.cNodeMap.has(token.content)) {
-      this.errors.push({
-        type: ErrorTypes.DupName,
-        token: token,
-      });
-      return false;
+    } else {
+      const definition = this.getDefinition(token.content);
+      if (definition) {
+        this.errors.push({
+          type: ErrorTypes.DupName,
+          token: token,
+        });
+        return false;
+      }
     }
     return true;
   }

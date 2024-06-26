@@ -1,0 +1,10 @@
+
+thm emptyset.notin(set s0) {
+  |- not(in(s0, emptyset))
+} = {
+  ax.mp(not(in(s0,emptyset)), eq(s0,s0))
+  eq.id(s0)
+  contra.2i(eq(s0,s0), in(s0,emptyset))
+  iff.imp.1i(in(s0,emptyset), not(eq(s0,s0)))
+  emptyset.def(s0)
+}

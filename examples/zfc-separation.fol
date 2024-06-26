@@ -1,0 +1,15 @@
+
+thm zfc.cantor(set s0) {
+  |- not(subseteq(spower(s0), s0))
+} = {
+  ax.mp(not(subseteq(spower(s0),s0)), not(imp(in(hs0, spower(s0)), in(hs0, s0))))
+  contra.3i(imp(in(hs0,spower(s0)),in(hs0,s0)), subseteq(spower(s0),s0))
+  subseteq.def(spower(s0), s0, hs0)
+  not.imp.left(in(hs0,spower(s0)), in(hs0,s0), subseteq(hs0, s0))
+ spower.def(hs0, s0)
+ exist.contra(imp(subseteq(hs0,s0),in(hs0,s0)), in(hs1, hs1), hs1)
+ mpd(imp(subseteq(hs0,s0),in(hs0,s0)), exist(hs1,and(in(hs1,hs1),not(in(hs1,hs1)))), 
+exist(hs0, forall(hs1, iff(in(hs1, hs0), and(in(hs1, s0), not(in(hs1,hs1)))))))
+a1i(imp(subseteq(hs0,s0),in(hs0,s0)), exist(hs0,forall(hs1,iff(in(hs1,hs0),and(in(hs1,s0),not(in(hs1,hs1)))))))
+zfc.separation(hs0, hs1, s0, not(in(hs1,hs1)))
+}

@@ -79,3 +79,13 @@ thm and.intro.d(prop p1, prop p2, prop p3) {
   syl(p1, imp(p3,and(p2,p3)), p2)
   and.forintro(p2, p3)
 }
+
+thm and.not(prop p1) {
+  |- not(and(p1, not(p1)))
+} = {
+  ax.mp(not(and(p1,not(p1))), not(not(imp(p1, not(not(p1))))))
+  notnot.i(imp(p1,not(not(p1))))
+  notnot.2(p1)
+  contra.3i(not(imp(p1,not(not(p1)))), and(p1,not(p1)))
+  and.def.1(p1, not(p1))
+}

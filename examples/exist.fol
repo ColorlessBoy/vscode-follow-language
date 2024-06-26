@@ -97,7 +97,7 @@ thm forall.exist.then.existimp.i(set s0, prop p1, prop p2) {
 
 thm exist.ax5(set s0, prop p1) {
   |- imp(exist(s0, p1), p1)
-  diff s0 p1
+  diff (s0, p1)
 } = {
   syl(exist(s0,p1), p1, not(forall(s0, not(p1))))
   exist.def.1(s0, p1)
@@ -108,7 +108,7 @@ thm exist.ax5(set s0, prop p1) {
 thm exist.imp(set s0, prop p1, prop p2) {
   |- imp(exist(s0, p1), p2)
   -| imp(p1, p2)
-  diff s0 p2
+  diff (s0, p2)
 } = {
   syl(exist(s0,p1), p2, exist(s0, p2))
   forall.imp.exist.exist.i(s0, p1, p2)
@@ -187,4 +187,28 @@ thm forall.special.i(set s0, prop p0) {
 } = {
   ax.mp(p0, forall(s0, p0))
   forall.special(s0, p0)
+}
+
+thm exist.not(set s0, prop p0) {
+  |- not(exist(s0, p0))
+  -| not(p0)
+} = {
+  ax.mp(not(exist(s0,p0)), not(not(forall(s0, not(p0)))))
+  contra.3i(not(forall(s0,not(p0))), exist(s0,p0))
+  exist.def.1(s0, p0)
+  notnot.i(forall(s0,not(p0)))
+  ax.gen(s0, not(p0))
+}
+
+thm exist.contra(prop p0, prop p1, set s0) {
+  |- not(p0)
+  -| imp(p0, exist(s0, and(p1, not(p1))))
+} = {
+  ax.mp(not(p0), imp(p0, exist(s0, and(p1, not(p1)))))
+  ja(p0, exist(s0,and(p1,not(p1))), not(p0))
+  id(not(p0))
+  contra.2i(exist(s0,and(p1,not(p1))), p0)
+  a1i(p0, not(exist(s0,and(p1,not(p1)))))
+  exist.not(s0, and(p1,not(p1)))
+  and.not(p1)
 }

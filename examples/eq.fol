@@ -1,8 +1,3 @@
-// ax.7 s0=s1 -> s0=s2 -> s1=s2
-// trans2 s0=s1 -> s2=s0 -> s2=s1
-// trans3 s0=s1 -> s1=s2 -> s0=s2
-// trans4 s0=s1 -> s2=s1 -> s0=s2
-// axiom ax.7(set s0, set s1, set s2) { |- imp(eq(s0, s1), imp(eq(s0, s2), eq(s1, s2)))}
 thm eq.trans2(set s0, set s1, set s2) {
   |- imp(eq(s0, s1), imp(eq(s2,s0), eq(s2,s1)))
 } = {
@@ -27,9 +22,42 @@ thm eq.trans3(set s0, set s1, set s2) {
   eq.trans2(s1, s2, s0)
 }
 thm eq.trans4(set s0, set s1, set s2) {
-  |- imp(eq(s1,s0),imp(eq(s2,s0),eq(s1,s2)))
+  |- imp(eq(s0,s1),imp(eq(s2,s1),eq(s0,s2)))
 } = {
-  syl5(eq(s1,s0), eq(s2,s0), eq(s1,s2), eq(s0,s2))
-  eq.comm(s2, s0)
-  eq.trans3(s1, s0, s2)
+  syl5(eq(s0,s1), eq(s2,s1), eq(s0,s2), eq(s1,s2))
+  eq.comm(s2, s1)
+  eq.trans3(s0, s1, s2)
 }
+
+thm eq.trans(set s0, set s1, set s2) {
+  |- imp(eq(s0,s1), imp(eq(s0,s2), eq(s1,s2)))
+  |- imp(eq(s0,s1), imp(eq(s0,s2), eq(s2,s1)))
+  |- imp(eq(s0,s1), imp(eq(s2,s0), eq(s1,s2)))
+  |- imp(eq(s0,s1), imp(eq(s2,s0), eq(s2,s1)))
+  |- imp(eq(s0,s1), imp(eq(s1,s2), eq(s0,s2)))
+  |- imp(eq(s0,s1), imp(eq(s1,s2), eq(s2,s0)))
+  |- imp(eq(s0,s1), imp(eq(s2,s1), eq(s0,s2)))
+  |- imp(eq(s0,s1), imp(eq(s2,s1), eq(s2,s0)))
+} = {
+  syl6(eq(s0,s1), eq(s0,s2), eq(s2,s1), eq(s1,s2))
+  eq.comm(s1, s2)
+  syl5(eq(s0,s1), eq(s2,s0), eq(s1,s2), eq(s0,s2))
+  eq.comm(s2, s0)
+  ax.7(s0, s1, s2)
+  eq.trans2(s0, s1, s2))
+  syl6(eq(s0,s1), eq(s1,s2), eq(s2,s0), eq(s0,s2))
+  eq.comm(s0, s2)
+  eq.trans3(s0, s1, s2)
+  syl6(eq(s0,s1), eq(s2,s1), eq(s2,s0), eq(s0,s2))
+  eq.comm(s0, s2)
+  eq.trans4(s0, s1, s2)
+}
+
+// |- s0=s1 -> s0=s2 -> s1=s2    ax.7
+// |- s0=s1 -> s0=s2 -> s2=s1
+// |- s0=s1 -> s2=s0 -> s1=s2
+// |- s0=s1 -> s2=s0 -> s2=s1    eq.trans2
+// |- s0=s1 -> s1=s2 -> s0=s2    eq.trans3
+// |- s0=s1 -> s1=s2 -> s2=s0
+// |- s0=s1 -> s2=s1 -> s0=s2    eq.trans4
+// |- s0=s1 -> s2=s1 -> s2=s0

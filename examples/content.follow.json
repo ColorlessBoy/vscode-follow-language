@@ -9,6 +9,8 @@
     "forall.fol",
     "exist.fol",
     "eq.fol",
-    "zfc-extensionality.fol"
+    "zfc-extensionality.fol",
+    "set-operator.fol",
+    "zfc-separation.fol"
   ]
 }
