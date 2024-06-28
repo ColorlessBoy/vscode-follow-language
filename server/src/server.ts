@@ -488,7 +488,7 @@ function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position)
 
 function findProofByPosition(proof: ProofOpCNode, state: TermOpCNode[], position: Position): string {
   if (positionInRange(proof.root.range, position)) {
-    const diffStr = proof.diffError?.map((s) => 'diff(' + s + ')');
+    const diffStr = proof.diffError ? 'diff ' + proof.diffError.join(' ') : undefined;
     const assumeStr = proof.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
     const targetStr = proof.targets.map((t) => '|- ' + t.termContent).join('\n\n');
     const stateStr = state.map((e) => '? ' + e.termContent).join('\n\n');

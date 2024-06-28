@@ -5,11 +5,10 @@ thm zfc.cantor(set s0) {
   ax.mp(not(subseteq(spower(s0),s0)), not(imp(in(hs0, spower(s0)), in(hs0, s0))))
   contra.3i(imp(in(hs0,spower(s0)),in(hs0,s0)), subseteq(spower(s0),s0))
   subseteq.def(spower(s0), s0, hs0)
-  not.imp.left(in(hs0,spower(s0)), in(hs0,s0), subseteq(hs0, s0))
- spower.def(hs0, s0)
- exist.contra(imp(subseteq(hs0,s0),in(hs0,s0)), in(hs0, hs0), hs0)
- ax.mp(imp(imp(subseteq(hs0,s0),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))), 
-exist(hs1, forall(hs0, iff(in(hs0, hs1), and(in(hs0, s0), not(in(hs0,hs0)))))))
-zfc.separation(hs1, hs0, s0, not(in(hs0,hs0)))
-exist.imp(hs1, forall(hs0,iff(in(hs0,hs1),and(in(hs0,s0),not(in(hs0,hs0))))), imp(imp(subseteq(hs0,s0),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))))
+ exist.contra(imp(in(hs0,spower(s0)),in(hs0,s0)), in(hs0, hs0), hs0)
+ ax.mp(imp(imp(in(hs0,spower(s0)),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))), 
+exist(hs1, forall(hs0, iff(in(hs0, hs1), and(in(hs0, spower(s0)), not(in(hs0,hs0)))))))
+zfc.separation(hs1, hs0, spower(s0), not(in(hs0,hs0)))
+exist.imp(hs1, forall(hs0,iff(in(hs0,hs1),and(in(hs0,spower(s0)),not(in(hs0,hs0))))), imp(imp(in(hs0,spower(s0)),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))))
+
 }

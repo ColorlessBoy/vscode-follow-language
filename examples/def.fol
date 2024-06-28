@@ -80,6 +80,8 @@ term prop neq(set s0, set s1) { (s0 ≠ s1) }
 
 axiom neq.def(set s0, set s1) {
   |- iff(neq(s0, s1), not(eq(s0, s1)))
+  |- imp(neq(s0, s1), not(eq(s0, s1)))
+  |- imp(not(eq(s0, s1)), neq(s0, s1))
 }
 // [t / s] p0
 // t : target
@@ -87,6 +89,8 @@ axiom neq.def(set s0, set s1) {
 term prop subs(set t, set s, prop p) { ([ t / s ] p) } 
 axiom subs.def(set t, set s, prop p, set hs) {
   |- iff(subs(t, s, p), forall(hs, imp(eq(hs, t), forall(s, imp(eq(s, hs), p)))))
+  |- imp(subs(t, s, p), forall(hs, imp(eq(hs, t), forall(s, imp(eq(s, hs), p)))))
+  |- imp(forall(hs, imp(eq(hs, t), forall(s, imp(eq(s, hs), p)))), subs(t, s, p))
   diff (hs t) (hs s) (hs p)
 }
 
@@ -95,6 +99,8 @@ term set abs(set s0, prop p1) { {s0 | p1} }
 term prop in(set s0, set s1) { (s0 ∈ s1) }
 axiom abs.def(set s0, set s1, prop p1) {
   |- iff(in(s0, abs(s1, p1)), subs(s0, s1, p1))
+  |- imp(in(s0, abs(s1, p1)), subs(s0, s1, p1))
+  |- imp(subs(s0, s1, p1), in(s0, abs(s1, p1)))
 }
 axiom zfc.ax.ext(set s0, set s1, set s2) {
   |- imp(forall(s0, iff(in(s0, s1), in(s0, s2))), eq(s1, s2))
@@ -117,6 +123,10 @@ axiom singleton.def.1(set s0) {
 axiom singleton.def.2(set s0, set s1) {
   |- iff(in(s0, singleton(s1)), eq(s0, s1))
 }
+axiom singleton.def(set s0, set s1) {
+  |- in(s0, singleton(s0))
+  |- iff(in(s0, singleton(s1)), eq(s0, s1))
+}
 axiom pair.def.1(set s0, set s1) {
   |- in(s0, pair(s0, s1))
 }
@@ -126,6 +136,11 @@ axiom pair.def.2(set s0, set s1) {
 axiom pair.def.3(set s0, set s1, set s2) {
   |- iff(in(s0, pair(s1, s2)), or(eq(s0, s1), eq(s0, s2)))
 }
+axiom pair.def(set s0, set s1, set s2) {
+  |- in(s0, pair(s0, s1))
+  |- in(s1, pair(s0, s1))
+  |- iff(in(s0, pair(s1, s2)), or(eq(s0, s1), eq(s0, s2)))
+}
 axiom opair.def(set s0, set s1) {
   |- eq(opair(s0, s1), pair(singleton(s0), pair(s0, s1)))
 }
@@ -133,16 +148,22 @@ axiom opair.def(set s0, set s1) {
 term set sdiff(set s0, set s1) { (s0 \ s1)}
 axiom sdiff.def(set s0, set s1, set s2) {
   |- iff(in(s0, sdiff(s1, s2)), and(in(s0, s1), not(in(s0,s2))))
+  |- imp(in(s0, sdiff(s1, s2)), and(in(s0, s1), not(in(s0,s2))))
+  |- imp(and(in(s0, s1), not(in(s0,s2))), in(s0, sdiff(s1, s2)))
   diff (s0, s1) (s0, s2)
 }
 term set sunion(set s0, set s1) { (s0 ⋃ s1) }
 axiom sunion.def(set s0, set s1, set s2) {
   |- iff(in(s0, sunion(s1,s2)), or(in(s0,s1), in(s0,s2)))
+  |- imp(in(s0, sunion(s1,s2)), or(in(s0,s1), in(s0,s2)))
+  |- imp(or(in(s0,s1), in(s0,s2)), in(s0, sunion(s1,s2)))
   diff (s0, s1) (s0, s2)
 }
 term set sinter(set s0, set s1) { (s0 ⋂ s1) }
 axiom sinter.def(set s0, set s1, set s2) {
   |- iff(in(s0, sinter(s1, s2)), and(in(s0, s1), in(s0, s2)))
+  |- imp(in(s0, sinter(s1, s2)), and(in(s0, s1), in(s0, s2)))
+  |- imp(and(in(s0, s1), in(s0, s2)), in(s0, sinter(s1, s2)))
   diff (s0, s1) (s0, s2)
 }
 term prop subseteq(set s0, set s1) { (s0 ⊆ s1) }
@@ -162,6 +183,8 @@ axiom subsetne.def(set s0, set s1, set s2) {
 term set emptyset { ∅ }
 axiom emptyset.def(set s0) {
   |- iff(in(s0, emptyset), not(eq(s0, s0)))
+  |- imp(in(s0, emptyset), not(eq(s0, s0)))
+  |- imp(not(eq(s0, s0)), in(s0, emptyset))
 }
 term set spower(set s0) { 𝒫(s0)}
 axiom spower.def(set s0, set s1) {
@@ -172,6 +195,8 @@ axiom spower.def(set s0, set s1) {
 term set ssunion(set s0) { ⋃(s0) }
 axiom ssunion.def(set s0, set s1, set s2) {
   |- iff(in(s0, ssunion(s1)), exist(s2, and(in(s0, s2), in(s2, s1))))
+  |- imp(in(s0, ssunion(s1)), exist(s2, and(in(s0, s2), in(s2, s1))))
+  |- imp(exist(s2, and(in(s0, s2), in(s2, s1))), in(s0, ssunion(s1)))
   diff (s0, s1, s2)
 }
 
@@ -195,12 +220,16 @@ axiom zfc.powerset(set s0, set s1, set s2) {
 term set sprod(set s0, set s1) { (s0 ⨯ s1)}
 axiom sprod.def(set s0, set s1, set s2, set s3) {
   |- iff(in(opair(s2,s3), sprod(s0,s1)), and(in(s2,s0),in(s3,s1)))
+  |- imp(in(opair(s2,s3), sprod(s0,s1)), and(in(s2,s0),in(s3,s1)))
+  |- imp(and(in(s2,s0),in(s3,s1)), in(opair(s2,s3), sprod(s0,s1)))
   diff (s0, s2, s3) (s1, s2, s3)
 }
 
 term set mapsto(set x, set X, set Y) { (x ∈ X ↦ Y)}
 axiom mapsto.def(set x, set y, set X, set Y) {
   |- iff(in(y, mapsto(x, X, Y)), in(opair(x, y), sprod(X, Y)))
+  |- imp(in(y, mapsto(x, X, Y)), in(opair(x, y), sprod(X, Y)))
+  |- imp(in(opair(x, y), sprod(X, Y)), in(y, mapsto(x, X, Y)))
   diff (x, y) (y, X) (y, Y)
 }
 
@@ -211,15 +240,21 @@ axiom relation.def(set x, set R, set y) {
 term set relation.dom(set R) { dom(R) }
 axiom relation.dom.def(set x, set R, set y) {
   |- iff(in(x, relation.dom(R)), exist(y, in(opair(x, y), R)))
+  |- imp(in(x, relation.dom(R)), exist(y, in(opair(x, y), R)))
+  |- imp(exist(y, in(opair(x, y), R)), in(x, relation.dom(R)))
 }
 term set relation.ran(set R) { ran(R) }
 axiom relation.ran.def(set x, set R, set y) {
   |- iff(in(y, relation.ran(R)), exist(x, in(opair(x, y), R)))
+  |- imp(in(y, relation.ran(R)), exist(x, in(opair(x, y), R)))
+  |- imp(exist(x, in(opair(x, y), R)), in(y, relation.ran(R)))
 }
 
 term prop transition(set s0) { Trans(s0) }
 axiom transition.def(set s0, set s1) {
   |- iff(transition(s0), imp(in(s1,s0), subseteq(s1,s0)))
+  |- imp(transition(s0), imp(in(s1,s0), subseteq(s1,s0)))
+  |- imp(imp(in(s1,s0), subseteq(s1,s0)), transition(s0))
 }
 
 // wi(wal(s0, wex(s1, wal(s2, wi(wal(s1, w0), wceq(cv(s2), cv(s1)))))), 
