@@ -88,3 +88,73 @@ thm not.exist.universe(set s0, set s1) {
   iff.ax9(hs0, s1, hs0)
   iff.ax8(hs0, s1, s1)
 }
+
+thm subseteq.def.2(set s0, set s1, set s2) {
+  |- imp(imp(in(s0, s1), in(s0, s2)), subseteq(s1, s2))
+} = {
+  ax.mp(imp(imp(in(s0,s1),in(s0,s2)),subseteq(s1,s2)), 
+  forall(hs0, imp(imp(in(hs0, s1), in(hs0, s2)), subseteq(s1,s2)))
+)
+  ax.gen(hs0, imp(imp(in(hs0,s1),in(hs0,s2)),subseteq(s1,s2)))
+  subseteq.def(s1, s2, hs0)
+  forall.special.value(hs0, s0, imp(imp(in(hs0,s1),in(hs0,s2)),subseteq(s1,s2)), imp(imp(in(s0,s1),in(s0,s2)),subseteq(s1,s2)))
+  syl.d.2.d(eq(hs0,s0), imp(in(hs0,s1),in(hs0,s2)), imp(in(s0,s1),in(s0,s2)), subseteq(s1,s2))
+  syld(eq(hs0,s0), imp(in(s0,s1),in(s0,s2)), imp(in(hs0,s1),in(hs0,s2)), imp(in(s0,s1),in(hs0,s2)))
+  syl.d.1.d(eq(hs0,s0), in(s0,s1), in(s0,s2), in(hs0,s2))
+  syl.d.2.d(eq(hs0,s0), in(s0,s1), in(hs0,s1), in(hs0,s2))
+  ax.8(hs0, s0, s1)
+  syl(eq(hs0,s0), imp(in(s0,s2),in(hs0,s2)), eq(s0,hs0))
+  eq.comm(hs0, s0)
+  ax.8(s0, hs0, s2)
+}
+
+thm zfc.separation.subseteq.1(set s0, set s1, set s2, prop p1) {
+  |- imp(iff(in(s0, s1), and(in(s0, s2), p1)), subseteq(s1,s2))
+} = {
+  syl(iff(in(s0,s1),and(in(s0,s2),p1)), subseteq(s1,s2), imp(in(s0,s1),in(s0,s2)))
+  subseteq.def.2(s0, s1, s2)
+  syl(iff(in(s0,s1),and(in(s0,s2),p1)), imp(in(s0,s1),in(s0,s2)), imp(in(s0,s1),and(in(s0,s2),p1)))
+  iff.imp(in(s0,s1), and(in(s0,s2),p1))
+  syl.d.1(in(s0,s1), and(in(s0,s2),p1), in(s0,s2))
+  and.left(in(s0,s2), p1)
+}
+
+thm cantor(set s0) {
+  |- not(subseteq(spower(s0), s0))
+} = {
+  exist.contra(subseteq(spower(s0),s0), in(hs0,hs0), hs0)
+  ax.mp(imp(subseteq(spower(s0),s0),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))), exist(hs0, forall(hs1,iff(in(hs1,hs0), and(in(hs1,s0), not(in(hs1,hs1)))))))
+  zfc.separation(hs0, hs1, s0, not(in(hs1,hs1)))
+com12(exist(hs0,forall(hs1,iff(in(hs1,hs0),and(in(hs1,s0),not(in(hs1,hs1)))))), subseteq(spower(s0),s0), exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0)))))
+  imp.exist.imp.exist(hs0, subseteq(spower(s0),s0), forall(hs1,iff(in(hs1,hs0),and(in(hs1,s0),not(in(hs1,hs1))))), and(in(hs0,hs0),not(in(hs0,hs0))))
+  syl5(subseteq(spower(s0),s0), forall(hs1,iff(in(hs1,hs0),and(in(hs1,s0),not(in(hs1,hs1))))), and(in(hs0,hs0),not(in(hs0,hs0))), 
+  iff(in(hs0,hs0), and(in(hs0,s0), not(in(hs0,hs0))))
+  )
+  forall.special.value(hs1, hs0, iff(in(hs1,hs0),and(in(hs1,s0),not(in(hs1,hs1)))), iff(in(hs0,hs0),and(in(hs0,s0),not(in(hs0,hs0)))))
+  imp.iff.imp.iff(eq(hs1,hs0), in(hs1,hs0), and(in(hs1,s0),not(in(hs1,hs1))), in(hs0,hs0), and(in(hs0,s0),not(in(hs0,hs0))))
+  iff.ax8(hs1, hs0, hs0)
+  imp.and.iff.and(eq(hs1,hs0), in(hs1,s0), not(in(hs1,hs1)), in(hs0,s0), not(in(hs0,hs0)))
+  iff.ax8(hs1, hs0, s0)
+  iff.contra.3d(eq(hs1,hs0), in(hs1,hs1), in(hs0,hs0))  
+  iff.syld(eq(hs1,hs0), in(hs1,hs1), in(hs0,hs0), in(hs1,hs0))
+  iff.ax9(hs1, hs0, hs1)
+  iff.ax8(hs1, hs0, hs0)
+  syl(subseteq(spower(s0),s0), imp(iff(in(hs0,hs0),and(in(hs0,s0),not(in(hs0,hs0)))),and(in(hs0,hs0),not(in(hs0,hs0)))), imp(subseteq(hs0, s0), in(hs0,s0)))
+  syl(subseteq(spower(s0),s0), imp(subseteq(hs0,s0),in(hs0,s0)), imp(in(hs0,spower(s0)), in(hs0,s0)))
+  subseteq.def(spower(s0), s0, hs0)
+  syl.d.2(in(hs0,spower(s0)), subseteq(hs0,s0), in(hs0,s0))
+  spower.def(hs0, s0)
+  syl5(imp(subseteq(hs0,s0),in(hs0,s0)), iff(in(hs0,hs0),and(in(hs0,s0),not(in(hs0,hs0)))), and(in(hs0,hs0),not(in(hs0,hs0))), 
+  and(not(in(hs0,s0)), subseteq(hs0, s0))
+  )
+  and.intro.d(iff(in(hs0,hs0),and(in(hs0,s0),not(in(hs0,hs0)))), not(in(hs0,s0)), subseteq(hs0,s0))
+  iff.and.not(in(hs0,hs0), in(hs0,s0))
+ com12(imp(subseteq(hs0,s0),in(hs0,s0)), and(not(in(hs0,s0)),subseteq(hs0,s0)), and(in(hs0,hs0),not(in(hs0,hs0)))) 
+ and.impo(not(in(hs0,s0)), subseteq(hs0,s0), imp(imp(subseteq(hs0,s0),in(hs0,s0)),and(in(hs0,hs0),not(in(hs0,hs0)))))
+ syl6d(not(in(hs0,s0)), subseteq(hs0,s0), imp(subseteq(hs0,s0),in(hs0,s0)), and(in(hs0,hs0),not(in(hs0,hs0))), in(hs0,s0))
+ absurd.1(in(hs0,s0), and(in(hs0,hs0),not(in(hs0,hs0))))
+ a1i(not(in(hs0,s0)), imp(subseteq(hs0,s0),imp(imp(subseteq(hs0,s0),in(hs0,s0)),in(hs0,s0))))
+ com12(subseteq(hs0,s0), imp(subseteq(hs0,s0),in(hs0,s0)), in(hs0,s0))
+ id(imp(subseteq(hs0,s0),in(hs0,s0)))
+  zfc.separation.subseteq.1(hs0, hs0, s0, not(in(hs0,hs0)))
+}
