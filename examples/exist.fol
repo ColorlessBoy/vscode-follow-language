@@ -44,6 +44,16 @@ thm forall.imp.exist.exist.i(set s0, prop p1, prop p2) {
   forall.imp.exist.exist(s0, p1, p2)
 }
 
+thm exist.imp.i.i(set s0, prop p1, prop p2) {
+  |- exist(s0, p1)
+  -| exist(s0, p2)
+  -| imp(p2,p1)
+} = {
+  ax.mp(exist(s0,p1), exist(s0,p2))
+  forall.imp.exist.exist.i(s0, p2, p1)
+  ax.gen(s0, imp(p2,p1))
+}
+
 thm forall.existimp.exist(set s0, prop p1, prop p2) {
   |- imp(forall(s0, p1), imp(exist(s0, imp(p1, p2)), exist(s0, p2)))
 } = {
@@ -211,4 +221,17 @@ thm exist.contra(prop p0, prop p1, set s0) {
   a1i(p0, not(exist(s0,and(p1,not(p1)))))
   exist.not(s0, and(p1,not(p1)))
   and.not(p1)
+}
+
+thm not.forall.to.exist(set s0, prop p0) {
+  |- not(forall(s0, p0))
+  -| exist(s0, not(p0))
+} = {
+  ax.mp(not(forall(s0,p0)), not(forall(s0, not(not(p0)))))
+  contra.3i(forall(s0,not(not(p0))), forall(s0,p0))
+  a4i(s0, p0, not(not(p0)))
+  ax.gen(s0, imp(p0,not(not(p0))))
+  notnot.2(p0)
+  ax.mp(not(forall(s0,not(not(p0)))), exist(s0, not(p0)))
+  exist.def(s0, not(p0))
 }

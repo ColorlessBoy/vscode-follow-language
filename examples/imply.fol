@@ -89,6 +89,16 @@ thm com12(prop p1, prop p2, prop p3) {
   ax.1(p1, p2)
   a2i(p2, p1, p3)
 }
+thm com12.d(prop p1, prop p2, prop p3) {
+  |- imp(imp(p1, imp(p2, p3)), imp(p2, imp(p1, p3)))
+} = {
+  com12(imp(p1,imp(p2,p3)), p2, imp(p1,p3))
+  a2d(p2, p1, imp(p2,p3), p3)
+  com12(p2, p1, imp(imp(p2,p3),p3))
+  a1i(p1, imp(p2,imp(imp(p2,p3),p3)))
+  com12(p2, imp(p2,p3), p3)
+  id(imp(p2,p3))
+}
 
 thm imp.trans.2(prop p1, prop p2, prop p3) {
   |- imp(imp(p2, p3), imp(imp(p1, p2), imp(p1, p3)))
@@ -211,4 +221,12 @@ thm imp.trans(prop p0, prop p1, prop p2) {
 } = {
   imp.trans.1(p0, p1, p2)
   imp.trans.2(p2, p0, p1)
+}
+
+thm com23(prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p1, imp(p2, imp(p3,p4)))
+  -| imp(p1, imp(p3, imp(p2, p4)))
+} = {
+  syl(p1, imp(p2,imp(p3,p4)), imp(p3,imp(p2,p4)))
+  com12.d(p3, p2, p4)
 }

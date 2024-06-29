@@ -63,7 +63,11 @@ axiom ax.5(set s0, prop p1) {
   |- imp(p1, forall(s0, p1))
   diff (s0, p1)
 }
-axiom exist.def(set s0, prop p1) { |- iff(exist(s0, p1), not(forall(s0, not(p1)))) }
+axiom exist.def(set s0, prop p1) { 
+  |- iff(exist(s0, p1), not(forall(s0, not(p1)))) 
+  |- imp(exist(s0, p1), not(forall(s0, not(p1)))) 
+  |- imp(not(forall(s0, not(p1))), exist(s0, p1)) 
+}
 axiom ax.6(set s0, set s1) { |- exist(s0, eq(s0, s1)) }
 axiom ax.7(set s0, set s1, set s2) { |- imp(eq(s0, s1), imp(eq(s0, s2), eq(s1, s2)))}
 axiom ax.10(set s0, prop p1) {
@@ -202,7 +206,7 @@ axiom ssunion.def(set s0, set s1, set s2) {
 
 axiom zfc.separation(set s0, set s1, set s2, prop p0) {
   |- exist(s0, forall(s1, iff(in(s1, s0), and(in(s1, s2), p0))))
-  diff (s0, s1, s2) (p0, s1, s2)
+  diff (s1, s0, s2) (p0, s0, s2)
 }
 axiom zfc.infinity(set s0, set s1) {
   |- exist(s0, and(in(emptyset, s0), forall(s1, imp(in(s1, s0), in(sunion(s1, singleton(s1)), s0)))))

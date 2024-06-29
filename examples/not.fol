@@ -162,6 +162,13 @@ thm contra(prop p1, prop p2) {
   contra.3(p1, p2)
   contra.4(p2, p1)
 }
+thm absurd.4(prop p1) {
+  |- imp(imp(p1, not(p1)), not(p1))
+} = {
+  syl(imp(p1,not(p1)), not(p1), imp(not(not(p1)),not(p1)))
+  contra(p1, not(p1))  
+  absurd.3(not(p1))
+}
 thm absurd.1d(prop p1, prop p2, prop p3) {
   |- imp(p1, p2)
   -| imp(p1, imp(p3, p2))
@@ -192,6 +199,17 @@ thm contradiction(prop p0, prop p1) {
   ja(p0, p1, not(p0))
   id(not(p0))
   contra.2i(p1, p0)
+}
+thm contradiction.d(prop p0, prop p1) {
+  |- imp(imp(p0,p1), imp(imp(p0,not(p1)), not(p0)))
+  |- imp(imp(p0,not(p1)), imp(imp(p0,p1), not(p0)))
+} = {
+  com12(imp(p0,not(p1)), imp(p0,p1), not(p0))
+  syl5(imp(p0,p1), imp(p0,not(p1)), not(p0), imp(p1, not(p0)))
+  contra(p0, p1)
+  syl6(imp(p0,p1), imp(p1,not(p0)), not(p0), imp(p0,not(p0)))
+  imp.trans(p0, p1, not(p0))
+  absurd.4(p0)
 }
 
 thm not.imp.left(prop p0, prop p1, prop p2) {

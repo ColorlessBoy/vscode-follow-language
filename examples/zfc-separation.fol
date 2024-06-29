@@ -1,14 +1,90 @@
 
-thm zfc.cantor(set s0) {
-  |- not(subseteq(spower(s0), s0))
+thm exist.emptyset(set s0, set s1) {
+  |- exist(s0, forall(s1, not(in(s1, s0))))
+  diff (s0, s1)
 } = {
-  ax.mp(not(subseteq(spower(s0),s0)), not(imp(in(hs0, spower(s0)), in(hs0, s0))))
-  contra.3i(imp(in(hs0,spower(s0)),in(hs0,s0)), subseteq(spower(s0),s0))
-  subseteq.def(spower(s0), s0, hs0)
- exist.contra(imp(in(hs0,spower(s0)),in(hs0,s0)), in(hs0, hs0), hs0)
- ax.mp(imp(imp(in(hs0,spower(s0)),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))), 
-exist(hs1, forall(hs0, iff(in(hs0, hs1), and(in(hs0, spower(s0)), not(in(hs0,hs0)))))))
-zfc.separation(hs1, hs0, spower(s0), not(in(hs0,hs0)))
-exist.imp(hs1, forall(hs0,iff(in(hs0,hs1),and(in(hs0,spower(s0)),not(in(hs0,hs0))))), imp(imp(in(hs0,spower(s0)),in(hs0,s0)),exist(hs0,and(in(hs0,hs0),not(in(hs0,hs0))))))
+  exist.imp.i.i(s0, forall(s1,not(in(s1,s0))), forall(s1, iff(in(s1, s0), and(in(s1, hs0), false))))
+  zfc.separation(s0, s1, hs0, false)
+  a4i(s1, iff(in(s1,s0),and(in(s1,hs0),false)), not(in(s1,s0)))
+  ax.gen(s1, imp(iff(in(s1,s0),and(in(s1,hs0),false)),not(in(s1,s0))))
+  iff.imp.not(and(in(s1,hs0),false), in(s1,s0))
+  not.and(false, in(s1,hs0))
+  false.def()
+}
 
+thm forall.special.value(set s0, set s1, prop p0, prop p1) {
+  |- imp(forall(s0, p0), p1)
+  -| imp(eq(s0, s1), imp(p0, p1))
+  diff (s0, s1) (s0, p1)
+} = {
+  syl(forall(s0,p0), p1, exist(s0,p1))
+  exist.ax5(s0, p1)
+  ax.mp(imp(forall(s0,p0),exist(s0,p1)), exist(s0,eq(s0,s1)))
+  ax.6(s0, s1)
+  com12(exist(s0,eq(s0,s1)), forall(s0,p0), exist(s0,p1))
+  syl(forall(s0,p0), imp(exist(s0,eq(s0,s1)),exist(s0,p1)), forall(s0, imp(eq(s0,s1),p1)))
+  forall.imp.exist.exist(s0, eq(s0,s1), p1)
+  a4i(s0, p0, imp(eq(s0,s1),p1))
+  ax.gen(s0, imp(p0,imp(eq(s0,s1),p1)))
+  com12(p0, eq(s0,s1), p1)
+}
+
+thm not.iff.exchange(prop p0, prop p1) {
+  |- imp(iff(p0, p1), not(iff(p0,not(p1))))
+} = {
+  syl(iff(p0,p1), not(iff(p0,not(p1))), not(and(imp(p0,not(p1)),imp(not(p1),p0))))
+  contra.3i(and(imp(p0,not(p1)),imp(not(p1),p0)), iff(p0,not(p1)))
+  iff.def.1(p0, not(p1))
+  syl(iff(p0,p1), not(and(imp(p0,not(p1)),imp(not(p1),p0))), and(imp(p0,p1),imp(p1,p0)))
+  iff.def.1(p0, p1)
+  and.impo(imp(p0,p1), imp(p1,p0), not(and(imp(p0,not(p1)),imp(not(p1),p0))))
+  contra.2d(imp(p0,p1), imp(p1,p0), and(imp(p0,not(p1)),imp(not(p1),p0)))
+  com12(imp(p0,p1), and(imp(p0,not(p1)),imp(not(p1),p0)), not(imp(p1,p0)))
+  and.impo(imp(p0,not(p1)), imp(not(p1),p0), imp(imp(p0,p1),not(imp(p1,p0))))
+  com23(imp(p0,not(p1)), imp(not(p1),p0), imp(p0,p1), not(imp(p1,p0)))
+  syl6(imp(p0,not(p1)), imp(p0,p1), imp(imp(not(p1),p0),not(imp(p1,p0))), not(p0))
+  contradiction.d(p0, p1)
+  com12(not(p0), imp(not(p1),p0), not(imp(p1,p0)))
+  contra.3d(imp(not(p1),p0), p0, imp(p1,p0))
+  syl(imp(not(p1),p0), imp(imp(p1,p0),p0), imp(not(p0),p1))
+  contra(p1, p0)
+  syl6(imp(not(p0),p1), imp(p1,p0), p0, imp(not(p0), p0))
+  imp.trans(not(p0), p1, p0)
+  absurd.3(p0)
+}
+
+thm iff.and.not(prop p0, prop p1) {
+  |- imp(iff(p0, and(p1,not(p0))),not(p1))
+} = {
+  syl(iff(p0,and(p1,not(p0))), not(p1), not(iff(p0,not(and(p1,not(p0))))))
+  not.iff.exchange(p0, and(p1,not(p0)))
+  contra.3i(iff(p0,not(and(p1,not(p0)))), p1)
+  iff.intro.d(p1, p0, not(and(p1,not(p0))))
+  contra.1d(p1, and(p1,not(p0)), p0)
+  and.forintro(p1, not(p0))
+  contra.2d(p1, p0, and(p1,not(p0)))
+  a1i(p1, imp(and(p1,not(p0)),not(p0)))
+  and.right(p1, not(p0))
+}
+
+thm not.exist.universe(set s0, set s1) {
+  |- not(exist(s0, forall(s1, in(s1, s0))))
+  diff (s0, s1)
+} = {
+  exist.not(s0, forall(s1,in(s1,s0)))
+  not.forall.to.exist(s1, in(s1,s0))
+  exist.imp.i.i(s1, not(in(s1,s0)), forall(hs0, iff(in(hs0, s1), and(in(hs0, s0), not(in(hs0, hs0))))))
+  zfc.separation(s1, hs0, s0, not(in(hs0,hs0)))
+  forall.special.value(hs0, s1, iff(in(hs0,s1),and(in(hs0,s0),not(in(hs0,hs0)))), not(in(s1,s0)))
+  syl6(eq(hs0,s1), iff(in(hs0,s1),and(in(hs0,s0),not(in(hs0,hs0)))), not(in(s1,s0)), 
+  iff(in(s1,s1), and(in(s1,s0),not(in(s1,s1)))))
+  iff.and.not(in(s1,s1), in(s1,s0))
+  imp.iff.imp.iff(eq(hs0,s1), in(hs0,s1), and(in(hs0,s0),not(in(hs0,hs0))), in(s1,s1), and(in(s1,s0),not(in(s1,s1))))
+  iff.ax8(hs0, s1, s1)
+  imp.and.iff.and(eq(hs0,s1), in(hs0,s0), not(in(hs0,hs0)), in(s1,s0), not(in(s1,s1)))
+  iff.ax8(hs0, s1, s0)
+  iff.contra.3d(eq(hs0,s1), in(hs0,hs0), in(s1,s1))
+  iff.syld(eq(hs0,s1), in(hs0,hs0), in(s1,s1), in(hs0, s1))
+  iff.ax9(hs0, s1, hs0)
+  iff.ax8(hs0, s1, s1)
 }
