@@ -11,6 +11,7 @@
     "eq.fol",
     "zfc-extensionality.fol",
     "set-operator.fol",
-    "zfc-separation.fol"
+    "zfc-separation.fol",
+    "zfc-order.fol"
   ]
 }

@@ -1,0 +1,178 @@
+term prop rforall(set s0, set s1, prop p0) { ∀(s0 ∈ s1, p0) }
+axiom rforall.def(set s0, set s1, prop p0) {
+  |- iff(rforall(s0,s1,p0), forall(s0, imp(in(s0,s1), p0)))
+  |- iff(forall(s0, imp(in(s0,s1), p0)), rforall(s0,s1,p0))
+  |- imp(forall(s0, imp(in(s0,s1), p0)), rforall(s0,s1,p0))
+  |- imp(forall(s0, imp(in(s0,s1), p0)), rforall(s0,s1,p0))
+}
+// partial order
+term prop porder(set R, set A) { (R ⪯ A)}
+axiom porder.def(set R, set A, set x, set y, set z) {
+  |- iff(porder(R, A), 
+  imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)
+    )
+  )))
+  |- imp(imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)
+    ))), porder(R, A))
+  |- imp(porder(R, A), imp(in(x,A), not(relation(x,R,x))))
+  |- imp(porder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
+  diff (R, x, y, z) (A, x, y, z)
+}
+// strict order ; linear order
+term prop sorder(set R, set A) { (R ≺ A)}
+axiom sorder.def(set R, set A, set x, set y, set z) {
+  |- iff(sorder(R, A), 
+  imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    )
+  ))
+  |- imp(imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    )),sorder(R, A))
+  |- imp(sorder(R, A), imp(in(x,A), not(relation(x,R,x))))
+  |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
+  |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  diff (R, x, y, z) (A, x, y, z)
+}
+
+// 
+term set porder.min(set R, set s0) { min< R >(s0) }
+axiom porder.min.def(set R, set s0, set s1, set s2) {
+  |- imp(porder(R,s0), iff(
+    in(s1, porder.min(R, s0)), 
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
+  ))
+  |- imp(porder(R,s0), imp(
+    in(s1, porder.min(R, s0)), 
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
+  ))
+  |- imp(porder(R,s0), imp(
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
+    in(s1, porder.min(R, s0)), 
+  ))
+  diff (R, s1, s2) (s0, s1, s2)
+}
+
+term set porder.max(set R, set s0) { max< R >(s0) }
+axiom porder.max.def(set R, set s0, set s1, set s2) {
+  |- imp(porder(R,s0), iff(
+    in(s1, porder.max(R, s0)), 
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
+  ))
+  |- imp(porder(R,s0), imp(
+    in(s1, porder.max(R, s0)), 
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
+  ))
+  |- imp(porder(R,s0), imp(
+    imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
+    in(s1, porder.max(R, s0)), 
+  ))
+  diff (R, s1, s2) (s0, s1, s2)
+}
+
+term set porder.gst(set R, set A) { great< R >(A) }
+axiom porder.gst.def(set R, set A, set a, set x) {
+  |- imp(porder(R,A), iff(
+    in(a, porder.gst(R, A)), 
+    imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
+  ))
+  |- imp(porder(R,A), imp(
+    in(a, porder.gst(R, A)), 
+    imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
+  ))
+  |- imp(porder(R,A), imp(
+    imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
+    in(a, porder.gst(R, A)), 
+  ))
+  diff (R, a, x) (A, a, x)
+}
+
+term set porder.lst(set R, set A) { least< R >(A) }
+axiom porder.lst.def(set R, set A, set a, set x) {
+  |- imp(porder(R,A), iff(
+    in(a, porder.lst(R, A)), 
+    imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
+  ))
+  |- imp(porder(R,A), imp(
+    in(a, porder.lst(R, A)), 
+    imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
+  ))
+  |- imp(porder(R,A), imp(
+    imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
+    in(a, porder.lst(R, A)), 
+  ))
+  diff (R, a, x) (A, a, x)
+}
+
+term set porder.upper(set R, set A) { upper< R >(A) }
+axiom porder.uppder.def(set R, set A, set a, set x) {
+  |- imp(porder(R,A), iff(
+    in(a, porder.upper(R, A)), 
+    imp(in(x,A), relation(x,R,a)),
+  ))
+  |- imp(porder(R,A), imp(
+    in(a, porder.upper(R, A)), 
+    imp(in(x,A), relation(x,R,a)),
+  ))
+  |- imp(porder(R,A), imp(
+    imp(in(x,A), relation(x,R,a)),
+    in(a, porder.upper(R, A)), 
+  ))
+  diff (R, a, x) (A, a, x)
+}
+
+term set porder.lower(set R, set A) { lower< R >(A) }
+axiom porder.lower.def(set R, set A, set a, set x) {
+  |- imp(porder(R,A), iff(
+    in(a, porder.lower(R, A)), 
+    imp(in(x,A), relation(a,R,x)),
+  ))
+  |- imp(porder(R,A), imp(
+    in(a, porder.lower(R, A)), 
+    imp(in(x,A), relation(a,R,x)),
+  ))
+  |- imp(porder(R,A), imp(
+    imp(in(x,A), relation(a,R,x)),
+    in(a, porder.lower(R, A)), 
+  ))
+  diff (R, a, x) (A, a, x)
+}
+
+term set porder.sup(set R, set A) { sup< R >(A) }
+axiom porder.sup.def(set R, set A) {
+  |- imp(porder(R, A), eq(porder.sup(R, A), porder.lst(R, porder.upper(R, A))))
+}
+
+term set porder.inf(set R, set A) { inf< R >(A) }
+axiom porder.inf.def(set R, set A) {
+  |- imp(porder(R, A), eq(porder.inf(R, A), porder.gst(R, porder.lower(R, A))))
+}
+
+thm subseteq.porder(set R, set A, set B) {
+  |- imp(subseteq(A, B), imp(porder(R, B), porder(R, A)))
+} = {
+  syld(subseteq(A,B), porder(R,B), porder(R,A), 
+  imp(
+    and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
+    and(not(relation(hs0, R, hs0)), 
+        imp(and(relation(hs0, R, hs1), relation(hs1, R, hs2)), relation(hs0, R, hs2)
+    )))
+  )
+  a1i(subseteq(A,B), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))),porder(R,A)))
+  porder.def(R, A, hs0, hs1, hs2)
+  
+}

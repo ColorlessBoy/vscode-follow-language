@@ -49,6 +49,7 @@ axiom false.def() {
 type set
 term set hs0 
 term set hs1
+term set hs2
 term prop forall(set s0, prop p1) { ∀(s0, p1) }
 term prop exist(set s0, prop p1) { ∃(s0, p1) }
 term prop eq(set s0, set s1) { (s0 = s1) }
