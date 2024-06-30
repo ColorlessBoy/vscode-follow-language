@@ -8,20 +8,32 @@ axiom rforall.def(set s0, set s1, prop p0) {
 // partial order
 term prop porder(set R, set A) { (R ⪯ A)}
 axiom porder.def(set R, set A, set x, set y, set z) {
-  |- iff(porder(R, A), 
+  |- iff(
+  porder(R, A), 
   imp(
     and(in(x,A),and(in(y,A),in(z,A))), 
-    and(not(relation(x, R, x)), 
-        imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)
-    )
-  )))
-  |- imp(imp(
+    and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
+  )),
+)
+  |- imp(
+  imp(
     and(in(x,A),and(in(y,A),in(z,A))), 
-    and(not(relation(x, R, x)), 
-        imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)
-    ))), porder(R, A))
+    and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
+  )), 
+  porder(R, A),
+)
+  |- imp(
+  porder(R, A),
+  imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
+  )), 
+)
   |- imp(porder(R, A), imp(in(x,A), not(relation(x,R,x))))
-  |- imp(porder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
+  |- imp(
+    porder(R,A),
+    imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z))))
+  )
   diff (R, x, y, z) (A, x, y, z)
 }
 // strict order ; linear order
@@ -43,6 +55,16 @@ axiom sorder.def(set R, set A, set x, set y, set z) {
           or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
         )
     )),sorder(R, A))
+  |- imp(
+    sorder(R, A),
+    imp( 
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    )),
+  )
   |- imp(sorder(R, A), imp(in(x,A), not(relation(x,R,x))))
   |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
   |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
@@ -174,5 +196,15 @@ thm subseteq.porder(set R, set A, set B) {
   )
   a1i(subseteq(A,B), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))),porder(R,A)))
   porder.def(R, A, hs0, hs1, hs2)
-  
+  com23(subseteq(A,B), porder(R,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
+  syld(subseteq(A,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), imp(porder(R,B),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))), 
+  and(in(hs0,B),and(in(hs1,B), in(hs2,B))))
+  com23(subseteq(A,B), and(in(hs0,B),and(in(hs1,B),in(hs2,B))), porder(R,B), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
+  a1i(subseteq(A,B), imp(porder(R,B),imp(and(in(hs0,B),and(in(hs1,B),in(hs2,B))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))))
+  porder.def(R, B, hs0, hs1, hs2)
+  imp.and.imp.and(subseteq(A,B), in(hs0,A), and(in(hs1,A),in(hs2,A)), in(hs0,B), and(in(hs1,B),in(hs2,B)))
+  imp.and.imp.and(subseteq(A,B), in(hs1,A), in(hs2,A), in(hs1,B), in(hs2,B))
+  subseteq.def(A, B, hs0)
+  subseteq.def(A, B, hs1)
+  subseteq.def(A, B, hs2)
 }
