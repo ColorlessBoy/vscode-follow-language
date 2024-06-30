@@ -1051,16 +1051,9 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
 });
 
 function proofRelacementForSuggestion(proof: ProofOpCNode, suggestProof: ProofOpCNode) {
-  let rst =
-    proof.root.content +
-    '(' +
-    suggestProof.children.map((child) => (child.virtual ? '' : child.funContent)).join(', ') +
-    ')';
+  let rst = proof.root.content + '(' + suggestProof.children.map((child) => child.funContent).join(', ') + ')';
   let rstDocArray = [
-    proof.root.content +
-      '(' +
-      suggestProof.children.map((child) => (child.virtual ? '?' : child.termContent)).join(', ') +
-      ') {',
+    proof.root.content + '(' + suggestProof.children.map((child) => child.termContent).join(', ') + ') {',
     ...suggestProof.targets.map((target) => '|- ' + target.termContent),
     ...suggestProof.assumptions.map((assume) => '-| ' + assume.termContent),
   ];

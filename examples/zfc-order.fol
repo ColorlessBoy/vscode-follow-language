@@ -184,7 +184,7 @@ axiom porder.inf.def(set R, set A) {
   |- imp(porder(R, A), eq(porder.inf(R, A), porder.gst(R, porder.lower(R, A))))
 }
 
-thm subseteq.porder(set R, set A, set B) {
+thm subseteq.porder.1(set R, set A, set B) {
   |- imp(subseteq(A, B), imp(porder(R, B), porder(R, A)))
 } = {
   syld(subseteq(A,B), porder(R,B), porder(R,A), 
@@ -207,4 +207,23 @@ thm subseteq.porder(set R, set A, set B) {
   subseteq.def(A, B, hs0)
   subseteq.def(A, B, hs1)
   subseteq.def(A, B, hs2)
+}
+
+thm eq.subseteq(set s0, set s1) {
+  |- imp(eq(s0, s1), subseteq(s0, s1))
+  |- imp(eq(s1, s0), subseteq(s0, s1))
+} = {
+  syl(eq(s1,s0), subseteq(s0,s1), eq(s0,s1))
+  eq.comm(s1, s0)
+  syl(eq(s0,s1), subseteq(s0,s1), imp(in(hs0, s0), in(hs0,s1)))
+  ax.9(s0, s1, hs0)
+  subseteq.def(s0, s1, hs0)
+}
+
+thm subseteq.porder.2(set R, set A, set B) {
+  |- imp(eq(A, B), imp(porder(R, B), porder(R, A)))
+} = {
+  syl(eq(A,B), imp(porder(R,B),porder(R,A)), subseteq(A,B))
+  eq.subseteq(A, B)
+  subseteq.porder.1(R, A, B)
 }
