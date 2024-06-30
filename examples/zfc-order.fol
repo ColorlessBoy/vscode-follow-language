@@ -188,11 +188,11 @@ thm subseteq.porder(set R, set A, set B) {
   |- imp(subseteq(A, B), imp(porder(R, B), porder(R, A)))
 } = {
   syld(subseteq(A,B), porder(R,B), porder(R,A), 
-  imp(
-    and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
-    and(not(relation(hs0, R, hs0)), 
-        imp(and(relation(hs0, R, hs1), relation(hs1, R, hs2)), relation(hs0, R, hs2)
-    )))
+    imp(
+      and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
+      and(not(relation(hs0, R, hs0)), 
+          imp(and(relation(hs0, R, hs1), relation(hs1, R, hs2)), relation(hs0, R, hs2)
+      )))
   )
   a1i(subseteq(A,B), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))),porder(R,A)))
   porder.def(R, A, hs0, hs1, hs2)

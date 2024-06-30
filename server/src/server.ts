@@ -24,6 +24,8 @@ import {
   TextDocumentEdit,
   WorkspaceEdit,
   Location,
+  MarkupContent,
+  MarkupKind,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -48,6 +50,8 @@ import {
   TokenTypes,
   TermASTNode,
 } from './parser';
+import { ChildProcess } from 'child_process';
+import { MarkdownString } from 'vscode';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -488,7 +492,7 @@ function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position)
 
 function findProofByPosition(proof: ProofOpCNode, state: TermOpCNode[], position: Position): string {
   if (positionInRange(proof.root.range, position)) {
-    const diffStr = proof.diffError ? 'diff ' + proof.diffError.join(' ') : undefined;
+    const diffStr = proof.diffError && proof.diffError.length > 0 ? 'diff ' + proof.diffError.join(' ') : undefined;
     const assumeStr = proof.assumptions.map((a) => '-| ' + a.termContent).join('\n\n');
     const targetStr = proof.targets.map((t) => '|- ' + t.termContent).join('\n\n');
     const stateStr = state.map((e) => '? ' + e.termContent).join('\n\n');
@@ -1025,20 +1029,19 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
     if (proofs.length === 0) {
       return [];
     }
-    const suggestions = (cNode as ThmCNode).suggestions;
+    const suggestions = (cNode as ThmCNode).suggestionProof;
     for (let i = 0; i < proofs.length; i++) {
       const proof = proofs[i];
       const suggestion = suggestions[i];
       if (suggestion.length > 0 && proof.range.start.line === position.line) {
-        for (const singleSuggestion of suggestion) {
-          if (singleSuggestion.size > 0) {
-            const newText = proofRelacementForSuggestion(proof, singleSuggestion);
-            items.push({
-              label: newText,
-              kind: CompletionItemKind.Function,
-              textEdit: { range: proof.range, newText: newText },
-            });
-          }
+        for (const suggestProof of suggestion) {
+          const { newText, doc } = proofRelacementForSuggestion(proof, suggestProof);
+          items.push({
+            label: newText,
+            kind: CompletionItemKind.Function,
+            documentation: doc,
+            textEdit: { range: proof.range, newText: newText },
+          });
         }
         return items;
       }
@@ -1047,28 +1050,26 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
   return items;
 });
 
-function proofRelacementForSuggestion(proof: ProofOpCNode, suggestion: Map<string, TermOpCNode>): string {
-  let rst = proof.root.content + '(';
-  const astNode = proof.definition.astNode as AxiomASTNode | ThmASTNode;
-  const params = astNode.params;
-  const children = proof.children;
-  const newChildren: string[] = [];
-  let count = 1;
-  for (let i = 0; i < params.length; i++) {
-    const argName = params[i].name.content;
-    const child = children[i];
-    const suggest = suggestion.get(argName);
-    if (suggest) {
-      newChildren.push(suggest.funContent);
-    } else if (child.virtual === true) {
-      newChildren.push('');
-      count += 1;
-    } else {
-      newChildren.push(child.funContent);
-    }
+function proofRelacementForSuggestion(proof: ProofOpCNode, suggestProof: ProofOpCNode) {
+  let rst =
+    proof.root.content +
+    '(' +
+    suggestProof.children.map((child) => (child.virtual ? '' : child.funContent)).join(', ') +
+    ')';
+  let rstDocArray = [
+    proof.root.content +
+      '(' +
+      suggestProof.children.map((child) => (child.virtual ? '?' : child.termContent)).join(', ') +
+      ') {',
+    ...suggestProof.targets.map((target) => '|- ' + target.termContent),
+    ...suggestProof.assumptions.map((assume) => '-| ' + assume.termContent),
+  ];
+
+  if (suggestProof.diffError && suggestProof.diffError.length > 0) {
+    rstDocArray.push('diff ' + suggestProof.diffError.map((diff) => '(' + diff + ')').join(' '));
   }
-  rst += newChildren.join(', ') + ')';
-  return rst;
+  rstDocArray.push('}');
+  return { newText: rst, doc: rstDocArray.join('\n') };
 }
 
 // This handler resolves additional information for the item selected in
