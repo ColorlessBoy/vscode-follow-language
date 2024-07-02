@@ -5,11 +5,65 @@ axiom rforall.def(set s0, set s1, prop p0) {
   |- imp(forall(s0, imp(in(s0,s1), p0)), rforall(s0,s1,p0))
   |- imp(forall(s0, imp(in(s0,s1), p0)), rforall(s0,s1,p0))
 }
-// partial order
-term prop porder(set R, set A) { (R ⪯ A)}
+
+term prop porder(set R, set A) { (R ⪯ A) }
 axiom porder.def(set R, set A, set x, set y, set z) {
   |- iff(
-  porder(R, A), 
+    porder(R, A), 
+    imp(
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      and(relation(x, R, x), 
+        and(
+          imp(and(relation(x,R,y), relation(y,R,x)), eq(x,y)),
+          imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+        )
+    )),
+  )
+  |- imp(
+    imp(
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      and(relation(x, R, x), 
+        and(
+          imp(and(relation(x,R,y), relation(y,R,x)), eq(x,y)),
+          imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+        )
+    )),
+    porder(R, A), 
+  )
+  |- imp(
+    porder(R, A), 
+    imp(
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      and(relation(x, R, x), 
+        and(
+          imp(and(relation(x,R,y), relation(y,R,x)), eq(x,y)),
+          imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+        )
+    )),
+  )
+  // relexivity
+  |- imp(
+    porder(R, A), 
+    imp(and(in(x,A),and(in(y,A),in(z,A))), relation(x, R, x)),
+  )
+  // antisymmetry
+  |- imp(
+    porder(R, A), 
+    imp(and(relation(x,R,y), relation(y,R,x)), eq(x,y)),
+  )
+  // transitivity
+  |- imp(
+    porder(R, A), 
+    imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+  )
+}
+
+
+// strict partial order
+term prop sporder(set R, set A) { (R ⪯ A)}
+axiom sporder.def(set R, set A, set x, set y, set z) {
+  |- iff(
+  sporder(R, A), 
   imp(
     and(in(x,A),and(in(y,A),in(z,A))), 
     and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
@@ -20,26 +74,26 @@ axiom porder.def(set R, set A, set x, set y, set z) {
     and(in(x,A),and(in(y,A),in(z,A))), 
     and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
   )), 
-  porder(R, A),
+  sporder(R, A),
 )
   |- imp(
-  porder(R, A),
+  sporder(R, A),
   imp(
     and(in(x,A),and(in(y,A),in(z,A))), 
     and(not(relation(x, R, x)), imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z))
   )), 
 )
-  |- imp(porder(R, A), imp(in(x,A), not(relation(x,R,x))))
+  |- imp(sporder(R, A), imp(in(x,A), not(relation(x,R,x))))
   |- imp(
-    porder(R,A),
+    sporder(R,A),
     imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z))))
   )
-  diff (R, x, y, z) (A, x, y, z)
+  diff (R,x,y,z) (A,x,y,z)
 }
-// strict order ; linear order
-term prop sorder(set R, set A) { (R ≺ A)}
-axiom sorder.def(set R, set A, set x, set y, set z) {
-  |- iff(sorder(R, A), 
+// linear order ; strict complete order 
+term prop lorder(set R, set A) { (R ≺ A)}
+axiom lorder.def(set R, set A, set x, set y, set z) {
+  |- iff(lorder(R, A), 
   imp(
     and(in(x,A),and(in(y,A),in(z,A))), 
     and(not(relation(x, R, x)), 
@@ -54,9 +108,9 @@ axiom sorder.def(set R, set A, set x, set y, set z) {
         and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
           or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
         )
-    )),sorder(R, A))
+    )),lorder(R, A))
   |- imp(
-    sorder(R, A),
+    lorder(R, A),
     imp( 
       and(in(x,A),and(in(y,A),in(z,A))), 
       and(not(relation(x, R, x)), 
@@ -65,143 +119,147 @@ axiom sorder.def(set R, set A, set x, set y, set z) {
         )
     )),
   )
-  |- imp(sorder(R, A), imp(in(x,A), not(relation(x,R,x))))
-  |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
-  |- imp(sorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- imp(lorder(R, A), imp(in(x,A), not(relation(x,R,x))))
+  |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
+  |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- iff(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- imp(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- imp(and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))), lorder(R, A))
+  |- imp(lorder(R, A), sporder(R, A))
+  |- imp(lorder(R, A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x))))
   diff (R, x, y, z) (A, x, y, z)
 }
 
-// 
-term set porder.min(set R, set s0) { min< R >(s0) }
-axiom porder.min.def(set R, set s0, set s1, set s2) {
-  |- imp(porder(R,s0), iff(
-    in(s1, porder.min(R, s0)), 
+term set sporder.min(set R, set s0) { min< R >(s0) }
+axiom sporder.min.def(set R, set s0, set s1, set s2) {
+  |- imp(sporder(R,s0), iff(
+    in(s1, sporder.min(R, s0)), 
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
   ))
-  |- imp(porder(R,s0), imp(
-    in(s1, porder.min(R, s0)), 
+  |- imp(sporder(R,s0), imp(
+    in(s1, sporder.min(R, s0)), 
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
   ))
-  |- imp(porder(R,s0), imp(
+  |- imp(sporder(R,s0), imp(
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s2,R,s1))),
-    in(s1, porder.min(R, s0)), 
+    in(s1, sporder.min(R, s0)), 
   ))
   diff (R, s1, s2) (s0, s1, s2)
 }
 
-term set porder.max(set R, set s0) { max< R >(s0) }
-axiom porder.max.def(set R, set s0, set s1, set s2) {
-  |- imp(porder(R,s0), iff(
-    in(s1, porder.max(R, s0)), 
+term set sporder.max(set R, set s0) { max< R >(s0) }
+axiom sporder.max.def(set R, set s0, set s1, set s2) {
+  |- imp(sporder(R,s0), iff(
+    in(s1, sporder.max(R, s0)), 
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
   ))
-  |- imp(porder(R,s0), imp(
-    in(s1, porder.max(R, s0)), 
+  |- imp(sporder(R,s0), imp(
+    in(s1, sporder.max(R, s0)), 
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
   ))
-  |- imp(porder(R,s0), imp(
+  |- imp(sporder(R,s0), imp(
     imp(and(in(s1,s0),in(s2,s0)), not(relation(s1,R,s2))),
-    in(s1, porder.max(R, s0)), 
+    in(s1, sporder.max(R, s0)), 
   ))
   diff (R, s1, s2) (s0, s1, s2)
 }
 
-term set porder.gst(set R, set A) { great< R >(A) }
-axiom porder.gst.def(set R, set A, set a, set x) {
-  |- imp(porder(R,A), iff(
-    in(a, porder.gst(R, A)), 
+term set sporder.gst(set R, set A) { great< R >(A) }
+axiom sporder.gst.def(set R, set A, set a, set x) {
+  |- imp(sporder(R,A), iff(
+    in(a, sporder.gst(R, A)), 
     imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
   ))
-  |- imp(porder(R,A), imp(
-    in(a, porder.gst(R, A)), 
+  |- imp(sporder(R,A), imp(
+    in(a, sporder.gst(R, A)), 
     imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
   ))
-  |- imp(porder(R,A), imp(
+  |- imp(sporder(R,A), imp(
     imp(and(in(a,A),in(x,A)), or(relation(x,R,a), eq(x,a))),
-    in(a, porder.gst(R, A)), 
+    in(a, sporder.gst(R, A)), 
   ))
   diff (R, a, x) (A, a, x)
 }
 
-term set porder.lst(set R, set A) { least< R >(A) }
-axiom porder.lst.def(set R, set A, set a, set x) {
-  |- imp(porder(R,A), iff(
-    in(a, porder.lst(R, A)), 
+term set sporder.lst(set R, set A) { least< R >(A) }
+axiom sporder.lst.def(set R, set A, set a, set x) {
+  |- imp(sporder(R,A), iff(
+    in(a, sporder.lst(R, A)), 
     imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
   ))
-  |- imp(porder(R,A), imp(
-    in(a, porder.lst(R, A)), 
+  |- imp(sporder(R,A), imp(
+    in(a, sporder.lst(R, A)), 
     imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
   ))
-  |- imp(porder(R,A), imp(
+  |- imp(sporder(R,A), imp(
     imp(and(in(a,A),in(x,A)), or(relation(a,R,x), eq(a,x))),
-    in(a, porder.lst(R, A)), 
+    in(a, sporder.lst(R, A)), 
   ))
   diff (R, a, x) (A, a, x)
 }
 
-term set porder.upper(set R, set A) { upper< R >(A) }
-axiom porder.uppder.def(set R, set A, set a, set x) {
-  |- imp(porder(R,A), iff(
-    in(a, porder.upper(R, A)), 
+term set sporder.upper(set R, set A) { upper< R >(A) }
+axiom sporder.uppder.def(set R, set A, set a, set x) {
+  |- imp(sporder(R,A), iff(
+    in(a, sporder.upper(R, A)), 
     imp(in(x,A), relation(x,R,a)),
   ))
-  |- imp(porder(R,A), imp(
-    in(a, porder.upper(R, A)), 
+  |- imp(sporder(R,A), imp(
+    in(a, sporder.upper(R, A)), 
     imp(in(x,A), relation(x,R,a)),
   ))
-  |- imp(porder(R,A), imp(
+  |- imp(sporder(R,A), imp(
     imp(in(x,A), relation(x,R,a)),
-    in(a, porder.upper(R, A)), 
+    in(a, sporder.upper(R, A)), 
   ))
   diff (R, a, x) (A, a, x)
 }
 
-term set porder.lower(set R, set A) { lower< R >(A) }
-axiom porder.lower.def(set R, set A, set a, set x) {
-  |- imp(porder(R,A), iff(
-    in(a, porder.lower(R, A)), 
+term set sporder.lower(set R, set A) { lower< R >(A) }
+axiom sporder.lower.def(set R, set A, set a, set x) {
+  |- imp(sporder(R,A), iff(
+    in(a, sporder.lower(R, A)), 
     imp(in(x,A), relation(a,R,x)),
   ))
-  |- imp(porder(R,A), imp(
-    in(a, porder.lower(R, A)), 
+  |- imp(sporder(R,A), imp(
+    in(a, sporder.lower(R, A)), 
     imp(in(x,A), relation(a,R,x)),
   ))
-  |- imp(porder(R,A), imp(
+  |- imp(sporder(R,A), imp(
     imp(in(x,A), relation(a,R,x)),
-    in(a, porder.lower(R, A)), 
+    in(a, sporder.lower(R, A)), 
   ))
   diff (R, a, x) (A, a, x)
 }
 
-term set porder.sup(set R, set A) { sup< R >(A) }
-axiom porder.sup.def(set R, set A) {
-  |- imp(porder(R, A), eq(porder.sup(R, A), porder.lst(R, porder.upper(R, A))))
+term set sporder.sup(set R, set A) { sup< R >(A) }
+axiom sporder.sup.def(set R, set A) {
+  |- imp(sporder(R, A), eq(sporder.sup(R, A), sporder.lst(R, sporder.upper(R, A))))
 }
 
-term set porder.inf(set R, set A) { inf< R >(A) }
-axiom porder.inf.def(set R, set A) {
-  |- imp(porder(R, A), eq(porder.inf(R, A), porder.gst(R, porder.lower(R, A))))
+term set sporder.inf(set R, set A) { inf< R >(A) }
+axiom sporder.inf.def(set R, set A) {
+  |- imp(sporder(R, A), eq(sporder.inf(R, A), sporder.gst(R, sporder.lower(R, A))))
 }
 
-thm subseteq.porder.1(set R, set A, set B) {
-  |- imp(subseteq(A, B), imp(porder(R, B), porder(R, A)))
+thm subseteq.sporder.1(set R, set A, set B) {
+  |- imp(subseteq(A, B), imp(sporder(R, B), sporder(R, A)))
 } = {
-  syld(subseteq(A,B), porder(R,B), porder(R,A), 
+  syld(subseteq(A,B), sporder(R,B), sporder(R,A), 
     imp(
       and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
       and(not(relation(hs0, R, hs0)), 
           imp(and(relation(hs0, R, hs1), relation(hs1, R, hs2)), relation(hs0, R, hs2)
       )))
   )
-  a1i(subseteq(A,B), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))),porder(R,A)))
-  porder.def(R, A, hs0, hs1, hs2)
-  com23(subseteq(A,B), porder(R,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
-  syld(subseteq(A,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), imp(porder(R,B),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))), 
+  a1i(subseteq(A,B), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))),sporder(R,A)))
+  sporder.def(R, A, hs0, hs1, hs2)
+  com23(subseteq(A,B), sporder(R,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
+  syld(subseteq(A,B), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), imp(sporder(R,B),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2)))), 
   and(in(hs0,B),and(in(hs1,B), in(hs2,B))))
-  com23(subseteq(A,B), and(in(hs0,B),and(in(hs1,B),in(hs2,B))), porder(R,B), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
-  a1i(subseteq(A,B), imp(porder(R,B),imp(and(in(hs0,B),and(in(hs1,B),in(hs2,B))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))))
-  porder.def(R, B, hs0, hs1, hs2)
+  com23(subseteq(A,B), and(in(hs0,B),and(in(hs1,B),in(hs2,B))), sporder(R,B), and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))
+  a1i(subseteq(A,B), imp(sporder(R,B),imp(and(in(hs0,B),and(in(hs1,B),in(hs2,B))),and(not(relation(hs0,R,hs0)),imp(and(relation(hs0,R,hs1),relation(hs1,R,hs2)),relation(hs0,R,hs2))))))
+  sporder.def(R, B, hs0, hs1, hs2)
   imp.and.imp.and(subseteq(A,B), in(hs0,A), and(in(hs1,A),in(hs2,A)), in(hs0,B), and(in(hs1,B),in(hs2,B)))
   imp.and.imp.and(subseteq(A,B), in(hs1,A), in(hs2,A), in(hs1,B), in(hs2,B))
   subseteq.def(A, B, hs0)
@@ -220,10 +278,272 @@ thm eq.subseteq(set s0, set s1) {
   subseteq.def(s0, s1, hs0)
 }
 
-thm subseteq.porder.2(set R, set A, set B) {
-  |- imp(eq(A, B), imp(porder(R, B), porder(R, A)))
+thm eq.sporder.2(set R, set A, set B) {
+  |- imp(eq(A, B), imp(sporder(R, B), sporder(R, A)))
 } = {
-  syl(eq(A,B), imp(porder(R,B),porder(R,A)), subseteq(A,B))
+  syl(eq(A,B), imp(sporder(R,B),sporder(R,A)), subseteq(A,B))
   eq.subseteq(A, B)
-  subseteq.porder.1(R, A, B)
+  subseteq.sporder.1(R, A, B)
+}
+
+thm eq.sporder.3(set R, set A, set B) {
+  |- imp(eq(A, B), iff(sporder(R, B), sporder(R, A)))
+} = {
+  iff.intro.d(eq(A,B), sporder(R,B), sporder(R,A))
+  eq.sporder.2(R, A, B)
+  syl(eq(A,B), imp(sporder(R,A),sporder(R,B)), eq(B,A))
+  eq.comm(A, B)
+  eq.sporder.2(R, B, A)
+}
+
+thm eq.relation.1(set R, set s1, set s2, set s3) {
+  |- imp(eq(s1,s2), imp(relation(s1,R,s3), relation(s2,R,s3)))
+} = {
+  syl5(eq(s1,s2), relation(s1,R,s3), relation(s2,R,s3), in(opair(s1,s3), R))
+  relation.def(s1, R, s3)
+  syl6(eq(s1,s2), in(opair(s1,s3),R), relation(s2,R,s3), in(opair(s2,s3), R))
+  relation.def(s2, R, s3)
+  syl(eq(s1,s2), imp(in(opair(s1,s3),R),in(opair(s2,s3),R)), eq(opair(s1,s3),opair(s2,s3)))
+  ax.8(opair(s1,s3), opair(s2,s3), R)
+  ax.mp(imp(eq(s1,s2),eq(opair(s1,s3),opair(s2,s3))), eq(s3,s3))
+  eq.id(s3)
+  com12(eq(s3,s3), eq(s1,s2), eq(opair(s1,s3),opair(s2,s3)))
+  opair.eq.5(s1, s3, s2, s3)
+}
+thm eq.relation.2(set R, set s1, set s2, set s3) {
+  |- imp(eq(s1,s2), imp(relation(s3,R,s1), relation(s3,R,s2)))
+} = {
+  syl5(eq(s1,s2), relation(s3,R,s1), relation(s3,R,s2), in(opair(s3,s1),R))
+  relation.def(s3, R, s1)
+  syl6(eq(s1,s2), in(opair(s3,s1),R), relation(s3,R,s2), in(opair(s3,s2), R))
+  relation.def(s3, R, s2)
+  syl(eq(s1,s2), imp(in(opair(s3,s1),R),in(opair(s3,s2),R)), eq(opair(s3,s1),opair(s3,s2)))
+  ax.8(opair(s3,s1), opair(s3,s2), R)
+  ax.mp(imp(eq(s1,s2),eq(opair(s3,s1),opair(s3,s2))), eq(s3,s3))
+  eq.id(s3)
+  opair.eq.5(s3, s1, s3, s2)
+}
+
+thm eq.relation(set R1, set R2, set s1, set s2) {
+  |- imp(eq(R1,R2), imp(relation(s1,R1,s2), relation(s1,R2,s2)))
+  |- imp(eq(R2,R1), imp(relation(s1,R1,s2), relation(s1,R2,s2)))
+  |- imp(eq(s1,s2), imp(relation(s1,R1,R2), relation(s2,R1,R2)))
+  |- imp(eq(s1,s2), imp(relation(R1,R2,s1), relation(R1,R2,s2)))
+  |- imp(eq(s2,s1), imp(relation(s1,R1,R2), relation(s2,R1,R2)))
+  |- imp(eq(s2,s1), imp(relation(R1,R2,s1), relation(R1,R2,s2)))
+
+} = {
+  syl(eq(R2,R1), imp(relation(s1,R1,s2),relation(s1,R2,s2)), eq(R1,R2))
+  eq.comm(R2, R1)
+  syld(eq(R1,R2), relation(s1,R1,s2), relation(s1,R2,s2), in(opair(s1,s2),R1))
+  a1i(eq(R1,R2), imp(relation(s1,R1,s2),in(opair(s1,s2),R1)))
+  relation.def(s1, R1, s2)
+  syld(eq(R1,R2), in(opair(s1,s2),R1), relation(s1,R2,s2), in(opair(s1,s2),R2))
+  a1i(eq(R1,R2), imp(in(opair(s1,s2),R2),relation(s1,R2,s2)))
+  relation.def(s1, R2, s2)
+  ax.9(R1, R2, opair(s1,s2))
+  syl(eq(s2,s1), imp(relation(R1,R2,s1),relation(R1,R2,s2)), eq(s1,s2))
+  eq.comm(s2, s1)
+  syl(eq(s2,s1), imp(relation(s1,R1,R2),relation(s2,R1,R2)), eq(s1,s2))
+  eq.comm(s2, s1)
+  eq.relation.1(R1, s1, s2, R2)
+  eq.relation.2(R2, s1, s2, R1)
+}
+
+thm eq.sporder.4(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), imp(sporder(R1, A), sporder(R2,A)))
+} = {
+  syld(eq(R1,R2), sporder(R1,A), sporder(R2,A), 
+    imp(
+      and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
+      and(not(relation(hs0, R2, hs0)), 
+          imp(and(relation(hs0, R2, hs1), relation(hs1, R2, hs2)), relation(hs0, R2, hs2)
+      ))
+    )
+  )
+  a1i(eq(R1,R2), imp(imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R2,hs0)),imp(and(relation(hs0,R2,hs1),relation(hs1,R2,hs2)),relation(hs0,R2,hs2)))),sporder(R2,A)))
+  sporder.def(R2, A, hs0, hs1, hs2)
+  syl6d(eq(R1,R2), sporder(R1,A), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), and(not(relation(hs0,R2,hs0)),imp(and(relation(hs0,R2,hs1),relation(hs1,R2,hs2)),relation(hs0,R2,hs2))), 
+      and(not(relation(hs0, R1, hs0)), 
+          imp(and(relation(hs0, R1, hs1), relation(hs1, R1, hs2)), relation(hs0, R1, hs2)
+      ))
+  )
+  a1i(eq(R1,R2), imp(sporder(R1,A),imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),and(not(relation(hs0,R1,hs0)),imp(and(relation(hs0,R1,hs1),relation(hs1,R1,hs2)),relation(hs0,R1,hs2))))))
+  sporder.def(R1, A, hs0, hs1, hs2)
+  imp.and.imp.and(eq(R1,R2), not(relation(hs0,R1,hs0)), imp(and(relation(hs0,R1,hs1),relation(hs1,R1,hs2)),relation(hs0,R1,hs2)), not(relation(hs0,R2,hs0)), imp(and(relation(hs0,R2,hs1),relation(hs1,R2,hs2)),relation(hs0,R2,hs2)))
+  contra.3d(eq(R1,R2), relation(hs0,R1,hs0), relation(hs0,R2,hs0))
+  eq.relation(R2, R1, hs0, hs0)
+  imp.imp.imp.imp(eq(R1,R2), and(relation(hs0,R1,hs1),relation(hs1,R1,hs2)), relation(hs0,R1,hs2), and(relation(hs0,R2,hs1),relation(hs1,R2,hs2)), relation(hs0,R2,hs2))
+  imp.and.imp.and(eq(R1,R2), relation(hs0,R2,hs1), relation(hs1,R2,hs2), relation(hs0,R1,hs1), relation(hs1,R1,hs2))
+  eq.relation(R1, R2, hs0, hs2)
+  eq.relation(R2, R1, hs0, hs1)
+  eq.relation(R2, R1, hs1, hs2)
+}
+thm eq.sporder.5(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), imp(sporder(R2, A), sporder(R1,A)))
+} = {
+  syl(eq(R1,R2), imp(sporder(R2,A),sporder(R1,A)), eq(R2,R1))
+  eq.comm(R1, R2)
+  eq.sporder.4(R2, R1, A)
+}
+thm eq.sporder.6(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), iff(sporder(R1, A), sporder(R2,A)))
+} = {
+  iff.intro.d(eq(R1,R2), sporder(R1,A), sporder(R2,A))
+  eq.sporder.4(R1, R2, A)
+  eq.sporder.5(R1, R2, A)
+}
+
+thm sporder.imp(set A, set B, set C) {
+  |- imp(subseteq(A,B), imp(sporder(C,B), sporder(C,A)))
+
+  |- imp(eq(A,B), imp(sporder(C,A), sporder(C,B)))
+  |- imp(eq(A,B), imp(sporder(C,B), sporder(C,A)))
+  |- imp(eq(A,B), iff(sporder(C,A),sporder(C,B)))
+  |- imp(eq(A,B), iff(sporder(C,B),sporder(C,A)))
+
+  |- imp(eq(A,B), imp(sporder(A,C),sporder(B,C)))
+  |- imp(eq(A,B), imp(sporder(B,C),sporder(A,C)))
+  |- imp(eq(A,B), iff(sporder(A,C),sporder(B,C)))
+  |- imp(eq(A,B), iff(sporder(B,C),sporder(A,C)))
+} = {
+  subseteq.sporder.1(C, A, B)
+  eq.sporder.2(C, A, B)
+  syl(eq(A,B), imp(sporder(C,A),sporder(C,B)), eq(B,A))
+  eq.comm(A, B)
+  eq.sporder.2(C, B, A)
+  eq.sporder.3(C, A, B)
+ syl(eq(A,B), iff(sporder(C,A),sporder(C,B)), eq(B,A)) 
+ eq.comm(A, B)
+ eq.sporder.3(C, B, A)
+ eq.sporder.4(A, B, C)
+ eq.sporder.5(A, B, C)
+ eq.sporder.6(A, B, C)
+ syl(eq(A,B), iff(sporder(B,C),sporder(A,C)), eq(B,A))
+ eq.sporder.6(B, A, C)
+ eq.comm(A, B)
+}
+
+thm sporder.diff.1(set R, set A, set x) {
+  |- imp(sporder(R, A), imp(in(x, A), not(relation(x, R, x))))
+} = {
+  eq.replace(hs0, x, imp(sporder(R,A),imp(in(x,A),not(relation(x,R,x)))), 
+  imp(sporder(R,A),imp(in(hs0,A),not(relation(hs0,R,hs0)))))
+  sporder.def(R, A, hs0, hs1, hs2)
+  imp.imp.imp.imp(eq(hs0,x), sporder(R,A), imp(in(hs0,A),not(relation(hs0,R,hs0))), sporder(R,A), imp(in(x,A),not(relation(x,R,x))))
+  a1i(eq(hs0,x), imp(sporder(R,A),sporder(R,A)))
+  id(sporder(R,A))
+  imp.imp.imp.imp(eq(hs0,x), in(hs0,A), not(relation(hs0,R,hs0)), in(x,A), not(relation(x,R,x)))
+  syl(eq(hs0,x), imp(in(x,A),in(hs0,A)), eq(x,hs0))
+  eq.comm(hs0, x)
+  ax.8(x, hs0, A)
+  contra.3d(eq(hs0,x), relation(hs0,R,hs0), relation(x,R,x))
+  syld(eq(hs0,x), relation(x,R,x), relation(hs0,R,hs0), relation(x,R,hs0))
+  eq.relation(R, hs0, x, hs0)
+  eq.relation(x, R, x, hs0)
+}
+
+thm sporder.diff.2(set R, set A, set x, set y, set z) {
+  |- imp(
+    sporder(R, A),
+    imp(
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      imp(relation(x, R, y), imp(relation(y, R, z), relation(x, R, z)))
+    ),
+  )
+} = {
+  eq.replace(hs0, x, imp(sporder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))),imp(relation(x,R,y),imp(relation(y,R,z),relation(x,R,z))))), 
+    imp(
+      sporder(R, A),
+      imp(
+        and(in(hs0,A),and(in(y,A),in(z,A))), 
+        imp(relation(hs0, R, y), imp(relation(y, R, z), relation(hs0, R, z)))
+      ),
+    )
+  )
+  imp.imp.imp.imp(eq(hs0,x), sporder(R,A), imp(and(in(hs0,A),and(in(y,A),in(z,A))),imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z)))), sporder(R,A), imp(and(in(x,A),and(in(y,A),in(z,A))),imp(relation(x,R,y),imp(relation(y,R,z),relation(x,R,z)))))
+  a1i(eq(hs0,x), imp(sporder(R,A),sporder(R,A)))
+  id(sporder(R,A))
+  imp.imp.imp.imp(eq(hs0,x), and(in(hs0,A),and(in(y,A),in(z,A))), imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z))), and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y),imp(relation(y,R,z),relation(x,R,z))))
+  imp.and.imp.and(eq(hs0,x), in(x,A), and(in(y,A),in(z,A)), in(hs0,A), and(in(y,A),in(z,A)))
+  syl(eq(hs0,x), imp(in(x,A),in(hs0,A)), eq(x,hs0))
+  eq.comm(hs0, x)
+  ax.8(x, hs0, A)
+  a1i(eq(hs0,x), imp(and(in(y,A),in(z,A)),and(in(y,A),in(z,A))))
+  id(and(in(y,A),in(z,A)))
+  imp.imp.imp.imp(eq(hs0,x), relation(hs0,R,y), imp(relation(y,R,z),relation(hs0,R,z)), relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))
+  eq.relation(R, y, x, hs0)
+  imp.imp.imp.imp(eq(hs0,x), relation(y,R,z), relation(hs0,R,z), relation(y,R,z), relation(x,R,z))
+  idd(eq(hs0,x), relation(y,R,z))
+  eq.relation(R, z, hs0, x)
+  eq.replace(hs1, y, imp(sporder(R,A),imp(and(in(hs0,A),and(in(y,A),in(z,A))),imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z))))), 
+    imp(
+      sporder(R, A),
+      imp(
+        and(in(hs0,A),and(in(hs1,A),in(z,A))), 
+        imp(relation(hs0, R, hs1), imp(relation(hs1, R, z), relation(hs0, R, z)))
+      ),
+    )
+  )
+  syl(eq(hs1,y), imp(imp(sporder(R,A),imp(and(in(hs0,A),and(in(hs1,A),in(z,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z))))),imp(sporder(R,A),imp(and(in(hs0,A),and(in(y,A),in(z,A))),imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z)))))), eq(y,hs1))
+  eq.comm(hs1, y)
+  imp.imp.imp.imp(eq(y,hs1), sporder(R,A), imp(and(in(hs0,A),and(in(hs1,A),in(z,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z)))), sporder(R,A), imp(and(in(hs0,A),and(in(y,A),in(z,A))),imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z)))))
+  idd(eq(y,hs1), sporder(R,A))
+  imp.imp.imp.imp(eq(y,hs1), and(in(hs0,A),and(in(hs1,A),in(z,A))), imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z))), and(in(hs0,A),and(in(y,A),in(z,A))), imp(relation(hs0,R,y),imp(relation(y,R,z),relation(hs0,R,z))))
+  imp.and.imp.and(eq(y,hs1), in(hs0,A), and(in(y,A),in(z,A)), in(hs0,A), and(in(hs1,A),in(z,A)))
+  idd(eq(y,hs1), in(hs0,A))
+  imp.and.imp.and(eq(y,hs1), in(y,A), in(z,A), in(hs1,A), in(z,A))
+  ax.8(y, hs1, A)
+  idd(eq(y,hs1), in(z,A))
+  imp.imp.imp.imp(eq(y,hs1), relation(hs0,R,hs1), imp(relation(hs1,R,z),relation(hs0,R,z)), relation(hs0,R,y), imp(relation(y,R,z),relation(hs0,R,z)))
+  eq.relation(hs0, R, y, hs1)
+  imp.imp.imp.imp(eq(y,hs1), relation(hs1,R,z), relation(hs0,R,z), relation(y,R,z), relation(hs0,R,z))
+  eq.relation(R, z, y, hs1)
+  idd(eq(y,hs1), relation(hs0,R,z))
+  eq.replace(hs2, z, imp(sporder(R,A),imp(and(in(hs0,A),and(in(hs1,A),in(z,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z))))), 
+    imp(
+      sporder(R, A),
+      imp(
+        and(in(hs0,A),and(in(hs1,A),in(hs2,A))), 
+        imp(relation(hs0, R, hs1), imp(relation(hs1, R, hs2), relation(hs0, R, hs2)))
+      ),
+    )
+  )
+  syl(eq(hs2,z), imp(imp(sporder(R,A),imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,hs2),relation(hs0,R,hs2))))),imp(sporder(R,A),imp(and(in(hs0,A),and(in(hs1,A),in(z,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z)))))), eq(z,hs2))
+  eq.comm(hs2, z)
+  sporder.def(R, A, hs0, hs1, hs2)
+  imp.imp.imp.imp(eq(z,hs2), sporder(R,A), imp(and(in(hs0,A),and(in(hs1,A),in(hs2,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,hs2),relation(hs0,R,hs2)))), sporder(R,A), imp(and(in(hs0,A),and(in(hs1,A),in(z,A))),imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z)))))
+  idd(eq(z,hs2), sporder(R,A))
+  imp.imp.imp.imp(eq(z,hs2), and(in(hs0,A),and(in(hs1,A),in(hs2,A))), imp(relation(hs0,R,hs1),imp(relation(hs1,R,hs2),relation(hs0,R,hs2))), and(in(hs0,A),and(in(hs1,A),in(z,A))), imp(relation(hs0,R,hs1),imp(relation(hs1,R,z),relation(hs0,R,z))))
+  imp.and.imp.and(eq(z,hs2), in(hs0,A), and(in(hs1,A),in(z,A)), in(hs0,A), and(in(hs1,A),in(hs2,A)))
+  idd(eq(z,hs2), in(hs0,A))
+  imp.and.imp.and(eq(z,hs2), in(hs1,A), in(z,A), in(hs1,A), in(hs2,A))
+  idd(eq(z,hs2), in(hs1,A))
+  ax.8(z, hs2, A)
+  imp.imp.imp.imp(eq(z,hs2), relation(hs0,R,hs1), imp(relation(hs1,R,hs2),relation(hs0,R,hs2)), relation(hs0,R,hs1), imp(relation(hs1,R,z),relation(hs0,R,z)))
+  idd(eq(z,hs2), relation(hs0,R,hs1))
+  imp.imp.imp.imp(eq(z,hs2), relation(hs1,R,hs2), relation(hs0,R,hs2), relation(hs1,R,z), relation(hs0,R,z))
+  eq.relation(hs0, R, hs2, z)
+  eq.relation(hs1, R, z, hs2)
+}
+
+thm sporder.antisymmetric(set R, set A, set x, set y) {
+  |- imp(sporder(R, A), imp(and(in(x,A), in(y,A)), imp(relation(x, R, y), not(relation(y, R, x)))))
+} = {
+  and.expo(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),not(relation(y,R,x))))
+  mpd(and(sporder(R,A),and(in(x,A),in(y,A))), imp(relation(x,R,y),not(relation(y,R,x))), not(relation(x, R, x)))
+  and.impo(sporder(R,A), and(in(x,A),in(y,A)), not(relation(x,R,x)))
+  syl5(sporder(R,A), and(in(x,A),in(y,A)), not(relation(x,R,x)), in(x,A))
+  sporder.diff.1(R, A, x)
+  and.left(in(x,A), in(y,A))
+  com23(and(sporder(R,A),and(in(x,A),in(y,A))), not(relation(x,R,x)), relation(x,R,y), not(relation(y,R,x)))
+  and.expo(and(sporder(R,A),and(in(x,A),in(y,A))), relation(x,R,y), imp(not(relation(x,R,x)),not(relation(y,R,x))))
+  contra.3d(and(and(sporder(R,A),and(in(x,A),in(y,A))),relation(x,R,y)), relation(x,R,x), relation(y,R,x))
+  and.impo(and(sporder(R,A),and(in(x,A),in(y,A))), relation(x,R,y), imp(relation(y,R,x),relation(x,R,x)))
+  and.impo(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),imp(relation(y,R,x),relation(x,R,x))))
+  syl5(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),imp(relation(y,R,x),relation(x,R,x))), and(in(x,A),and(in(y,A),in(x,A))))
+  sporder.diff.2(R, A, x, y, x)
+  and.intro.d(and(in(x,A),in(y,A)), in(x,A), and(in(y,A),in(x,A)))
+  and.left(in(x,A), in(y,A))
+  and.comm(in(x,A), in(y,A))
 }

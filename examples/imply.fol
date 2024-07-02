@@ -20,6 +20,14 @@ thm a1i(prop p1, prop p2) {
   ax.1(p2, p1)
 }
 
+
+thm idd(prop p0, prop p1) {
+  |- imp(p0, imp(p1, p1))
+} = {
+  a1i(p0, imp(p1,p1))
+  id(p1)
+}
+
 thm mpd(prop p1, prop p2, prop p3) {
   |- imp(p1, p2)
   -| imp(p1, p3)
@@ -229,4 +237,17 @@ thm com23(prop p1, prop p2, prop p3, prop p4) {
 } = {
   syl(p1, imp(p2,imp(p3,p4)), imp(p3,imp(p2,p4)))
   com12.d(p3, p2, p4)
+}
+
+thm imp.imp.imp.imp(prop p0, prop p1, prop p2, prop p3, prop p4) {
+    |- imp(p0, imp(imp(p1,p2), imp(p3, p4)))
+    -| imp(p0, imp(p3, p1))
+    -| imp(p0, imp(p2, p4))
+} = {
+  a2ii(p0, imp(imp(p1,p2),imp(p3,p4)), imp(p3,p1))
+  syl(p0, imp(imp(p3,p1),imp(imp(p1,p2),imp(p3,p4))), imp(p2,p4))
+  com23(imp(p2,p4), imp(p3,p1), imp(p1,p2), imp(p3,p4))
+  syl6(imp(p2,p4), imp(p1,p2), imp(imp(p3,p1),imp(p3,p4)), imp(p1,p4))
+  imp.trans(p1, p4, p3)
+  imp.trans(p2, p4, p1)
 }

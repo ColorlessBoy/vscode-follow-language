@@ -111,7 +111,7 @@ thm ax9i(set s0, set s1, set s2) {
 }
 
 
-thm singleton.eq(set s0, set s1) {
+thm singleton.eq.mp(set s0, set s1) {
   |- imp(eq(singleton(s0), singleton(s1)), eq(s0,s1))
 } = {
   syl(eq(singleton(s0),singleton(s1)), eq(s0,s1), in(s0, singleton(s1)))
@@ -121,6 +121,24 @@ thm singleton.eq(set s0, set s1) {
   a1i(eq(singleton(s0),singleton(s1)), in(s0,singleton(s0)))
   singleton.def.1(s0)
   ax.9(singleton(s0), singleton(s1), s0)
+}
+thm singleton.eq.mpr(set s0, set s1) {
+  |- imp(eq(s0,s1), eq(singleton(s0), singleton(s1)))
+} = {
+  syl(eq(s0,s1), eq(singleton(s0),singleton(s1)), forall(hs0, iff(in(hs0,singleton(s0)), in(hs0,singleton(s1)))))
+  zfc.ext3(hs0, singleton(s0), singleton(s1))
+  agend(hs0, eq(s0,s1), iff(in(hs0,singleton(s0)),in(hs0,singleton(s1))))
+  iff.intro.d(eq(s0,s1), in(hs0,singleton(s0)), in(hs0,singleton(s1)))
+  syl5(eq(s0,s1), in(hs0,singleton(s0)), in(hs0,singleton(s1)), eq(hs0,s0))
+  singleton.def(hs0, s0)
+  syl6(eq(s0,s1), eq(hs0,s0), in(hs0,singleton(s1)), eq(hs0,s1))
+  singleton.def(hs0, s1)
+  eq.trans(s0, s1, hs0)
+  syl5(eq(s0,s1), in(hs0,singleton(s1)), in(hs0,singleton(s0)), eq(hs0,s1))
+  singleton.def(hs0, s1)
+  syl6(eq(s0,s1), eq(hs0,s1), in(hs0,singleton(s0)), eq(hs0,s0))
+  singleton.def(hs0, s0)
+  eq.trans(s0, s1, hs0)
 }
 
 thm eq.def.ii(set s0, set s1, set s3) {
@@ -501,6 +519,33 @@ thm pair.eq.5(set s0, set s1, set s2, set s3) {
   pair.comm(s2, s0)
 }
 
+thm pair.eq.6(set s0, set s1, set s2, set s3) {
+  |- imp(eq(s0,s1),imp(eq(s2,s3), eq(pair(s0, s2), pair(s1, s3))))
+} = {
+  syl6(eq(s0,s1), eq(s2,s3), eq(pair(s0,s2),pair(s1,s3)), 
+    forall(hs0, iff(in(hs0, pair(s0,s2)), in(hs0,pair(s1,s3))))
+  )
+  zfc.ext3(hs0, pair(s0,s2), pair(s1,s3))
+  and.expo(eq(s0,s1), eq(s2,s3), forall(hs0,iff(in(hs0,pair(s0,s2)),in(hs0,pair(s1,s3)))))
+  agend(hs0, and(eq(s0,s1),eq(s2,s3)), iff(in(hs0,pair(s0,s2)),in(hs0,pair(s1,s3))))
+  iff.syld(and(eq(s0,s1),eq(s2,s3)), in(hs0,pair(s0,s2)), in(hs0,pair(s1,s3)), 
+    or(eq(hs0,s0),eq(hs0,s2))
+  )
+  a1i(and(eq(s0,s1),eq(s2,s3)), iff(in(hs0,pair(s0,s2)),or(eq(hs0,s0),eq(hs0,s2))))
+  pair.def(hs0, s0, s2)
+  iff.syld(and(eq(s0,s1),eq(s2,s3)), or(eq(hs0,s0),eq(hs0,s2)), in(hs0,pair(s1,s3)), or(eq(hs0,s1),eq(hs0,s3)))
+  a1i(and(eq(s0,s1),eq(s2,s3)), iff(or(eq(hs0,s1),eq(hs0,s3)),in(hs0,pair(s1,s3))))
+  pair.def(hs0, s1, s3)
+  imp.or.iff.or(and(eq(s0,s1),eq(s2,s3)), eq(hs0,s0), eq(hs0,s2), eq(hs0,s1), eq(hs0,s3))
+  syl(and(eq(s0,s1),eq(s2,s3)), iff(eq(hs0,s0),eq(hs0,s1)), eq(s0,s1))
+  and.left(eq(s0,s1), eq(s2,s3))
+  eq.trans(s0, s1, hs0)
+  syl(and(eq(s0,s1),eq(s2,s3)), iff(eq(hs0,s2),eq(hs0,s3)), eq(s2,s3))
+  and.right(eq(s0,s1), eq(s2,s3))
+  eq.trans(s2, s3, hs0)
+}
+
+
 thm opair.def.2(set s0, set s1, set s2, set s3) {
   |- eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
   -| eq(opair(s0,s1), opair(s2,s3))
@@ -512,7 +557,27 @@ thm opair.def.2(set s0, set s1, set s2, set s3) {
   opair.def(s2, s3)
 }
 
-thm opair.eq.1(set s0, set s1, set s2, set s3) {
+thm opair.def.3(set s0, set s1, set s2, set s3) {
+  |- imp(eq(opair(s0,s1), opair(s2,s3)), 
+  eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
+  )
+} = {
+  syl(eq(opair(s0,s1),opair(s2,s3)), eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), 
+    eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3))
+  )
+  ax.mp(imp(eq(opair(s0,s1),opair(s2,s3)),eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3))),
+    eq(opair(s0,s1), pair(singleton(s0),pair(s0,s1)))
+  )
+  opair.def(s0, s1)
+  eq.trans(opair(s0,s1), pair(singleton(s0),pair(s0,s1)), opair(s2,s3))
+  ax.mp(imp(eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3)),eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3)))), 
+    eq(opair(s2,s3), pair(singleton(s2),pair(s2,s3)))
+  )
+  opair.def(s2, s3)
+  eq.trans(opair(s2,s3), pair(singleton(s2),pair(s2,s3)), pair(singleton(s0),pair(s0,s1)))
+}
+
+thm opair.eq.1.i(set s0, set s1, set s2, set s3) {
   |- eq(s0, s2)
   -| eq(opair(s0, s1), opair(s2, s3))
 } = {
@@ -526,7 +591,7 @@ thm opair.eq.1(set s0, set s1, set s2, set s3) {
   or.cases(and(eq(singleton(s0),singleton(s2)),eq(pair(s0,s1),pair(s2,s3))), and(eq(singleton(s0),pair(s2,s3)),eq(singleton(s2),pair(s0,s1))), eq(s0,s2))
   and.impo(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s0,s2))
   a1d(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s0,s2))
-  singleton.eq(s0, s2)
+  singleton.eq.mp(s0, s2)
   and.impo(eq(singleton(s0),pair(s2,s3)), eq(singleton(s2),pair(s0,s1)), eq(s0,s2))
   a1d(eq(singleton(s0),pair(s2,s3)), eq(singleton(s2),pair(s0,s1)), eq(s0,s2))
   syl(eq(singleton(s0),pair(s2,s3)), eq(s0,s2), in(s2, singleton(s0)))
@@ -542,7 +607,7 @@ thm opair.eq.1(set s0, set s1, set s2, set s3) {
   ax.9(pair(s2,s3), singleton(s0), s2)
 }
 
-thm opair.eq.2(set s0, set s1, set s2, set s3) {
+thm opair.eq.2.i(set s0, set s1, set s2, set s3) {
   |- eq(s1, s3)
   -| eq(opair(s0, s1), opair(s2, s3))
 } = {
@@ -563,7 +628,85 @@ thm opair.eq.2(set s0, set s1, set s2, set s3) {
   ax.7(s2, s1, s3)
   and.impo(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s1,s3))
   syl(eq(singleton(s0),singleton(s2)), imp(eq(pair(s0,s1),pair(s2,s3)),eq(s1,s3)), eq(s0,s2))
-  singleton.eq(s0, s2)
+  singleton.eq.mp(s0, s2)
   com12(eq(s0,s2), eq(pair(s0,s1),pair(s2,s3)), eq(s1,s3))
   pair.eq.2.d(s0, s1, s2, s3)
+}
+
+thm opair.eq.3(set s0, set s1, set s2, set s3) {
+  |- imp(eq(opair(s0,s1),opair(s2,s3)), eq(s0,s2))
+} = {
+  syl(eq(opair(s0,s1),opair(s2,s3)), eq(s0,s2), 
+    eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
+  )
+  opair.def.3(s0, s1, s2, s3)
+  syl(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(s0,s2), 
+    or(
+      eq(singleton(s0), singleton(s2)),
+      eq(singleton(s0), pair(s2,s3))
+    )
+  )
+  pair.eq.pair.in.left(singleton(s0), pair(s0,s1), singleton(s2), pair(s2,s3))
+  or.cases(eq(singleton(s0),singleton(s2)), eq(singleton(s0),pair(s2,s3)), eq(s0,s2))
+  singleton.eq.mp(s0, s2)
+  singleton.eq.pair.left.d(s0, s2, s3)
+}
+
+thm opair.eq.4(set s0, set s1, set s2, set s3) {
+  |- imp(eq(opair(s0,s1),opair(s2,s3)), eq(s1,s3))
+} = {
+  mpd(eq(opair(s0,s1),opair(s2,s3)), eq(s1,s3), eq(s0,s2))
+  opair.eq.3(s0, s1, s2, s3)
+  syl(eq(opair(s0,s1),opair(s2,s3)), imp(eq(s0,s2),eq(s1,s3)), 
+    eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
+  )
+  opair.def.3(s0, s1, s2, s3)
+  syl5(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(s0,s2), eq(s1,s3), 
+    eq(singleton(s0),singleton(s2))
+  )
+  singleton.eq.mpr(s0, s2)
+  and.expo(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(singleton(s0),singleton(s2)), eq(s1,s3))
+  mpd(and(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))),eq(singleton(s0),singleton(s2))), eq(s1,s3), 
+    eq(pair(s0,s1), pair(s2,s3))
+  )
+  and.impo(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)))
+  pair.eq.2.d(singleton(s0), pair(s0,s1), singleton(s2), pair(s2,s3))
+  and.impo(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(singleton(s0),singleton(s2)), imp(eq(pair(s0,s1),pair(s2,s3)),eq(s1,s3)))
+  a1i(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), imp(eq(singleton(s0),singleton(s2)),imp(eq(pair(s0,s1),pair(s2,s3)),eq(s1,s3))))
+  com12(eq(singleton(s0),singleton(s2)), eq(pair(s0,s1),pair(s2,s3)), eq(s1,s3))
+  syl5(eq(pair(s0,s1),pair(s2,s3)), eq(singleton(s0),singleton(s2)), eq(s1,s3), eq(s0,s2))
+  singleton.eq.mp(s0, s2)
+  pair.eq.2.d(s0, s1, s2, s3)
+}
+thm opair.eq.5(set s0, set s1, set s2, set s3) {
+  |- imp(eq(s0,s2), imp(eq(s1,s3), eq(opair(s0,s1), opair(s2,s3))))
+} = {
+  syl6(eq(s0,s2), eq(s1,s3), eq(opair(s0,s1),opair(s2,s3)), 
+      eq(pair(singleton(s0), pair(s0,s1)), pair(singleton(s2), pair(s2,s3)))
+  )
+  syld(eq(s0,s2), eq(s1,s3), eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(pair(s0,s1),pair(s2,s3)))
+  pair.eq.6(s0, s2, s1, s3)
+  syl(eq(s0,s2), imp(eq(pair(s0,s1),pair(s2,s3)),eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3)))), eq(singleton(s0), singleton(s2)))
+  singleton.eq.mpr(s0, s2)
+  pair.eq.6(singleton(s0), singleton(s2), pair(s0,s1), pair(s2,s3))
+  syl(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))), eq(opair(s0,s1),opair(s2,s3)), 
+    eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3))
+  )
+  ax.mp(imp(eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3)),eq(opair(s0,s1),opair(s2,s3))), 
+    eq(opair(s0,s1), pair(singleton(s0),pair(s0,s1)))
+  )
+  opair.def(s0, s1)
+  eq.trans(opair(s0,s1), pair(singleton(s0),pair(s0,s1)), opair(s2,s3))
+  ax.mp(imp(eq(pair(singleton(s0),pair(s0,s1)),pair(singleton(s2),pair(s2,s3))),eq(pair(singleton(s0),pair(s0,s1)),opair(s2,s3))), 
+    eq(pair(singleton(s2),pair(s2,s3)), opair(s2,s3))
+  )
+  opair.def(s2,s3)
+  eq.trans(pair(singleton(s2),pair(s2,s3)), opair(s2,s3), pair(singleton(s0),pair(s0,s1)))
+}
+thm opair.eq(set s0, set s1, set s2, set s3) {
+  |- imp(eq(opair(s0,s1),opair(s2,s3)), eq(s0,s2))
+  |- imp(eq(opair(s0,s1),opair(s2,s3)), eq(s1,s3))
+} = {
+  opair.eq.3(s0, s1, s2, s3)
+  opair.eq.4(s0, s1, s2, s3)
 }

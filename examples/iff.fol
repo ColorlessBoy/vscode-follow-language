@@ -339,3 +339,17 @@ thm iff.contra.3d(prop p0, prop p1, prop p2) {
     iff.imp.1d(p0, p1, p2)
     iff.imp.2d(p0, p2, p1)
 }
+
+thm imp.or.iff.or(prop p0, prop p1, prop p2, prop p3, prop p4) {
+    |- imp(p0, iff(or(p1, p2), or(p3, p4)))
+    -| imp(p0, iff(p1,p3))
+    -| imp(p0, iff(p2,p4))
+} = {
+    iff.intro.d(p0, or(p1,p2), or(p3,p4))
+    imp.or.imp.or(p0, p1, p2, p3, p4)
+    iff.imp.1d(p0, p1, p3)
+    iff.imp.1d(p0, p2, p4)
+    imp.or.imp.or(p0, p3, p4, p1, p2)
+    iff.imp.2d(p0, p3, p1)
+    iff.imp.2d(p0, p4, p2)
+}

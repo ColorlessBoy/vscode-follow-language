@@ -131,6 +131,8 @@ axiom singleton.def.2(set s0, set s1) {
 axiom singleton.def(set s0, set s1) {
   |- in(s0, singleton(s0))
   |- iff(in(s0, singleton(s1)), eq(s0, s1))
+  |- imp(in(s0, singleton(s1)), eq(s0, s1))
+  |- imp(eq(s0, s1), in(s0, singleton(s1)))
 }
 axiom pair.def.1(set s0, set s1) {
   |- in(s0, pair(s0, s1))
@@ -145,9 +147,11 @@ axiom pair.def(set s0, set s1, set s2) {
   |- in(s0, pair(s0, s1))
   |- in(s1, pair(s0, s1))
   |- iff(in(s0, pair(s1, s2)), or(eq(s0, s1), eq(s0, s2)))
+  |- iff(or(eq(s0, s1), eq(s0, s2)), in(s0, pair(s1, s2)))
 }
 axiom opair.def(set s0, set s1) {
   |- eq(opair(s0, s1), pair(singleton(s0), pair(s0, s1)))
+  |- eq(pair(singleton(s0), pair(s0, s1)), opair(s0, s1))
 }
 
 term set sdiff(set s0, set s1) { (s0 \ s1)}
@@ -241,6 +245,8 @@ axiom mapsto.def(set x, set y, set X, set Y) {
 term prop relation(set x, set R, set y) { (x R y) }
 axiom relation.def(set x, set R, set y) {
   |- iff(relation(x, R, y), in(opair(x, y), R))
+  |- imp(relation(x, R, y), in(opair(x, y), R))
+  |- imp(in(opair(x, y), R), relation(x, R, y))
 }
 term set relation.dom(set R) { dom(R) }
 axiom relation.dom.def(set x, set R, set y) {
