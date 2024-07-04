@@ -22,6 +22,8 @@ import {
   ProofOpCNode,
   ThmCNode,
   TokenTypes,
+  Suggestion,
+  cNodeToString,
 } from './types';
 
 export class CompilerWithImport {
@@ -260,10 +262,13 @@ export class CompilerWithImport {
 
     const proofs: ProofOpCNode[] = [];
     const diffMap = this.getDiffMap(node.diffs);
+    const cNodeSuggestions: Suggestion[] = [];
     for (const opNode of node.proof) {
       const proofOpCNode = this.compileProofOpNode(opNode, argDefMap, diffMap);
       if (proofOpCNode) {
         proofs.push(proofOpCNode);
+      } else {
+        cNodeSuggestions.push(...this.getProofOpRootSuggestions(opNode.root));
       }
     }
     const { processes, suggestions, suggestionProof } = this.getProofProcess(
@@ -285,6 +290,7 @@ export class CompilerWithImport {
       isValid: this.checkProofValidation(processes.at(-1)),
       suggestions: suggestions,
       suggestionProof: suggestionProof,
+      cNodeSuggestions: cNodeSuggestions,
     };
     this.pushCurrentCNodeList(thmCNode);
     this.setCurrentCNodeMap(node.name.content, thmCNode);
@@ -505,6 +511,43 @@ export class CompilerWithImport {
       }
     }
     return undefined;
+  }
+  private getProofOpRootSuggestions(token: Token): Suggestion[] {
+    const suggestions: Suggestion[] = [];
+    if (token.content.length >= 3) {
+      for (const cNode of this.currentCNodeList) {
+        if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
+          const cNode2 = cNode as ThmCNode | AxiomCNode;
+          if (cNode2.astNode.name.content.startsWith(token.content)) {
+            const tmp: Suggestion = {
+              range: token.range,
+              newText: cNode2.astNode.name.content,
+              doc: cNodeToString(cNode),
+            };
+            suggestions.push(tmp);
+          }
+        }
+      }
+      for (const dep of this.currentDeps) {
+        const cNodeList = this.cNodeListMap.get(dep);
+        if (cNodeList) {
+          for (const cNode of cNodeList) {
+            if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
+              const cNode2 = cNode as ThmCNode | AxiomCNode;
+              if (cNode2.astNode.name.content.startsWith(token.content)) {
+                const tmp: Suggestion = {
+                  range: token.range,
+                  newText: cNode2.astNode.name.content,
+                  doc: cNodeToString(cNode),
+                };
+                suggestions.push(tmp);
+              }
+            }
+          }
+        }
+      }
+    }
+    return suggestions.slice(0, 20);
   }
   private compileProofOpNode(
     opNode: OpAstNode,

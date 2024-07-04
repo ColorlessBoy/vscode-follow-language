@@ -5,7 +5,6 @@ import {
   ParamPair,
   TermASTNode,
   ThmASTNode,
-  Token,
   TypeASTNode,
   NodeTypes,
   TokenTypes,
@@ -13,6 +12,7 @@ import {
   Error,
   Position,
   Keywords,
+  Token,
 } from './types';
 import { RangeImpl } from './scanner';
 
@@ -68,20 +68,20 @@ export class Parser {
     }
     let i = 3;
     for (; i < tokens.length; i++) {
-      if (tokens[i].content === ')') {
+      if (tokens[i].content !== ',' && tokens[i].type !== TokenTypes.WORD) {
         break;
       }
     }
-    if (i === tokens.length) {
+    let rightBrace = tokens.at(i);
+    const params = this.parseParams(tokens.slice(3, i));
+    if (i === tokens.length || tokens[i].content !== ')') {
       this.errors.push({
         type: ErrorTypes.RightParenMissing,
         token: tokens[i - 1] || leftBrace,
       });
-      return;
+    } else {
+      i += 1;
     }
-    let rightBrace = tokens.at(i);
-    const params = this.parseParams(tokens.slice(3, i));
-    i += 1;
     // body.
     let content: Token[] = [];
     if (i < tokens.length) {
@@ -206,20 +206,20 @@ export class Parser {
     }
     let i = 3;
     for (; i < tokens.length; i++) {
-      if (tokens[i].content === ')') {
+      if (tokens[i].content !== ',' && tokens[i].type !== TokenTypes.WORD) {
         break;
       }
     }
-    if (i === tokens.length) {
+    let rightBrace = tokens.at(i);
+    const params = this.parseParams(tokens.slice(3, i));
+    if (i === tokens.length || tokens[i].content !== ')') {
       this.errors.push({
         type: ErrorTypes.RightParenMissing,
         token: tokens[i - 1] || leftBrace,
       });
-      return;
+    } else {
+      i += 1;
     }
-    let rightBrace = tokens.at(i);
-    const params = this.parseParams(tokens.slice(3, i));
-    i += 1;
     // body.
     let content: Token[] = [];
     if (i < tokens.length) {
@@ -311,7 +311,7 @@ export class Parser {
         const opNodes = this.parseOpNode(stmt.slice(1));
         if (opNodes.length === 0) {
           this.errors.push({
-            type: ErrorTypes.EmptyBodyStmt,
+            type: stmt[0].content === Keywords.TARGET ? ErrorTypes.EmptyTargetBodyStmt : ErrorTypes.EmptyAssumeBodyStmt,
             token: stmt[0],
           });
         } else {
@@ -326,7 +326,7 @@ export class Parser {
         const diffParts = this.parseDiff(stmt, paramSet);
         if (diffParts.length === 0) {
           this.errors.push({
-            type: ErrorTypes.EmptyBodyStmt,
+            type: ErrorTypes.EmptyDiffBodyStmt,
             token: stmt[0],
           });
         } else {
@@ -466,8 +466,6 @@ export class Parser {
       });
       return;
     }
-    name.type = TokenTypes.TERMNAME;
-
     // parse params.
     // Params is alternative in term block.
     let leftBrace = tokens.at(3);
@@ -477,20 +475,20 @@ export class Parser {
     if (leftBrace && leftBrace.content === '(') {
       i += 1;
       for (; i < tokens.length; i++) {
-        if (tokens[i].content === ')') {
+        if (tokens[i].content !== ',' && tokens[i].type !== TokenTypes.WORD) {
           break;
         }
       }
-      if (i === tokens.length) {
+      rightBrace = tokens.at(i);
+      params = this.parseParams(tokens.slice(4, i));
+      if (i === tokens.length || tokens[i].content !== ')') {
         this.errors.push({
           type: ErrorTypes.RightParenMissing,
           token: leftBrace,
         });
-        return;
+      } else {
+        i += 1;
       }
-      rightBrace = tokens.at(i);
-      params = this.parseParams(tokens.slice(4, i));
-      i += 1;
     }
     // content. The bridge between follow language and nature language.
     // content is alternative in term block, too.
@@ -528,6 +526,14 @@ export class Parser {
       params: params,
       content: content,
     };
+    if (params.length === 0) {
+      name.type = TokenTypes.CONSTNAME;
+      content.forEach((content) => {
+        content.type = TokenTypes.CONSTNAME;
+      });
+    } else {
+      name.type = TokenTypes.TERMNAME;
+    }
     this.astNodes.push(astNode);
   }
   private parseParams(tokens: Token[]): ParamPair[] {
@@ -563,14 +569,9 @@ export class Parser {
       });
       i += 2;
 
-      // Check comma. ErrorTypes.ParamCommaMissing is not harmful.
       if (i < tokens.length) {
         if (tokens[i].content !== ',') {
           continue;
-          this.errors.push({
-            type: ErrorTypes.ParamCommaMissing,
-            token: tokens[i + 1],
-          });
         } else {
           i += 1;
         }
