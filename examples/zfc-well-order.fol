@@ -1,0 +1,30 @@
+
+// well order
+term prop wfounded(set R, set A) { (R [wf] A) }
+term prop worder(set R, set A) { (R ≤ A) }
+
+axiom wfounded.def(set R, set A, set x, set y, set z) {
+  |- iff(wfounded(R, A), forall(x, imp(
+    and(subseteq(x,A), not(eq(x, emptyset))),
+    exist(y, and(in(y, x), forall(z, imp(in(z,x), not(relation(z,R,y)))))) 
+  )))
+  |- imp(
+    wfounded(R, A), 
+    forall(x, imp(
+      and(subseteq(x,A), not(eq(x, emptyset))),
+      exist(y, and(in(y, x), forall(z, imp(in(z,x), not(relation(z,R,y)))))) 
+    )),
+  )
+  |- imp(
+    forall(x, imp(
+      and(subseteq(x,A), not(eq(x, emptyset))),
+      exist(y, and(in(y, x), forall(z, imp(in(z,x), not(relation(z,R,y)))))) 
+    )),
+    wfounded(R, A), 
+  )
+  diff (R, x, y, z) (A, x, y, z)
+}
+
+axiom worder.def(set R, set A) {
+  |- iff(worder(R,A), and(wfounded(R,A), lorder(R,A)))
+}

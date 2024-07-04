@@ -12,6 +12,8 @@
     "zfc-extensionality.fol",
     "set-operator.fol",
     "zfc-separation.fol",
-    "zfc-order.fol"
+    "zfc-parital-order.fol",
+    "zfc-linear-order.fol",
+    "zfc-well-order.fol"
   ]
 }

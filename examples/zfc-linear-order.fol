@@ -1,0 +1,57 @@
+
+// linear order ; strict complete order 
+term prop lorder(set R, set A) { (R ≺ A) }
+axiom lorder.def(set R, set A, set x, set y, set z) {
+  |- iff(lorder(R, A), 
+  imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    )
+  ))
+  |- imp(imp(
+    and(in(x,A),and(in(y,A),in(z,A))), 
+    and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    )),lorder(R, A))
+  |- imp(
+    lorder(R, A),
+    imp( 
+      and(in(x,A),and(in(y,A),in(z,A))), 
+      and(not(relation(x, R, x)), 
+        and(imp(and(relation(x, R, y), relation(y, R, z)), relation(x, R, z)),
+          or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))
+        )
+    ))
+  )
+  |- imp(lorder(R, A), imp(in(x,A), not(relation(x,R,x))))
+  |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
+  |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- iff(lorder(R,A),and(sporder(R,A), sporder(R,A)))
+  |- iff(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- imp(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
+  |- imp(and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))), lorder(R, A))
+  |- imp(lorder(R, A), sporder(R, A))
+  |- imp(lorder(R, A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x))))
+  diff (R, x, y, z) (A, x, y, z)
+}
+
+
+thm subseteq.lorder(set R, set A, set B) {
+  |- imp(subseteq(A, B), imp(lorder(R, B), lorder(R, A)))
+} = {
+  syl56(subseteq(A,B), lorder(R,B), lorder(R,A), 
+  , and(sporder(R,B), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))
+  , and(sporder(R,A), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0)))))
+  a1i(subseteq(A,B), imp(lorder(R,B),and(sporder(R,B),or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))))
+  lorder.def(R, B, hs0, hs1, hs2)
+  a1i(subseteq(A,B), imp(and(sporder(R,A),or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0)))),lorder(R,A)))
+  lorder.def(R, A, hs0, hs1, hs2)
+  imp.and.imp.and(subseteq(A,B), sporder(R,B), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))), sporder(R,A), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))
+  idd(subseteq(A,B), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))
+  subseteq.sporder.1(R, A, B)
+}

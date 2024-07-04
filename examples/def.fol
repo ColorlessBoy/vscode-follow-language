@@ -194,6 +194,7 @@ axiom emptyset.def(set s0) {
   |- iff(in(s0, emptyset), not(eq(s0, s0)))
   |- imp(in(s0, emptyset), not(eq(s0, s0)))
   |- imp(not(eq(s0, s0)), in(s0, emptyset))
+  |- not(in(s0, emptyset))
 }
 term set spower(set s0) { 𝒫(s0)}
 axiom spower.def(set s0, set s1) {
