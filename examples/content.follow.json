@@ -9,11 +9,14 @@
     "forall.fol",
     "exist.fol",
     "eq.fol",
+    "subs.fol",
     "zfc-extensionality.fol",
     "set-operator.fol",
     "zfc-separation.fol",
     "zfc-parital-order.fol",
     "zfc-linear-order.fol",
-    "zfc-well-order.fol"
+    "zfc-well-order.fol",
+    "transitive.fol",
+    "ordinals.fol"
   ]
 }

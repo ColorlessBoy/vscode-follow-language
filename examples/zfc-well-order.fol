@@ -27,4 +27,48 @@ axiom wfounded.def(set R, set A, set x, set y, set z) {
 
 axiom worder.def(set R, set A) {
   |- iff(worder(R,A), and(wfounded(R,A), lorder(R,A)))
+  |- imp(worder(R,A), and(wfounded(R,A), lorder(R,A)))
+  |- imp(and(wfounded(R,A), lorder(R,A)), worder(R,A))
+  |- imp(worder(R,A), wfounded(R,A))
+  |- imp(worder(R,A), lorder(R,A))
+}
+
+thm subseteq.trans(set s0, set s1, set s2) {
+  |- imp(subseteq(s0,s1),imp(subseteq(s1,s2), subseteq(s0,s2)))
+  |- imp(subseteq(s1,s2),imp(subseteq(s0,s1), subseteq(s0,s2)))
+} = {
+  com12(subseteq(s1,s2), subseteq(s0,s1), subseteq(s0,s2))
+  syl56(subseteq(s0,s1), subseteq(s1,s2), subseteq(s0,s2), 
+  imp(in(hs0,s1),in(hs0,s2)), imp(in(hs0,s0),in(hs0,s2)))
+  syl(subseteq(s0,s1), imp(imp(in(hs0,s1),in(hs0,s2)),imp(in(hs0,s0),in(hs0,s2))), imp(in(hs0,s0),in(hs0,s1)))
+  subseteq.def(s0, s2, hs0)
+  subseteq.def(s1, s2, hs0)
+  subseteq.def(s0, s1, hs0)
+  imp.trans(in(hs0,s0), in(hs0,s1), in(hs0,s2))
+}
+
+
+thm subseteq.wfounded(set R, set A, set B) {
+  |- imp(subseteq(A,B), imp(wfounded(R,B),wfounded(R,A)))
+} = {
+  syld2(subseteq(A,B), wfounded(R,B), wfounded(R,A), 
+    forall(hs0, imp(
+      and(subseteq(hs0,B), not(eq(hs0, emptyset))),
+      exist(hs1, and(in(hs1, hs0), forall(hs2, imp(in(hs2,hs0), not(relation(hs2,R,hs1)))))) 
+    )),
+    forall(hs0, imp(
+      and(subseteq(hs0,A), not(eq(hs0, emptyset))),
+      exist(hs1, and(in(hs1, hs0), forall(hs2, imp(in(hs2,hs0), not(relation(hs2,R,hs1)))))) 
+    ))
+  )  
+  a1i(subseteq(A,B), imp(wfounded(R,B),forall(hs0,imp(and(subseteq(hs0,B),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1))))))))))
+  wfounded.def(R, B, hs0, hs1, hs2)
+  a1i(subseteq(A,B), imp(forall(hs0,imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1)))))))),wfounded(R,A)))
+  wfounded.def(R, A, hs0, hs1, hs2)
+  imp.forall.imp.forall(hs0, subseteq(A,B), imp(and(subseteq(hs0,B),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1))))))), imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1))))))))
+  imp.imp.imp.imp(subseteq(A,B), and(subseteq(hs0,B),not(eq(hs0,emptyset))), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1)))))), and(subseteq(hs0,A),not(eq(hs0,emptyset))), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1)))))))
+  imp.and.imp.and(subseteq(A,B), subseteq(hs0,A), not(eq(hs0,emptyset)), subseteq(hs0,B), not(eq(hs0,emptyset)))
+  subseteq.trans(hs0, A, B)
+  idd(subseteq(A,B), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1)))))))
+  idd(subseteq(A,B), not(eq(hs0,emptyset)))
 }

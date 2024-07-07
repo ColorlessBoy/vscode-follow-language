@@ -292,7 +292,6 @@ thm eq.relation(set R1, set R2, set s1, set s2) {
   |- imp(eq(s1,s2), imp(relation(R1,R2,s1), relation(R1,R2,s2)))
   |- imp(eq(s2,s1), imp(relation(s1,R1,R2), relation(s2,R1,R2)))
   |- imp(eq(s2,s1), imp(relation(R1,R2,s1), relation(R1,R2,s2)))
-
 } = {
   syl(eq(R2,R1), imp(relation(s1,R1,s2),relation(s1,R2,s2)), eq(R1,R2))
   eq.comm(R2, R1)
@@ -385,7 +384,7 @@ thm sporder.imp(set A, set B, set C) {
  eq.comm(A, B)
 }
 
-thm sporder.diff.1(set R, set A, set x) {
+thm sporder.irreflexivity(set R, set A, set x) {
   |- imp(sporder(R, A), imp(in(x, A), not(relation(x, R, x))))
 } = {
   eq.replace(hs0, x, imp(sporder(R,A),imp(in(x,A),not(relation(x,R,x)))), 
@@ -404,7 +403,7 @@ thm sporder.diff.1(set R, set A, set x) {
   eq.relation(x, R, x, hs0)
 }
 
-thm sporder.diff.2(set R, set A, set x, set y, set z) {
+thm sporder.transitivity(set R, set A, set x, set y, set z) {
   |- imp(
     sporder(R, A),
     imp(
@@ -495,7 +494,7 @@ thm sporder.antisymmetric(set R, set A, set x, set y) {
   mpd(and(sporder(R,A),and(in(x,A),in(y,A))), imp(relation(x,R,y),not(relation(y,R,x))), not(relation(x, R, x)))
   and.impo(sporder(R,A), and(in(x,A),in(y,A)), not(relation(x,R,x)))
   syl5(sporder(R,A), and(in(x,A),in(y,A)), not(relation(x,R,x)), in(x,A))
-  sporder.diff.1(R, A, x)
+  sporder.irreflexivity(R, A, x)
   and.left(in(x,A), in(y,A))
   com23(and(sporder(R,A),and(in(x,A),in(y,A))), not(relation(x,R,x)), relation(x,R,y), not(relation(y,R,x)))
   and.expo(and(sporder(R,A),and(in(x,A),in(y,A))), relation(x,R,y), imp(not(relation(x,R,x)),not(relation(y,R,x))))
@@ -503,7 +502,7 @@ thm sporder.antisymmetric(set R, set A, set x, set y) {
   and.impo(and(sporder(R,A),and(in(x,A),in(y,A))), relation(x,R,y), imp(relation(y,R,x),relation(x,R,x)))
   and.impo(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),imp(relation(y,R,x),relation(x,R,x))))
   syl5(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),imp(relation(y,R,x),relation(x,R,x))), and(in(x,A),and(in(y,A),in(x,A))))
-  sporder.diff.2(R, A, x, y, x)
+  sporder.transitivity(R, A, x, y, x)
   and.intro.d(and(in(x,A),in(y,A)), in(x,A), and(in(y,A),in(x,A)))
   and.left(in(x,A), in(y,A))
   and.comm(in(x,A), in(y,A))
@@ -514,7 +513,7 @@ thm sporder.neq(set R, set A, set x, set y) {
 } = {
   syl6(sporder(R,A), and(in(x,A),in(y,A)), imp(relation(x,R,y),not(eq(x,y))), not(relation(x,R,x)))
   syl5(sporder(R,A), and(in(x,A),in(y,A)), not(relation(x,R,x)), in(x,A))
-  sporder.diff.1(R, A, x)
+  sporder.irreflexivity(R, A, x)
   and.left(in(x,A), in(y,A))
   com12(not(relation(x,R,x)), relation(x,R,y), not(eq(x,y)))
   contra.3d(relation(x,R,y), relation(x,R,x), eq(x,y))

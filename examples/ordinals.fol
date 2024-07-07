@@ -1,0 +1,35 @@
+
+term set opair.abs(set s0, set s1, prop p0) { { (s0, s1) | p0} }
+axiom opair.abs.def(prop p0, set s0, set s1, set s2) {
+  |- eq(opair.abs(s0, s1, p0), abs(s2, exist(s0, exist(s1, and(eq(s2, opair(s0,s1)), p0)))))
+  diff (s2, p0) (s2, s0) (s2, s1)
+}
+
+term set relation.in { ∈ }
+axiom relation.in.def(set s0, set s1) {
+  |- eq(relation.in, opair.abs(s0, s1, in(s0,s1)))
+} 
+
+term prop ord(set s0) { Ord(s0) }
+term set ord.universe
+term prop ord.limit(set s0) { Lim(s0) }
+term set ord.succ(set s0)  { succ(s0) }
+
+axiom ord.def(set s0) {
+  |- iff(ord(s0), and(transitive(s0), worder(relation.in, s0)))
+}
+
+axiom ord.universe.def(set s0) {
+  |- eq(ord.universe, abs(s0, ord(s0)))
+  |- iff(in(s0, ord.universe), ord(s0))
+  |- imp(in(s0, ord.universe), ord(s0))
+  |- imp(ord(s0), in(s0, ord.universe))
+}
+axiom ord.limit.def(set s0) {
+  |- iff(ord.limit(s0), and(ord(s0), and(neq(s0, emptyset), eq(s0, ssunion(s0)))))
+}
+axiom ord.succ.def(set s0) {
+  |- eq(ord.succ(s0), sunion(s0, singleton(s0)))
+}
+
+

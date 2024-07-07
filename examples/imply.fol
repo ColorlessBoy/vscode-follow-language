@@ -252,7 +252,7 @@ thm imp.imp.imp.imp(prop p0, prop p1, prop p2, prop p3, prop p4) {
   imp.trans(p2, p4, p1)
 }
 
-thm syl56(prop p1, prop p2, prop p3, prop p4, prop p5) {
+thm syld2(prop p1, prop p2, prop p3, prop p4, prop p5) {
   |- imp(p1, imp(p2, p3))
   -| imp(p1, imp(p4, p5))
   -| imp(p1, imp(p2, p4))
@@ -260,4 +260,15 @@ thm syl56(prop p1, prop p2, prop p3, prop p4, prop p5) {
 } = {
   syld(p1, p2, p3, p4)
   syld(p1, p4, p3, p5)
+}
+
+thm syl56(prop p1, prop p2, prop p3, prop p4, prop p5) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p1, imp(p4, p5))
+  -| imp(p2, p4)
+  -| imp(p5, p3)
+} = {
+  syld2(p1, p2, p3, p4, p5)
+  a1i(p1, imp(p2,p4))
+  a1i(p1, imp(p5,p3))
 }

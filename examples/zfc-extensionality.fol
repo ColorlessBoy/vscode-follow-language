@@ -710,3 +710,30 @@ thm opair.eq(set s0, set s1, set s2, set s3) {
   opair.eq.3(s0, s1, s2, s3)
   opair.eq.4(s0, s1, s2, s3)
 }
+
+thm eq.in(set s0, set s1, set s2) {
+  |- imp(eq(s0,s1), imp(in(s0,s2), in(s1,s2)))
+  |- imp(eq(s1,s0), imp(in(s0,s2), in(s1,s2)))
+  |- imp(eq(s0,s1), iff(in(s0,s2), in(s1,s2)))
+  |- imp(eq(s1,s0), iff(in(s0,s2), in(s1,s2)))
+
+  |- imp(eq(s0,s1), imp(in(s2,s0), in(s2,s1)))
+  |- imp(eq(s1,s0), imp(in(s2,s0), in(s2,s1)))
+  |- imp(eq(s0,s1), iff(in(s2,s0), in(s2,s1)))
+  |- imp(eq(s1,s0), iff(in(s2,s0), in(s2,s1)))
+} = {
+  iff.intro.d(eq(s0,s1), in(s0,s2), in(s1,s2))
+  iff.intro.d(eq(s1,s0), in(s0,s2), in(s1,s2))
+  syl(eq(s0,s1), imp(in(s1,s2),in(s0,s2)), eq(s1,s0))
+  syl(eq(s1,s0), imp(in(s0,s2),in(s1,s2)), eq(s0,s1))
+  ax.8(s0, s1, s2)
+  ax.8(s1, s0, s2)
+  eq.comm(s0, s1)
+  eq.comm(s1, s0)
+
+  syl(eq(s1,s0), iff(in(s2,s0),in(s2,s1)), eq(s0,s1))
+  syl(eq(s1,s0), imp(in(s2,s0),in(s2,s1)), eq(s0,s1))
+  ax.9(s0, s1, s2)
+  iff.ax9(s0, s1, s2)
+  eq.comm(s1, s0)
+}

@@ -1,0 +1,26 @@
+
+thm sbt(set s0, set s1, prop p0) {
+  |- subs(s0, s1, p0)
+  -| p0
+} = {
+  ax.mp(subs(s0,s1,p0), forall(hs0, imp(eq(hs0, s0), forall(s1, imp(eq(s1, hs0), p0)))))
+  subs.def(s0, s1, p0, hs0)
+  ax.gen(hs0, imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))))
+  a1i(eq(hs0,s0), forall(s1,imp(eq(s1,hs0),p0)))
+  ax.gen(s1, imp(eq(s1,hs0),p0))
+  a1i(eq(s1,hs0), p0)
+}
+
+thm forall.subs(set s0, set s1, prop p1) {
+  |- imp(forall(s1, p1), subs(s0,s1,p1))
+} = {
+  syl(forall(s1,p1), subs(s0,s1,p1), forall(hs0, imp(eq(hs0,s0), forall(s1,imp(eq(s1,hs0),p1)))))
+  subs.def(s0, s1, p1, hs0)
+  agend(hs0, forall(s1,p1), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p1))))
+  com12(forall(s1,p1), eq(hs0,s0), forall(s1,imp(eq(s1,hs0),p1)))
+  a1i(eq(hs0,s0), imp(forall(s1,p1),forall(s1,imp(eq(s1,hs0),p1))))
+  a4i(s1, p1, imp(eq(s1,hs0),p1))
+  ax.gen(s1, imp(p1,imp(eq(s1,hs0),p1)))
+  ax.1(p1, eq(s1,hs0))
+}
+

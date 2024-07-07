@@ -228,10 +228,11 @@ axiom zfc.powerset(set s0, set s1, set s2) {
 }
 
 term set sprod(set s0, set s1) { (s0 ⨯ s1)}
-axiom sprod.def(set s0, set s1, set s2, set s3) {
+axiom sprod.def(set s0, set s1, set s2, set s3, set a) {
   |- iff(in(opair(s2,s3), sprod(s0,s1)), and(in(s2,s0),in(s3,s1)))
   |- imp(in(opair(s2,s3), sprod(s0,s1)), and(in(s2,s0),in(s3,s1)))
   |- imp(and(in(s2,s0),in(s3,s1)), in(opair(s2,s3), sprod(s0,s1)))
+  |- imp(in(a, sprod(s0, s1)), exist(s2, exist(s3, eq(a, opair(s2,s3)))))
   diff (s0, s2, s3) (s1, s2, s3)
 }
 
@@ -262,11 +263,11 @@ axiom relation.ran.def(set x, set R, set y) {
   |- imp(exist(x, in(opair(x, y), R)), in(y, relation.ran(R)))
 }
 
-term prop transition(set s0) { Trans(s0) }
-axiom transition.def(set s0, set s1) {
-  |- iff(transition(s0), imp(in(s1,s0), subseteq(s1,s0)))
-  |- imp(transition(s0), imp(in(s1,s0), subseteq(s1,s0)))
-  |- imp(imp(in(s1,s0), subseteq(s1,s0)), transition(s0))
+term prop transitive(set s0) { Trans(s0) }
+axiom transitive.def(set s0, set s1) {
+  |- iff(transitive(s0), imp(in(s1,s0), subseteq(s1,s0)))
+  |- imp(transitive(s0), imp(in(s1,s0), subseteq(s1,s0)))
+  |- imp(imp(in(s1,s0), subseteq(s1,s0)), transitive(s0))
 }
 
 // wi(wal(s0, wex(s1, wal(s2, wi(wal(s1, w0), wceq(cv(s2), cv(s1)))))), 

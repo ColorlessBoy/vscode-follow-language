@@ -31,12 +31,11 @@ axiom lorder.def(set R, set A, set x, set y, set z) {
   |- imp(lorder(R, A), imp(in(x,A), not(relation(x,R,x))))
   |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y), imp(relation(y,R,z),relation(x,R,z)))))
   |- imp(lorder(R,A),imp(and(in(x,A),and(in(y,A),in(z,A))), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
-  |- iff(lorder(R,A),and(sporder(R,A), sporder(R,A)))
   |- iff(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
   |- imp(lorder(R, A), and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
   |- imp(and(sporder(R,A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))), lorder(R, A))
   |- imp(lorder(R, A), sporder(R, A))
-  |- imp(lorder(R, A), or(relation(x,R,y), or(eq(x,y), relation(y,R,x))))
+  |- imp(lorder(R, A), imp(and(in(x,A),in(y,A)), or(relation(x,R,y), or(eq(x,y), relation(y,R,x)))))
   diff (R, x, y, z) (A, x, y, z)
 }
 
@@ -44,7 +43,7 @@ axiom lorder.def(set R, set A, set x, set y, set z) {
 thm subseteq.lorder(set R, set A, set B) {
   |- imp(subseteq(A, B), imp(lorder(R, B), lorder(R, A)))
 } = {
-  syl56(subseteq(A,B), lorder(R,B), lorder(R,A), 
+  syld2(subseteq(A,B), lorder(R,B), lorder(R,A), 
   , and(sporder(R,B), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))
   , and(sporder(R,A), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0)))))
   a1i(subseteq(A,B), imp(lorder(R,B),and(sporder(R,B),or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))))
@@ -55,3 +54,111 @@ thm subseteq.lorder(set R, set A, set B) {
   idd(subseteq(A,B), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))
   subseteq.sporder.1(R, A, B)
 }
+
+thm eq.lorder.1(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), imp(lorder(R1,A), lorder(R2,A)))
+} = {
+  syld2(eq(R1,R2), lorder(R1,A), lorder(R2,A), 
+  , and(sporder(R1,A), or(relation(hs0,R1,hs1),or(eq(hs0,hs1),relation(hs1,R1,hs0))))
+  , and(sporder(R2,A), or(relation(hs0,R2,hs1),or(eq(hs0,hs1),relation(hs1,R2,hs0)))))
+  a1i(eq(R1,R2), imp(lorder(R1,A),and(sporder(R1,A),or(relation(hs0,R1,hs1),or(eq(hs0,hs1),relation(hs1,R1,hs0))))))
+  lorder.def(R1, A, hs0, hs1, hs2)
+  a1i(eq(R1,R2), imp(and(sporder(R2,A),or(relation(hs0,R2,hs1),or(eq(hs0,hs1),relation(hs1,R2,hs0)))),lorder(R2,A)))
+  lorder.def(R2, A, hs0, hs1, hs2)
+  imp.and.imp.and(eq(R1,R2), sporder(R1,A), or(relation(hs0,R1,hs1),or(eq(hs0,hs1),relation(hs1,R1,hs0))), sporder(R2,A), or(relation(hs0,R2,hs1),or(eq(hs0,hs1),relation(hs1,R2,hs0))))
+  sporder.imp(R1, R2, A)
+  imp.or.imp.or(eq(R1,R2), relation(hs0,R1,hs1), or(eq(hs0,hs1),relation(hs1,R1,hs0)), relation(hs0,R2,hs1), or(eq(hs0,hs1),relation(hs1,R2,hs0)))
+  eq.relation(R1, R2, hs0, hs1)
+  imp.or.imp.or(eq(R1,R2), eq(hs0,hs1), relation(hs1,R1,hs0), eq(hs0,hs1), relation(hs1,R2,hs0))
+  idd(eq(R1,R2), eq(hs0,hs1))
+  eq.relation(R1, R2, hs1, hs0)
+}
+thm eq.lorder.2(set R, set A, set B) {
+  |- imp(eq(A,B),imp(lorder(R,A),lorder(R,B)))
+} = {
+  syl(eq(A,B), imp(lorder(R,A),lorder(R,B)), subseteq(B,A))
+  eq.subseteq(B, A)
+  subseteq.lorder(R, B, A)
+}
+
+thm eq.lorder(set R1, set R2, set A) {
+  |- imp(eq(R2,A),imp(lorder(R1,R2),lorder(R1,A)))
+  |- imp(eq(R2,A),iff(lorder(R1,R2),lorder(R1,A)))
+  |- imp(eq(A,R2),imp(lorder(R1,R2),lorder(R1,A)))
+  |- imp(eq(A,R2),iff(lorder(R1,R2),lorder(R1,A)))
+
+  |- imp(eq(R1,R2), imp(lorder(R1,A), lorder(R2,A)))
+  |- imp(eq(R1,R2), iff(lorder(R1,A), lorder(R2,A)))
+  |- imp(eq(R2,R1), imp(lorder(R1,A), lorder(R2,A)))
+  |- imp(eq(R2,R1), iff(lorder(R1,A), lorder(R2,A)))
+} = {
+  iff.intro.d(eq(R2,A), lorder(R1,R2), lorder(R1,A))
+  iff.intro.d(eq(A,R2), lorder(R1,R2), lorder(R1,A))
+  syl(eq(R2,A), imp(lorder(R1,A),lorder(R1,R2)), eq(A,R2))
+  syl(eq(A,R2), imp(lorder(R1,R2),lorder(R1,A)), eq(R2,A))
+  eq.comm(R2, A)
+  eq.comm(A, R2)
+  eq.lorder.2(R1, R2, A)
+  eq.lorder.2(R1, A, R2)
+
+  iff.intro.d(eq(R1,R2), lorder(R1,A), lorder(R2,A))
+  iff.intro.d(eq(R2,R1), lorder(R1,A), lorder(R2,A))
+  syl(eq(R1,R2), imp(lorder(R2,A),lorder(R1,A)), eq(R2,R1))
+  syl(eq(R2,R1), imp(lorder(R1,A),lorder(R2,A)), eq(R1,R2))
+  eq.comm(R1, R2)
+  eq.comm(R2, R1)
+  eq.lorder.1(R1, R2, A)
+  eq.lorder.1(R2, R1, A)
+}
+
+thm lorder.irreflexivity(set R, set A, set x) {
+  |- imp(lorder(R, A), imp(in(x, A), not(relation(x, R, x))))
+} = {
+  syl(lorder(R,A), imp(in(x,A),not(relation(x,R,x))), sporder(R,A))
+  lorder.def(R, A, hs0, hs1, hs2)
+  sporder.irreflexivity(R, A, x)
+}
+
+thm lorder.transitivity(set R, set A, set x, set y, set z) {
+  |- imp(lorder(R,A), imp(and(in(x,A),and(in(y,A),in(z,A))), imp(relation(x,R,y),imp(relation(y,R,z),relation(x,R,z)))))
+} = {
+  syl(lorder(R,A), imp(and(in(x,A),and(in(y,A),in(z,A))),imp(relation(x,R,y),imp(relation(y,R,z),relation(x,R,z)))), sporder(R,A))
+  lorder.def(R, A, hs0, hs1, hs2)
+  sporder.transitivity(R, A, x, y, z)
+}
+
+thm lorder.comparability(set R, set A, set x, set y) {
+  |- imp(lorder(R,A), imp(and(in(x,A),in(y,A)), or(relation(x,R,y), or(eq(x,y),relation(y,R,x)))))
+} = {
+  eq.replace(hs0, x, imp(lorder(R,A),imp(and(in(x,A),in(y,A)),or(relation(x,R,y),or(eq(x,y),relation(y,R,x))))), 
+    imp(lorder(R,A),imp(and(in(hs0,A),in(y,A)),or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0)))))
+  )
+  imp.imp.imp.imp(eq(hs0,x), lorder(R,A), imp(and(in(hs0,A),in(y,A)),or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0)))), lorder(R,A), imp(and(in(x,A),in(y,A)),or(relation(x,R,y),or(eq(x,y),relation(y,R,x)))))
+  idd(eq(hs0,x), lorder(R,A))
+  imp.imp.imp.imp(eq(hs0,x), and(in(hs0,A),in(y,A)), or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0))), and(in(x,A),in(y,A)), or(relation(x,R,y),or(eq(x,y),relation(y,R,x))))
+  imp.and.imp.and(eq(hs0,x), in(x,A), in(y,A), in(hs0,A), in(y,A))
+  eq.in(x, hs0, A)
+  idd(eq(hs0,x), in(y,A))
+  imp.or.imp.or(eq(hs0,x), relation(hs0,R,y), or(eq(hs0,y),relation(y,R,hs0)), relation(x,R,y), or(eq(x,y),relation(y,R,x)))
+  eq.relation(R, y, hs0, x)
+  imp.or.imp.or(eq(hs0,x), eq(hs0,y), relation(y,R,hs0), eq(x,y), relation(y,R,x))
+  eq.trans(hs0, x, y)
+  eq.relation(y, R, hs0, x)
+  eq.replace(hs1, y, imp(lorder(R,A),imp(and(in(hs0,A),in(y,A)),or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0))))), 
+    imp(lorder(R,A),imp(and(in(hs0,A),in(hs1,A)),or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))))), 
+  )
+  lorder.def(R, A, hs0, hs1, hs2)
+  imp.imp.imp.imp(eq(hs1,y), lorder(R,A), imp(and(in(hs0,A),in(hs1,A)),or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0)))), lorder(R,A), imp(and(in(hs0,A),in(y,A)),or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0)))))
+  idd(eq(hs1,y), lorder(R,A))
+  imp.imp.imp.imp(eq(hs1,y), and(in(hs0,A),in(hs1,A)), or(relation(hs0,R,hs1),or(eq(hs0,hs1),relation(hs1,R,hs0))), and(in(hs0,A),in(y,A)), or(relation(hs0,R,y),or(eq(hs0,y),relation(y,R,hs0))))
+  imp.and.imp.and(eq(hs1,y), in(hs0,A), in(y,A), in(hs0,A), in(hs1,A))
+  idd(eq(hs1,y), in(hs0,A))
+  eq.in(y, hs1, A)
+  imp.or.imp.or(eq(hs1,y), relation(hs0,R,hs1), or(eq(hs0,hs1),relation(hs1,R,hs0)), relation(hs0,R,y), or(eq(hs0,y),relation(y,R,hs0)))
+  eq.relation(hs0, R, hs1, y)
+  imp.or.imp.or(eq(hs1,y), eq(hs0,hs1), relation(hs1,R,hs0), eq(hs0,y), relation(y,R,hs0))
+  eq.trans(hs1, y, hs0)
+  eq.relation(R, hs0, hs1, y)
+}
+
+
