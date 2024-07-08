@@ -501,15 +501,6 @@ export class Compiler {
     }
     return diffError;
   }
-  private getSuggestion2(proof: ProofOpCNode): Map<string, TermOpCNode> {
-    const suggestions: Map<string, TermOpCNode> = new Map();
-    for (const child of proof.children) {
-      if (child.virtual === true) {
-        suggestions.set(child.root.content, child);
-      }
-    }
-    return suggestions;
-  }
   private getSuggestions(targets: TermOpCNode[], proof: ProofOpCNode): Map<string, TermOpCNode>[] {
     const suggestions: Map<string, TermOpCNode>[] = [];
     // suggestions 的顺序和target相同体验更好
