@@ -1,0 +1,7 @@
+thm id2(prop p0) {
+  |- imp(p0, p0)
+} = {
+  a2ii(p0, p0, imp(?prop3,p0))
+  ax.1(p0, ?prop3)
+  ax.1(p0, imp(?prop3,p0))
+}
