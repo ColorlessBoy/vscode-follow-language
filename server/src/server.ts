@@ -982,6 +982,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
             kind: CompletionItemKind.Function,
             documentation: doc,
             textEdit: { range: proof.range, newText: newText },
+            additionalTextEdits: suggestProof.virtualEdit,
           });
         }
         return items;
