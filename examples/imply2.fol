@@ -1,7 +1,6 @@
-thm id2(prop p0) {
-  |- imp(p0, p0)
+thm com122(prop p1, prop p2, prop p3) {
+  |- imp(p1, imp(p2, p3))
+  -| imp(p2, imp(p1, p3))
 } = {
-  a2ii(p0, p0, imp(p0,p0))
-  ax.1(p0, p0)
-  ax.1(p0, imp(p0,p0))
+  syl(p1, imp(p2,p3), imp(p2,p1))
 }

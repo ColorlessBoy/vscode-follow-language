@@ -1,5 +1,5 @@
-import { Parser } from "./parser";
-import { RangeImpl, Scanner } from "./scanner";
+import { Parser } from './parser';
+import { RangeImpl, Scanner } from './scanner';
 import {
   ASTNode,
   AxiomASTNode,
@@ -25,7 +25,7 @@ import {
   Suggestion,
   cNodeToString,
   TextEdit,
-} from "./types";
+} from './types';
 
 export class CompilerWithImport {
   public cNodeListMap: Map<string, CNode[]> = new Map();
@@ -36,7 +36,7 @@ export class CompilerWithImport {
   public currentCNodeList: CNode[] = [];
   public currentCNodeMap: Map<string, CNode> = new Map();
   public currentDeps: string[] = [];
-  public currentFile: string = "";
+  public currentFile: string = '';
   private virtualIndex = 0;
   private virtualMap: Map<string, TermOpCNode> = new Map();
   private virtualUsedMap: Map<string, TermOpCNode[]> = new Map();
@@ -55,9 +55,7 @@ export class CompilerWithImport {
     errors.sort((a, b) => {
       if (a.token.range.start.line != b.token.range.start.line) {
         return a.token.range.start.line - b.token.range.start.line;
-      } else if (
-        a.token.range.start.character != b.token.range.start.character
-      ) {
+      } else if (a.token.range.start.character != b.token.range.start.character) {
         return a.token.range.start.character - b.token.range.start.character;
       } else if (a.token.range.end.line != b.token.range.start.line) {
         return a.token.range.end.line - b.token.range.end.line;
@@ -148,7 +146,7 @@ export class CompilerWithImport {
         const last = content.pop();
         if (last === undefined) {
           content.push(token.content);
-        } else if (typeof last === "string") {
+        } else if (typeof last === 'string') {
           content.push(last + token.content);
         } else {
           content.push(last, token.content);
@@ -287,7 +285,7 @@ export class CompilerWithImport {
       proofs,
       assumptions,
       argDefMap,
-      diffMap
+      diffMap,
     );
     const thmCNode: ThmCNode = {
       cnodetype: CNodeTypes.THM,
@@ -326,22 +324,16 @@ export class CompilerWithImport {
     proofs: ProofOpCNode[],
     assumptions: TermOpCNode[],
     blockArgDefMap: Map<string, ParamPair>,
-    targetDiffMap: Map<string, Set<string>>
+    targetDiffMap: Map<string, Set<string>>,
   ) {
     const processes: TermOpCNode[][] = [];
     const suggestions: Map<string, TermOpCNode>[][] = [];
-    const assumptionSet: Set<string> = new Set(
-      assumptions.map((ass) => ass.funContent)
-    );
+    const assumptionSet: Set<string> = new Set(assumptions.map((ass) => ass.funContent));
     const suggestionProof: ProofOpCNode[][] = [];
     let currentTarget = [...targets];
     for (const proof of proofs) {
       // check target
-      const nextTarget = this.getNextProof0(
-        currentTarget,
-        proof,
-        assumptionSet
-      );
+      const nextTarget = this.getNextProof0(currentTarget, proof, assumptionSet);
       if (nextTarget === undefined) {
         this.errors.push({
           type: ErrorTypes.ProofOpUseless,
@@ -351,20 +343,12 @@ export class CompilerWithImport {
         const suggestion = this.getSuggestions(currentTarget, proof);
         suggestions.push(suggestion);
         const result = suggestion.map((m) => {
-          const proofOpCNode = this.replaceProofCNode(
-            proof,
-            m,
-            blockArgDefMap,
-            targetDiffMap
-          );
+          const proofOpCNode = this.replaceProofCNode(proof, m, blockArgDefMap, targetDiffMap);
           const virtualEdits: TextEdit[] = [];
           this.virtualMap.forEach((value, key) => {
             if (value.range.end.line < proofOpCNode.range.start.line) {
               const virtualTarget = m.get(key);
-              if (
-                virtualTarget &&
-                virtualTarget.funContent !== value.funContent
-              ) {
+              if (virtualTarget && virtualTarget.funContent !== value.funContent) {
                 virtualEdits.push({
                   range: value.range,
                   newText: virtualTarget.funContent,
@@ -396,7 +380,7 @@ export class CompilerWithImport {
               }
             }
             return false;
-          })
+          }),
         );
       } else {
         processes.push(nextTarget);
@@ -404,14 +388,7 @@ export class CompilerWithImport {
         if (proof.useVirtual) {
           const suggestion = this.getSuggestion2(proof);
           suggestions.push([suggestion]);
-          suggestionProof.push([
-            this.replaceProofCNode(
-              proof,
-              suggestion,
-              blockArgDefMap,
-              targetDiffMap
-            ),
-          ]);
+          suggestionProof.push([this.replaceProofCNode(proof, suggestion, blockArgDefMap, targetDiffMap)]);
         } else {
           suggestions.push([]);
           suggestionProof.push([]);
@@ -424,7 +401,7 @@ export class CompilerWithImport {
     root: Token,
     targetDiffMap: Map<string, Set<string>>,
     newDiffMap: Map<string, Set<string>>,
-    blockArgSet: Set<string>
+    blockArgSet: Set<string>,
   ) {
     if (newDiffMap.size === 0) {
       return [];
@@ -461,7 +438,7 @@ export class CompilerWithImport {
   private checkDiffCondition0(
     targetDiffMap: Map<string, Set<string>>,
     newDiffMap: Map<string, Set<string>>,
-    blockArgSet: Set<string>
+    blockArgSet: Set<string>,
   ) {
     if (newDiffMap.size === 0) {
       return [];
@@ -497,10 +474,8 @@ export class CompilerWithImport {
     }
     return suggestions;
   }
-  private getSuggestions(
-    targets: TermOpCNode[],
-    proof: ProofOpCNode
-  ): Map<string, TermOpCNode>[] {
+
+  private getSuggestions(targets: TermOpCNode[], proof: ProofOpCNode): Map<string, TermOpCNode>[] {
     const suggestions: Map<string, TermOpCNode>[] = [];
     // suggestion 的顺序和target的顺序相同体验更好
     for (const target of targets) {
@@ -513,10 +488,7 @@ export class CompilerWithImport {
     }
     return suggestions;
   }
-  private matchTermOpCNode(
-    current: TermOpCNode,
-    target: TermOpCNode
-  ): Map<string, TermOpCNode> | undefined {
+  private matchTermOpCNode(current: TermOpCNode, target: TermOpCNode): Map<string, TermOpCNode> | undefined {
     const pairStack: [TermOpCNode, TermOpCNode][] = [[current, target]];
     const suggestArgMap: Map<string, TermOpCNode> = new Map();
     const tArgMap: Map<string, TermOpCNode> = new Map();
@@ -560,7 +532,7 @@ export class CompilerWithImport {
   private getNextProof0(
     targets: TermOpCNode[],
     proof: ProofOpCNode,
-    assumptionSet: Set<string>
+    assumptionSet: Set<string>,
   ): TermOpCNode[] | undefined {
     const proofTargetSet = new Set(proof.targets.map((e) => e.funContent));
     let nextTargets: TermOpCNode[] = [];
@@ -581,9 +553,7 @@ export class CompilerWithImport {
       // 新的targets放在最前面体验更好
       const nextTargetSet = new Set(nextTargets.map((e) => e.funContent));
       const newTargets = proof.assumptions.filter(
-        (assumption) =>
-          !assumptionSet.has(assumption.funContent) &&
-          !nextTargetSet.has(assumption.funContent)
+        (assumption) => !assumptionSet.has(assumption.funContent) && !nextTargetSet.has(assumption.funContent),
       );
       nextTargets = [...newTargets, ...nextTargets];
     }
@@ -606,10 +576,7 @@ export class CompilerWithImport {
     const suggestions: Suggestion[] = [];
     if (token.content.length >= 3) {
       for (const cNode of this.currentCNodeList) {
-        if (
-          cNode.cnodetype === CNodeTypes.AXIOM ||
-          cNode.cnodetype === CNodeTypes.THM
-        ) {
+        if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
           const cNode2 = cNode as ThmCNode | AxiomCNode;
           if (cNode2.astNode.name.content.startsWith(token.content)) {
             const tmp: Suggestion = {
@@ -625,10 +592,7 @@ export class CompilerWithImport {
         const cNodeList = this.cNodeListMap.get(dep);
         if (cNodeList) {
           for (const cNode of cNodeList) {
-            if (
-              cNode.cnodetype === CNodeTypes.AXIOM ||
-              cNode.cnodetype === CNodeTypes.THM
-            ) {
+            if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
               const cNode2 = cNode as ThmCNode | AxiomCNode;
               if (cNode2.astNode.name.content.startsWith(token.content)) {
                 const tmp: Suggestion = {
@@ -648,14 +612,13 @@ export class CompilerWithImport {
   private compileProofOpNode(
     opNode: OpAstNode,
     blockArgDefMap: Map<string, ParamPair>,
-    targetDiffMap: Map<string, Set<string>>
+    targetDiffMap: Map<string, Set<string>>,
   ): ProofOpCNode | undefined {
     const root = opNode.root;
     const definition = this.getDefinition(root.content);
     if (
       definition === undefined ||
-      (definition.cnodetype !== CNodeTypes.AXIOM &&
-        definition.cnodetype !== CNodeTypes.THM)
+      (definition.cnodetype !== CNodeTypes.AXIOM && definition.cnodetype !== CNodeTypes.THM)
     ) {
       this.errors.push({
         type: ErrorTypes.AxiomThmDefMissing,
@@ -712,11 +675,7 @@ export class CompilerWithImport {
           children.push(virtualArg);
         }
       } else {
-        const childOpCNode = this.compileTermOpNode1(
-          childOpNode,
-          blockArgDefMap,
-          wantArg
-        );
+        const childOpCNode = this.compileTermOpNode1(childOpNode, blockArgDefMap, wantArg);
         children.push(childOpCNode);
         if (childOpCNode.virtual) {
           useVirtual = true;
@@ -725,21 +684,12 @@ export class CompilerWithImport {
       }
     }
 
-    const targets = definition2.targets.map((e) =>
-      this.replaceTermOpCNode(e, argMap)
-    );
-    const assumptions = definition2.assumptions.map((e) =>
-      this.replaceTermOpCNode(e, argMap)
-    );
+    const targets = definition2.targets.map((e) => this.replaceTermOpCNode(e, argMap));
+    const assumptions = definition2.assumptions.map((e) => this.replaceTermOpCNode(e, argMap));
     const blockArgSet: Set<string> = new Set();
     blockArgDefMap.forEach((pair) => blockArgSet.add(pair.name.content));
     const diffs = this.replaceDiffs(definition2.diffArray, argMap);
-    const diffErrors = this.checkDiffCondition(
-      root,
-      targetDiffMap,
-      diffs,
-      blockArgSet
-    );
+    const diffErrors = this.checkDiffCondition(root, targetDiffMap, diffs, blockArgSet);
 
     const proofOpCNode: ProofOpCNode = {
       root: root,
@@ -754,10 +704,7 @@ export class CompilerWithImport {
     };
     return proofOpCNode;
   }
-  private replaceDiffs(
-    diffs: string[][],
-    argMap: Map<string, TermOpCNode>
-  ): Map<string, Set<string>> {
+  private replaceDiffs(diffs: string[][], argMap: Map<string, TermOpCNode>): Map<string, Set<string>> {
     if (diffs.length === 0) {
       return new Map();
     }
@@ -824,7 +771,7 @@ export class CompilerWithImport {
     proof: ProofOpCNode,
     suggestion: Map<string, TermOpCNode>,
     blockArgDefMap: Map<string, ParamPair>,
-    targetDiffMap: Map<string, Set<string>>
+    targetDiffMap: Map<string, Set<string>>,
   ): ProofOpCNode {
     const definition = proof.definition as AxiomCNode | ThmCNode;
     const children = proof.children;
@@ -835,21 +782,13 @@ export class CompilerWithImport {
       newChildren.push(newChild);
     }
 
-    const targets = proof.targets.map((e) =>
-      this.replaceTermOpCNode(e, suggestion)
-    );
-    const assumptions = proof.assumptions.map((e) =>
-      this.replaceTermOpCNode(e, suggestion)
-    );
+    const targets = proof.targets.map((e) => this.replaceTermOpCNode(e, suggestion));
+    const assumptions = proof.assumptions.map((e) => this.replaceTermOpCNode(e, suggestion));
     const diffs = this.replaceDiffs2(proof.diffs, suggestion);
 
     const blockArgSet: Set<string> = new Set();
     blockArgDefMap.forEach((pair) => blockArgSet.add(pair.name.content));
-    const diffErrors = this.checkDiffCondition0(
-      targetDiffMap,
-      diffs,
-      blockArgSet
-    );
+    const diffErrors = this.checkDiffCondition0(targetDiffMap, diffs, blockArgSet);
 
     const newProof = {
       ...proof,
@@ -861,10 +800,7 @@ export class CompilerWithImport {
     };
     return newProof;
   }
-  private replaceTermOpCNode(
-    cNode: TermOpCNode,
-    argMap: Map<string, TermOpCNode>
-  ): TermOpCNode {
+  private replaceTermOpCNode(cNode: TermOpCNode, argMap: Map<string, TermOpCNode>): TermOpCNode {
     const root = cNode.root;
     const definition = cNode.definition;
 
@@ -877,9 +813,7 @@ export class CompilerWithImport {
       return cNode;
     }
 
-    const children = cNode.children.map((e) =>
-      this.replaceTermOpCNode(e, argMap)
-    );
+    const children = cNode.children.map((e) => this.replaceTermOpCNode(e, argMap));
     const definition2 = definition as TermCNode;
     const opCNode: TermOpCNode = {
       root: root,
@@ -898,10 +832,7 @@ export class CompilerWithImport {
     }
     return `?${content}${this.virtualIndex}`;
   }
-  public replaceDiffs2(
-    diffs: Map<string, Set<string>>,
-    argMap: Map<string, TermOpCNode>
-  ) {
+  public replaceDiffs2(diffs: Map<string, Set<string>>, argMap: Map<string, TermOpCNode>) {
     if (diffs.size === 0) {
       return new Map();
     }
@@ -944,11 +875,7 @@ export class CompilerWithImport {
     });
     return rstMap;
   }
-  private compileTermOpNode1(
-    opNode: OpAstNode,
-    argDefMap: Map<string, ParamPair>,
-    wantArg: ParamPair
-  ): TermOpCNode {
+  private compileTermOpNode1(opNode: OpAstNode, argDefMap: Map<string, ParamPair>, wantArg: ParamPair): TermOpCNode {
     const root = opNode.root;
     // arg
     const argDef = argDefMap.get(root.content);
@@ -1133,10 +1060,7 @@ export class CompilerWithImport {
     return opCNode;
   }
 
-  private compileTermOpNode0(
-    opNode: OpAstNode,
-    argDefMap: Map<string, ParamPair>
-  ): TermOpCNode | undefined {
+  private compileTermOpNode0(opNode: OpAstNode, argDefMap: Map<string, ParamPair>): TermOpCNode | undefined {
     const root = opNode.root;
     // arg
     const argDef = argDefMap.get(root.content);
@@ -1190,9 +1114,7 @@ export class CompilerWithImport {
     } else {
       root.type = TokenTypes.TERMNAME;
     }
-    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) =>
-      this.compileTermOpNode0(c, argDefMap)
-    );
+    const children: (TermOpCNode | undefined)[] = opNode.children.map((c) => this.compileTermOpNode0(c, argDefMap));
     for (let idx = 0; idx < children.length; idx++) {
       const opCNode = children[idx];
       const wantArg = wantArgs[idx];
@@ -1216,10 +1138,10 @@ export class CompilerWithImport {
     return opCNode;
   }
   private getTermContent(term: TermCNode, children: TermOpCNode[]): string {
-    let s: string = "";
+    let s: string = '';
     for (let i = 0; i < term.content.length; i++) {
       const word = term.content[i];
-      if (typeof word === "string") {
+      if (typeof word === 'string') {
         s += word;
       } else {
         s += children[word].termContent;
@@ -1230,7 +1152,7 @@ export class CompilerWithImport {
   private getFunContent(term: TermCNode, children: TermOpCNode[]): string {
     let s: string = term.astNode.name.content;
     if (children.length > 0) {
-      s += "(" + children.map((c) => c.funContent).join(",") + ")";
+      s += '(' + children.map((c) => c.funContent).join(',') + ')';
     }
     return s;
   }
