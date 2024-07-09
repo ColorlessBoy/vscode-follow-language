@@ -393,7 +393,7 @@ export class Compiler {
                 this.virtualUsedMap.get(key)?.forEach((cNode) => {
                   virtualEdits.push({
                     range: cNode.range,
-                    newText: value.funContent,
+                    newText: virtualTarget.funContent,
                   });
                 });
               }
@@ -505,7 +505,7 @@ export class Compiler {
     // suggestions 的顺序和target相同体验更好
     for (const target of targets) {
       for (const current of proof.targets) {
-        const suggestion = this.matchTermOpCNode(current, target);
+        const suggestion = this.matchTermOpCNode1(current, target);
         if (suggestion) {
           suggestions.push(suggestion);
         }
@@ -513,6 +513,171 @@ export class Compiler {
     }
     return suggestions;
   }
+
+  private isDep0(parent: string, child: string, dep: Map<string, Set<string>>) {
+    const depChild = dep.get(parent);
+    if (depChild) {
+      if (depChild.has(child)) {
+        return true;
+      }
+      for (const c of depChild) {
+        if (this.isDep0(c, child, dep)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  private setDep(parent: string, child: string, dep: Map<string, Set<string>>) {
+    const depChild = dep.get(parent);
+    if (depChild) {
+      depChild.add(child);
+    } else {
+      dep.set(parent, new Set([child]));
+    }
+  }
+  private isEq(v1: string, v2: string, eq: Set<string>[]) {
+    const s = eq.find((s) => s.has(v1));
+    return s !== undefined && s.has(v2);
+  }
+  private checkTreeMatching(
+    current: TermOpCNode | undefined,
+    target: TermOpCNode | undefined,
+    eq: Set<string>[],
+    dep: Map<string, Set<string>>,
+    preArgMap: Map<string, TermOpCNode>,
+  ): Map<string, TermOpCNode> | undefined {
+    if (current === undefined || target === undefined) {
+      return preArgMap;
+    }
+    if (current.virtual) {
+      if (target.virtual) {
+        if (this.isDep0(current.funContent, target.funContent, dep)) {
+          return undefined;
+        }
+        const tmp = this.checkTreeMatching(
+          preArgMap.get(current.funContent),
+          preArgMap.get(target.funContent),
+          eq,
+          dep,
+          preArgMap,
+        );
+        if (tmp === undefined) {
+          return undefined;
+        }
+
+        // 合并 eq 集合
+        const currentSetIndex = eq.findIndex((s) => s.has(current.funContent));
+        const targetSetIndex = eq.findIndex((s) => s.has(target.funContent));
+        if (currentSetIndex === -1 && targetSetIndex === -1) {
+          eq.push(new Set([current.funContent, target.funContent]));
+        } else if (currentSetIndex === -1) {
+          eq[targetSetIndex].add(current.funContent);
+        } else if (targetSetIndex === -1) {
+          eq[currentSetIndex].add(target.funContent);
+        } else if (currentSetIndex !== targetSetIndex) {
+          const currentSet = eq[currentSetIndex];
+          const targetSet = eq[targetSetIndex];
+          eq[currentSetIndex] = new Set([...currentSet, ...targetSet]);
+          eq.splice(targetSetIndex, 1);
+        }
+        return preArgMap;
+      }
+      const virtuals = this.getVirtualOfTermOpCNode(target);
+      for (const v of virtuals) {
+        if (this.isEq(current.funContent, v, eq) || this.isDep0(v, current.funContent, dep)) {
+          return undefined;
+        }
+      }
+      const oldCNode = preArgMap.get(current.funContent);
+      if (oldCNode) {
+        const tmp = this.checkTreeMatching(oldCNode, target, eq, dep, preArgMap);
+        if (tmp === undefined) {
+          return undefined;
+        }
+      } else {
+        preArgMap.set(current.funContent, target);
+      }
+      for (const v of virtuals) {
+        this.setDep(current.funContent, v, dep);
+      }
+      return preArgMap;
+    } else if (target.virtual) {
+      const virtuals = this.getVirtualOfTermOpCNode(current);
+      for (const v of virtuals) {
+        if (this.isEq(target.funContent, v, eq) || this.isDep0(v, target.funContent, dep)) {
+          return undefined;
+        }
+      }
+      const oldCNode = preArgMap.get(target.funContent);
+      if (oldCNode) {
+        const tmp = this.checkTreeMatching(current, oldCNode, eq, dep, preArgMap);
+        if (tmp === undefined) {
+          return undefined;
+        }
+      } else {
+        preArgMap.set(target.funContent, current);
+      }
+      for (const v of virtuals) {
+        this.setDep(target.funContent, v, dep);
+      }
+      return preArgMap;
+    } else {
+      if (current.root.content !== target.root.content) {
+        return undefined;
+      }
+      for (let i = 0; i < current.children.length; i++) {
+        const tmp = this.checkTreeMatching(current.children[i], target.children[i], eq, dep, preArgMap);
+        if (tmp === undefined) {
+          return undefined;
+        }
+      }
+      return preArgMap;
+    }
+  }
+  private matchTermOpCNode1(current: TermOpCNode, target: TermOpCNode): Map<string, TermOpCNode> | undefined {
+    const argMap: Map<string, TermOpCNode> = new Map();
+    const eq: Set<string>[] = [];
+    const dep: Map<string, Set<string>> = new Map();
+    const tmp = this.checkTreeMatching(current, target, eq, dep, argMap);
+    if (tmp === undefined) {
+      return undefined;
+    }
+    const argValues = Array.from(argMap.keys());
+    argValues.sort((a, b) => {
+      if (this.isDep0(b, a, dep)) {
+        return -1;
+      } else if (this.isEq(b, a, eq)) {
+        return 0;
+      }
+      return 1;
+    });
+    const virtuals = [...this.getVirtualOfTermOpCNode2(current), ...this.getVirtualOfTermOpCNode2(target)];
+    for (const k of argValues) {
+      const value = argMap.get(k);
+      const s = eq.find((s) => s.has(k));
+      if (value) {
+        const newOpCNode = this.replaceTermOpCNode(value, argMap);
+        if (s) {
+          for (const newK of s) {
+            argMap.set(newK, newOpCNode);
+          }
+        } else {
+          argMap.set(k, newOpCNode);
+        }
+      } else if (s) {
+        const minS = Array.from(s.values()).sort()[0];
+        const virtual = virtuals.find((v) => v.funContent === minS);
+        if (virtual) {
+          for (const newK of s) {
+            argMap.set(newK, virtual);
+          }
+        }
+      }
+    }
+    return argMap;
+  }
+
   private matchTermOpCNode(current: TermOpCNode, target: TermOpCNode): Map<string, TermOpCNode> | undefined {
     const pairStack: [TermOpCNode, TermOpCNode][] = [[current, target]];
     const suggestArgMap: Map<string, TermOpCNode> = new Map();
@@ -807,10 +972,31 @@ export class Compiler {
     }
     return rstMap;
   }
+  private getVirtualOfTermOpCNode2(term: TermOpCNode): TermOpCNode[] {
+    if (term.virtual) {
+      return [term];
+    }
+    const rst: TermOpCNode[] = [];
+    for (const child of term.children) {
+      rst.push(...this.getVirtualOfTermOpCNode2(child));
+    }
+    return rst;
+  }
+
+  private getVirtualOfTermOpCNode(term: TermOpCNode): Set<string> {
+    if (term.virtual) {
+      return new Set([term.funContent]);
+    }
+    const rst: string[] = [];
+    for (const child of term.children) {
+      rst.push(...this.getVirtualOfTermOpCNode(child));
+    }
+    return new Set(rst);
+  }
   private getLeavesOfTermOpCNode(term: TermOpCNode): Set<string> {
     if (term.children.length === 0) {
       // 这里之前有bug，只返回了arg参数
-      return new Set([term.termContent]);
+      return new Set([term.funContent]);
     }
     const rst: string[] = [];
     for (const child of term.children) {
