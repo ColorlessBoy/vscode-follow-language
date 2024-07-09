@@ -6,4 +6,7 @@ thm eq.transitive(set s0, set s1) {
   syl56(eq(s0,s1), transitive(s0), transitive(s1), imp(in(hs0,s0),subseteq(hs0,s0)), imp(in(hs0,s1),subseteq(hs0,s1)))
   transitive.def(s0, hs0)
   transitive.def(s1, hs0)
+  imp.imp.imp.imp(eq(s0,s1), in(hs0,s0), subseteq(hs0,s0), in(hs0,s1), subseteq(hs0,s1))
+  eq.in(s1, s0, hs0)
+  eq.subseteq(s0, s1, hs0)
 }

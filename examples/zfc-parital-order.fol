@@ -228,7 +228,32 @@ thm subseteq.sporder.1(set R, set A, set B) {
   subseteq.def(A, B, hs2)
 }
 
-thm eq.subseteq(set s0, set s1) {
+thm eq.subseteq(set s0, set s1, set s2) {
+  |- imp(eq(s0, s1), imp(subseteq(s0, s2), subseteq(s1,s2)))
+  |- imp(eq(s1, s0), imp(subseteq(s0, s2), subseteq(s1,s2)))
+  |- imp(eq(s0, s1), imp(subseteq(s2, s0), subseteq(s2,s1)))
+  |- imp(eq(s1, s0), imp(subseteq(s2, s0), subseteq(s2,s1)))
+} = {
+  syl(eq(s1,s0), imp(subseteq(s0,s2),subseteq(s1,s2)), eq(s0,s1))
+  eq.comm(s1, s0)
+  syl56(eq(s0,s1), subseteq(s0,s2), subseteq(s1,s2), imp(in(hs0,s0),in(hs0,s2)), imp(in(hs0,s1),in(hs0,s2)))
+  subseteq.def(s0, s2, hs0)
+  subseteq.def(s1, s2, hs0)
+  imp.imp.imp.imp(eq(s0,s1), in(hs0,s0), in(hs0,s2), in(hs0,s1), in(hs0,s2))
+  eq.in(s1, s0, hs0)
+  idd(eq(s0,s1), in(hs0,s2))
+
+  syl(eq(s1,s0), imp(subseteq(s2,s0),subseteq(s2,s1)), eq(s0,s1))
+  eq.comm(s1, s0)
+  syl56(eq(s0,s1), subseteq(s2,s0), subseteq(s2,s1), imp(in(hs0,s2),in(hs0,s0)), imp(in(hs0,s2),in(hs0,s1)))
+  subseteq.def(s2, s0, hs0)
+  subseteq.def(s2, s1, hs0)
+  imp.imp.imp.imp(eq(s0,s1), in(hs0,s2), in(hs0,s0), in(hs0,s2), in(hs0,s1))
+  idd(eq(s0,s1), in(hs0,s2))
+  eq.in(s0, s1, hs0)
+}
+
+thm eq.to.subseteq(set s0, set s1) {
   |- imp(eq(s0, s1), subseteq(s0, s1))
   |- imp(eq(s1, s0), subseteq(s0, s1))
 } = {
@@ -243,7 +268,7 @@ thm eq.sporder.2(set R, set A, set B) {
   |- imp(eq(A, B), imp(sporder(R, B), sporder(R, A)))
 } = {
   syl(eq(A,B), imp(sporder(R,B),sporder(R,A)), subseteq(A,B))
-  eq.subseteq(A, B)
+  eq.to.subseteq(A, B)
   subseteq.sporder.1(R, A, B)
 }
 

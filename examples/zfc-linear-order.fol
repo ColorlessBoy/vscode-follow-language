@@ -77,7 +77,7 @@ thm eq.lorder.2(set R, set A, set B) {
   |- imp(eq(A,B),imp(lorder(R,A),lorder(R,B)))
 } = {
   syl(eq(A,B), imp(lorder(R,A),lorder(R,B)), subseteq(B,A))
-  eq.subseteq(B, A)
+  eq.to.subseteq(B, A)
   subseteq.lorder(R, B, A)
 }
 
