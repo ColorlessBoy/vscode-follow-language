@@ -352,11 +352,15 @@ export class CompilerWithImport {
                 virtualEdits.push({
                   range: value.range,
                   newText: virtualTarget.funContent,
+                  oldText: value.funContent,
+                  newTermText: virtualTarget.termContent,
                 });
                 this.virtualUsedMap.get(key)?.forEach((cNode) => {
                   virtualEdits.push({
                     range: cNode.range,
                     newText: virtualTarget.funContent,
+                    oldText: value.funContent,
+                    newTermText: virtualTarget.termContent,
                   });
                 });
               }

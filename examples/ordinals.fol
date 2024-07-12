@@ -17,6 +17,12 @@ term set ord.succ(set s0)  { succ(s0) }
 
 axiom ord.def(set s0) {
   |- iff(ord(s0), and(transitive(s0), worder(relation.in, s0)))
+  |- imp(ord(s0), and(transitive(s0), worder(relation.in, s0)))
+  |- imp(ord(s0), transitive(s0))
+  |- imp(ord(s0), worder(relation.in, s0))
+  |- imp(and(transitive(s0), worder(relation.in, s0)), ord(s0))
+  |- imp(transitive(s0), imp(worder(relation.in, s0), ord(s0)))
+  |- imp(worder(relation.in, s0), imp(transitive(s0), ord(s0)))
 }
 
 axiom ord.universe.def(set s0) {
@@ -33,3 +39,10 @@ axiom ord.succ.def(set s0) {
 }
 
 
+thm eq.ord(set s0, set s1) {
+  |- imp(eq(s0, s1), imp(ord(s0), ord(s1)))
+} = {
+  syl56(eq(s0,s1), ord(s0), ord(s1), and(transitive(s0),worder(relation.in,s0)), and(transitive(s1),worder(relation.in,s1)))
+  ord.def(s0)
+  ord.def(s1)
+}

@@ -1033,6 +1033,13 @@ function proofRelacementForSuggestion(proof: ProofOpCNode, suggestProof: ProofOp
     rstDocArray.push('diff ' + suggestProof.diffError.map((diff) => '(' + diff + ')').join(' '));
   }
   rstDocArray.push('}');
+  if (suggestProof.virtualEdit) {
+    rstDocArray.push(
+      ...suggestProof.virtualEdit.map((v) => {
+        return `${v.oldText} : ${v.newTermText}`;
+      }),
+    );
+  }
   return { newText: rst, doc: rstDocArray.join('\n') };
 }
 
