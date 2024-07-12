@@ -28,8 +28,17 @@
     "vscode": "^1.74.0"
   },
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "followBlockList",
+          "title": "Follow Block List",
+          "icon": "./follow-icon-128-2.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "followBlockList": [
         {
           "type": "webview",
           "id": "followBlockList",
