@@ -108,6 +108,13 @@ export class Compiler {
       rstDocArray.push('diff ' + suggestProof.diffError.map((diff) => '(' + diff + ')').join(' '));
     }
     rstDocArray.push('}');
+    if (suggestProof.virtualEdit) {
+      rstDocArray.push(
+        ...suggestProof.virtualEdit.map((v) => {
+          return `${v.oldText} : ${v.newTermText}`;
+        }),
+      );
+    }
     return {
       range: proof.range,
       newText: rst,
@@ -396,9 +403,9 @@ export class Compiler {
                   virtualEdits.push({
                     range: cNode.range,
                     newText: virtualTarget.funContent,
-                  oldText: value.funContent,
+                    oldText: value.funContent,
 
-                  newTermText: virtualTarget.termContent,
+                    newTermText: virtualTarget.termContent,
                   });
                 });
               }
