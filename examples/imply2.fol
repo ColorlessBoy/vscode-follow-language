@@ -1,8 +1,0 @@
-thm com122(prop p1, prop p2, prop p3) {
-  |- imp(p1, imp(p2, p3))
-  -| imp(p2, imp(p1, p3))
-} = {
-  syl(p1, imp(p2,p3), imp(p2,p1))
-  ax.1(p1, p2)
-  a2i(p2, p1, p3)
-}

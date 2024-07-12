@@ -6,6 +6,7 @@ thm iff.imp.1(prop p0, prop p1) {
     iff.def.1(p0, p1)
     and.left(imp(p0,p1), imp(p1,p0))
 }
+
 thm iff.imp.1i(prop p0, prop p1) {
   |- imp(p0,p1)
   -| iff(p0,p1)

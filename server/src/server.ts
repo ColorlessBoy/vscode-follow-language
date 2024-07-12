@@ -19,13 +19,10 @@ import {
   SemanticTokensBuilder,
   Range,
   Hover,
-  integer,
   TextEdit,
   TextDocumentEdit,
   WorkspaceEdit,
   Location,
-  MarkupContent,
-  MarkupKind,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -48,9 +45,8 @@ import {
   TokenTypes,
   TermASTNode,
   getFollowErrorMsg,
+  cNodeToString,
 } from './parser';
-import { ChildProcess } from 'child_process';
-import { MarkdownString } from 'vscode';
 
 const semanticTokensLegend: SemanticTokensLegend = {
   tokenTypes: [
@@ -324,12 +320,45 @@ connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams)
   return null;
 });
 
+// follow block list
+connection.onRequest('follow/followBlockList', () => {
+  const result2 = [];
+  for (const [folderPath, compiler] of compilerMap.entries()) {
+    const result = [];
+    const deps = compiler.depFileList;
+
+    for (const file of deps) {
+      const cNodeList = compiler.cNodeListMap.get(file) || [];
+      const blocks = cNodeList
+        .filter((cNode) => cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM)
+        .map((cNode) => {
+          const cNode2 = cNode as AxiomCNode | ThmCNode;
+          return {
+            type: cNode2.astNode.keyword.content,
+            name: cNode2.astNode.name.content,
+            isValid: cNode.cnodetype === CNodeTypes.AXIOM ? true : (cNode as ThmCNode).isValid,
+            content: cNodeToString(cNode),
+          };
+        });
+      result.push({
+        file: path.basename(file),
+        blocks,
+      });
+    }
+    result2.push({
+      folder: folderPath.split(path.sep).at(-1),
+      result,
+    });
+  }
+  console.log('follow/followBlockList', result2);
+  return result2;
+});
+
 connection.onHover((event) => {
   const textDocument = documents.get(event.textDocument.uri);
   if (textDocument === undefined) {
     return null;
   }
-  // const uri = Uri.parse(textDocument.uri);
   const uri = textDocument.uri.slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);

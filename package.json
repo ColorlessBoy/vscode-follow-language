@@ -28,6 +28,15 @@
     "vscode": "^1.74.0"
   },
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "followBlockList",
+          "name": "Follow Block List"
+        }
+      ]
+    },
     "configurationDefaults": {
       "editor.semanticTokenColorCustomizations": {
         "rules": {

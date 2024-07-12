@@ -22,6 +22,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.4.0",
     "vscode-languageclient": "^8.1.0"
   }
 }
