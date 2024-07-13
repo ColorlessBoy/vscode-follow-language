@@ -38,11 +38,13 @@ axiom ord.succ.def(set s0) {
   |- eq(ord.succ(s0), sunion(s0, singleton(s0)))
 }
 
-
 thm eq.ord(set s0, set s1) {
   |- imp(eq(s0, s1), imp(ord(s0), ord(s1)))
 } = {
   syl56(eq(s0,s1), ord(s0), ord(s1), and(transitive(s0),worder(relation.in,s0)), and(transitive(s1),worder(relation.in,s1)))
   ord.def(s0)
   ord.def(s1)
+  imp.and.imp.and(eq(s0,s1), transitive(s0), worder(relation.in,s0), transitive(s1), worder(relation.in,s1))
+  eq.transitive(s0, s1)
+  eq.worder(relation.in, s0, s1)
 }

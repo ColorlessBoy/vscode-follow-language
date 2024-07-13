@@ -47,7 +47,6 @@ thm subseteq.trans(set s0, set s1, set s2) {
   imp.trans(in(hs0,s0), in(hs0,s1), in(hs0,s2))
 }
 
-
 thm subseteq.wfounded(set R, set A, set B) {
   |- imp(subseteq(A,B), imp(wfounded(R,B),wfounded(R,A)))
 } = {
@@ -71,4 +70,77 @@ thm subseteq.wfounded(set R, set A, set B) {
   subseteq.trans(hs0, A, B)
   idd(subseteq(A,B), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R,hs1)))))))
   idd(subseteq(A,B), not(eq(hs0,emptyset)))
+}
+
+thm eq.wfounded.1(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), imp(wfounded(R1,A), wfounded(R2,A)))
+} = {
+  syl56(eq(R1,R2), wfounded(R1,A), wfounded(R2,A), forall(hs0,imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R1,hs1)))))))), forall(hs0,imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R2,hs1)))))))))
+  wfounded.def(R1, A, hs0, hs1, hs2)
+  wfounded.def(R2, A, hs0, hs1, hs2)
+  imp.forall.imp.forall(hs0, eq(R1,R2), imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R1,hs1))))))), imp(and(subseteq(hs0,A),not(eq(hs0,emptyset))),exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R2,hs1))))))))
+  imp.imp.imp.imp(eq(R1,R2), and(subseteq(hs0,A),not(eq(hs0,emptyset))), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R1,hs1)))))), and(subseteq(hs0,A),not(eq(hs0,emptyset))), exist(hs1,and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R2,hs1)))))))
+  imp.and.imp.and(eq(R1,R2), subseteq(hs0,A), not(eq(hs0,emptyset)), subseteq(hs0,A), not(eq(hs0,emptyset)))
+  idd(eq(R1,R2), subseteq(hs0,A))
+  idd(eq(R1,R2), not(eq(hs0,emptyset)))
+  imp.exist.imp.exist(hs1, eq(R1,R2), and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R1,hs1))))), and(in(hs1,hs0),forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R2,hs1))))))
+  imp.and.imp.and(eq(R1,R2), in(hs1,hs0), forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R1,hs1)))), in(hs1,hs0), forall(hs2,imp(in(hs2,hs0),not(relation(hs2,R2,hs1)))))
+  idd(eq(R1,R2), in(hs1,hs0))
+  imp.forall.imp.forall(hs2, eq(R1,R2), imp(in(hs2,hs0),not(relation(hs2,R1,hs1))), imp(in(hs2,hs0),not(relation(hs2,R2,hs1))))
+  imp.imp.imp.imp(eq(R1,R2), in(hs2,hs0), not(relation(hs2,R1,hs1)), in(hs2,hs0), not(relation(hs2,R2,hs1)))
+  idd(eq(R1,R2), in(hs2,hs0))
+  contra.3d(eq(R1,R2), relation(hs2,R1,hs1), relation(hs2,R2,hs1))
+  eq.relation(R2, R1, hs2, hs1)
+}
+
+thm eq.wfounded(set R, set A, set B) {
+  |- imp(eq(A,B), imp(wfounded(R,A), wfounded(R,B)))
+  |- imp(eq(B,A), imp(wfounded(R,A), wfounded(R,B)))
+  |- imp(eq(A,B), imp(wfounded(A,R), wfounded(B,R)))
+  |- imp(eq(B,A), imp(wfounded(A,R), wfounded(B,R)))
+} = {
+  syl(eq(B,A), imp(wfounded(R,A),wfounded(R,B)), eq(A,B))
+  eq.comm(B, A)
+  syl(eq(A,B), imp(wfounded(R,A),wfounded(R,B)), subseteq(B,A))
+  subseteq.wfounded(R, B, A)
+  eq.subseteq(B, A, hs0)
+  syl(eq(B,A), imp(wfounded(A,R),wfounded(B,R)), eq(A,B))
+  eq.comm(B, A)
+  eq.wfounded.1(A, B, R)
+}
+
+thm eq.worder.1(set R, set A, set B) {
+  |- imp(eq(A,B), imp(worder(R,A), worder(R,B)))
+} = {
+  syl56(eq(A,B), worder(R,A), worder(R,B), and(wfounded(R,A),lorder(R,A)), and(wfounded(R,B),lorder(R,B)))
+  worder.def(R, A)
+  worder.def(R, B)
+  imp.and.imp.and(eq(A,B), wfounded(R,A), lorder(R,A), wfounded(R,B), lorder(R,B))
+  eq.wfounded(R, A, B)
+  eq.lorder(R, A, B)
+}
+
+thm eq.worder.2(set R1, set R2, set A) {
+  |- imp(eq(R1,R2), imp(worder(R1,A),worder(R2,A)))
+} = {
+  syl56(eq(R1,R2), worder(R1,A), worder(R2,A), and(wfounded(R1,A),lorder(R1,A)), and(wfounded(R2,A),lorder(R2,A)))
+  worder.def(R1, A)
+  worder.def(R2, A)
+  imp.and.imp.and(eq(R1,R2), wfounded(R1,A), lorder(R1,A), wfounded(R2,A), lorder(R2,A))
+  eq.wfounded(A, R1, R2)
+  eq.lorder(R1, R2, A)
+}
+
+thm eq.worder(set R, set A, set B) {
+  |- imp(eq(A,B), imp(worder(R,A), worder(R,B)))
+  |- imp(eq(B,A), imp(worder(R,A), worder(R,B)))
+  |- imp(eq(A,B), imp(worder(A,R), worder(B,R)))
+  |- imp(eq(B,A), imp(worder(A,R), worder(B,R)))
+} = {
+  syl(eq(B,A), imp(worder(A,R),worder(B,R)), eq(A,B))
+  eq.comm(B, A)
+  syl(eq(B,A), imp(worder(R,A),worder(R,B)), eq(A,B))
+  eq.comm(B, A)
+  eq.worder.1(R, A, B)
+  eq.worder.2(A, B, R)
 }
