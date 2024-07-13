@@ -24,3 +24,11 @@ thm forall.subs(set s0, set s1, prop p1) {
   ax.1(p1, eq(s1,hs0))
 }
 
+thm eq.ax4(set s0, set s1, prop p0, prop p1) {
+  |- imp(forall(s0,p0), forall(s1,p1))
+  -| imp(eq(s0,s1), imp(p0,p1))
+  diff (s0,s1) (s0,p1) (s1,p0)
+} = {
+  agend(s1, forall(s0,p0), p1)
+  forall.special.value(s0, s1, p0, p1)
+}
