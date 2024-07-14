@@ -35,3 +35,19 @@ thm imp.forall.imp.forall(set s0, prop p1, prop p2, prop p3) {
   a4d(s0, p1, p2, p3)
   agend(s0, p1, imp(p2,p3))  
 }
+
+thm forall.imp.forall(set s0, prop p0, prop p1) {
+  |- imp(forall(s0, p0), forall(s0, p1))
+  -| imp(p0, p1)
+} = {
+  a4i(s0, p0, p1)
+  ax.gen(s0, imp(p0,p1))
+}
+
+thm forall.imp.forall.imp.forall(set s0, prop p0, prop p1, prop p2) {
+  |- imp(forall(s0, p0), imp(forall(s0,p1), forall(s0,p2)))
+  -| imp(p0, imp(p1, p2))
+} = {
+  a4d(s0, forall(s0,p0), p1, p2)
+  forall.imp.forall(s0, p0, imp(p1,p2))
+}

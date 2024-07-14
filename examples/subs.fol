@@ -32,3 +32,36 @@ thm eq.ax4(set s0, set s1, prop p0, prop p1) {
   agend(s1, forall(s0,p0), p1)
   forall.special.value(s0, s1, p0, p1)
 }
+
+//(∀(s0,(s0 = s1 → ∀(s2,(s2 = s0 → w0))))↔ ∀(s3,(s3 = s1 → ∀(s2,(s2 = s3 → w0)))))
+thm subs.justification.1(set s0, set s1, set s2, set s3, prop p0) {
+  |- imp(
+    forall(s0, imp(eq(s0,s1), forall(s2,imp(eq(s2,s0), p0)))),
+    forall(s3, imp(eq(s3,s1), forall(s2,imp(eq(s2,s3), p0))))
+  )
+  diff (s0, s3, s1) (s0, s3, s2) (s0, s3, p0)
+} = {
+  eq.ax4(s0, s3, imp(eq(s0,s1),forall(s2,imp(eq(s2,s0),p0))), imp(eq(s3,s1),forall(s2,imp(eq(s2,s3),p0))))
+  imp.imp.imp.imp(eq(s0,s3), eq(s0,s1), forall(s2,imp(eq(s2,s0),p0)), eq(s3,s1), forall(s2,imp(eq(s2,s3),p0)))
+  eq.trans(s0, s3, s1)
+  imp.forall.imp.forall(s2, eq(s0,s3), imp(eq(s2,s0),p0), imp(eq(s2,s3),p0))
+  imp.imp.imp.imp(eq(s0,s3), eq(s2,s0), p0, eq(s2,s3), p0)
+  eq.trans(s0, s3, s2)
+  idd(eq(s0,s3), p0)
+}
+
+thm subs.imply(set s0, set s1, prop p0, prop p1) {
+  |- imp(subs(s0,s1,imp(p0,p1)), imp(subs(s0,s1,p0),subs(s0,s1,p1)))
+} = {
+  syl(subs(s0,s1,imp(p0,p1)), imp(subs(s0,s1,p0),subs(s0,s1,p1)), forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),imp(p0,p1))))))
+  subs.def(s0, s1, imp(p0,p1), hs0)
+  syl56(forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),imp(p0,p1))))), subs(s0,s1,p0), subs(s0,s1,p1), forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0)))), forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p1)))))
+  subs.def(s0, s1, p0, hs0)
+  subs.def(s0, s1, p1, hs0)
+  forall.imp.forall.imp.forall(hs0, imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),imp(p0,p1)))), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p1))))
+  a2.3(eq(hs0,s0), forall(s1,imp(eq(s1,hs0),imp(p0,p1))), forall(s1,imp(eq(s1,hs0),p0)), forall(s1,imp(eq(s1,hs0),p1)))
+  a1i(eq(hs0,s0), imp(forall(s1,imp(eq(s1,hs0),imp(p0,p1))),imp(forall(s1,imp(eq(s1,hs0),p0)),forall(s1,imp(eq(s1,hs0),p1)))))
+  forall.imp.forall.imp.forall(s1, imp(eq(s1,hs0),imp(p0,p1)), imp(eq(s1,hs0),p0), imp(eq(s1,hs0),p1))
+  a2.3(eq(s1,hs0), imp(p0,p1), p0, p1)
+  idd(eq(s1,hs0), imp(p0,p1))
+}
