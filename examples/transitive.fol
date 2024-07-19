@@ -10,3 +10,11 @@ thm eq.transitive(set s0, set s1) {
   eq.in(s1, s0, hs0)
   eq.subseteq(s0, s1, hs0)
 }
+
+thm in.transitive(set s0, set s1) {
+  |- imp(in(s0, s1), imp(transitive(s1), transitive(s0)))
+} = {
+  syl56(in(s0,s1), transitive(s1), transitive(s0), imp(in(hs0,s1),subseteq(hs0,s1)), imp(in(hs0,s0),subseteq(hs0,s0)))
+  transitive.def(s0, hs0)
+  transitive.def(s1, hs0)
+}

@@ -667,6 +667,41 @@ connection.onRenameRequest((params) => {
       return workspaceEdit;
     }
   }
+
+  // 函数Proof中的变量替换
+  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNode = findCNodeByPostion(cNodeList, position);
+  if (cNode && cNode.cnodetype === CNodeTypes.THM) {
+    const cNode2 = cNode as ThmCNode;
+    let inProof = false;
+    for (const proof of cNode2.proofs) {
+      if (positionInRange(proof.range, position)) {
+        inProof = true;
+        break;
+      }
+    }
+    if (inProof) {
+      const tokens = getTokensFromRange(tokenList, cNode.astNode.range);
+      const edits: TextEdit[] = [];
+      tokens.forEach((token) => {
+        if (token.content === targetToken.content) {
+          edits.push(TextEdit.replace(token.range, newName));
+        }
+      });
+      if (edits.length === 0) {
+        return null;
+      }
+      const textDocumentEdit: TextDocumentEdit = {
+        textDocument: { uri: textDocument.uri, version: document.version },
+        edits: edits,
+      };
+      const workspaceEdit: WorkspaceEdit = {
+        documentChanges: [textDocumentEdit],
+      };
+      return workspaceEdit;
+    }
+  }
+
   // 非函数内部替换
   const workspaceEdit: WorkspaceEdit = {
     documentChanges: [],

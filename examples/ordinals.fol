@@ -48,3 +48,28 @@ thm eq.ord(set s0, set s1) {
   eq.transitive(s0, s1)
   eq.worder(relation.in, s0, s1)
 }
+
+thm ord.in(set s0, set s1) {
+  |- imp(ord(s1), imp(in(s0,s1), subseteq(s0,s1)))
+} = {
+  syl(ord(s1), imp(in(s0,s1),subseteq(s0,s1)), transitive(s1))
+  transitive.def(s1, s0)
+  ord.def(s1)
+}
+
+thm ord.subseteq.transitive(set s0, set s1) {
+  |- imp(ord(s0), imp(subseteq(s1,s0), imp(transitive(s1), ord(s1))))
+} = {
+  and.expo(ord(s0), subseteq(s1,s0), imp(transitive(s1),ord(s1)))
+  syl6(and(ord(s0),subseteq(s1,s0)), transitive(s1), ord(s1), and(transitive(s1),worder(relation.in,s1)))
+  ord.def(s1)
+  and.intro.d.d(and(ord(s0),subseteq(s1,s0)), transitive(s1), transitive(s1), worder(relation.in,s1))
+  idd(and(ord(s0),subseteq(s1,s0)), transitive(s1))
+  com12(and(ord(s0),subseteq(s1,s0)), transitive(s1), worder(relation.in,s1))
+  a1i(transitive(s1), imp(and(ord(s0),subseteq(s1,s0)),worder(relation.in,s1)))
+  and.impo(ord(s0), subseteq(s1,s0), worder(relation.in,s1))
+  syl(ord(s0), imp(subseteq(s1,s0),worder(relation.in,s1)), worder(relation.in,s0))
+  ord.def(s0)
+  com12(worder(relation.in,s0), subseteq(s1,s0), worder(relation.in,s1))
+  subseteq.worder(relation.in, s1, s0)
+}

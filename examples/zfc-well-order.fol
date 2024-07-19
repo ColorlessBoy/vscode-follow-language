@@ -144,3 +144,14 @@ thm eq.worder(set R, set A, set B) {
   eq.worder.1(R, A, B)
   eq.worder.2(A, B, R)
 }
+
+thm subseteq.worder(set R, set A, set B) {
+  |- imp(subseteq(A, B), imp(worder(R, B), worder(R, A)))
+} = {
+  syl56(subseteq(A,B), worder(R,B), worder(R,A), and(wfounded(R,B),lorder(R,B)), and(wfounded(R,A),lorder(R,A)))
+  worder.def(R, A)
+  worder.def(R, B)
+  imp.and.imp.and(subseteq(A,B), wfounded(R,B), lorder(R,B), wfounded(R,A), lorder(R,A))
+  subseteq.wfounded(R, A, B)
+  subseteq.lorder(R, A, B)
+}
