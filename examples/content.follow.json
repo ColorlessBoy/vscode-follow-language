@@ -15,7 +15,9 @@
     "zfc-parital-order.fol",
     "zfc-linear-order.fol",
     "zfc-well-order.fol",
+    "notfree.fol",
     "subs.fol",
+    "abs.fol",
     "transitive.fol",
     "ordinals.fol"
   ]

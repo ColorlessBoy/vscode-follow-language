@@ -261,6 +261,16 @@ thm eq.subseteq(set s0, set s1, set s2) {
   subseteq.def(s0, s1, hs0)
 }
 
+thm eq.subseteq.i1(set s0, set s1, set s2) {
+  |- subseteq(s0, s1)
+  -| eq(s0, s2)
+  -| subseteq(s2, s1)
+} = {
+  ax.mp(subseteq(s0,s1), subseteq(s2,s1))
+  ax.mp(imp(subseteq(s2,s1),subseteq(s0,s1)), eq(s0,s2))
+  eq.subseteq(s2, s0, s1)
+}
+
 thm eq.to.subseteq(set s0, set s1) {
   |- imp(eq(s0, s1), subseteq(s0, s1))
   |- imp(eq(s1, s0), subseteq(s0, s1))

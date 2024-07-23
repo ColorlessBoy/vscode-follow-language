@@ -65,3 +65,67 @@ thm subs.imply(set s0, set s1, prop p0, prop p1) {
   a2.3(eq(s1,hs0), imp(p0,p1), p0, p1)
   idd(eq(s1,hs0), imp(p0,p1))
 }
+
+thm eq.subs.1(set s0, set s1, prop p0) {
+  |- imp(eq(s0,s1), imp(subs(s0,s1,p0), p0))
+} = {
+  syl5(eq(s0,s1), subs(s0,s1,p0), p0, forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0)))))
+  subs.def(s0, s1, p0, hs0)
+  syld(eq(s0,s1), forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0)))), p0, 
+    forall(hs0, imp(and(eq(hs0,s0), eq(s1,hs0)), p0)))
+  imp.forall.imp.forall(hs0, eq(s0,s1), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))), imp(and(eq(hs0,s0),eq(s1,hs0)),p0))
+  syl6(eq(s0,s1), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))), imp(and(eq(hs0,s0),eq(s1,hs0)),p0), 
+    imp(eq(hs0,s0),imp(eq(s1,hs0),p0)), 
+  )
+  imp.imp.imp.imp(eq(s0,s1), eq(hs0,s0), forall(s1,imp(eq(s1,hs0),p0)), eq(hs0,s0), imp(eq(s1,hs0),p0))
+  idd(eq(s0,s1), eq(hs0,s0))
+  a1i(eq(s0,s1), imp(forall(s1,imp(eq(s1,hs0),p0)),imp(eq(s1,hs0),p0)))
+  forall.special(s1, imp(eq(s1,hs0),p0))
+  and.impo.d(eq(hs0,s0), eq(s1,hs0), p0)
+  syl5(eq(s0,s1), forall(hs0,imp(and(eq(hs0,s0),eq(s1,hs0)),p0)), p0, 
+    imp(exist(hs0, and(eq(hs0,s0),eq(s1,hs0))), p0)
+  )
+  syl6(forall(hs0,imp(and(eq(hs0,s0),eq(s1,hs0)),p0)), exist(hs0,and(eq(hs0,s0),eq(s1,hs0))), p0, 
+    exist(hs0,p0)
+  )
+  forall.imp.exist.exist(hs0, and(eq(hs0,s0),eq(s1,hs0)), p0)
+  exist.ax5(hs0, p0)
+  syl(eq(s0,s1), imp(imp(exist(hs0,and(eq(hs0,s0),eq(s1,hs0))),p0),p0), 
+    exist(hs0, and(eq(hs0,s0),eq(s1,hs0)))
+  )
+  com12(exist(hs0,and(eq(hs0,s0),eq(s1,hs0))), imp(exist(hs0,and(eq(hs0,s0),eq(s1,hs0))),p0), p0)
+  id(imp(exist(hs0,and(eq(hs0,s0),eq(s1,hs0))),p0))
+  mpd(eq(s0,s1), exist(hs0,and(eq(hs0,s0),eq(s1,hs0))), exist(hs0,eq(hs0,s0)))
+  a1i(eq(s0,s1), exist(hs0,eq(hs0,s0)))
+  ax.6(hs0, s0)
+  imp.exist.imp.exist(hs0, eq(s0,s1), eq(hs0,s0), and(eq(hs0,s0),eq(s1,hs0)))
+  and.intro.d.d(eq(s0,s1), eq(hs0,s0), eq(hs0,s0), eq(s1,hs0))
+  eq.trans(s0, s1, hs0)
+  idd(eq(s0,s1), eq(hs0,s0))
+}
+
+thm eq.subs.2(set s0, set s1, prop p0) {
+  |- imp(eq(s0,s1), imp(p0, subs(s0,s1,p0)))
+} = {
+  syl6(eq(s0,s1), p0, subs(s0,s1,p0), forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0)))))
+  subs.def(s0, s1, p0, hs0)
+  and.expo(eq(s0,s1), p0, forall(hs0,imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0)))))
+  agend(hs0, and(eq(s0,s1),p0), imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))))
+  and.impo(eq(s0,s1), p0, imp(eq(hs0,s0),forall(s1,imp(eq(s1,hs0),p0))))
+  com23(eq(s0,s1), p0, eq(hs0,s0), forall(s1,imp(eq(s1,hs0),p0)))
+  syl6(eq(s0,s1), eq(hs0,s0), imp(p0,forall(s1,imp(eq(s1,hs0),p0))), eq(s1,hs0))
+  eq.trans(s0, s1, hs0)
+  ax.12(s1, hs0, p0)
+}
+
+thm eq.subs(set s0, set s1, prop p0) {
+  |- imp(subs(s0,s1,p0), imp(eq(s0,s1), p0))
+  |- imp(p0, imp(eq(s0,s1), subs(s0,s1,p0)))
+  |- imp(eq(s0,s1), imp(subs(s0,s1,p0), p0))
+  |- imp(eq(s0,s1), imp(p0, subs(s0,s1,p0)))
+} = {
+  com12(subs(s0,s1,p0), eq(s0,s1), p0)
+  com12(p0, eq(s0,s1), subs(s0,s1,p0))
+  eq.subs.1(s0, s1, p0)
+  eq.subs.2(s0, s1, p0)
+}

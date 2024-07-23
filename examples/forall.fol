@@ -51,3 +51,13 @@ thm forall.imp.forall.imp.forall(set s0, prop p0, prop p1, prop p2) {
   a4d(s0, forall(s0,p0), p1, p2)
   forall.imp.forall(s0, p0, imp(p1,p2))
 }
+
+thm forall.and(set s0, prop p0, prop p1) {
+  |- imp(forall(s0, and(p0, p1)), and(forall(s0,p0),forall(s0,p1)))
+} = {
+  and.intro.d(forall(s0,and(p0,p1)), forall(s0,p0), forall(s0,p1))
+  forall.imp.forall(s0, and(p0,p1), p0)
+  forall.imp.forall(s0, and(p0,p1), p1)
+  and.right(p0, p1)
+  and.left(p0, p1)
+}

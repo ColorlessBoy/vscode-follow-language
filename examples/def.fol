@@ -27,16 +27,28 @@ axiom and.def.1(prop p1, prop p2) {
 axiom and.def.2(prop p1, prop p2) {
   |- imp(not(imp(p1, not(p2))), and(p1, p2))
 }
+axiom and.def(prop p1, prop p2) {
+  |- imp(and(p1, p2), not(imp(p1, not(p2))))
+  |- imp(not(imp(p1, not(p2))), and(p1, p2))
+}
 axiom or.def.1(prop p1, prop p2) {
   |- imp(or(p1, p2), imp(not(p1), p2))
 }
 axiom or.def.2(prop p1, prop p2) {
   |- imp(imp(not(p1), p2), or(p1, p2))
 }
+axiom or.def(prop p1, prop p2) {
+  |- imp(or(p1, p2), imp(not(p1), p2))
+  |- imp(imp(not(p1), p2), or(p1, p2))
+}
 axiom iff.def.1(prop p1, prop p2) {
   |- imp(iff(p1, p2), and(imp(p1, p2), imp(p2, p1)))
 }
 axiom iff.def.2(prop p1, prop p2) {
+  |- imp(and(imp(p1, p2), imp(p2, p1)), iff(p1, p2))
+}
+axiom iff.def(prop p1, prop p2) {
+  |- imp(iff(p1, p2), and(imp(p1, p2), imp(p2, p1)))
   |- imp(and(imp(p1, p2), imp(p2, p1)), iff(p1, p2))
 }
 axiom true.def() {
@@ -50,6 +62,9 @@ type set
 term set hs0 
 term set hs1
 term set hs2
+term set hs3 
+term set hs4
+term set hs5
 term prop forall(set s0, prop p1) { ∀(s0, p1) }
 term prop exist(set s0, prop p1) { ∃(s0, p1) }
 term prop eq(set s0, set s1) { (s0 = s1) }
@@ -226,6 +241,10 @@ axiom zfc.powerset(set s0, set s1, set s2) {
   |- exist(s0, forall(s2, iff(in(s2, s0), in(s2, spower(s1)))))
   diff (s0, s1, s2)
 }
+axiom zfc.pair(set s0, set s1, set s2, set s3) {
+  |- exist(s0, forall(s1, iff(or(eq(s1,s2), eq(s1,s3)), in(s1,s0))))
+  diff (s0,s1,s2) (s0,s1,s3)
+} 
 
 term set sprod(set s0, set s1) { (s0 ⨯ s1)}
 axiom sprod.def(set s0, set s1, set s2, set s3, set a) {

@@ -69,12 +69,3 @@ thm eq.trans(set s0, set s1, set s2) {
   eq.comm(s0, s2)
   eq.trans4(s0, s1, s2)
 }
-
-// |- s0=s1 -> s0=s2 -> s1=s2    ax.7
-// |- s0=s1 -> s0=s2 -> s2=s1
-// |- s0=s1 -> s2=s0 -> s1=s2
-// |- s0=s1 -> s2=s0 -> s2=s1    eq.trans2
-// |- s0=s1 -> s1=s2 -> s0=s2    eq.trans3
-// |- s0=s1 -> s1=s2 -> s2=s0
-// |- s0=s1 -> s2=s1 -> s0=s2    eq.trans4
-// |- s0=s1 -> s2=s1 -> s2=s0

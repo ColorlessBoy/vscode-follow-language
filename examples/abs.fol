@@ -1,0 +1,78 @@
+
+thm subseteq.def.1(set s0, set s1, set s2) {
+  |- imp(subseteq(s0,s1), imp(in(s2,s0), in(s2,s1)))
+} = {
+  eq.replace(hs0, s2, 
+    imp(subseteq(s0,s1),imp(in(s2,s0),in(s2,s1))), 
+    imp(subseteq(s0,s1),imp(in(hs0,s0),in(hs0,s1))), 
+  )
+  subseteq.def(s0, s1, hs0)
+  imp.imp.imp.imp(eq(hs0,s2), subseteq(s0,s1), imp(in(hs0,s0),in(hs0,s1)), subseteq(s0,s1), imp(in(s2,s0),in(s2,s1)))
+  idd(eq(hs0,s2), subseteq(s0,s1)))
+  imp.imp.imp.imp(eq(hs0,s2), in(hs0,s0), in(hs0,s1), in(s2,s0), in(s2,s1))
+  eq.in(s2, hs0, s0)
+  eq.in(hs0, s2, s1)
+}
+
+thm subseteq.def2(set s0, set s1, set s2) {
+  |- iff(subseteq(s0,s1), imp(in(s2,s0), in(s2,s1)))
+  |- imp(subseteq(s0,s1), imp(in(s2,s0), in(s2,s1)))
+  |- imp(imp(in(s2,s0), in(s2,s1)), subseteq(s0,s1))
+  |- iff(imp(in(s2,s0), in(s2,s1)), subseteq(s0,s1))
+} = {
+  iff.intro(subseteq(s0,s1), imp(in(s2,s0),in(s2,s1)))
+  iff.intro(imp(in(s2,s0),in(s2,s1)), subseteq(s0,s1))
+  subseteq.def.1(s0, s1, s2)
+  subseteq.def.2(s2, s0, s1)
+}
+
+thm abs.imp.1(set s0, prop p0) {
+  |- imp(in(s0,abs(s0,p0)), p0)
+} = {
+  syl(in(s0,abs(s0,p0)), p0, subs(s0,s0,p0))
+  abs.def(s0, s0, p0)
+  ax.mp(imp(subs(s0,s0,p0),p0), eq(s0,s0))
+  eq.id(s0)
+  eq.subs(s0, s0, p0)
+}
+thm abs.imp.2(set s0, prop p0) {
+  |- imp(p0, in(s0,abs(s0,p0)))
+} = {
+  syl(p0, in(s0,abs(s0,p0)), subs(s0,s0,p0))
+  abs.def(s0, s0, p0)
+  ax.mp(imp(p0,subs(s0,s0,p0)), eq(s0,s0))
+  eq.id(s0)
+  eq.subs(s0, s0, p0)
+}
+thm abs.imp(set s0, prop p0) {
+  |- imp(in(s0,abs(s0,p0)), p0)
+  |- iff(in(s0,abs(s0,p0)), p0)
+  |- imp(p0, in(s0,abs(s0,p0)))
+  |- iff(p0, in(s0,abs(s0,p0)))
+} = {
+  iff.intro(in(s0,abs(s0,p0)), p0)
+  iff.intro(p0, in(s0,abs(s0,p0)))
+  abs.imp.1(s0, p0)
+  abs.imp.2(s0, p0)
+}
+
+thm abs.subseteq.imply.1(set s0, prop p0, prop p1) {
+  |- imp(subseteq(abs(s0,p0), abs(s0,p1)), imp(p0,p1))
+} = {
+  syl(subseteq(abs(s0,p0),abs(s0,p1)), imp(p0,p1), imp(in(s0,abs(s0,p0)),in(s0,abs(s0,p1))))
+  subseteq.def2(abs(s0,p0), abs(s0,p1), s0)
+  imp.imp.imp(in(s0,abs(s0,p0)), in(s0,abs(s0,p1)), p0, p1)
+  abs.imp(s0, p0)
+  abs.imp(s0, p1)
+}
+
+thm abs.subseteq(set s0, set s1, prop p0) {
+  |- subseteq(abs(s0, p0), s1)
+  -| imp(p0, in(s0, s1))
+  diff(s0,s1)
+} = {
+  ax.mp(subseteq(abs(s0,p0),s1), imp(in(s0,abs(s0,p0)),in(s0,s1)))  
+  subseteq.def2(abs(s0,p0), s1, s0)
+  syl(in(s0,abs(s0,p0)), in(s0,s1), p0)
+  abs.imp(s0, p0)
+}

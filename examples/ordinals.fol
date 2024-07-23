@@ -1,14 +1,109 @@
 
-term set opair.abs(set s0, set s1, prop p0) { { (s0, s1) | p0} }
-axiom opair.abs.def(prop p0, set s0, set s1, set s2) {
-  |- eq(opair.abs(s0, s1, p0), abs(s2, exist(s0, exist(s1, and(eq(s2, opair(s0,s1)), p0)))))
+term set oabs(set s0, set s1, prop p0) { { (s0, s1) | p0} }
+axiom oabs.def(prop p0, set s0, set s1, set s2) {
+  |- eq(oabs(s0, s1, p0), abs(s2, exist(s0, exist(s1, and(eq(s2, opair(s0,s1)), p0)))))
   diff (s2, p0) (s2, s0) (s2, s1)
+}
+
+thm oabs.relation(set R, set s0, set s1) {
+  |- subseteq(oabs(s0, s1, relation(s0, R, s1)), R)
+  diff (R, s0) (R, s1)
+} = {
+  eq.subseteq.i1(oabs(s0,s1,relation(s0,R,s1)), R, abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1))))))
+  oabs.def(relation(s0,R,s1), s0, s1, hs0)
+  ax.mp(subseteq(abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1))))),R), imp(in(hs0,abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1)))))),in(hs0,R)))
+  subseteq.def2(abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1))))), R, hs0)
+  syl(in(hs0,abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1)))))), in(hs0,R), exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1)))))
+  abs.imp(hs0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1)))))
+  exist.imp(s0, exist(s1,and(eq(hs0,opair(s0,s1)),relation(s0,R,s1))), in(hs0,R))
+  exist.imp(s1, and(eq(hs0,opair(s0,s1)),relation(s0,R,s1)), in(hs0,R))
+  and.impo(eq(hs0,opair(s0,s1)), relation(s0,R,s1), in(hs0,R))
+  syl5(eq(hs0,opair(s0,s1)), relation(s0,R,s1), in(hs0,R), in(opair(s0,s1),R))
+  relation.def(s0, R, s1)
+  eq.in(opair(s0,s1), hs0, R)
+}
+
+thm oabs.imp.relation(set R, set s0, set s1) {
+  |- imp(in(opair(s0, s1), oabs(s0, s1, relation(s0, R, s1))), relation(s0, R, s1))
+  diff (R, s0) (R, s1)
+} = {
+  syl(in(opair(s0,s1),oabs(s0,s1,relation(s0,R,s1))), relation(s0,R,s1), in(opair(s0,s1),R))
+  relation.def(s0, R, s1)
+  ax.mp(imp(in(opair(s0,s1),oabs(s0,s1,relation(s0,R,s1))),in(opair(s0,s1),R)), subseteq(oabs(s0,s1,relation(s0,R,s1)),R))
+  subseteq.def2(oabs(s0,s1,relation(s0,R,s1)), R, opair(s0,s1))
+  oabs.relation(R, s0, s1)
+}
+
+thm exist.pair(set s0, set s1, set s2) {
+  |- exist(s0, eq(s0, pair(s1,s2)))
+} = {
+  ax.mp(exist(s0,eq(s0,pair(s1,s2))), 
+    exist(s0, iff(in(hs0,s0), in(hs0,pair(s1,s2))))
+  )
+  exist.imp.exist(s0, iff(in(hs0,s0),in(hs0,pair(s1,s2))), eq(s0,pair(s1,s2)))
+}
+
+thm exist.opair(set s0, set s1, set s2) {
+  |- exist(s0, eq(s0, opair(s1, s2)))
+  |- exist(s0, eq(opair(s1, s2), s0))
+} = {
+  ax.mp(exist(s0,eq(s0,opair(s1,s2))), 
+    exist(s0, eq(s0, pair(singleton(s1), pair(s1,s2))))
+  )
+  exist.pair(s0, singleton(s1), pair(s1,s2))
+  exist.imp.exist(s0, eq(s0,pair(singleton(s1),pair(s1,s2))), eq(s0,opair(s1,s2)))
+  ax.mp(imp(eq(s0,pair(singleton(s1),pair(s1,s2))),eq(s0,opair(s1,s2))), eq(opair(s1,s2),pair(singleton(s1),pair(s1,s2))))
+  eq.trans(opair(s1,s2), pair(singleton(s1),pair(s1,s2)), s0)
+  opair.def(s1, s2)
+  ax.mp(exist(s0,eq(opair(s1,s2),s0)), exist(s0,eq(s0,pair(singleton(s1),pair(s1,s2)))))
+  exist.pair(s0, singleton(s1), pair(s1,s2))
+  exist.imp.exist(s0, eq(s0,pair(singleton(s1),pair(s1,s2))), eq(opair(s1,s2),s0))
+  ax.mp(imp(eq(s0,pair(singleton(s1),pair(s1,s2))),eq(opair(s1,s2),s0)), eq(opair(s1,s2),pair(singleton(s1),pair(s1,s2))))
+  eq.trans(opair(s1,s2), pair(singleton(s1),pair(s1,s2)), s0)
+  opair.def(s1, s2)
+}
+
+thm oabs.imp(set s0, set s1, prop p0) {
+  |- imp(in(opair(s0,s1), oabs(s0,s1,p0)), p0)
+  diff (p0, s0) (p0, s1)
+} = {
+  ax.mp(imp(in(opair(s0,s1),oabs(s0,s1,p0)),p0), eq(oabs(s0,s1,p0),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))))
+  oabs.def(p0, s0, s1, hs0)
+  syl6(eq(oabs(s0,s1,p0),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), in(opair(s0,s1),oabs(s0,s1,p0)), p0, in(opair(s0,s1),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))))
+  eq.in(oabs(s0,s1,p0), abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0)))), opair(s0,s1))
+  syl(
+    in(opair(s0,s1),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), 
+    p0, 
+    in(hs0,abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), 
+  )
+  syl(in(hs0,abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), p0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
+  abs.imp(hs0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
+  exist.imp(s0, exist(s1,and(eq(hs0,opair(s0,s1)),p0)), p0)
+  exist.imp(s1, and(eq(hs0,opair(s0,s1)),p0), p0)
+  and.right(eq(hs0,opair(s0,s1)), p0)
+  syl(in(opair(s0,s1),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), in(hs0,abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
+  abs.imp(hs0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
+  syl(in(opair(s0,s1),abs(hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))), exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))), subs(opair(s0,s1),hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0)))))
+  abs.def(opair(s0,s1), hs0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
+  syl(subs(opair(s0,s1),hs0,exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0)))), exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))), imp(eq(opair(s0,s1),hs0),exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0)))))
+  eq.subs(opair(s0,s1), hs0, exist(s0,exist(s1,and(eq(hs0,opair(s0,s1)),p0))))
 }
 
 term set relation.in { ∈ }
 axiom relation.in.def(set s0, set s1) {
-  |- eq(relation.in, opair.abs(s0, s1, in(s0,s1)))
+  |- eq(relation.in, oabs(s0, s1, in(s0,s1)))
 } 
+
+thm relation.in.simp(set s0, set s1) {
+  |- imp(in(opair(s0,s1), relation.in), in(s0,s1))
+} = {
+  ax.mp(imp(in(opair(s0,s1),relation.in),in(s0,s1)), eq(relation.in,oabs(s0,s1,in(s0,s1))))
+  relation.in.def(s0, s1)
+  syl6(eq(relation.in,oabs(s0,s1,in(s0,s1))), in(opair(s0,s1),relation.in), in(s0,s1), in(opair(s0,s1),oabs(s0,s1,in(s0,s1))))
+  eq.in(relation.in, oabs(s0,s1,in(s0,s1)), opair(s0,s1))
+
+   
+}
 
 term prop ord(set s0) { Ord(s0) }
 term set ord.universe
@@ -72,4 +167,25 @@ thm ord.subseteq.transitive(set s0, set s1) {
   ord.def(s0)
   com12(worder(relation.in,s0), subseteq(s1,s0), worder(relation.in,s1))
   subseteq.worder(relation.in, s1, s0)
+}
+
+thm elation.in.in.imp.subseteq(set s0, set s1) {
+  |- imp( worder(relation.in, s1), imp(in(s0, s1), subseteq(s0,s1)))
+} = {
+  syl(worder(relation.in,s1), imp(in(s0,s1),subseteq(s0,s1)), and(wfounded(relation.in,s1),lorder(relation.in,s1)))
+  worder.def(relation.in, s1)
+
+}
+
+
+thm in.ord.imp.ord(set s0, set s1) {
+  |- imp(in(s1,s0), imp(ord(s0), ord(s1)))
+} = {
+  syl56(in(s1,s0), ord(s0), ord(s1), and(transitive(s0),worder(relation.in,s0)), and(transitive(s1),worder(relation.in,s1)))
+  ord.def(s0)
+  ord.def(s1)
+  and.intro.d.d(in(s1,s0), and(transitive(s0),worder(relation.in,s0)), transitive(s1), worder(relation.in,s1))
+  syl6(in(s1,s0), and(transitive(s0),worder(relation.in,s0)), transitive(s1), imp(in(hs0,s1),subseteq(hs0,s1)))
+  transitive.def(s1, hs0)
+  
 }

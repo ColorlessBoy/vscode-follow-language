@@ -1,0 +1,18 @@
+
+term prop notfree(set s0, prop p0) { NF(s0, p0) }
+term prop notfree.set(set s0, set s1) { NFS(s0, s1) }
+
+axiom notfree.def(set s0, prop p0) {
+  |- iff(notfree(s0,p0), imp(exist(s0,p0), forall(s0,p0)))
+  |- imp(notfree(s0,p0), imp(exist(s0,p0), forall(s0,p0)))
+  |- iff(imp(exist(s0,p0), forall(s0,p0)), notfree(s0,p0))
+  |- imp(imp(exist(s0,p0), forall(s0,p0)), notfree(s0,p0))
+}
+
+axiom notfree.set.def(set s0, set s1, set s2) {
+  |- iff(notfree.set(s0,s1), forall(s2, notfree(s0, in(s2,s1))))
+  |- imp(notfree.set(s0,s1), forall(s2, notfree(s0, in(s2,s1))))
+  |- iff(forall(s2, notfree(s0, in(s2,s1))), notfree.set(s0,s1))
+  |- imp(forall(s2, notfree(s0, in(s2,s1))), notfree.set(s0,s1))
+  diff (s2, s0) (s2, s1)
+}

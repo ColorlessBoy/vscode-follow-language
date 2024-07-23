@@ -43,6 +43,13 @@ thm forall.imp.exist.exist.i(set s0, prop p1, prop p2) {
   ax.mp(imp(exist(s0,p1),exist(s0,p2)), forall(s0, imp(p1, p2)))
   forall.imp.exist.exist(s0, p1, p2)
 }
+thm exist.imp.exist(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, p1), exist(s0, p2))
+  -| imp(p1, p2)
+} = {
+  forall.imp.exist.exist.i(s0, p1, p2)
+  ax.gen(s0, imp(p1,p2))
+}
 
 thm exist.imp.i.i(set s0, prop p1, prop p2) {
   |- exist(s0, p1)
@@ -244,4 +251,23 @@ thm imp.exist.imp.exist(set s0, prop p0, prop p1, prop p2) {
   syl(p0, imp(exist(s0,p1),exist(s0,p2)), forall(s0, imp(p1, p2)))
   forall.imp.exist.exist(s0, p1, p2)
   agend(s0, p0, imp(p1,p2))  
+}
+
+thm exist.and(set s0, prop p0, prop p1) {
+  |- imp(exist(s0, and(p0, p1)), and(exist(s0,p0),exist(s0,p1)))
+} = {
+  and.intro.d(exist(s0,and(p0,p1)), exist(s0,p0), exist(s0,p1))
+  exist.imp.exist(s0, and(p0,p1), p0)
+  exist.imp.exist(s0, and(p0,p1), p1)
+  and.left(p0, p1)
+  and.right(p0, p1)
+}
+thm exist.imp.2(set s0, prop p1, prop p2) {
+  |- imp(p1, exist(s0,p2))
+  -| imp(p1, p2)
+  diff (s0, p1)
+} = {
+  syl(p1, exist(s0,p2), exist(s0,p1))
+  exist.imp.exist(s0, p1, p2)
+  exist.use(s0, p1)
 }
