@@ -32,7 +32,7 @@ thm id(prop p0) {
 thm idd(prop p0, prop p1) {
   |- imp(p0, imp(p1,p1))
 } = {
-  a1i(imp(p1,p1), p0)
+  a1i(p0, imp(p1,p1))
   id(p1)
 }
 
@@ -43,7 +43,7 @@ thm syl(prop p0, prop p1, prop p2) {
   -| imp(p2, p1)
 } = {
   mpd(p0, p1, p2)
-  a1i(imp(p2,p1), p0)
+  a1i(p0, imp(p2,p1))
 }
 
 thm a1d(prop p0, prop p1, prop p2) {
@@ -77,7 +77,7 @@ thm com12(prop p0, prop p1, prop p2) {
   com12i(imp(p0,imp(p1,p2)), p1, imp(p0,p2))
   a2d(p1, p0, imp(p1,p2), p2)
   com12i(p1, p0, imp(imp(p1,p2),p2))
-  a1i(imp(p1,imp(imp(p1,p2),p2)), p0)
+  a1i(p0, imp(p1,imp(imp(p1,p2),p2)))
   com12i(p1, imp(p1,p2), p2)
   id(imp(p1,p2))
 }

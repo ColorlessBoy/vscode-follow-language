@@ -456,7 +456,7 @@ function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position)
         ...processes.slice(0, i).map((process, index) => {
           return {
             line: proofs[index].range.start.line,
-            value: process.map((t) => t.termContent).join(';') || 'Success!',
+            value: process.map((t) => t.termContent).join(';') || 'Q.E.D.',
           };
         }),
       );
