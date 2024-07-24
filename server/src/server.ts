@@ -23,6 +23,7 @@ import {
   TextDocumentEdit,
   WorkspaceEdit,
   Location,
+  URI,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -95,7 +96,7 @@ connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
 
   if (params.workspaceFolders) {
-    workspacePaths = params.workspaceFolders.map((wf) => wf.uri.slice(7)); // remove "file://"
+    workspacePaths = params.workspaceFolders.map((wf) => decodeURIComponent(wf.uri).slice(7)); // remove "file://"
     for (const folder of workspacePaths) {
       initContentJsonFile(folder);
     }
@@ -267,16 +268,15 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 async function reloadContentJsonFile(textDocument: TextDocument) {
-  const uri = textDocument.uri.slice(7); // remove 'file://'
+  const uri = decodeURIComponent(textDocument.uri).slice(7); // remove 'file://'
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   await initContentJsonFile(folderPath);
 }
 
 async function processTextDocument(textDocument: TextDocument) {
-  // const uri = Uri.parse(textDocument.uri);
-  const uri = textDocument.uri.slice(7); // remove 'file://'
-  const filePath: string = path.resolve(uri);
+  const fsPath = decodeURIComponent(textDocument.uri).slice(7);
+  const filePath: string = path.resolve(fsPath);
 
   let compiler: CompilerWithImport | undefined;
   for (const [key, value] of compilerMap.entries()) {
@@ -317,8 +317,7 @@ connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams)
   if (textDocument === undefined) {
     return null;
   }
-  // const uri = Uri.parse(textDocument.uri);
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
 
@@ -378,7 +377,7 @@ connection.onHover((event) => {
   if (textDocument === undefined) {
     return null;
   }
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
 
@@ -533,9 +532,8 @@ connection.onDefinition((params) => {
   if (textDocument === undefined || document === undefined) {
     return null;
   }
-  // const uri = Uri.parse(textDocument.uri);
   // file://
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
 
@@ -586,7 +584,7 @@ connection.onReferences((params) => {
   }
   // const uri = Uri.parse(textDocument.uri);
   // file://
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
 
@@ -648,7 +646,7 @@ connection.onRenameRequest((params) => {
   }
   // const uri = Uri.parse(textDocument.uri);
   // file://
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
 
@@ -826,7 +824,7 @@ connection.languages.semanticTokens.on(async (event) => {
     return builder.build();
   }
   // const uri = Uri.parse(textDocument.uri);
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   const compiler = compilerMap.get(folderPath);
@@ -848,7 +846,7 @@ connection.languages.semanticTokens.onDelta(async (event) => {
     return builder.build();
   }
   // const uri = Uri.parse(textDocument.uri);
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   const compiler = compilerMap.get(folderPath);
@@ -1023,7 +1021,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
     return [];
   }
   // const uri = Uri.parse(textDocument.uri);
-  const uri = textDocument.uri.slice(7);
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
   const folderPath: string = path.dirname(filePath);
   const compiler = compilerMap.get(folderPath);
