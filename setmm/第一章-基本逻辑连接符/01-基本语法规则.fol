@@ -1,13 +1,14 @@
-// # 第一章 基本语法规则
+// # 第一章 基本语法规则-四个关键词
 
-// ## 关键词 `type` 
+// ## 关键词一 `type` 
 
 type prop // proposition 提议有对有错 
 
-// ## 关键词 `term` 
+// ## 关键词二 `term` 
 
 term prop imp(prop p0, prop p1) { (p0 -> p1) } // imply 因此
-// ## 关键词 `axiom` 
+
+// ## 关键词三 `axiom` 
 
 // 一阶逻辑第一条公理
 axiom a1(prop p0, prop p1) {
@@ -26,7 +27,7 @@ axiom mp(prop p0, prop p1) {
   -| p1
 }
 
-// ## 关键词 `thm` 
+// ## 关键词四 `thm` 
 
 thm a1i(prop p0, prop p1) {
   |- imp(p1, p0)

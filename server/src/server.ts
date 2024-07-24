@@ -274,24 +274,24 @@ async function reloadContentJsonFile(textDocument: TextDocument) {
   await initContentJsonFile(folderPath);
 }
 
-async function processTextDocument(textDocument: TextDocument) {
-  const fsPath = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(fsPath);
-
-  let compiler: CompilerWithImport | undefined;
+function getCompiler(filePath: string) {
   for (const [key, value] of compilerMap.entries()) {
     if (key !== filePath && value.depFileList.includes(filePath)) {
-      compiler = value;
-      break;
+      return value;
     }
   }
-  if (compiler === undefined) {
-    compiler = compilerMap.get(filePath);
-  }
+  let compiler = compilerMap.get(filePath);
   if (compiler === undefined) {
     compiler = new CompilerWithImport();
     compilerMap.set(filePath, compiler);
   }
+  return compiler;
+}
+
+async function processTextDocument(textDocument: TextDocument) {
+  const fsPath = decodeURIComponent(textDocument.uri).slice(7);
+  const filePath: string = path.resolve(fsPath);
+  const compiler = getCompiler(filePath);
   return compiler.compileCode(filePath, textDocument.getText());
 }
 
@@ -314,15 +314,14 @@ type HoverV2 = {
 // onHoverV2
 connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams) => {
   const textDocument = documents.get(event.textDocument.uri);
+  console.log('onHoverV2', textDocument);
   if (textDocument === undefined) {
     return null;
   }
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
-
   const position = event.position;
-  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
   const cNode = findCNodeByPostion(cNodeList, position);
   if (cNode) {
     if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
@@ -379,10 +378,9 @@ connection.onHover((event) => {
   }
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
 
   const position = event.position;
-  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
   const cNode = findCNodeByPostion(cNodeList, position);
   if (cNode) {
     if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
@@ -535,9 +533,8 @@ connection.onDefinition((params) => {
   // file://
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
 
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   if (compiler === undefined) {
     return null;
   }
@@ -586,9 +583,8 @@ connection.onReferences((params) => {
   // file://
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
 
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   if (compiler === undefined) {
     return null;
   }
@@ -599,7 +595,7 @@ connection.onReferences((params) => {
   }
   if (targetToken.type === TokenTypes.ARGNAME) {
     // 函数内部的变量替换
-    const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+    const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
     const cNode = findCNodeByPostion(cNodeList, position);
     if (cNode) {
       const tokens = getTokensFromRange(tokenList, cNode.astNode.range);
@@ -648,9 +644,8 @@ connection.onRenameRequest((params) => {
   // file://
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
 
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   if (compiler === undefined) {
     return null;
   }
@@ -661,7 +656,7 @@ connection.onRenameRequest((params) => {
   }
   if (targetToken.type === TokenTypes.ARGNAME) {
     // 函数内部的变量替换
-    const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+    const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
     const cNode = findCNodeByPostion(cNodeList, position);
     if (cNode) {
       const tokens = getTokensFromRange(tokenList, cNode.astNode.range);
@@ -686,7 +681,7 @@ connection.onRenameRequest((params) => {
   }
 
   // 函数Proof中的变量替换
-  const cNodeList = compilerMap.get(folderPath)?.cNodeListMap.get(filePath) || [];
+  const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
   const cNode = findCNodeByPostion(cNodeList, position);
   if (cNode && cNode.cnodetype === CNodeTypes.THM) {
     const cNode2 = cNode as ThmCNode;
@@ -826,8 +821,7 @@ connection.languages.semanticTokens.on(async (event) => {
   // const uri = Uri.parse(textDocument.uri);
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   let tokenList = compiler?.tokenListMap.get(filePath);
 
   if (tokenList === undefined) {
@@ -848,8 +842,7 @@ connection.languages.semanticTokens.onDelta(async (event) => {
   // const uri = Uri.parse(textDocument.uri);
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   let tokenList = compiler?.tokenListMap.get(filePath);
 
   if (tokenList === undefined) {
@@ -1023,8 +1016,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
   // const uri = Uri.parse(textDocument.uri);
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
-  const compiler = compilerMap.get(folderPath);
+  const compiler = getCompiler(filePath);
   let cNodeList = compiler?.cNodeListMap.get(filePath);
 
   if (cNodeList === undefined) {
