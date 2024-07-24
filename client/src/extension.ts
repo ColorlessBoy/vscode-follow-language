@@ -220,7 +220,7 @@ class FollowBlockListProvider implements WebviewViewProvider {
             ).join('');
 
             return \`
-              <h3>\${index}-\${fileData.file}-\${fileData.blocks.length}</h3>
+              <h3>\${fileData.file}-\${fileData.blocks.length}</h3>
               <div class="collapsible-content">
                 <table border="1">
                   <thead>
@@ -228,7 +228,7 @@ class FollowBlockListProvider implements WebviewViewProvider {
                       <th>Idx</th>
                       <th>Type</th>
                       <th>Name</th>
-                      <th>IsValid</th>
+                      <th>Proofed</th>
                       <th>Content</th>
                     </tr>
                   </thead>

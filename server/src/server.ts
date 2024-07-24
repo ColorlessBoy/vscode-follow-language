@@ -89,8 +89,17 @@ let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 let compilerMap: Map<string, CompilerWithImport> = new Map(); // folder - compiler
 
+let workspacePaths: string[] | undefined;
+
 connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
+
+  if (params.workspaceFolders) {
+    workspacePaths = params.workspaceFolders.map((wf) => wf.uri.slice(7)); // remove "file://"
+    for (const folder of workspacePaths) {
+      initContentJsonFile(folder);
+    }
+  }
 
   // Does the client support the `workspace/configuration` request?
   // If not, we fall back using global settings.
@@ -151,7 +160,7 @@ connection.onInitialized(async () => {
   void connection.client.register(SemanticTokensRegistrationType.type, registrationOptions);
 });
 
-async function readContentJsonFile(dir: string): Promise<string[]> {
+async function readContentJsonFile(dir: string): Promise<string[] | null> {
   try {
     const file = path.join(dir, CONTENT_FILE);
     const data = fs.readFileSync(file, 'utf8');
@@ -160,30 +169,36 @@ async function readContentJsonFile(dir: string): Promise<string[]> {
     if (jsonData.hasOwnProperty('content') && Array.isArray(jsonData.content)) {
       const content: string[] = [];
       for (const item of jsonData.content) {
-        if ((item as string).includes('\\') || (item as string).includes('/')) {
-          // 只支持一级目录
+        if (typeof item !== 'string') {
           continue;
         }
-        const absPath = path.resolve(path.join(dir, item));
-        if (typeof item === 'string' && fs.existsSync(absPath)) {
+        const splitItems = item.split(/\\|\/+/).filter((e) => e.length > 0);
+        const absPath = path.resolve(path.join(dir, ...splitItems));
+        if (fs.existsSync(absPath)) {
           content.push(absPath);
         }
       }
       return content;
     }
   } catch (err) {}
-  return [];
+  return null;
 }
 async function initContentJsonFile(folder: string) {
-  const compiler = new CompilerWithImport();
-  compilerMap.set(folder, compiler);
-  const depFileList = await readContentJsonFile(folder);
-  compiler.setImportList(depFileList);
-  for (const file of depFileList) {
-    try {
-      const code = fs.readFileSync(file, 'utf8');
-      compiler.compileCode(file, code);
-    } catch (err) {}
+  if (workspacePaths?.includes(folder)) {
+    // 只有workspace的Json File才会读入
+    const depFileList = await readContentJsonFile(folder);
+    if (depFileList === null) {
+      return;
+    }
+    const compiler = new CompilerWithImport();
+    compilerMap.set(folder, compiler);
+    compiler.setImportList(depFileList);
+    for (const file of depFileList) {
+      try {
+        const code = fs.readFileSync(file, 'utf8');
+        compiler.compileCode(file, code);
+      } catch (err) {}
+    }
   }
 }
 
@@ -262,15 +277,20 @@ async function processTextDocument(textDocument: TextDocument) {
   // const uri = Uri.parse(textDocument.uri);
   const uri = textDocument.uri.slice(7); // remove 'file://'
   const filePath: string = path.resolve(uri);
-  const folderPath: string = path.dirname(filePath);
-  let compiler = compilerMap.get(folderPath);
+
+  let compiler: CompilerWithImport | undefined;
+  for (const [key, value] of compilerMap.entries()) {
+    if (key !== filePath && value.depFileList.includes(filePath)) {
+      compiler = value;
+      break;
+    }
+  }
   if (compiler === undefined) {
-    await initContentJsonFile(folderPath);
-    compiler = compilerMap.get(folderPath);
+    compiler = compilerMap.get(filePath);
   }
   if (compiler === undefined) {
     compiler = new CompilerWithImport();
-    compilerMap.set(folderPath, compiler);
+    compilerMap.set(filePath, compiler);
   }
   return compiler.compileCode(filePath, textDocument.getText());
 }
@@ -350,7 +370,6 @@ connection.onRequest('follow/followBlockList', () => {
       result,
     });
   }
-  console.log('follow/followBlockList', result2);
   return result2;
 });
 
