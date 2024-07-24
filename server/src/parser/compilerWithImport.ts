@@ -1,3 +1,6 @@
+import * as path from 'path';
+import MarkdownIt from 'markdown-it';
+
 import { Parser } from './parser';
 import { RangeImpl, Scanner } from './scanner';
 import {
@@ -44,7 +47,35 @@ export class CompilerWithImport {
   public setImportList(importList: string[]) {
     this.depFileList = importList;
   }
+
+  public changeMarkdownFile(markdownContent: string) {
+    try {
+      const md = new MarkdownIt();
+      // 编译Markdown
+      const tokens = md.parse(markdownContent, {});
+      const matches = tokens
+        .filter((token) => token.type === 'fence' && token.info.trim() === 'follow')
+        .map((token) => ({ code: token.content, position: markdownContent.indexOf(token.content) }));
+      let followCode: string = '';
+      let preIndex: number = 0;
+      for (const match of matches) {
+        if (match.position >= preIndex) {
+          followCode += markdownContent.slice(preIndex, match.position).replace(/[^\n]/g, ' ');
+          followCode += match.code;
+          preIndex = match.position + match.code.length;
+        }
+      }
+      return followCode;
+    } catch (error) {
+      console.error('changeMarkdownFile', error);
+    }
+    return markdownContent;
+  }
   public compileCode(filename: string, code: string) {
+    const extname = path.extname(filename);
+    if (extname === '.md') {
+      code = this.changeMarkdownFile(code);
+    }
     const scanner = new Scanner();
     const parser = new Parser();
     const tokens = scanner.scan(code);

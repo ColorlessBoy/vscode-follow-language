@@ -68,6 +68,16 @@
           ".fol"
         ],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "markdown",
+        "aliases": [
+          "Markdown",
+          "markdown"
+        ],
+        "extensions": [
+          ".md"
+        ]
       }
     ],
     "grammars": [
@@ -91,6 +101,12 @@
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
+        },
+        "follow.enableWatchMarkdown": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable watching markdown file code block."
         },
         "follow.trace.server": {
           "scope": "window",

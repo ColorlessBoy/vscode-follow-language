@@ -20,6 +20,14 @@ type HoverV2Content = { line: number; value: string };
 type HoverV2 = {
   contents: HoverV2Content[];
 };
+interface FollowSettings {
+  maxNumberOfProblems: number;
+  enableWatchMarkdown: boolean;
+}
+enum FollowSettingProps {
+  maxNumberOfProblems = 'maxNumberOfProblems',
+  enableWatchMarkdown = 'enableWatchMarkdown',
+}
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
@@ -78,12 +86,21 @@ export function activate(context: ExtensionContext) {
   };
 
   // Options to control the language client
+
+  const documentSelector = [
+    { scheme: 'file', language: 'follow' },
+    { scheme: 'file', pattern: '**/content.follow.json' },
+  ];
+  if (config.get(FollowSettingProps.enableWatchMarkdown)) {
+    documentSelector.push({
+      scheme: 'file',
+      pattern: '**/*.md',
+    });
+  }
+
   let clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [
-      { scheme: 'file', language: 'follow' },
-      { scheme: 'file', pattern: '**/content.follow.json' },
-    ],
+    documentSelector,
   };
 
   // Create the language client and start the client.

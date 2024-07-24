@@ -24,6 +24,7 @@ import {
   WorkspaceEdit,
   Location,
   URI,
+  DocumentSelector,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -111,6 +112,10 @@ connection.onInitialize((params: InitializeParams) => {
     capabilities.textDocument.publishDiagnostics &&
     capabilities.textDocument.publishDiagnostics.relatedInformation
   );
+  const documentSelector: DocumentSelector = [{ language: 'follow' }];
+  if (globalSettings.enableWatchMarkdown) {
+    documentSelector.push({ pattern: '**/*.md' });
+  }
 
   const result: InitializeResult = {
     capabilities: {
@@ -118,13 +123,14 @@ connection.onInitialize((params: InitializeParams) => {
       // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: false,
+        triggerCharacters: ['('],
       },
       hoverProvider: true,
       definitionProvider: true,
       referencesProvider: { workDoneProgress: true },
       renameProvider: true,
       semanticTokensProvider: {
-        documentSelector: [{ language: 'follow' }],
+        documentSelector: documentSelector,
         legend: semanticTokensLegend,
         range: false,
         full: {
@@ -195,6 +201,14 @@ async function initContentJsonFile(folder: string) {
     compilerMap.set(folder, compiler);
     compiler.setImportList(depFileList);
     for (const file of depFileList) {
+      const extName = path.extname(file);
+      if (extName === '.md') {
+        if (!globalSettings.enableWatchMarkdown) {
+          continue;
+        }
+      } else if (extName !== '.fol') {
+        continue;
+      }
       try {
         const code = fs.readFileSync(file, 'utf8');
         compiler.compileCode(file, code);
@@ -203,33 +217,33 @@ async function initContentJsonFile(folder: string) {
   }
 }
 
-// The example settings
-interface ExampleSettings {
+interface FollowSettings {
   maxNumberOfProblems: number;
+  enableWatchMarkdown: boolean;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000 };
-let globalSettings: ExampleSettings = defaultSettings;
+const defaultSettings: FollowSettings = { maxNumberOfProblems: 100, enableWatchMarkdown: true };
+let globalSettings: FollowSettings = defaultSettings;
 
 // Cache the settings of all open documents
-let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
+let documentSettings: Map<string, Thenable<FollowSettings>> = new Map();
 
 connection.onDidChangeConfiguration((change) => {
   if (hasConfigurationCapability) {
     // Reset all cached document settings
     documentSettings.clear();
   } else {
-    globalSettings = <ExampleSettings>(change.settings.languageServerExample || defaultSettings);
+    globalSettings = <FollowSettings>(change.settings.languageServerExample || defaultSettings);
   }
 
   // Revalidate all open text documents
   documents.all().forEach(validateTextDocument);
 });
 
-function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
+function getDocumentSettings(resource: string): Thenable<FollowSettings> {
   if (!hasConfigurationCapability) {
     return Promise.resolve(globalSettings);
   }
@@ -261,7 +275,10 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     reloadContentJsonFile(textDocument);
   } else {
     const { errors } = await processTextDocument(textDocument);
-    const diagnostics = getDiagnostics(errors);
+    let diagnostics = getDiagnostics(errors);
+    if (diagnostics.length > globalSettings.maxNumberOfProblems) {
+      diagnostics = diagnostics.slice(0, globalSettings.maxNumberOfProblems);
+    }
     const uri = textDocument.uri;
     connection.sendDiagnostics({ uri, diagnostics });
   }
@@ -314,7 +331,6 @@ type HoverV2 = {
 // onHoverV2
 connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams) => {
   const textDocument = documents.get(event.textDocument.uri);
-  console.log('onHoverV2', textDocument);
   if (textDocument === undefined) {
     return null;
   }
@@ -1013,6 +1029,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
   if (textDocument === undefined) {
     return [];
   }
+
   // const uri = Uri.parse(textDocument.uri);
   const uri = decodeURIComponent(textDocument.uri).slice(7);
   const filePath: string = path.resolve(uri);
