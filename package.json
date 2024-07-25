@@ -27,7 +27,27 @@
   "engines": {
     "vscode": "^1.74.0"
   },
+  "activationEvents": [
+    "onLanguage:fol",
+    "onLanguage:markdown",
+    "onCommand:extension.start",
+    "onCommand:extension.restart"
+  ],
   "contributes": {
+    "commands": [
+      {
+        "command": "follow.start",
+        "title": "Follow: Start"
+      },
+      {
+        "command": "follow.restart",
+        "title": "Follow: Restart"
+      },
+      {
+        "command": "follow.disable",
+        "title": "Follow: Disable"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

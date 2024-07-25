@@ -10,6 +10,7 @@ import {
   Uri,
   Webview,
   TextDocument,
+  commands,
 } from 'vscode';
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
@@ -121,6 +122,27 @@ export function activate(context: ExtensionContext) {
       }
     }),
   );
+
+  let startCommand = commands.registerCommand('follow.start', () => {
+    // 启动插件的逻辑
+    window.showInformationMessage('Follow Extension Started');
+  });
+
+  context.subscriptions.push(startCommand);
+
+  let restartCommand = commands.registerCommand('follow.restart', async () => {
+    await deactivate();
+    activate(context);
+    window.showInformationMessage('Follow Extension Restart');
+  });
+  context.subscriptions.push(restartCommand);
+
+  let disableCommand = commands.registerCommand('follow.disable', async () => {
+    await deactivate();
+    window.showInformationMessage('Follow Extension Disabled');
+  });
+
+  context.subscriptions.push(disableCommand);
 }
 
 export function deactivate(): Thenable<void> | undefined {
