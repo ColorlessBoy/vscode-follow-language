@@ -173,7 +173,6 @@ class FollowBlockListProvider implements WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (message) => {
       if (message.command === 'requestTable') {
         const response = await client.sendRequest<FollowBlockType[]>('follow/followBlockList', {});
-        console.log('requrestTable', response);
         webviewView.webview.postMessage({ command: 'updateTables', data: response });
       }
     });

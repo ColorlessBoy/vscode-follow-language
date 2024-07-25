@@ -173,11 +173,14 @@ thm trans(prop p0, prop p1, prop p2) {
 
 ```follow
 // syl.deduction
-thm syl.deduction(prop p0, prop p1, prop p2, prop p3) {
+thm syld(prop p0, prop p1, prop p2, prop p3) {
   |- imp(p0, imp(p1,p2))
   -| imp(p0, imp(p3,p2))
-  -| imp(p0, imp(p1, p3))
+  -| imp(p0, imp(p1,p3))
 } = {
+  a2ii(p0, imp(p1,p2), imp(p3,p2))
+  syl(p0, imp(imp(p3,p2),imp(p1,p2)), imp(p1,p3))
+  trans(p1, p3, p2)
 }
 ```
 
@@ -204,5 +207,16 @@ thm change3(prop p0, prop p1, prop p2, prop p3) {
   syl(p0, imp(p1,p2), imp(p1,p3))
   mp(imp(imp(p1,p3),imp(p1,p2)), imp(p3,p2))
   trans(p1, p3, p2)
+}
+```
+
+```follow
+// imp.change23 替换imp(p0,imp(p1,p2))中的第二第三个元素
+thm change23(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, imp(p1,p2))
+  -| imp(p0, imp(p3,p4))
+  -| imp(p4, p2)
+  -| imp(p1, p3)
+} = {
 }
 ```

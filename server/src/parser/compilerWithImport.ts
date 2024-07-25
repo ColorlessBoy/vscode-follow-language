@@ -406,7 +406,6 @@ export class CompilerWithImport {
             if (newProofOp.virtualEdit && newProofOp.virtualEdit.length > 0) {
               return true;
             }
-            console.log({ proof, newProofOp });
             for (let i = 0; i < newProofOp.children.length; i++) {
               const child = proof.children[i];
               const newChild = newProofOp.children[i];
@@ -510,12 +509,19 @@ export class CompilerWithImport {
     return suggestions;
   }
 
+  private suggestionToString(suggestion: Map<string, TermOpCNode>) {
+    const keyList = Array.from(suggestion.keys()).sort();
+    const s = keyList.map((key) => key + ':' + suggestion.get(key)?.funContent || key).join(';');
+    return s;
+  }
+
   private getSuggestions(
     targets: TermOpCNode[],
     proof: ProofOpCNode,
     assumptions: TermOpCNode[],
   ): Map<string, TermOpCNode>[] {
     const suggestions: Map<string, TermOpCNode>[] = [];
+    const suggestionSet: Set<string> = new Set();
     // suggestion 的顺序和target的顺序相同体验更好
     for (const target of targets) {
       const tmpSuggestions: Map<string, TermOpCNode>[] = [];
@@ -544,7 +550,13 @@ export class CompilerWithImport {
         }
         return realB - realA;
       });
-      suggestions.push(...tmpSuggestions);
+      for (const suggestion of tmpSuggestions) {
+        const suggestionStr = this.suggestionToString(suggestion);
+        if (!suggestionSet.has(suggestionStr)) {
+          suggestions.push(suggestion);
+          suggestionSet.add(suggestionStr);
+        }
+      }
     }
     return suggestions;
   }
