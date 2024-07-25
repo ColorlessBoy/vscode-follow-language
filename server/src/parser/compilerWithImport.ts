@@ -535,10 +535,14 @@ export class CompilerWithImport {
         }
       }
       tmpSuggestions.sort((a, b) => {
-        if (a.size === b.size) {
-          return this.getSuggestionVirtualCount(a) - this.getSuggestionVirtualCount(b);
+        const virtualA = this.getSuggestionVirtualCount(a);
+        const virtualB = this.getSuggestionVirtualCount(b);
+        const realA = a.size - virtualA;
+        const realB = b.size - virtualB;
+        if (realA === realB) {
+          return virtualA - virtualB;
         }
-        return b.size - a.size;
+        return realB - realA;
       });
       suggestions.push(...tmpSuggestions);
     }
