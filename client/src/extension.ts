@@ -46,34 +46,37 @@ export function activate(context: ExtensionContext) {
       color: 'grey',
     },
   });
-  window.onDidChangeTextEditorSelection(async (event) => {
-    const editor = event.textEditor;
-    const position = editor.selection.active;
-    const response = await client.sendRequest<HoverV2>('textDocument/hoverV2', {
-      textDocument: { uri: editor.document.uri.toString() },
-      position: position,
-    });
-    if (response === undefined || response === null || !('contents' in response)) {
-      editor.setDecorations(decorationType, []);
-      return;
-    }
-    const contents = response.contents;
-    if (contents === undefined || contents === null || contents.length === 0) {
-      editor.setDecorations(decorationType, []);
-      return;
-    }
-    const decorationOptions: DecorationOptions[] = contents.map((content) => {
-      return {
-        range: new Range(position.with(content.line, 0), position.with(content.line, 0)),
-        renderOptions: {
-          after: {
-            contentText: content.value,
+
+  context.subscriptions.push(
+    window.onDidChangeTextEditorSelection(async (event) => {
+      const editor = event.textEditor;
+      const position = editor.selection.active;
+      const response = await client.sendRequest<HoverV2>('textDocument/hoverV2', {
+        textDocument: { uri: editor.document.uri.toString() },
+        position: position,
+      });
+      if (response === undefined || response === null || !('contents' in response)) {
+        editor.setDecorations(decorationType, []);
+        return;
+      }
+      const contents = response.contents;
+      if (contents === undefined || contents === null || contents.length === 0) {
+        editor.setDecorations(decorationType, []);
+        return;
+      }
+      const decorationOptions: DecorationOptions[] = contents.map((content) => {
+        return {
+          range: new Range(position.with(content.line, 0), position.with(content.line, 0)),
+          renderOptions: {
+            after: {
+              contentText: content.value,
+            },
           },
-        },
-      };
-    });
-    editor.setDecorations(decorationType, decorationOptions);
-  });
+        };
+      });
+      editor.setDecorations(decorationType, decorationOptions);
+    }),
+  );
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
@@ -111,6 +114,7 @@ export function activate(context: ExtensionContext) {
   client.start();
 
   const followBlockListProvider = new FollowBlockListProvider(context.extensionUri);
+
   context.subscriptions.push(
     window.registerWebviewViewProvider(FollowBlockListProvider.viewType, followBlockListProvider),
   );
@@ -122,27 +126,6 @@ export function activate(context: ExtensionContext) {
       }
     }),
   );
-
-  let startCommand = commands.registerCommand('follow.start', () => {
-    // 启动插件的逻辑
-    window.showInformationMessage('Follow Extension Started');
-  });
-
-  context.subscriptions.push(startCommand);
-
-  let restartCommand = commands.registerCommand('follow.restart', async () => {
-    await deactivate();
-    activate(context);
-    window.showInformationMessage('Follow Extension Restart');
-  });
-  context.subscriptions.push(restartCommand);
-
-  let disableCommand = commands.registerCommand('follow.disable', async () => {
-    await deactivate();
-    window.showInformationMessage('Follow Extension Disabled');
-  });
-
-  context.subscriptions.push(disableCommand);
 }
 
 export function deactivate(): Thenable<void> | undefined {
