@@ -212,6 +212,9 @@ async function initContentJsonFile(folder: string) {
       try {
         const code = fs.readFileSync(file, 'utf8');
         compiler.compileCode(file, code);
+        if (extName === '.md') {
+          sendMarkdownRenderNotification(file);
+        }
       } catch (err) {}
     }
   }
@@ -240,7 +243,13 @@ connection.onDidChangeConfiguration((change) => {
   }
 
   // Revalidate all open text documents
-  documents.all().forEach(validateTextDocument);
+  documents.all().forEach((doc) =>
+    validateTextDocument(doc).then(() => {
+      const uri = decodeURIComponent(doc.uri).slice(7);
+      const filePath: string = path.resolve(uri);
+      sendMarkdownRenderNotification(filePath);
+    }),
+  );
 });
 
 function getDocumentSettings(resource: string): Thenable<FollowSettings> {
@@ -267,7 +276,9 @@ documents.onDidClose((e) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
   validateTextDocument(change.document).then(() => {
-    sendMarkdownRenderNotification(change.document);
+    const uri = decodeURIComponent(change.document.uri).slice(7);
+    const filePath: string = path.resolve(uri);
+    sendMarkdownRenderNotification(filePath);
   });
 });
 
@@ -360,10 +371,7 @@ connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams)
 const MarkdownRenderNotificationType = new NotificationType<{ fileName: string; codeArray: [string, string][] }>(
   'follow/markdownRender',
 );
-function sendMarkdownRenderNotification(textDocument: TextDocument) {
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
-
+function sendMarkdownRenderNotification(filePath: string) {
   if (filePath.endsWith('.md')) {
     const cNodeMap = getCompiler(filePath).markdownCodeMap.get(filePath);
     const tokensMap = getCompiler(filePath).markdownCodeTokensMap.get(filePath);
@@ -457,7 +465,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         const finalState = cNode.proofProcess
           .at(-1)
           ?.map((termOpCNode) => {
-            return `  <span class="follow-comment'>// |- ${termOpCNode.termContent}</span> `;
+            return `  <span class='follow-comment'>// |- ${termOpCNode.termContent}</span> `;
           })
           .join('\n');
         if (finalState) {

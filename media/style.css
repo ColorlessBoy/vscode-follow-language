@@ -8,7 +8,7 @@
   color: var(--color-prettylights-syntax-keyword);
 }
 .follow-code-block .follow-argument {
-  color: var(--color-prettylights-syntax-markup-inserted-text);
+  color: var(--color-prettylights-syntax-markup-list);
 }
 .follow-code-block .follow-termname {
   color: var(--color-prettylights-syntax-variable);

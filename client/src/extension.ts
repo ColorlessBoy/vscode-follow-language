@@ -15,6 +15,8 @@ import {
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
 import MarkdownIt from 'markdown-it';
 
+import CryptoJS from 'crypto-js';
+
 let client: LanguageClient;
 
 type HoverV2Content = { line: number; value: string };
@@ -162,7 +164,8 @@ function markdownItPlugin(md: MarkdownIt) {
     const content = token.content;
 
     if (language === 'follow') {
-      const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(token.content);
+      const contentMd5 = CryptoJS.MD5(token.content).toString();
+      const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(contentMd5);
       if (newContent) {
         return `<div class="follow-code-block">
               <pre><code class="${language}">${newContent}</code></pre>

@@ -16,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/charcodes": "^0.2.2",
+    "@types/crypto-js": "^4.2.2",
     "@types/markdown-it": "^14.1.1",
     "@types/node": "^20.5.0",
     "@vscode/test-cli": "^0.0.9",
@@ -27,6 +28,7 @@
   "dependencies": {
     "@types/vscode": "^1.80.0",
     "charcodes": "^0.2.0",
+    "crypto-js": "^4.2.0",
     "markdown-it": "^14.1.0",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8"

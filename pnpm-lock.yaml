@@ -23,6 +23,9 @@ importers:
       '@vscode/webview-ui-toolkit':
         specifier: ^1.4.0
         version: 1.4.0(react@18.3.1)
+      crypto-js:
+        specifier: ^4.2.0
+        version: 4.2.0
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -33,6 +36,9 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
     devDependencies:
+      '@types/crypto-js':
+        specifier: ^4.2.2
+        version: 4.2.2
       '@types/markdown-it':
         specifier: ^14.1.1
         version: 14.1.1
@@ -63,6 +69,9 @@ importers:
       charcodes:
         specifier: ^0.2.0
         version: 0.2.0
+      crypto-js:
+        specifier: ^4.2.0
+        version: 4.2.0
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -76,6 +85,9 @@ importers:
       '@types/charcodes':
         specifier: ^0.2.2
         version: 0.2.2
+      '@types/crypto-js':
+        specifier: ^4.2.2
+        version: 4.2.2
       '@types/markdown-it':
         specifier: ^14.1.1
         version: 14.1.1
@@ -332,6 +344,9 @@ packages:
   '@types/charcodes@0.2.2':
     resolution: {integrity: sha512-NOChHk5vtZS5RVRENgTlttjpsX0uxpx7V3u3Jx73swJba6V8Hgf7FjCsLcvirkaY/qGXLYN/IRtaaLSUWNrjMA==}
 
+  '@types/crypto-js@4.2.2':
+    resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
+
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
 
@@ -545,6 +560,9 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
+
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css-select@5.1.0:
     resolution: {integrity: sha512-nwoRF1rvRRnnCqqY7updORDsuqKzqYJ28+oSMaJMMgOauh3fvwHqMS7EZpIPqK8GL+g9mKxF1vP/ZjSeNjEVHg==}
@@ -1616,6 +1634,8 @@ snapshots:
 
   '@types/charcodes@0.2.2': {}
 
+  '@types/crypto-js@4.2.2': {}
+
   '@types/istanbul-lib-coverage@2.0.6': {}
 
   '@types/linkify-it@5.0.0': {}
@@ -1905,6 +1925,8 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  crypto-js@4.2.0: {}
 
   css-select@5.1.0:
     dependencies:

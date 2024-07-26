@@ -30,6 +30,8 @@ import {
   TextEdit,
 } from './types';
 
+import CryptoJS from 'crypto-js';
+
 export class CompilerWithImport {
   public cNodeListMap: Map<string, CNode[]> = new Map();
   public cNodeMapMap: Map<string, Map<string, CNode>> = new Map();
@@ -97,19 +99,20 @@ export class CompilerWithImport {
     const codeMap: Map<string, CNode[]> = new Map();
     const codeTokensMap: Map<string, Token[]> = new Map();
     for (const { code, offset } of markdownCodeList) {
+      const codeMd5 = CryptoJS.MD5(code).toString();
       const cNodes = cNodeList.filter(
         (node) => offset <= node.astNode.range.start.offset && offset + code.length >= node.astNode.range.end.offset,
       );
       if (cNodes.length > 0) {
-        codeMap.set(code, cNodes);
+        codeMap.set(codeMd5, cNodes);
       }
       const tokenStartIndex = tokenList.findIndex((token) => token.range.start.offset >= offset);
       const tokenEndIndex = tokenList.findIndex((token) => token.range.end.offset >= offset + code.length);
       if (tokenStartIndex !== -1) {
         if (tokenEndIndex === -1) {
-          codeTokensMap.set(code, tokenList.slice(tokenStartIndex));
+          codeTokensMap.set(codeMd5, tokenList.slice(tokenStartIndex));
         } else if (tokenStartIndex < tokenEndIndex) {
-          codeTokensMap.set(code, tokenList.slice(tokenStartIndex, tokenEndIndex));
+          codeTokensMap.set(codeMd5, tokenList.slice(tokenStartIndex, tokenEndIndex));
         }
       }
     }

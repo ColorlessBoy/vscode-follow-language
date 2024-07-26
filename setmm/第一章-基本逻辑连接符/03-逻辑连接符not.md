@@ -11,7 +11,7 @@ term prop hp0
 ```follow
 //一阶逻辑第三条公理 
 axiom a3(prop p0, prop p1) {
-  |- imp(imp(not(p0), not(p1)), imp(p0, p1))
+  |- imp(imp(not(p0), not(p1)), imp(p1, p0))
 }
 ```
 
@@ -19,6 +19,8 @@ axiom a3(prop p0, prop p1) {
 thm contra.1(prop p0, prop p1) {
   |- imp(not(p0), imp(p0, p1))
 } = {
-
+  syl(not(p0), imp(p0,p1), imp(not(p1),not(p0)))
+  a3(p1, p0)
+  a1(not(p0), not(p1))
 }
 ```
