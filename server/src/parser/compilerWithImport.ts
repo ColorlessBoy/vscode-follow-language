@@ -621,6 +621,17 @@ export class CompilerWithImport {
         }
       }
     }
+    // 整体再排一次序吧，体验好一些
+    suggestions.sort((a, b) => {
+      const virtualA = this.getSuggestionVirtualCount(a);
+      const virtualB = this.getSuggestionVirtualCount(b);
+      const realA = a.size - virtualA;
+      const realB = b.size - virtualB;
+      if (realA === realB) {
+        return virtualA - virtualB;
+      }
+      return realB - realA;
+    });
     return suggestions;
   }
   private getSuggestionVirtualCount(suggestion: Map<string, TermOpCNode>) {

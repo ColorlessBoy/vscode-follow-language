@@ -72,6 +72,16 @@ thm idd(prop p0, prop p1) {
 ```
 
 ```follow
+thm iid(prop p0, prop p1) {
+  |- imp(p0, p1)
+  -| imp(p0, imp(p0, p1))
+} = {
+  a2ii(p0, p1, p0)
+  id(p0)
+}
+```
+
+```follow
 // 逻辑学中非常重要的工具：三段论(syllogism)
 thm syl(prop p0, prop p1, prop p2) {
   |- imp(p0, p1)
