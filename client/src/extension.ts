@@ -158,25 +158,31 @@ export function deactivate(): Thenable<void> | undefined {
 }
 
 function markdownItPlugin(md: MarkdownIt) {
+  const defaultRender =
+    md.renderer.rules.fence ||
+    function (tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
   md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     const token = tokens[idx];
     const language = token.info.trim();
     const content = token.content;
+    const lineNumber = token.map ? token.map[0] : 0; // 获取起始行号
 
     if (language === 'follow') {
       const contentMd5 = CryptoJS.MD5(token.content).toString();
       const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(contentMd5);
       if (newContent) {
-        return `<div class="follow-code-block">
+        return `<div class="follow-code-block" data-line="${lineNumber}">
               <pre><code class="${language}">${newContent}</code></pre>
             </div>`;
       }
-      return `<div class="follow-code-block">
+      return `<div class="follow-code-block" data-line="${lineNumber}">
               <pre><code class="${language}">${md.utils.escapeHtml(content)}</code></pre>
             </div>`;
     }
     // 默认渲染其他语言
-    return self.renderToken(tokens, idx, options);
+    return defaultRender(tokens, idx, options, env, self);
   };
 
   return md;

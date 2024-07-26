@@ -5,7 +5,6 @@
 
 ```follow
 term prop not(prop p0) { ¬ p0 }
-term prop hp0
 ```
 
 ```follow
@@ -15,6 +14,8 @@ axiom a3(prop p0, prop p1) {
 }
 ```
 
+## 反证法 Contradiction 
+
 ```follow
 thm contradiction.1(prop p0, prop p1) {
   |- imp(not(p0), imp(p0, p1))
@@ -22,5 +23,13 @@ thm contradiction.1(prop p0, prop p1) {
   syl(not(p0), imp(p0,p1), imp(not(p1),not(p0)))
   a3(p1, p0)
   a1(not(p0), not(p1))
+}
+```
+
+```follow
+thm contradiction.2(prop p0, prop p1) {
+  |- imp(imp(not(p1), p1), p1)
+} = {
+  
 }
 ```
