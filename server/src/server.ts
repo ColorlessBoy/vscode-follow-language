@@ -1191,7 +1191,8 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
       const proof = proofs[i];
       const suggestion = suggestions[i];
       if (suggestion.length > 0 && proof.range.start.line === position.line) {
-        for (const suggestProof of suggestion) {
+        for (let idx = 0; idx < suggestion.length; idx++) {
+          const suggestProof = suggestion[idx];
           const { newText, doc } = proofRelacementForSuggestion(proof, suggestProof);
           items.push({
             label: newText,
@@ -1199,6 +1200,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
             documentation: doc,
             textEdit: { range: proof.range, newText: newText },
             additionalTextEdits: suggestProof.virtualEdit,
+            sortText: i.toString().padStart(3, '0') + idx.toString().padStart(3, '0'),
           });
         }
         return items;

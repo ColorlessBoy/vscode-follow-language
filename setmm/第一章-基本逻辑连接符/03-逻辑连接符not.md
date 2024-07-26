@@ -14,6 +14,26 @@ axiom a3(prop p0, prop p1) {
 }
 ```
 
+```follow
+thm a3i(prop p0, prop p1) {
+  |- imp(p0, p1)
+  -| imp(not(p1), not(p0))
+} = {
+  mp(imp(p0,p1), imp(not(p1),not(p0)))
+  a3(p1, p0)
+}
+```
+
+```follow
+thm a3d(prop p0, prop p1, prop p2) {
+  |- imp(p0, imp(p1, p2))
+  -| imp(p0, imp(not(p2), not(p1)))
+} = {
+  syl(p0, imp(p1,p2), imp(not(p2),not(p1)))
+  a3(p2, p1)
+}
+```
+
 ## 反证法 Contradiction 
 
 ```follow
