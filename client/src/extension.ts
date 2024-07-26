@@ -10,10 +10,10 @@ import {
   Uri,
   Webview,
   TextDocument,
-  commands,
 } from 'vscode';
 
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient/node';
+import MarkdownIt from 'markdown-it';
 
 let client: LanguageClient;
 
@@ -29,6 +29,8 @@ enum FollowSettingProps {
   maxNumberOfProblems = 'maxNumberOfProblems',
   enableWatchMarkdown = 'enableWatchMarkdown',
 }
+
+let markdownFollowCodeMap: Map<string, Map<string, string>>;
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
@@ -113,6 +115,19 @@ export function activate(context: ExtensionContext) {
   // Start the client. This will also launch the server
   client.start();
 
+  // Register a listener for markdown follow code render
+  const markdownFollowCodeRenderListener = client.onNotification(
+    'follow/markdownRender',
+    ({ fileName, codeArray }: { fileName: string; codeArray: [string, string][] }) => {
+      if (markdownFollowCodeMap === undefined) {
+        markdownFollowCodeMap = new Map();
+      }
+      markdownFollowCodeMap.set(fileName, new Map(codeArray));
+    },
+  );
+
+  context.subscriptions.push(markdownFollowCodeRenderListener);
+
   const followBlockListProvider = new FollowBlockListProvider(context.extensionUri);
 
   context.subscriptions.push(
@@ -126,6 +141,11 @@ export function activate(context: ExtensionContext) {
       }
     }),
   );
+  return {
+    extendMarkdownIt(md: MarkdownIt) {
+      return markdownItPlugin(md);
+    },
+  };
 }
 
 export function deactivate(): Thenable<void> | undefined {
@@ -133,6 +153,30 @@ export function deactivate(): Thenable<void> | undefined {
     return undefined;
   }
   return client.stop();
+}
+
+function markdownItPlugin(md: MarkdownIt) {
+  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const language = token.info.trim();
+    const content = token.content;
+
+    if (language === 'follow') {
+      const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(token.content);
+      if (newContent) {
+        return `<div class="follow-code-block">
+              <pre><code class="${language}">${newContent}</code></pre>
+            </div>`;
+      }
+      return `<div class="follow-code-block">
+              <pre><code class="${language}">${md.utils.escapeHtml(content + '\n//客户端渲染成功')}</code></pre>
+            </div>`;
+    }
+    // 默认渲染其他语言
+    return self.renderToken(tokens, idx, options);
+  };
+
+  return md;
 }
 
 type FollowBlockType = {

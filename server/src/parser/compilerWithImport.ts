@@ -44,11 +44,15 @@ export class CompilerWithImport {
   private virtualMap: Map<string, TermOpCNode> = new Map();
   private virtualUsedMap: Map<string, TermOpCNode[]> = new Map();
 
+  private markdownCodePosMap: Map<string, { code: string; offset: number }[]> = new Map();
+  public markdownCodeMap: Map<string, Map<string, CNode[]>> = new Map();
+  public markdownCodeTokensMap: Map<string, Map<string, Token[]>> = new Map();
+
   public setImportList(importList: string[]) {
     this.depFileList = importList;
   }
 
-  public changeMarkdownFile(markdownContent: string) {
+  private changeMarkdownFile(filename: string, markdownContent: string) {
     try {
       const md = new MarkdownIt();
       // 编译Markdown
@@ -58,23 +62,64 @@ export class CompilerWithImport {
         .map((token) => ({ code: token.content, position: markdownContent.indexOf(token.content) }));
       let followCode: string = '';
       let preIndex: number = 0;
+      const markdownCodeList: {
+        code: string;
+        offset: number;
+      }[] = [];
       for (const match of matches) {
         if (match.position >= preIndex) {
           followCode += markdownContent.slice(preIndex, match.position).replace(/[^\n]/g, ' ');
           followCode += match.code;
           preIndex = match.position + match.code.length;
+          markdownCodeList.push({ code: match.code, offset: match.position });
         }
       }
+      this.markdownCodePosMap.set(filename, markdownCodeList);
       return followCode;
     } catch (error) {
       console.error('changeMarkdownFile', error);
     }
     return markdownContent;
   }
+  private buildMarkdownCodeMap(filename: string) {
+    const markdownCodeList = this.markdownCodePosMap.get(filename);
+    if (markdownCodeList === undefined) {
+      return;
+    }
+    const cNodeList = this.cNodeListMap.get(filename);
+    if (cNodeList === undefined || cNodeList.length === 0) {
+      return;
+    }
+    const tokenList = this.tokenListMap.get(filename);
+    if (tokenList === undefined || tokenList.length === 0) {
+      return;
+    }
+    const codeMap: Map<string, CNode[]> = new Map();
+    const codeTokensMap: Map<string, Token[]> = new Map();
+    for (const { code, offset } of markdownCodeList) {
+      const cNodes = cNodeList.filter(
+        (node) => offset <= node.astNode.range.start.offset && offset + code.length >= node.astNode.range.end.offset,
+      );
+      if (cNodes.length > 0) {
+        codeMap.set(code, cNodes);
+      }
+      const tokenStartIndex = tokenList.findIndex((token) => token.range.start.offset >= offset);
+      const tokenEndIndex = tokenList.findIndex((token) => token.range.end.offset >= offset + code.length);
+      if (tokenStartIndex !== -1) {
+        if (tokenEndIndex === -1) {
+          codeTokensMap.set(code, tokenList.slice(tokenStartIndex));
+        } else if (tokenStartIndex < tokenEndIndex) {
+          codeTokensMap.set(code, tokenList.slice(tokenStartIndex, tokenEndIndex));
+        }
+      }
+    }
+    this.markdownCodeMap.set(filename, codeMap);
+    this.markdownCodeTokensMap.set(filename, codeTokensMap);
+  }
   public compileCode(filename: string, code: string) {
     const extname = path.extname(filename);
     if (extname === '.md') {
-      code = this.changeMarkdownFile(code);
+      code = this.changeMarkdownFile(filename, code);
     }
     const scanner = new Scanner();
     const parser = new Parser();
@@ -93,6 +138,9 @@ export class CompilerWithImport {
       }
       return a.token.range.end.character - b.token.range.end.character;
     });
+    if (extname === '.md') {
+      this.buildMarkdownCodeMap(filename);
+    }
     return {
       cNodes: cNdoes,
       errors: errors,
@@ -175,6 +223,9 @@ export class CompilerWithImport {
         content.push(index);
       } else {
         const last = content.pop();
+        if (node.params.length === 0) {
+          token.type = TokenTypes.CONSTNAME;
+        }
         if (last === undefined) {
           content.push(token.content);
         } else if (typeof last === 'string') {
@@ -212,6 +263,7 @@ export class CompilerWithImport {
         return;
       } else {
         targets.push(ct);
+        ct.root.comment = ct.termContent;
       }
     }
     const assumptions: TermOpCNode[] = [];
@@ -222,6 +274,7 @@ export class CompilerWithImport {
         return;
       } else {
         assumptions.push(ca);
+        ca.root.comment = ca.termContent;
       }
     }
     const axiomCNode: AxiomCNode = {
@@ -283,6 +336,7 @@ export class CompilerWithImport {
         return;
       } else {
         targets.push(ct);
+        ct.root.comment = ct.termContent;
       }
     }
     const assumptions: TermOpCNode[] = [];
@@ -293,6 +347,7 @@ export class CompilerWithImport {
         return;
       } else {
         assumptions.push(ca);
+        ca.root.comment = ca.termContent;
       }
     }
 
@@ -419,6 +474,7 @@ export class CompilerWithImport {
       } else {
         processes.push(nextTarget);
         currentTarget = nextTarget;
+        this.setProofComment(proof, nextTarget);
         if (proof.useVirtual) {
           const suggestion = this.getSuggestion2(proof);
           suggestions.push([suggestion]);
@@ -430,6 +486,10 @@ export class CompilerWithImport {
       }
     }
     return { processes, suggestions, suggestionProof };
+  }
+  private setProofComment(proof: ProofOpCNode, currentTarget: TermOpCNode[]) {
+    const newTarget = currentTarget.map((t) => '|- ' + t.termContent).join('\n');
+    proof.root.comment = `${proof.root.content} => ${newTarget || 'Q.E.D.'}`;
   }
   private checkDiffCondition(
     root: Token,
@@ -1052,6 +1112,7 @@ export class CompilerWithImport {
       type: cNode.type,
       termContent: this.getTermContent(definition2, children),
       funContent: this.getFunContent(definition2, children),
+      termTokens: this.getTermToken(definition2, children),
     };
     return opCNode;
   }
@@ -1284,6 +1345,7 @@ export class CompilerWithImport {
       type: definition2.astNode.type.content,
       termContent: this.getTermContent(definition2, children as TermOpCNode[]),
       funContent: this.getFunContent(definition2, children as TermOpCNode[]),
+      termTokens: this.getTermToken(definition2, children as TermOpCNode[]),
       virtual: useVirutal,
     };
     return opCNode;
@@ -1363,6 +1425,7 @@ export class CompilerWithImport {
       type: definition2.astNode.type.content,
       termContent: this.getTermContent(definition2, children as TermOpCNode[]),
       funContent: this.getFunContent(definition2, children as TermOpCNode[]),
+      termTokens: this.getTermToken(definition2, children as TermOpCNode[]),
     };
     return opCNode;
   }
@@ -1377,6 +1440,23 @@ export class CompilerWithImport {
       }
     }
     return s;
+  }
+  private getTermToken(term: TermCNode, children: TermOpCNode[]): Token[] {
+    const result: Token[] = [];
+    for (let i = 0; i < term.content.length; i++) {
+      const word = term.content[i];
+      if (typeof word === 'string') {
+        result.push(term.astNode.content[i]);
+      } else {
+        const tokens = children[word].termTokens;
+        if (tokens) {
+          result.push(...tokens);
+        } else {
+          result.push(children[word].root);
+        }
+      }
+    }
+    return result;
   }
   private getFunContent(term: TermCNode, children: TermOpCNode[]): string {
     let s: string = term.astNode.name.content;

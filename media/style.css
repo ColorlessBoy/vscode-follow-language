@@ -1,0 +1,25 @@
+.follow-code-block .follow-keyword {
+  color: var(--color-prettylights-syntax-markup-heading);
+}
+.follow-code-block .follow-comment {
+  color: var(--color-prettylights-syntax-entity-tag);
+}
+.follow-code-block .follow-typename {
+  color: var(--color-prettylights-syntax-keyword);
+}
+.follow-code-block .follow-argument {
+  color: var(--color-prettylights-syntax-markup-inserted-text);
+}
+.follow-code-block .follow-termname {
+  color: var(--color-prettylights-syntax-variable);
+}
+.follow-code-block .follow-constname {
+  color: var(--color-prettylights-syntax-entity);
+}
+.follow-code-block .follow-axiomname {
+  color: var(--color-prettylights-syntax-constant);
+  font-weight: bold;
+}
+.follow-code-block .follow-thmname {
+  color: var(--color-prettylights-syntax-constant);
+}

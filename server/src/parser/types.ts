@@ -72,8 +72,6 @@ export enum TokenTypes {
   CONSTNAME,
   AXIOMNAME,
   THMNAME,
-
-  TOKENTREE,
 }
 
 export interface Token {
@@ -305,6 +303,7 @@ export interface TermOpCNode {
   termContent: string;
   funContent: string;
   virtual?: boolean;
+  termTokens?: Token[];
 }
 
 export interface ProofOpCNode {

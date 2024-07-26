@@ -185,8 +185,8 @@ thm syld(prop p0, prop p1, prop p2, prop p3) {
 ```
 
 ```follow 
-// imp.change2 替换imp(p0,imp(p1,p2))中的第二个元素
-thm change2(prop p0, prop p1, prop p2, prop p3) {
+// imp.rewrite2 替换imp(p0,imp(p1,p2))中的第二个元素
+thm rw2(prop p0, prop p1, prop p2, prop p3) {
   |- imp(p0, imp(p1,p2))
   -| imp(p0, imp(p3,p2))
   -| imp(p1, p3)
@@ -198,8 +198,8 @@ thm change2(prop p0, prop p1, prop p2, prop p3) {
 ```
 
 ```follow
-// imp.change3 替换imp(p0,imp(p1,p2))中的第三个元素
-thm change3(prop p0, prop p1, prop p2, prop p3) {
+// imp.rewrite3 替换imp(p0,imp(p1,p2))中的第三个元素
+thm rw3(prop p0, prop p1, prop p2, prop p3) {
   |- imp(p0, imp(p1,p2))
   -| imp(p0, imp(p1,p3))
   -| imp(p3, p2)
@@ -211,12 +211,73 @@ thm change3(prop p0, prop p1, prop p2, prop p3) {
 ```
 
 ```follow
-// imp.change23 替换imp(p0,imp(p1,p2))中的第二第三个元素
-thm change23(prop p0, prop p1, prop p2, prop p3, prop p4) {
+// imp.rewrite23 替换imp(p0,imp(p1,p2))中的第二第三个元素
+thm rw23(prop p0, prop p1, prop p2, prop p3, prop p4) {
   |- imp(p0, imp(p1,p2))
   -| imp(p0, imp(p3,p4))
   -| imp(p4, p2)
   -| imp(p1, p3)
 } = {
+  rw2(p0, p1, p2, p3)
+  rw3(p0, p3, p2, p4)
+}
+```
+
+```follow
+// imp.communication23.induction
+thm com23i(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, imp(p1, imp(p2, p3)))
+  -| imp(p0, imp(p2, imp(p1, p3)))
+} = {
+  syl(p0, imp(p1,imp(p2,p3)), imp(p2,imp(p1,p3)))
+  com12(p2, p1, p3)
+}
+```
+
+```follow
+// imp.communication23
+thm com23(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(
+    imp(p0, imp(p1, imp(p2, p3))),
+    imp(p0, imp(p2, imp(p1, p3)))
+  )
+} = {
+  a2i(p0, imp(p1,imp(p2,p3)), imp(p2,imp(p1,p3)))
+  a1i(p0, imp(imp(p1,imp(p2,p3)),imp(p2,imp(p1,p3))))
+  com12(p1, p2, p3)
+}
+```
+
+```follow
+// imp.transition4.1
+thm trans4.1(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(imp(p0, p1), imp(imp(p1,p2), imp(imp(p2, p3), imp(p0,p3))))
+} = {
+  rw3(imp(p0,p1), imp(p1,p2), imp(imp(p2,p3),imp(p0,p3)), imp(p0,p2))
+  trans(p0, p1, p2)
+  trans(p0, p2, p3)
+}
+```
+
+```follow 
+// imp.transition4
+thm trans4(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(imp(p0,p1), imp(imp(p2,p3), imp(imp(p1,p2), imp(p0,p3))))
+  |- imp(imp(p1,p2), imp(imp(p0,p1), imp(imp(p2,p3), imp(p0,p3))))
+  |- imp(imp(p1,p2), imp(imp(p2,p3), imp(imp(p0,p1), imp(p0,p3))))
+  |- imp(imp(p2,p3), imp(imp(p0,p1), imp(imp(p1,p2), imp(p0,p3))))
+  |- imp(imp(p2,p3), imp(imp(p1,p2), imp(imp(p0,p1), imp(p0,p3))))
+  |- imp(imp(p0,p1), imp(imp(p1,p2), imp(imp(p2,p3), imp(p0,p3))))
+} = {
+  com23i(imp(p0,p1), imp(p2,p3), imp(p1,p2), imp(p0,p3))
+  com12i(imp(p1,p2), imp(p0,p1), imp(imp(p2,p3),imp(p0,p3)))
+  com23i(imp(p1,p2), imp(p2,p3), imp(p0,p1), imp(p0,p3))
+  com12i(imp(p1,p2), imp(p0,p1), imp(imp(p2,p3),imp(p0,p3)))
+  com12i(imp(p2,p3), imp(p0,p1), imp(imp(p1,p2),imp(p0,p3)))
+  com23i(imp(p0,p1), imp(p2,p3), imp(p1,p2), imp(p0,p3))
+  com23i(imp(p2,p3), imp(p1,p2), imp(p0,p1), imp(p0,p3))
+  com12i(imp(p2,p3), imp(p0,p1), imp(imp(p1,p2),imp(p0,p3)))
+  com23i(imp(p0,p1), imp(p2,p3), imp(p1,p2), imp(p0,p3))
+  trans4.1(p0, p1, p2, p3)
 }
 ```

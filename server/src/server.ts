@@ -23,8 +23,8 @@ import {
   TextDocumentEdit,
   WorkspaceEdit,
   Location,
-  URI,
   DocumentSelector,
+  NotificationType,
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -266,7 +266,9 @@ documents.onDidClose((e) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
-  validateTextDocument(change.document);
+  validateTextDocument(change.document).then(() => {
+    sendMarkdownRenderNotification(change.document);
+  });
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
@@ -353,6 +355,122 @@ connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams)
   }
   return null;
 });
+
+// Define a custom notification type
+const MarkdownRenderNotificationType = new NotificationType<{ fileName: string; codeArray: [string, string][] }>(
+  'follow/markdownRender',
+);
+function sendMarkdownRenderNotification(textDocument: TextDocument) {
+  const uri = decodeURIComponent(textDocument.uri).slice(7);
+  const filePath: string = path.resolve(uri);
+
+  if (filePath.endsWith('.md')) {
+    const cNodeMap = getCompiler(filePath).markdownCodeMap.get(filePath);
+    const tokensMap = getCompiler(filePath).markdownCodeTokensMap.get(filePath);
+    if (tokensMap) {
+      const codeArray: [string, string][] = [];
+      tokensMap.forEach((tokens, key) => {
+        const cNodes = cNodeMap
+          ?.get(key)
+          ?.filter((cNode) => cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM);
+        codeArray.push([key, tokensToMarkdown(tokens, cNodes as (ThmCNode | AxiomCNode)[] | undefined)]);
+      });
+      connection.sendNotification(MarkdownRenderNotificationType, { fileName: filePath, codeArray });
+    }
+  }
+}
+
+function tokenToMarkdown(token: Token | string) {
+  if (typeof token === 'string') {
+    return token;
+  }
+  switch (token.type) {
+    case TokenTypes.KEY:
+      return `<span class='follow-keyword'>${token.content}</span>`;
+    case TokenTypes.COMMENT:
+      return `<span class='follow-comment'>${token.content}</span>`;
+    case TokenTypes.TYPENAME:
+      return `<span class='follow-typename'>${token.content}</span>`;
+    case TokenTypes.ARGNAME:
+      return `<span class='follow-argument'>${token.content}</span>`;
+    case TokenTypes.TERMNAME:
+      return `<span class='follow-termname'>${token.content}</span>`;
+    case TokenTypes.CONSTNAME:
+      return `<span class='follow-constname'>${token.content}</span>`;
+    case TokenTypes.AXIOMNAME:
+      return `<span class='follow-axiomname'>${token.content}</span>`;
+    case TokenTypes.THMNAME:
+      return `<span class='follow-thmname'>${token.content}</span>`;
+    case TokenTypes.SEP:
+    case TokenTypes.WORD:
+    case TokenTypes.IGNORE:
+      return `<span class='follow-word'>${token.content}</span>`;
+  }
+}
+
+function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): string {
+  if (cNodes == undefined) {
+    return tokens.map((token) => tokenToMarkdown(token)).join('');
+  }
+  let tokenIndex = 0;
+  let currentToken = tokens.at(tokenIndex);
+  const newTokens: (Token | string)[] = [];
+  for (const cNode of cNodes) {
+    const termOpCNodes: TermOpCNode[] = [...cNode.targets, ...cNode.assumptions];
+    if (cNode.cnodetype === CNodeTypes.THM) {
+      cNode.proofs.forEach((proof) => {
+        termOpCNodes.push(...proof.children);
+      });
+    }
+    termOpCNodes.sort((a, b) => {
+      return a.range.start.offset - b.range.start.offset;
+    });
+    for (const termOpCNode of termOpCNodes) {
+      while (currentToken && currentToken.range.start.offset < termOpCNode.range.start.offset) {
+        newTokens.push(currentToken);
+        tokenIndex += 1;
+        currentToken = tokens[tokenIndex];
+      }
+      if (termOpCNode.termTokens) {
+        newTokens.push(...termOpCNode.termTokens);
+      } else {
+        newTokens.push(termOpCNode.root);
+      }
+      while (currentToken && currentToken.range.start.offset < termOpCNode.range.end.offset) {
+        if (currentToken.content.includes('\n') || currentToken.type === TokenTypes.COMMENT) {
+          // 回车和注释还是可以保留的
+          newTokens.push(currentToken);
+        }
+        tokenIndex += 1;
+        currentToken = tokens[tokenIndex];
+      }
+    }
+    if (cNode.cnodetype === CNodeTypes.THM) {
+      while (currentToken && !currentToken.content.includes('\n')) {
+        newTokens.push(currentToken);
+        tokenIndex += 1;
+        currentToken = tokens[tokenIndex];
+      }
+      if (cNode.isValid) {
+        newTokens.push('\n  <span class="follow-comment">// Q.E.D.</span> ');
+      } else {
+        const finalState = cNode.proofProcess
+          .at(-1)
+          ?.map((termOpCNode) => {
+            return `  <span class="follow-comment'>// |- ${termOpCNode.termContent}</span> `;
+          })
+          .join('\n');
+        if (finalState) {
+          newTokens.push('\n' + finalState);
+        }
+      }
+    }
+  }
+  if (tokenIndex < tokens.length) {
+    newTokens.push(...tokens.slice(tokenIndex));
+  }
+  return newTokens.map((token) => tokenToMarkdown(token)).join('');
+}
 
 // follow block list
 connection.onRequest('follow/followBlockList', () => {
