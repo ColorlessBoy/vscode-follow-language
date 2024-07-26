@@ -16,7 +16,7 @@ axiom a3(prop p0, prop p1) {
 ```
 
 ```follow
-thm contra.1(prop p0, prop p1) {
+thm contradiction.1(prop p0, prop p1) {
   |- imp(not(p0), imp(p0, p1))
 } = {
   syl(not(p0), imp(p0,p1), imp(not(p1),not(p0)))

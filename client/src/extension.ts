@@ -172,7 +172,7 @@ function markdownItPlugin(md: MarkdownIt) {
             </div>`;
       }
       return `<div class="follow-code-block">
-              <pre><code class="${language}">${md.utils.escapeHtml(content + '\n//客户端渲染成功')}</code></pre>
+              <pre><code class="${language}">${md.utils.escapeHtml(content)}</code></pre>
             </div>`;
     }
     // 默认渲染其他语言
