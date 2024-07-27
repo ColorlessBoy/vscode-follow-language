@@ -95,7 +95,7 @@ thm contradiction(prop p0, prop p1) {
 }
 ```
 
-# 否定的否定
+## 否定的否定
 
 ```follow
 thm notnot(prop p0) {
@@ -108,7 +108,7 @@ thm notnot(prop p0) {
 }
 ```
 
-# 逆否命题 Contraposition 
+## 逆否命题 Contraposition 
 
 ```follow
 thm contraposition.1(prop p0, prop p1) {
@@ -136,7 +136,11 @@ thm contraposition.2(prop p0, prop p1) {
 thm contraposition.3(prop p0, prop p1) {
   |- imp(imp(p0, p1), imp(not(p1), not(p0)))
 } = {
-
+  syl(imp(p0,p1), imp(not(p1),not(p0)), imp(not(not(p0)),p1))
+  contraposition.1(not(p0), p1)
+  mp(imp(imp(p0,p1),imp(not(not(p0)),p1)), imp(not(not(p0)),p0))
+  trans(not(not(p0)), p0, p1)
+  notnot(p0)
 }
 ```
 
@@ -145,6 +149,20 @@ thm contraposition.4(prop p0, prop p1) {
   |- imp(imp(not(p1), not(p0)), imp(p0, p1))
 } = {
   a3(p1, p0)
+}
+```
+
+```follow
+thm contraposition(prop p0, prop p1) {
+  |- imp(imp(not(p0), p1), imp(not(p1), p0))
+  |- imp(imp(p0, not(p1)), imp(p1, not(p0)))
+  |- imp(imp(p0, p1), imp(not(p1), not(p0)))
+  |- imp(imp(not(p1), not(p0)), imp(p0, p1))
+} = {
+  contraposition.1(p0, p1)
+  contraposition.2(p0, p1)
+  contraposition.3(p0, p1)
+  contraposition.4(p0, p1)
 }
 ```
 

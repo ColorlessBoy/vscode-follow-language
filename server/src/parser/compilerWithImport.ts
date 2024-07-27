@@ -856,11 +856,15 @@ export class CompilerWithImport {
   }
   private getProofOpRootSuggestions(token: Token): Suggestion[] {
     const suggestions: Suggestion[] = [];
-    if (token.content.length >= 3) {
+    let content = token.content;
+    if (content.at(-1) === '.') {
+      content = content.slice(0, content.length - 1);
+    }
+    if (content.length >= 2) {
       for (const cNode of this.currentCNodeList) {
         if (cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM) {
           const cNode2 = cNode as ThmCNode | AxiomCNode;
-          if (cNode2.astNode.name.content.startsWith(token.content)) {
+          if (cNode2.astNode.name.content.startsWith(content)) {
             const tmp: Suggestion = {
               range: token.range,
               newText: cNode2.astNode.name.content,
