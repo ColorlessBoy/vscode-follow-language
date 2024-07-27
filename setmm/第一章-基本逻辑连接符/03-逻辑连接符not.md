@@ -8,7 +8,9 @@ term prop not(prop p0) { ¬ p0 }
 ```
 
 ```follow
+/*
 //一阶逻辑第三条公理 
+*/
 axiom a3(prop p0, prop p1) {
   |- imp(imp(not(p0), not(p1)), imp(p1, p0))
 }

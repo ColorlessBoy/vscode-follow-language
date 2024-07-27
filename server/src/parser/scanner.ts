@@ -1,5 +1,5 @@
-import * as charCodes from "charcodes";
-import { Range, Position, Token, TokenTypes, Keywords } from "./types";
+import * as charCodes from 'charcodes';
+import { Range, Position, Token, TokenTypes, Keywords } from './types';
 
 const separators: Set<number> = new Set([
   charCodes.leftCurlyBrace,
@@ -34,7 +34,7 @@ export class Scanner {
 
   constructor() {
     this.position = new PositionImpl(0, 0, 0);
-    this.text = "";
+    this.text = '';
     this.idx = 0;
   }
   private reset(text: string) {
@@ -80,11 +80,7 @@ export class Scanner {
   }
 
   private isIgnore(code: number): boolean {
-    if (
-      isWhitespace(code) ||
-      isNewLine(code) ||
-      code === charCodes.carriageReturn
-    ) {
+    if (isWhitespace(code) || isNewLine(code) || code === charCodes.carriageReturn) {
       return true;
     }
     return false;
@@ -136,12 +132,7 @@ export class Scanner {
 
     while (this.idx < this.text.length) {
       const code = this.text.charCodeAt(this.idx);
-      if (
-        isWhitespace(code) ||
-        isNewLine(code) ||
-        code === charCodes.carriageReturn ||
-        isSeparator(code)
-      ) {
+      if (isWhitespace(code) || isNewLine(code) || code === charCodes.carriageReturn || isSeparator(code)) {
         endPosition = this.position.clone();
         endIdx = this.idx;
         break;
@@ -163,11 +154,7 @@ export class Scanner {
     const content = this.text.slice(startIdx, endIdx);
     const range = new RangeImpl(startPosition, endPosition);
 
-    const token = new TokenImpl(
-      isKeyword(content) ? TokenTypes.KEY : TokenTypes.WORD,
-      content,
-      range
-    );
+    const token = new TokenImpl(isKeyword(content) ? TokenTypes.KEY : TokenTypes.WORD, content, range);
     return token;
   }
 

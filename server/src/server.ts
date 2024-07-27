@@ -1071,6 +1071,9 @@ function buildSemanticToken(tokens: Token[]) {
           0,
         );
         break;
+      case TokenTypes.COMMENT:
+        buildCommentTokens(builder, token);
+        break;
     }
   }
   return builder.build();
@@ -1144,9 +1147,41 @@ function buildSemanticTokenDelta(tokens: Token[], previousResultId: string) {
           0,
         );
         break;
+      case TokenTypes.COMMENT:
+        buildCommentTokens(builder, token);
+        break;
     }
   }
   return builder.buildEdits();
+}
+function buildCommentTokens(builder: SemanticTokensBuilder, token: Token) {
+  if (token.content.includes('\n')) {
+    const commentLines = token.content.split('\n');
+    builder.push(
+      token.range.start.line,
+      token.range.start.character,
+      commentLines[0].length,
+      semanticTokensMap.get(SemanticTokenTypes.comment) || 0,
+      0,
+    );
+    for (let i = 1; i < commentLines.length; i++) {
+      builder.push(
+        token.range.start.line + i,
+        0,
+        commentLines[i].length,
+        semanticTokensMap.get(SemanticTokenTypes.comment) || 0,
+        0,
+      );
+    }
+  } else {
+    builder.push(
+      token.range.start.line,
+      token.range.start.character,
+      token.content.length,
+      semanticTokensMap.get(SemanticTokenTypes.comment) || 0,
+      0,
+    );
+  }
 }
 
 connection.onDidChangeWatchedFiles((_change) => {
