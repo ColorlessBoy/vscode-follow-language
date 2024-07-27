@@ -119,3 +119,31 @@ thm contraposition.1(prop p0, prop p1) {
 }
 ```
 
+```follow
+thm contraposition.2(prop p0, prop p1) {
+  |- imp(imp(p0, not(p1)), imp(p1, not(p0)))
+} = {
+  a3d(imp(p0,not(p1)), p1, not(p0))
+  mp(imp(imp(p0,not(p1)),imp(not(not(p0)),not(p1))), imp(not(not(p0)),p0))
+  trans(not(not(p0)), p0, not(p1))
+  notnot(p0)
+}
+```
+
+```follow
+thm contraposition.3(prop p0, prop p1) {
+  |- imp(imp(p0, p1), imp(not(p1), not(p0)))
+} = {
+
+}
+```
+
+```follow
+thm contraposition.4(prop p0, prop p1) {
+  |- imp(imp(not(p1), not(p0)), imp(p0, p1))
+} = {
+  a3(p1, p0)
+}
+```
+
+

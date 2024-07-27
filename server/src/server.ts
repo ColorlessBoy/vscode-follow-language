@@ -996,6 +996,14 @@ connection.languages.semanticTokens.onDelta(async (event) => {
   return semanticTokens;
 });
 
+// keyword --> keyword #569CD6
+// typename --> type #ff5757
+// argname --> parameter #9CDCFE
+// termname --> method #ff8c00
+// constname --> number #f9629f
+// axiomname --> function #72a0c1
+// thmname ---> function #72a0c1
+// comment --> comment #6A9955
 function buildSemanticToken(tokens: Token[]) {
   const builder = new SemanticTokensBuilder();
   for (const token of tokens) {

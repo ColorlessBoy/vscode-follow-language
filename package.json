@@ -57,12 +57,15 @@
     "configurationDefaults": {
       "editor.semanticTokenColorCustomizations": {
         "rules": {
+          "keyword": "#569CD6",
           "operator": "#17B169",
+          "parameter": "#9CDCFE",
           "string": "#FF8C00",
           "number": "#F9629F",
           "type": "#ff5757",
           "method": "#FF8C00",
-          "function": "#72A0C1"
+          "function": "#72A0C1",
+          "comment": "#6A9955"
         }
       }
     },
