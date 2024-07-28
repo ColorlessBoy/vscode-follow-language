@@ -418,11 +418,30 @@ function tokenToMarkdown(token: Token | string) {
 
 function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): string {
   if (cNodes == undefined) {
-    return tokens.map((token) => tokenToMarkdown(token)).join('');
+    const codeLines: string[] = [];
+    let currentLineContent: string = '';
+    let preLine = -1;
+    for (const token of tokens) {
+      if (token.range.start.line !== preLine) {
+        if (currentLineContent.length > 0) {
+          if (preLine !== -1) {
+            codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+          }
+          currentLineContent = '';
+          preLine = token.range.start.line;
+        }
+        currentLineContent += tokenToMarkdown(token);
+      }
+    }
+    return codeLines.join('\n');
   }
   let tokenIndex = 0;
   let currentToken = tokens.at(tokenIndex);
-  const newTokens: (Token | string)[] = [];
+
+  const codeLines: string[] = [];
+  let currentLineContent: string = '';
+  let preLine = -1;
+
   for (const cNode of cNodes) {
     const termOpCNodes: TermOpCNode[] = [...cNode.targets, ...cNode.assumptions];
     if (cNode.cnodetype === CNodeTypes.THM) {
@@ -435,19 +454,41 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     });
     for (const termOpCNode of termOpCNodes) {
       while (currentToken && currentToken.range.start.offset < termOpCNode.range.start.offset) {
-        newTokens.push(currentToken);
+        if (currentToken.range.start.line !== preLine) {
+          if (preLine !== -1) {
+            codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+          }
+          currentLineContent = '';
+          preLine = currentToken.range.start.line;
+        }
+
+        currentLineContent += tokenToMarkdown(currentToken);
         tokenIndex += 1;
         currentToken = tokens[tokenIndex];
       }
+      if (termOpCNode.range.start.line !== preLine) {
+        if (preLine !== -1) {
+          codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+        }
+        currentLineContent = '';
+        preLine = termOpCNode.range.start.line;
+      }
       if (termOpCNode.termTokens) {
-        newTokens.push(...termOpCNode.termTokens);
+        currentLineContent += termOpCNode.termTokens.map((token) => tokenToMarkdown(token)).join('');
       } else {
-        newTokens.push(termOpCNode.root);
+        currentLineContent += tokenToMarkdown(termOpCNode.root);
       }
       while (currentToken && currentToken.range.start.offset < termOpCNode.range.end.offset) {
         if (currentToken.content.includes('\n') || currentToken.type === TokenTypes.COMMENT) {
           // 回车和注释还是可以保留的
-          newTokens.push(currentToken);
+          if (currentToken.range.start.line !== preLine) {
+            if (preLine !== -1) {
+              codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+            }
+            currentLineContent = '';
+            preLine = currentToken.range.start.line;
+          }
+          currentLineContent += tokenToMarkdown(currentToken);
         }
         tokenIndex += 1;
         currentToken = tokens[tokenIndex];
@@ -455,12 +496,19 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     }
     if (cNode.cnodetype === CNodeTypes.THM) {
       while (currentToken && !currentToken.content.includes('\n')) {
-        newTokens.push(currentToken);
+        if (currentToken.range.start.line !== preLine) {
+          if (preLine !== -1) {
+            codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+          }
+          currentLineContent = '';
+          preLine = currentToken.range.start.line;
+        }
+        currentLineContent += tokenToMarkdown(currentToken);
         tokenIndex += 1;
         currentToken = tokens[tokenIndex];
       }
       if (cNode.isValid) {
-        newTokens.push('\n  <span class="follow-comment">// Q.E.D.</span> ');
+        currentLineContent += '\n  <span class="follow-comment">// Q.E.D.</span> ';
       } else {
         const finalState = cNode.proofProcess
           .at(-1)
@@ -469,15 +517,29 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
           })
           .join('\n');
         if (finalState) {
-          newTokens.push('\n' + finalState);
+          currentLineContent += '\n' + finalState;
         }
       }
     }
   }
-  if (tokenIndex < tokens.length) {
-    newTokens.push(...tokens.slice(tokenIndex));
+  while (tokenIndex < tokens.length && currentToken) {
+    if (currentToken.range.start.line !== preLine) {
+      if (preLine !== -1) {
+        codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+      }
+      currentLineContent = '';
+      preLine = currentToken.range.start.line;
+    }
+    currentLineContent += tokenToMarkdown(currentToken);
+    tokenIndex += 1;
+    currentToken = tokens[tokenIndex];
   }
-  return newTokens.map((token) => tokenToMarkdown(token)).join('');
+  if (currentLineContent.length > 0) {
+    if (preLine !== -1) {
+      codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
+    }
+  }
+  return codeLines.join('');
 }
 
 // follow block list

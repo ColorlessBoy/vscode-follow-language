@@ -1,25 +1,25 @@
-.follow-code-block .follow-keyword {
+.follow-keyword {
   color: var(--color-prettylights-syntax-markup-heading, #569cd6);
 }
-.follow-code-block .follow-comment {
+.follow-comment {
   color: var(--color-prettylights-syntax-entity-tag, #6a9955);
 }
-.follow-code-block .follow-typename {
+.follow-typename {
   color: var(--color-prettylights-syntax-keyword, #ff5757);
 }
-.follow-code-block .follow-argument {
+.follow-argument {
   color: var(--color-prettylights-syntax-markup-list, #9cdcfe);
 }
-.follow-code-block .follow-termname {
+.follow-termname {
   color: var(--color-prettylights-syntax-variable, #ff8c00);
 }
-.follow-code-block .follow-constname {
+.follow-constname {
   color: var(--color-prettylights-syntax-entity, #f9629f);
 }
-.follow-code-block .follow-axiomname {
+.follow-axiomname {
   color: var(--color-prettylights-syntax-constant, #72a0c1);
   font-weight: bold;
 }
-.follow-code-block .follow-thmname {
+.follow-thmname {
   color: var(--color-prettylights-syntax-constant, #72a0c1);
 }

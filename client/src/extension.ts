@@ -167,19 +167,15 @@ function markdownItPlugin(md: MarkdownIt) {
     const token = tokens[idx];
     const language = token.info.trim();
     const content = token.content;
-    const lineNumber = token.map ? token.map[0] : 0; // 获取起始行号
+    const lineNumber = token.map && token.map[0] > 0 ? token.map[0] : 0; // 获取起始行号
 
     if (language === 'follow') {
       const contentMd5 = CryptoJS.MD5(token.content).toString();
       const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(contentMd5);
       if (newContent) {
-        return `<div class="follow-code-block" data-line="${lineNumber}">
-              <pre><code class="${language}">${newContent}</code></pre>
-            </div>`;
+        return `<pre><code class="language-${language}">${newContent}</code></pre>`;
       }
-      return `<div class="follow-code-block" data-line="${lineNumber}">
-              <pre><code class="${language}">${md.utils.escapeHtml(content)}</code></pre>
-            </div>`;
+      return `<pre><code class="language-${language}"><span class="code-line" data-line="${lineNumber}">${md.utils.escapeHtml(content)}</span></code></pre>`;
     }
     // 默认渲染其他语言
     return defaultRender(tokens, idx, options, env, self);
