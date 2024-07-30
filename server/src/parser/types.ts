@@ -317,6 +317,7 @@ export interface ProofOpCNode {
   useVirtual: boolean;
   diffError?: string[];
   virtualEdit?: TextEdit[];
+  isUseless?: boolean;
 }
 
 export const CONTENT_FILE = 'content.follow.json';

@@ -428,6 +428,7 @@ export class CompilerWithImport {
           type: ErrorTypes.ProofOpUseless,
           token: proof.root,
         });
+        proof.isUseless = true;
         processes.push(currentTarget);
         const suggestion = this.getSuggestions(currentTarget, proof, assumptions);
         suggestions.push(suggestion);

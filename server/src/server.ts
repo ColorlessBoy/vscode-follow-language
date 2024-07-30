@@ -444,10 +444,13 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
 
   for (const cNode of cNodes) {
     const termOpCNodes: TermOpCNode[] = [...cNode.targets, ...cNode.assumptions];
+    let lastValidProofOffset = 0;
     if (cNode.cnodetype === CNodeTypes.THM) {
-      cNode.proofs.forEach((proof) => {
+      const proofs = cNode.proofs.filter((proof) => proof.isUseless !== true);
+      proofs.forEach((proof) => {
         termOpCNodes.push(...proof.children);
       });
+      lastValidProofOffset = proofs.at(-1)?.range.end.offset || 0;
     }
     termOpCNodes.sort((a, b) => {
       return a.range.start.offset - b.range.start.offset;
@@ -494,8 +497,12 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         currentToken = tokens[tokenIndex];
       }
     }
-    if (cNode.cnodetype === CNodeTypes.THM) {
-      while (currentToken && !currentToken.content.includes('\n')) {
+    if (cNode.cnodetype === CNodeTypes.THM && lastValidProofOffset !== 0) {
+      while (
+        currentToken &&
+        currentToken.range.start.offset < lastValidProofOffset &&
+        !currentToken.content.includes('\n')
+      ) {
         if (currentToken.range.start.line !== preLine) {
           if (preLine !== -1) {
             codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
