@@ -587,6 +587,7 @@ export class CompilerWithImport {
     const suggestions: Map<string, TermOpCNode>[] = [];
     const suggestionSet: Set<string> = new Set();
     // suggestion 的顺序和target的顺序相同体验更好
+    console.log('Hello');
     for (const target of targets) {
       const tmpSuggestions: Map<string, TermOpCNode>[] = [];
       for (const current of proof.targets) {
@@ -1225,6 +1226,7 @@ export class CompilerWithImport {
           type: virtual.type,
           termContent: virtual.termContent,
           funContent: virtual.funContent,
+          virtual: true,
         };
         let virtualUsed = this.virtualUsedMap.get(virtual.funContent);
         if (virtualUsed === undefined) {

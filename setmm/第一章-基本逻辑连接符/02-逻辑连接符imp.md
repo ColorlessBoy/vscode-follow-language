@@ -234,6 +234,43 @@ thm rw23(prop p0, prop p1, prop p2, prop p3, prop p4) {
 ```
 
 ```follow
+thm rw12(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, imp(p1,p2))
+  -| imp(p3, imp(p4,p2))
+  -| imp(p0, p3)
+  -| imp(p1, p4)
+} = {
+  rw2(p0, p1, p2, p4)
+  syl(p0, imp(p4,p2), p3)
+}
+```
+
+```follow
+thm rw13(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, imp(p1,p2))
+  -| imp(p3, imp(p1,p4))
+  -| imp(p0, p3)
+  -| imp(p4, p2)
+} = {
+  syl(p0, imp(p1,p2), p3)
+  rw3(p3, p1, p2, p4)
+}
+```
+
+```follow
+thm rw123(prop p0, prop p1, prop p2, prop p3, prop p4, prop p5) {
+  |- imp(p0, imp(p1, p2))
+  -| imp(p3, imp(p4, p5))
+  -| imp(p0, p3)
+  -| imp(p1, p4)
+  -| imp(p5, p2)
+} = {
+  rw23(p0, p1, p2, p4, p5)
+  syl(p0, imp(p4,p5), p3)
+}
+```
+
+```follow
 // imp.communication23.induction
 thm com23i(prop p0, prop p1, prop p2, prop p3) {
   |- imp(p0, imp(p1, imp(p2, p3)))
