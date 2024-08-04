@@ -412,7 +412,7 @@ function tokenToMarkdown(token: Token | string) {
     case TokenTypes.SEP:
     case TokenTypes.WORD:
     case TokenTypes.IGNORE:
-      return `<span class='follow-word'>${token.content}</span>`;
+      return token.content;
   }
 }
 
@@ -458,7 +458,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     for (const termOpCNode of termOpCNodes) {
       while (currentToken && currentToken.range.start.offset < termOpCNode.range.start.offset) {
         if (currentToken.range.start.line !== preLine) {
-          if (preLine !== -1) {
+          if (preLine !== -1 && currentLineContent.trim()) {
             codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
           }
           currentLineContent = '';
@@ -470,7 +470,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         currentToken = tokens[tokenIndex];
       }
       if (termOpCNode.range.start.line !== preLine) {
-        if (preLine !== -1) {
+        if (preLine !== -1 && currentLineContent.trim()) {
           codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
         }
         currentLineContent = '';
@@ -485,7 +485,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         if (currentToken.content.includes('\n') || currentToken.type === TokenTypes.COMMENT) {
           // 回车和注释还是可以保留的
           if (currentToken.range.start.line !== preLine) {
-            if (preLine !== -1) {
+            if (preLine !== -1 && currentLineContent.trim()) {
               codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
             }
             currentLineContent = '';
@@ -504,7 +504,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         !currentToken.content.includes('\n')
       ) {
         if (currentToken.range.start.line !== preLine) {
-          if (preLine !== -1) {
+          if (preLine !== -1 && currentLineContent.trim()) {
             codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
           }
           currentLineContent = '';
@@ -531,7 +531,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
   }
   while (tokenIndex < tokens.length && currentToken) {
     if (currentToken.range.start.line !== preLine) {
-      if (preLine !== -1) {
+      if (preLine !== -1 && currentLineContent.trim()) {
         codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
       }
       currentLineContent = '';
@@ -542,11 +542,12 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     currentToken = tokens[tokenIndex];
   }
   if (currentLineContent.length > 0) {
-    if (preLine !== -1) {
+    if (preLine !== -1 && currentLineContent.trim()) {
       codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
     }
   }
-  return codeLines.join('');
+  const codeLines2 = codeLines.map((code) => code.replace(/\n+/g, '\n'));
+  return codeLines2.join('');
 }
 
 // follow block list
