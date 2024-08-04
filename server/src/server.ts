@@ -546,7 +546,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
       codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
     }
   }
-  const codeLines2 = codeLines.map((code) => code.replace(/(\n+\s*)+/g, '\n'));
+  const codeLines2 = codeLines.map((code) => code.replace(/(\s*\n+)+/g, '\n'));
   return codeLines2.join('');
 }
 
