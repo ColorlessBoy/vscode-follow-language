@@ -49,6 +49,11 @@ export class Scanner {
 
     while (this.idx < this.text.length) {
       const code = this.text.charCodeAt(this.idx);
+      if (isNewLine(code)) {
+        const token = this.getNewLineToken();
+        tokens.push(token);
+        continue;
+      }
       if (this.isIgnore(code)) {
         const token = this.getIgnoreToken();
         tokens.push(token);
@@ -80,10 +85,20 @@ export class Scanner {
   }
 
   private isIgnore(code: number): boolean {
-    if (isWhitespace(code) || isNewLine(code) || code === charCodes.carriageReturn) {
+    if (isWhitespace(code) || code === charCodes.carriageReturn) {
       return true;
     }
     return false;
+  }
+  private getNewLineToken() {
+    const startPosition = this.position.clone();
+    const startIdx = this.idx;
+    this.idxPushForward();
+    const endPosition = this.position.clone();
+    const content = this.text.slice(startIdx, this.idx);
+    const range = new RangeImpl(startPosition, endPosition);
+    const token = new TokenImpl(TokenTypes.IGNORE, content, range);
+    return token;
   }
 
   private getIgnoreToken() {

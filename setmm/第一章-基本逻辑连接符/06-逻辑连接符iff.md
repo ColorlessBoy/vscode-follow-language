@@ -250,7 +250,6 @@ thm iff.trans(prop p0, prop p1, prop p2) {
 }
 ```
 
-
 ## 非常有用的定理
 
 ```follow
@@ -276,3 +275,4 @@ thm iff.syld(prop p0, prop p1, prop p2, prop p3) {
   iff.trans.1(p1, p3, p2)
 }
 ```
+

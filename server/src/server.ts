@@ -433,6 +433,9 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
         currentLineContent += tokenToMarkdown(token);
       }
     }
+    if (currentLineContent.length > 0) {
+      codeLines.push(currentLineContent);
+    }
     return codeLines.join('\n');
   }
   let tokenIndex = 0;
@@ -547,6 +550,7 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     }
   }
   const codeLines2 = codeLines.map((code) => code.replace(/(\s*\n+)+/g, '\n'));
+  console.log('Hello');
   return codeLines2.join('');
 }
 
