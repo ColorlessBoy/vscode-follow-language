@@ -550,7 +550,6 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
     }
   }
   const codeLines2 = codeLines.map((code) => code.replace(/(\s*\n+)+/g, '\n'));
-  console.log('Hello');
   return codeLines2.join('');
 }
 

@@ -81,7 +81,6 @@ thm iff.intro(prop p0, prop p1) {
 }
 ```
 
-
 ```follow
 thm iff.introii(prop p0, prop p1) {
   |- iff(p0, p1)
@@ -135,6 +134,24 @@ thm iff.comd(prop p0, prop p1, prop p2) {
 } = {
   syl(p0, iff(p1,p2), iff(p2,p1))
   iff.com(p2, p1)
+}
+```
+
+```follow
+thm iff.id(prop p0) {
+  |- iff(p0, p0)
+} = {
+  iff.introii(p0, p0)
+  id(p0)
+}
+```
+
+```follow
+thm iff.idd(prop p0, prop p1) {
+  |- imp(p0, iff(p1, p1))
+} = {
+  a1i(p0, iff(p1,p1))
+  iff.id(p1)
 }
 ```
 
@@ -275,4 +292,74 @@ thm iff.syld(prop p0, prop p1, prop p2, prop p3) {
   iff.trans.1(p1, p3, p2)
 }
 ```
+
+```follow
+thm iff.rw2(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, iff(p1, p2))
+  -| imp(p0, iff(p3, p2))
+  -| iff(p3, p1)
+} = {
+  syl(p0, iff(p1,p2), iff(p3,p2))
+  mp(imp(iff(p3,p2),iff(p1,p2)), iff(p3,p1))
+  iff.trans(p3, p1, p2)
+}
+```
+
+```follow
+thm iff.rw3(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, iff(p1, p2))
+  -| imp(p0, iff(p1, p3))
+  -| iff(p3, p2)
+} = {
+  syl(p0, iff(p1,p2), iff(p1,p3))
+  mp(imp(iff(p1,p3),iff(p1,p2)), iff(p3,p2))
+  iff.trans(p3, p2, p1)
+}
+```
+
+## 包含 `iff` 的 `a2` 
+
+```follow
+thm iff.a2(prop p0, prop p1, prop p2) {
+  |- imp(imp(p0, iff(p1, p2)), iff(imp(p0, p1), imp(p0, p2)))
+} = {
+  iff.introd(imp(p0,iff(p1,p2)), imp(p0,p1), imp(p0,p2))
+  syl(imp(p0,iff(p1,p2)), imp(imp(p0,p1),imp(p0,p2)), imp(p0,imp(p1,p2)))
+  a2(p0, p1, p2)
+  a2i(p0, iff(p1,p2), imp(p1,p2))
+  a1i(p0, imp(iff(p1,p2),imp(p1,p2)))
+  iff.left(p1, p2)
+  syl(imp(p0,iff(p1,p2)), imp(imp(p0,p2),imp(p0,p1)), imp(p0,imp(p2,p1)))
+  a2(p0, p2, p1)
+  a2i(p0, iff(p1,p2), imp(p2,p1))
+  a1i(p0, imp(iff(p1,p2),imp(p2,p1)))
+  iff.right(p1, p2)
+}
+```
+
+```follow
+thm iff.a2i(prop p0, prop p1, prop p2) {
+  |- iff(imp(p0, p1), imp(p0, p2))
+  -| imp(p0, iff(p1, p2))
+} = {
+  mp(iff(imp(p0,p1),imp(p0,p2)), imp(p0,iff(p1,p2)))
+  iff.a2(p0, p1, p2)
+}
+```
+
+```follow
+thm iff.a2d(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, iff(imp(p1, p2), imp(p1, p3)))
+  -| imp(p0, imp(p1, iff(p2, p3)))
+} = {
+  syl(p0, iff(imp(p1,p2),imp(p1,p3)), imp(p1,iff(p2,p3)))
+  iff.a2(p1, p2, p3)
+}
+```
+
+
+
+
+
+
 

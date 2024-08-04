@@ -225,17 +225,10 @@ export class CompilerWithImport {
         token.type = TokenTypes.ARGNAME;
         content.push(index);
       } else {
-        const last = content.pop();
         if (node.params.length === 0) {
           token.type = TokenTypes.CONSTNAME;
         }
-        if (last === undefined) {
-          content.push(token.content);
-        } else if (typeof last === 'string') {
-          content.push(last + token.content);
-        } else {
-          content.push(last, token.content);
-        }
+        content.push(token.content);
       }
     }
     const termCNode: TermCNode = {
