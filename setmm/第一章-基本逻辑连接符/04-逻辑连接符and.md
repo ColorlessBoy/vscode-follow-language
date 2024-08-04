@@ -16,7 +16,7 @@ thm and.left(prop p0, prop p1) {
 } = {
   syl(and(p0,p1), p0, not(imp(p0,not(p1))))
   and.def(p0, p1)
-  con1i(imp(p0,not(p1)), p0)
+  con2i(imp(p0,not(p1)), p0)
   cont(p0, not(p1))
 }
 ```
@@ -27,7 +27,7 @@ thm and.right(prop p0, prop p1) {
 } = {
   syl(and(p0,p1), p1, not(imp(p0,not(p1))))
   and.def(p0, p1)
-  con1i(imp(p0,not(p1)), p1)
+  con2i(imp(p0,not(p1)), p1)
   a1(not(p1), p0)
 }
 ```
@@ -38,7 +38,7 @@ thm and.intro(prop p0, prop p1) {
 } = {
   rw3(p0, p1, and(p0,p1), not(imp(p0,not(p1))))
   and.def(p0, p1)
-  con2d(p0, p1, imp(p0,not(p1)))
+  con1d(p0, p1, imp(p0,not(p1)))
   com12i(p0, imp(p0,not(p1)), not(p1))
   id(imp(p0,not(p1)))
 }
@@ -79,7 +79,7 @@ thm and.com(prop p0, prop p1) {
   syl(not(imp(p0,not(p1))), and(p1,p0), not(imp(p1,not(p0))))
   and.def(p1, p0)
   con3i(imp(p0,not(p1)), imp(p1,not(p0)))
-  con2(p1, p0)
+  con1(p1, p0)
 }
 ```
 
@@ -111,7 +111,7 @@ thm and.impo(prop p0, prop p1, prop p2) {
 } = {
   rw2(imp(p0,imp(p1,p2)), and(p0,p1), p2, not(imp(p0,not(p1))))
   and.def(p0, p1)
-  con1d(imp(p0,imp(p1,p2)), imp(p0,not(p1)), p2)
+  con2d(imp(p0,imp(p1,p2)), imp(p0,not(p1)), p2)
   syl(imp(p0,imp(p1,p2)), imp(not(p2),imp(p0,not(p1))), imp(p0,imp(not(p2),not(p1))))
   com12(p0, not(p2), not(p1))
   mp(imp(imp(p0,imp(p1,p2)),imp(p0,imp(not(p2),not(p1)))), imp(imp(p1,p2),imp(not(p2),not(p1))))
@@ -175,4 +175,44 @@ thm and.expod(prop p0, prop p1, prop p2, prop p3) {
 }
 ```
 
+## `and` 和 `imp` 之间的关系
 
+```follow
+thm and.2and(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(imp(p0, p1), imp(imp(p2, p3), imp(and(p0, p2), and(p1, p3))))
+} = {
+  and.expoi(imp(p0,p1), imp(p2,p3), imp(and(p0,p2),and(p1,p3)))
+  rw23(and(imp(p0,p1),imp(p2,p3)), and(p0,p2), and(p1,p3), not(imp(p0,not(p2))), not(imp(p1,not(p3))))
+  and.def(p1, p3)
+  and.def(p0, p2)
+  con3d(and(imp(p0,p1),imp(p2,p3)), imp(p0,not(p2)), imp(p1,not(p3)))
+  and.impoi(imp(p0,p1), imp(p2,p3), imp(imp(p1,not(p3)),imp(p0,not(p2))))
+  rw2(imp(p0,p1), imp(p2,p3), imp(imp(p1,not(p3)),imp(p0,not(p2))), imp(not(p3),not(p2)))
+  con3(p2, p3)
+  trans4(p0, p1, not(p3), not(p2))
+}
+```
+
+```follow
+thm and.2andii(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(and(p0, p2), and(p1, p3))
+  -| imp(p0, p1)
+  -| imp(p2, p3)
+} = {
+  mp(imp(and(p0,p2),and(p1,p3)), imp(p2,p3))
+  mp(imp(imp(p2,p3),imp(and(p0,p2),and(p1,p3))), imp(p0,p1))
+  and.2and(p0, p1, p2, p3)
+}
+```
+
+```follow
+thm and.2andd(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, imp(and(p1, p2), and(p3, p4)))
+  -| imp(p0, imp(p1, p3))
+  -| imp(p0, imp(p2, p4))
+} = {
+  mpd(p0, imp(and(p1,p2),and(p3,p4)), imp(p2,p4))
+  syl(p0, imp(imp(p2,p4),imp(and(p1,p2),and(p3,p4))), imp(p1,p3))
+  and.2and(p1, p3, p2, p4)
+}
+```

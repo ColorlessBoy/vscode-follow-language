@@ -637,18 +637,22 @@ function findOpCNodePosition(cNode: AxiomCNode | ThmCNode, position: Position): 
 }
 function findOpCNodePositionV2(cNode: AxiomCNode | ThmCNode, position: Position): HoverV2Content[] {
   const rst = [
-    ...cNode.targets.map((t) => {
-      return {
-        line: t.range.start.line,
-        value: t.termContent,
-      };
-    }),
-    ...cNode.assumptions.map((t) => {
-      return {
-        line: t.range.start.line,
-        value: t.termContent,
-      };
-    }),
+    ...cNode.targets
+      .filter((t) => t.range.end.line < position.line)
+      .map((t) => {
+        return {
+          line: t.range.start.line,
+          value: t.termContent,
+        };
+      }),
+    ...cNode.assumptions
+      .filter((a) => a.range.end.line < position.line)
+      .map((t) => {
+        return {
+          line: t.range.start.line,
+          value: t.termContent,
+        };
+      }),
   ];
   // 寻找前一个proof操作，用于hoverV2
   if (cNode.cnodetype === CNodeTypes.THM) {

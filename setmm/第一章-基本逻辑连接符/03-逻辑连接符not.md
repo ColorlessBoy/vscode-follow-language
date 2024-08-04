@@ -132,17 +132,6 @@ thm notnot(prop p0) {
 
 ```follow
 thm con1(prop p0, prop p1) {
-  |- imp(imp(not(p0), p1), imp(not(p1), p0))
-} = {
-  a3d(imp(not(p0),p1), not(p1), p0)
-  mp(imp(imp(not(p0),p1),imp(not(p0),not(not(p1)))), imp(p1,not(not(p1))))
-  trans(not(p0), p1, not(not(p1)))
-  notnot(p1)
-}
-```
-
-```follow
-thm con2(prop p0, prop p1) {
   |- imp(imp(p0, not(p1)), imp(p1, not(p0)))
 } = {
   a3d(imp(p0,not(p1)), p1, not(p0))
@@ -153,11 +142,22 @@ thm con2(prop p0, prop p1) {
 ```
 
 ```follow
+thm con2(prop p0, prop p1) {
+  |- imp(imp(not(p0), p1), imp(not(p1), p0))
+} = {
+  a3d(imp(not(p0),p1), not(p1), p0)
+  mp(imp(imp(not(p0),p1),imp(not(p0),not(not(p1)))), imp(p1,not(not(p1))))
+  trans(not(p0), p1, not(not(p1)))
+  notnot(p1)
+}
+```
+
+```follow
 thm con3(prop p0, prop p1) {
   |- imp(imp(p0, p1), imp(not(p1), not(p0)))
 } = {
   syl(imp(p0,p1), imp(not(p1),not(p0)), imp(not(not(p0)),p1))
-  con1(not(p0), p1)
+  con2(not(p0), p1)
   mp(imp(imp(p0,p1),imp(not(not(p0)),p1)), imp(not(not(p0)),p0))
   trans(not(not(p0)), p0, p1)
   notnot(p0)
@@ -174,20 +174,20 @@ thm con4(prop p0, prop p1) {
 
 ```follow
 thm con1i(prop p0, prop p1) {
-  |- imp(not(p0), p1)
-  -| imp(not(p1), p0)
+  |- imp(p0, not(p1))
+  -| imp(p1, not(p0))
 } = {
-  mp(imp(not(p0),p1), imp(not(p1),p0))
+  mp(imp(p0,not(p1)), imp(p1,not(p0)))
   con1(p1, p0)
 }
 ```
 
 ```follow
 thm con2i(prop p0, prop p1) {
-  |- imp(p0, not(p1))
-  -| imp(p1, not(p0))
+  |- imp(not(p0), p1)
+  -| imp(not(p1), p0)
 } = {
-  mp(imp(p0,not(p1)), imp(p1,not(p0)))
+  mp(imp(not(p0),p1), imp(not(p1),p0))
   con2(p1, p0)
 }
 ```
@@ -214,20 +214,20 @@ thm con4i(prop p0, prop p1) {
 
 ```follow
 thm con1d(prop p0, prop p1, prop p2) {
-  |- imp(p0, imp(not(p1), p2))
-  -| imp(p0, imp(not(p2), p1))
+  |- imp(p0, imp(p1, not(p2)))
+  -| imp(p0, imp(p2, not(p1)))
 } = {
-  syl(p0, imp(not(p1),p2), imp(not(p2),p1))
+  syl(p0, imp(p1,not(p2)), imp(p2,not(p1)))
   con1(p2, p1)
 }
 ```
 
 ```follow
 thm con2d(prop p0, prop p1, prop p2) {
-  |- imp(p0, imp(p1, not(p2)))
-  -| imp(p0, imp(p2, not(p1)))
+  |- imp(p0, imp(not(p1), p2))
+  -| imp(p0, imp(not(p2), p1))
 } = {
-  syl(p0, imp(p1,not(p2)), imp(p2,not(p1)))
+  syl(p0, imp(not(p1),p2), imp(not(p2),p1))
   con2(p2, p1)
 }
 ```
@@ -261,7 +261,7 @@ thm cont4(prop p0, prop p1) {
 } = {
   com12i(imp(not(p0),p1), imp(p0,p1), p1)
   rw23(imp(p0,p1), imp(not(p0),p1), p1, imp(not(p1),p0), imp(not(p1),p1))
-  con1(p0, p1)
+  con2(p0, p1)
   trans(not(p1), p0, p1)
   cont2(p1)
 }
@@ -275,7 +275,7 @@ thm cont5(prop p0, prop p1) {
   com12i(imp(p0,not(p1)), imp(p0,p1), not(p0))
   rw12(imp(p0,p1), imp(p0,not(p1)), not(p0), imp(not(p1),not(p0)), imp(p1,not(p0)))
   con3(p0, p1)
-  con2(p0, p1)
+  con1(p0, p1)
   cont4(p1, not(p0))
 }
 ```
@@ -299,7 +299,7 @@ thm join(prop p0, prop p1, prop p2) {
 } = {
   com12i(imp(p1,p2), imp(not(p0),p2), imp(imp(p0,p1),p2))
   rw123(imp(not(p0),p2), imp(p1,p2), imp(imp(p0,p1),p2), imp(not(p2),p0), imp(not(p2),not(p1)), imp(not(p2),not(imp(p0,p1))))
-  con1(p0, p2)
+  con2(p0, p2)
   con3(p1, p2)
   con4(imp(p0,p1), p2)
   a2d(imp(not(p2),p0), not(p2), not(p1), not(imp(p0,p1)))
@@ -441,8 +441,8 @@ thm con(prop p0, prop p1) {
   |- imp(imp(p0, p1), imp(not(p1), not(p0)))
   |- imp(imp(not(p1), not(p0)), imp(p0, p1))
 } = {
-  con1(p0, p1)
   con2(p0, p1)
+  con1(p0, p1)
   con3(p0, p1)
   con4(p0, p1)
 }
