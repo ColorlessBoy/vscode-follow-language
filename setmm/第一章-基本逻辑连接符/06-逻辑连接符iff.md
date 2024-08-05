@@ -358,8 +358,135 @@ thm iff.a2d(prop p0, prop p1, prop p2, prop p3) {
 ```
 
 
+## `iff` 和 `imp` 的分配律 
 
+```follow
+thm iff.2iff(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(iff(p0, p1), imp(iff(p2, p3), iff(imp(p0, p2), imp(p1, p3))))
+} = {
+  and.expoi(iff(p0,p1), iff(p2,p3), iff(imp(p0,p2),imp(p1,p3)))
+  iff.introd(and(iff(p0,p1),iff(p2,p3)), imp(p0,p2), imp(p1,p3))
+  and.impoi(iff(p0,p1), iff(p2,p3), imp(imp(p0,p2),imp(p1,p3)))
+  rw12(iff(p0,p1), iff(p2,p3), imp(imp(p0,p2),imp(p1,p3)), imp(p1,p0), imp(p2,p3))
+  trans4(p1, p0, p2, p3)
+  iff.right(p0, p1)
+  iff.left(p2, p3)
+  and.impoi(iff(p0,p1), iff(p2,p3), imp(imp(p1,p3),imp(p0,p2)))
+  rw12(iff(p0,p1), iff(p2,p3), imp(imp(p1,p3),imp(p0,p2)), imp(p0,p1), imp(p3,p2))
+  trans4(p0, p1, p3, p2)
+  iff.left(p0, p1)
+  iff.right(p2, p3)
+}
+```
 
+```follow
+thm iff.2iffii(prop p0, prop p1, prop p2, prop p3) {
+  |- iff(imp(p0, p2), imp(p1, p3))
+  -| iff(p0, p1)
+  -| iff(p2, p3)
+} = {
+  mp(iff(imp(p0,p2),imp(p1,p3)), iff(p2,p3))
+  mp(imp(iff(p2,p3),iff(imp(p0,p2),imp(p1,p3))), iff(p0,p1))
+  iff.2iff(p0, p1, p2, p3)
+}
+```
 
+```follow
+thm iff.2iffd(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, iff(imp(p1, p3), imp(p2, p4)))
+  -| imp(p0, iff(p1, p2))
+  -| imp(p0, iff(p3, p4))
+} = {
+  a2ii(p0, iff(imp(p1,p3),imp(p2,p4)), iff(p3,p4))
+  syl(p0, imp(iff(p3,p4),iff(imp(p1,p3),imp(p2,p4))), iff(p1,p2))
+  iff.2iff(p1, p2, p3, p4)
+}
+```
 
+## `and.iffand`
 
+```follow
+thm and.iffand(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(iff(p0,p1), imp(iff(p2,p3), iff(and(p0,p2), and(p1,p3))))
+} = {
+  and.expoi(iff(p0,p1), iff(p2,p3), iff(and(p0,p2),and(p1,p3)))
+  iff.introd(and(iff(p0,p1),iff(p2,p3)), and(p0,p2), and(p1,p3))
+  and.impoi(iff(p0,p1), iff(p2,p3), imp(and(p0,p2),and(p1,p3)))
+  rw12(iff(p0,p1), iff(p2,p3), imp(and(p0,p2),and(p1,p3)), imp(p0,p1), imp(p2,p3))
+  and.2and(p0, p1, p2, p3)
+  iff.left(p0, p1)
+  iff.left(p2, p3)
+  and.impoi(iff(p0,p1), iff(p2,p3), imp(and(p1,p3),and(p0,p2)))
+  rw12(iff(p0,p1), iff(p2,p3), imp(and(p1,p3),and(p0,p2)), imp(p1,p0), imp(p3,p2))
+  and.2and(p1, p0, p3, p2)
+  iff.right(p0, p1)
+  iff.right(p2, p3)
+}
+```
+
+```follow
+thm and.iffandii(prop p0, prop p1, prop p2, prop p3) {
+  |- iff(and(p0, p1), and(p2, p3))
+  -| iff(p0, p2)
+  -| iff(p1, p3)
+} = {
+  mp(iff(and(p0,p1),and(p2,p3)), iff(p1,p3))
+  mp(imp(iff(p1,p3),iff(and(p0,p1),and(p2,p3))), iff(p0,p2))
+  and.iffand(p0, p2, p1, p3)
+}
+```
+
+```follow
+thm and.iffandd(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, iff(and(p1, p2), and(p3, p4)))
+  -| imp(p0, iff(p1, p3))
+  -| imp(p0, iff(p2, p4))
+} = {
+  a2ii(p0, iff(and(p1,p2),and(p3,p4)), iff(p2,p4))
+  syl(p0, imp(iff(p2,p4),iff(and(p1,p2),and(p3,p4))), iff(p1,p3))
+  and.iffand(p1, p3, p2, p4)
+}
+```
+
+## 补充前面的定义
+
+```follow
+thm iff.and.def(prop p0, prop p1) {
+  |- iff(and(p0, p1), not(imp(p0, not(p1))))
+  |- iff(not(imp(p0, not(p1))), and(p0, p1))
+  |- imp(and(p0, p1), not(imp(p0, not(p1))))
+  |- imp(not(imp(p0, not(p1))), and(p0, p1))
+} = {
+  iff.introii(and(p0,p1), not(imp(p0,not(p1))))
+  iff.introii(not(imp(p0,not(p1))), and(p0,p1))
+  and.def(p0, p1)
+}
+```
+
+```follow
+thm iff.or.def(prop p0, prop p1) {
+  |- iff(or(p0, p1), imp(not(p0), p1))
+  |- iff(imp(not(p0), p1), or(p0, p1))
+  |- imp(or(p0, p1), imp(not(p0), p1))
+  |- imp(imp(not(p0), p1), or(p0, p1))
+} = {
+  iff.introii(or(p0,p1), imp(not(p0),p1))
+  iff.introii(imp(not(p0),p1), or(p0,p1))
+  or.def(p0, p1)
+}
+```
+
+## `iff.notnot` 
+
+```follow
+thm iff.notnot(prop p0) {
+  |- iff(p0, not(not(p0)))
+  |- iff(not(not(p0)), p0)
+  |- imp(p0, not(not(p0)))
+  |- imp(not(not(p0)), p0)
+} = {
+  iff.introii(p0, not(not(p0)))
+  iff.introii(not(not(p0)), p0)
+  notnot(p0)
+}
+```

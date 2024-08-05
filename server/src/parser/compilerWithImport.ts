@@ -888,7 +888,7 @@ export class CompilerWithImport {
         }
       }
     }
-    return suggestions.slice(0, 20);
+    return suggestions.slice(0, 1000);
   }
   private compileProofOpNode(
     opNode: OpAstNode,

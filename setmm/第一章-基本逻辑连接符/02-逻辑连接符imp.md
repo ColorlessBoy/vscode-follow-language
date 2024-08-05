@@ -328,3 +328,14 @@ thm trans4(prop p0, prop p1, prop p2, prop p3) {
   trans4.1(p0, p1, p2, p3)
 }
 ```
+
+## 经常碰到的定理，一行总是比两行好
+
+```follow
+thm iidd(prop p0, prop p1) {
+  |- imp(p0, imp(imp(p0, p1), p1))
+} = {
+  com12i(p0, imp(p0,p1), p1)
+  id(imp(p0,p1))
+}
+```
