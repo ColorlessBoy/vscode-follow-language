@@ -417,26 +417,24 @@ function tokenToMarkdown(token: Token | string) {
 }
 
 function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): string {
-  if (cNodes == undefined) {
+  if (cNodes == undefined || cNodes.length === 0) {
     const codeLines: string[] = [];
     let currentLineContent: string = '';
     let preLine = -1;
     for (const token of tokens) {
       if (token.range.start.line !== preLine) {
         if (currentLineContent.length > 0) {
-          if (preLine !== -1) {
-            codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
-          }
-          currentLineContent = '';
-          preLine = token.range.start.line;
+          codeLines.push(`<span class="code-line" data-line="${preLine}">${currentLineContent}</span>`);
         }
-        currentLineContent += tokenToMarkdown(token);
+        currentLineContent = '';
+        preLine = token.range.start.line;
       }
+      currentLineContent += tokenToMarkdown(token);
     }
     if (currentLineContent.length > 0) {
       codeLines.push(currentLineContent);
     }
-    return codeLines.join('\n');
+    return codeLines.join('');
   }
   let tokenIndex = 0;
   let currentToken = tokens.at(tokenIndex);

@@ -436,13 +436,13 @@ thm cont(prop p0, prop p1) {
 ```follow
 // 逆否命题 Contraposition
 thm con(prop p0, prop p1) {
-  |- imp(imp(not(p0), p1), imp(not(p1), p0))
   |- imp(imp(p0, not(p1)), imp(p1, not(p0)))
-  |- imp(imp(p0, p1), imp(not(p1), not(p0)))
+  |- imp(imp(not(p0), p1), imp(not(p1), p0))
   |- imp(imp(not(p1), not(p0)), imp(p0, p1))
+  |- imp(imp(p0, p1), imp(not(p1), not(p0)))
 } = {
-  con2(p0, p1)
   con1(p0, p1)
+  con2(p0, p1)
   con3(p0, p1)
   con4(p0, p1)
 }
