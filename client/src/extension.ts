@@ -32,7 +32,7 @@ enum FollowSettingProps {
   enableWatchMarkdown = 'enableWatchMarkdown',
 }
 
-let markdownFollowCodeMap: Map<string, Map<string, string>>;
+let markdownFollowCodeMap: Map<string, Map<string, string>> = new Map();
 
 export function activate(context: ExtensionContext) {
   // The server is implemented in node
@@ -171,7 +171,7 @@ function markdownItPlugin(md: MarkdownIt) {
 
     if (language === 'follow') {
       const contentMd5 = CryptoJS.MD5(token.content).toString();
-      const newContent = markdownFollowCodeMap.get(env.currentDocument.fsPath)?.get(contentMd5);
+      const newContent = markdownFollowCodeMap?.get(env.currentDocument.fsPath)?.get(contentMd5);
       if (newContent) {
         return `<pre><code class="language-${language}">${newContent}</code></pre>`;
       }
