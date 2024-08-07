@@ -51,7 +51,7 @@ Follow语言的编译器能够看到的是这三条公理代码块，而我们�
 ```follow
 // 一阶逻辑第一条公理
 axiom a1(prop p0, prop p1) {
-  |- imp(p0,imp(p1,p0))
+  |- imp(p0,imp(p1,p0)) // (p0 -> (p1 -> p0))
 }
 ```
 
@@ -59,6 +59,7 @@ axiom a1(prop p0, prop p1) {
 // 一阶逻辑第二条公理
 axiom a2(prop p0, prop p1, prop p2) {
   |- imp(imp(p0,imp(p1,p2)), imp(imp(p0,p1),imp(p0,p2)))
+  // ((p0->(p1->p2))->((p0->p1)->(p0->p2)))
 }
 ```
 
@@ -67,7 +68,7 @@ axiom a2(prop p0, prop p1, prop p2) {
 axiom mp(prop p0, prop p1) {
   |- p0
   -| p1
-  -| imp(p1, p0)
+  -| imp(p1, p0) // (p1 -> p0)
 }
 ```
 
@@ -75,7 +76,7 @@ axiom mp(prop p0, prop p1) {
 
 ```follow
 thm a1i(prop p0, prop p1) {
-  |- imp(p0, p1)
+  |- imp(p0, p1) // (p0 -> p1)
   -| p1
 } = {
   mp(imp(p0,p1), p1) // |- imp(p0, p1) -| imp(p1, imp(p0, p1)) -| p1
