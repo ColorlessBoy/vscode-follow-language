@@ -298,6 +298,37 @@ thm a4.exist2(set s0, prop p1, prop p2) {
 }
 ```
 
+
+### `exist` 和 `and` 
+
+```follow
+thm exist.and.left(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, and(p1, p2)), exist(s0, p1))
+} = {
+  a4.existi.gen(s0, and(p1,p2), p1)
+  and.left(p1, p2)
+}
+```
+
+```follow
+thm exist.and.right(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, and(p1, p2)), exist(s0, p2))
+} = {
+  a4.existi.gen(s0, and(p1,p2), p2)
+  and.right(p1, p2)
+}
+```
+
+```follow
+thm exist.and.com(set s0, prop p1, prop p2) {
+  |- imp(exist(s0, and(p1, p2)), and(exist(s0, p1), exist(s0, p2)))
+} = {
+  and.introd(exist(s0,and(p1,p2)), exist(s0,p1), exist(s0,p2))
+  exist.and.left(s0, p1, p2)
+  exist.and.right(s0, p1, p2)
+}
+```
+
 ## 公理 `a5` 相关的定理 
 
 ```follow
@@ -470,3 +501,59 @@ thm exist.orexist(set s0, prop p1, prop p2) {
   exist.orexist.2(s0, p1, p2)
 }
 ```
+
+## `exist` 和 `diff` 
+
+```follow
+thm exist.and.diff.1(set s0, prop p1, prop p2) {
+  |- iff(exist(s0, and(p1, p2)), and(exist(s0, p1), p2))
+  |- imp(exist(s0, and(p1, p2)), and(exist(s0, p1), p2))
+  |- imp(and(exist(s0, p1), p2), exist(s0, and(p1, p2)))
+  diff (s0, p2)
+} = {
+  iff.introii(exist(s0,and(p1,p2)), and(exist(s0,p1),p2))
+  syl(exist(s0,and(p1,p2)), and(exist(s0,p1),p2), and(exist(s0,p1),exist(s0,p2)))
+  exist.and.com(s0, p1, p2)
+  and.2andii(exist(s0,p1), exist(s0,p1), exist(s0,p2), p2)
+  id(exist(s0,p1))
+  a5.exist.1(s0, p2)
+  and.impoi(exist(s0,p1), p2, exist(s0,and(p1,p2)))
+  com12i(exist(s0,p1), p2, exist(s0,and(p1,p2)))
+  a4.existd.gen(s0, p1, and(p1,p2), p2)
+  and.intro(p1, p2)
+}
+```
+
+```follow
+thm exist.and.diff.2(set s0, prop p1, prop p2) {
+  |- iff(exist(s0, and(p2, p1)), and(p2, exist(s0, p1)))
+  |- imp(exist(s0, and(p2, p1)), and(p2, exist(s0, p1)))
+  |- imp(and(p2, exist(s0, p1)), exist(s0, and(p2, p1)))
+  diff (s0, p2)
+} = {
+  iff.lefti(exist(s0,and(p2,p1)), and(p2,exist(s0,p1)))
+  iff.righti(exist(s0,and(p2,p1)), and(p2,exist(s0,p1)))
+  iff.syl(exist(s0,and(p2,p1)), and(p2,exist(s0,p1)), and(exist(s0,p1),p2))
+  iff.and.com(exist(s0,p1), p2)
+  iff.syl(exist(s0,and(p2,p1)), and(exist(s0,p1),p2), exist(s0,and(p1,p2)))
+  exist.and.diff.1(s0, p1, p2)
+  a4.exist.iffi.gen(s0, and(p2,p1), and(p1,p2))
+  iff.and.com(p2, p1)
+}
+```
+
+```follow
+thm exist.and.diff(set s0, prop p1, prop p2) {
+  |- iff(exist(s0, and(p1, p2)), and(exist(s0, p1), p2))
+  |- imp(exist(s0, and(p1, p2)), and(exist(s0, p1), p2))
+  |- imp(and(exist(s0, p1), p2), exist(s0, and(p1, p2)))
+
+  |- iff(exist(s0, and(p2, p1)), and(p2, exist(s0, p1)))
+  |- imp(exist(s0, and(p2, p1)), and(p2, exist(s0, p1)))
+  |- imp(and(p2, exist(s0, p1)), exist(s0, and(p2, p1)))
+
+  diff (s0, p2)
+} = {
+  exist.and.diff.1(s0, p1, p2)
+  exist.and.diff.2(s0, p1, p2)
+}

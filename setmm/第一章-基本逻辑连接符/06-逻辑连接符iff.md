@@ -544,7 +544,41 @@ thm and.iffand2(prop p0, prop p1, prop p2) {
   and.def(p0, p1)
   con3d(imp(p0,iff(p1,p2)), imp(p0,not(p1)), imp(p0,not(p2)))
   a2d(imp(p0,iff(p1,p2)), p0, not(p2), not(p1))
+  mp(imp(imp(p0,iff(p1,p2)),imp(p0,imp(not(p2),not(p1)))), imp(iff(p1,p2),imp(not(p2),not(p1))))
+  trans(p0, iff(p1,p2), imp(not(p2),not(p1)))
+  syl(iff(p1,p2), imp(not(p2),not(p1)), imp(p1,p2))
+  con(p1, p2)
+  iff.left(p1, p2)
+  rw23(imp(p0,iff(p1,p2)), and(p0,p2), and(p0,p1), not(imp(p0,not(p2))), not(imp(p0,not(p1))))
+  and.def(p0, p1)
+  and.def(p0, p2)
+  con3d(imp(p0,iff(p1,p2)), imp(p0,not(p2)), imp(p0,not(p1)))
+  a2d(imp(p0,iff(p1,p2)), p0, not(p1), not(p2))
+  mp(imp(imp(p0,iff(p1,p2)),imp(p0,imp(not(p1),not(p2)))), imp(iff(p1,p2),imp(not(p1),not(p2))))
+  trans(p0, iff(p1,p2), imp(not(p1),not(p2)))
+  syl(iff(p1,p2), imp(not(p1),not(p2)), imp(p2,p1))
+  con(p2, p1)
+  iff.right(p1, p2)
+}
+```
 
+```follow
+thm and.iffand2i(prop p0, prop p1, prop p2) {
+  |- iff(and(p0,p1), and(p0,p2))
+  -| imp(p0, iff(p1, p2)) 
+} = {
+  mp(iff(and(p0,p1),and(p0,p2)), imp(p0,iff(p1,p2)))
+  and.iffand2(p0, p1, p2)
+}
+```
+
+```follow
+thm and.iffand2d(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p3, iff(and(p0,p1), and(p0,p2)))
+  -| imp(p3, imp(p0, iff(p1, p2)))
+} = {
+  syl(p3, iff(and(p0,p1),and(p0,p2)), imp(p0,iff(p1,p2)))
+  and.iffand2(p0, p1, p2)
 }
 ```
 

@@ -35,7 +35,9 @@ thm and.right(prop p0, prop p1) {
 ```follow
 thm and.intro(prop p0, prop p1) {
   |- imp(p0, imp(p1, and(p0, p1)))
+  |- imp(p1, imp(p0, and(p0, p1)))
 } = {
+  com12i(p1, p0, and(p0,p1))
   rw3(p0, p1, and(p0,p1), not(imp(p0,not(p1))))
   and.def(p0, p1)
   con1d(p0, p1, imp(p0,not(p1)))
