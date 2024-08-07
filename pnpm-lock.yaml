@@ -81,6 +81,9 @@ importers:
       vscode-languageserver-textdocument:
         specifier: ^1.0.11
         version: 1.0.12
+      vscode-uri:
+        specifier: ^3.0.8
+        version: 3.0.8
     devDependencies:
       '@types/charcodes':
         specifier: ^0.2.2
@@ -1478,6 +1481,9 @@ packages:
   vscode-languageserver@8.1.0:
     resolution: {integrity: sha512-eUt8f1z2N2IEUDBsKaNapkz7jl5QpskN2Y0G01T/ItMxBxw1fJwvtySGB9QMecatne8jFIWJGWI61dWjyTLQsw==}
     hasBin: true
+
+  vscode-uri@3.0.8:
+    resolution: {integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -2997,6 +3003,8 @@ snapshots:
   vscode-languageserver@8.1.0:
     dependencies:
       vscode-languageserver-protocol: 3.17.3
+
+  vscode-uri@3.0.8: {}
 
   which@2.0.2:
     dependencies:

@@ -8,6 +8,5 @@
   "[lisp]": {
     "editor.wordSeparators": "`|;:'\",()"
   },
-  "editor.tabSize": 2,
-  "svg.preview.background": "editor"
+  "editor.tabSize": 2
 }

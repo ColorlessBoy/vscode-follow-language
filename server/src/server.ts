@@ -28,6 +28,7 @@ import {
 } from 'vscode-languageserver/node';
 import * as fs from 'fs';
 import * as path from 'path';
+import { URI } from 'vscode-uri';
 
 import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 import {
@@ -97,7 +98,7 @@ connection.onInitialize((params: InitializeParams) => {
   let capabilities = params.capabilities;
 
   if (params.workspaceFolders) {
-    workspacePaths = params.workspaceFolders.map((wf) => decodeURIComponent(wf.uri).slice(7)); // remove "file://"
+    workspacePaths = params.workspaceFolders.map((wf) => URI.parse(wf.uri).fsPath);
     for (const folder of workspacePaths) {
       initContentJsonFile(folder);
     }
@@ -245,8 +246,7 @@ connection.onDidChangeConfiguration((change) => {
   // Revalidate all open text documents
   documents.all().forEach((doc) =>
     validateTextDocument(doc).then(() => {
-      const uri = decodeURIComponent(doc.uri).slice(7);
-      const filePath: string = path.resolve(uri);
+      const filePath = URI.parse(doc.uri).fsPath;
       sendMarkdownRenderNotification(filePath);
     }),
   );
@@ -276,8 +276,7 @@ documents.onDidClose((e) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent((change) => {
   validateTextDocument(change.document).then(() => {
-    const uri = decodeURIComponent(change.document.uri).slice(7);
-    const filePath: string = path.resolve(uri);
+    const filePath: string = URI.parse(change.document.uri).fsPath;
     sendMarkdownRenderNotification(filePath);
   });
 });
@@ -298,8 +297,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 async function reloadContentJsonFile(textDocument: TextDocument) {
-  const uri = decodeURIComponent(textDocument.uri).slice(7); // remove 'file://'
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const folderPath: string = path.dirname(filePath);
   await initContentJsonFile(folderPath);
 }
@@ -319,8 +317,7 @@ function getCompiler(filePath: string) {
 }
 
 async function processTextDocument(textDocument: TextDocument) {
-  const fsPath = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(fsPath);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const compiler = getCompiler(filePath);
   return compiler.compileCode(filePath, textDocument.getText());
 }
@@ -347,8 +344,7 @@ connection.onRequest('textDocument/hoverV2', (event: TextDocumentPositionParams)
   if (textDocument === undefined) {
     return null;
   }
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const position = event.position;
   const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
   const cNode = findCNodeByPostion(cNodeList, position);
@@ -589,8 +585,7 @@ connection.onHover((event) => {
   if (textDocument === undefined) {
     return null;
   }
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
 
   const position = event.position;
   const cNodeList = getCompiler(filePath).cNodeListMap.get(filePath) || [];
@@ -747,9 +742,7 @@ connection.onDefinition((params) => {
   if (textDocument === undefined || document === undefined) {
     return null;
   }
-  // file://
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
 
   const compiler = getCompiler(filePath);
   if (compiler === undefined) {
@@ -796,10 +789,7 @@ connection.onReferences((params) => {
   if (textDocument === undefined || document === undefined) {
     return null;
   }
-  // const uri = Uri.parse(textDocument.uri);
-  // file://
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
 
   const compiler = getCompiler(filePath);
   if (compiler === undefined) {
@@ -820,7 +810,7 @@ connection.onReferences((params) => {
       tokens.forEach((token) => {
         if (token.content === targetToken.content) {
           locations.push({
-            uri: uri,
+            uri: textDocument.uri,
             range: token.range,
           });
         }
@@ -834,7 +824,7 @@ connection.onReferences((params) => {
   // 非函数内部替换
   const locations: Location[] = [];
   compiler.tokenListMap.forEach((tokens, filePath) => {
-    const uri = 'file://' + filePath;
+    const uri = URI.file(filePath).toString();
     const document = documents.get(textDocument.uri);
     if (document === undefined) {
       return;
@@ -857,10 +847,7 @@ connection.onRenameRequest((params) => {
   if (textDocument === undefined || document === undefined) {
     return null;
   }
-  // const uri = Uri.parse(textDocument.uri);
-  // file://
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
 
   const compiler = getCompiler(filePath);
   if (compiler === undefined) {
@@ -1036,8 +1023,7 @@ connection.languages.semanticTokens.on(async (event) => {
     return builder.build();
   }
   // const uri = Uri.parse(textDocument.uri);
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const compiler = getCompiler(filePath);
   let tokenList = compiler?.tokenListMap.get(filePath);
 
@@ -1057,8 +1043,7 @@ connection.languages.semanticTokens.onDelta(async (event) => {
     return builder.build();
   }
   // const uri = Uri.parse(textDocument.uri);
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const compiler = getCompiler(filePath);
   let tokenList = compiler?.tokenListMap.get(filePath);
 
@@ -1275,8 +1260,7 @@ connection.onCompletion(async (_textDocumentPosition: TextDocumentPositionParams
   }
 
   // const uri = Uri.parse(textDocument.uri);
-  const uri = decodeURIComponent(textDocument.uri).slice(7);
-  const filePath: string = path.resolve(uri);
+  const filePath: string = URI.parse(textDocument.uri).fsPath;
   const compiler = getCompiler(filePath);
   let cNodeList = compiler?.cNodeListMap.get(filePath);
 
