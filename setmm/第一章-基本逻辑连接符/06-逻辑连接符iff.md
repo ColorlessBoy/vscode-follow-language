@@ -544,6 +544,7 @@ thm and.iffand2(prop p0, prop p1, prop p2) {
   and.def(p0, p1)
   con3d(imp(p0,iff(p1,p2)), imp(p0,not(p1)), imp(p0,not(p2)))
   a2d(imp(p0,iff(p1,p2)), p0, not(p2), not(p1))
+
 }
 ```
 
