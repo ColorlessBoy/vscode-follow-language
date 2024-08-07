@@ -7,7 +7,7 @@
 
 ```follow
 type set class
-term class stoc(set s0) { s0 }
+term class s2c(set s0) { s0 }
 term prop forall(set s0, prop p0) { ∀(s0, p0 ) } 
 term prop exist(set s0, prop p0) { ∃(s0, p0) }
 

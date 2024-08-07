@@ -2,7 +2,7 @@
   "name": "vscode-follow-language",
   "displayName": "Follow",
   "version": "1.0.0",
-  "publisher": "Peng Lingwei",
+  "publisher": "ColorlessBoy",
   "description": "Language support for Follow",
   "icon": "./follow-icon-128.png",
   "repository": {

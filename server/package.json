@@ -31,6 +31,6 @@
     "crypto-js": "^4.2.0",
     "markdown-it": "^14.1.0",
     "vscode-languageserver": "^8.1.0",
-    "vscode-languageserver-textdocument": "^1.0.8"
+    "vscode-languageserver-textdocument": "^1.0.11"
   }
 }
