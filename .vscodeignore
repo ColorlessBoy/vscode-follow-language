@@ -1,16 +1,11 @@
 .git/
-.vscode/
 out/
 examples/
-.gitignore
 .prettierrc.json
 .vscodeignore
 *.vsix
 packages/
-src/
-media/
 setmm/
-node_modules/**
 .vscode/**
 .vscode-test/**
 build/**
