@@ -99,6 +99,7 @@ connection.onInitialize((params: InitializeParams) => {
 
   if (params.workspaceFolders) {
     workspacePaths = params.workspaceFolders.map((wf) => URI.parse(wf.uri).fsPath);
+    console.log('Hello');
     for (const folder of workspacePaths) {
       initContentJsonFile(folder);
     }
@@ -192,6 +193,7 @@ async function readContentJsonFile(dir: string): Promise<string[] | null> {
   return null;
 }
 async function initContentJsonFile(folder: string) {
+  console.log('Hello');
   if (workspacePaths?.includes(folder)) {
     // 只有workspace的Json File才会读入
     const depFileList = await readContentJsonFile(folder);
@@ -551,10 +553,16 @@ function tokensToMarkdown(tokens: Token[], cNodes?: (AxiomCNode | ThmCNode)[]): 
 connection.onRequest('follow/followBlockList', () => {
   const result2 = [];
   for (const [folderPath, compiler] of compilerMap.entries()) {
+    if (folderPath.endsWith('content.follow.json')) {
+      continue;
+    }
     const result = [];
     const deps = compiler.depFileList;
 
     for (const file of deps) {
+      if (file.endsWith('content.follow.json')) {
+        continue;
+      }
       const cNodeList = compiler.cNodeListMap.get(file) || [];
       const blocks = cNodeList
         .filter((cNode) => cNode.cnodetype === CNodeTypes.AXIOM || cNode.cnodetype === CNodeTypes.THM)

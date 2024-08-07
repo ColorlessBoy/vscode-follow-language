@@ -120,6 +120,7 @@ export class CompilerWithImport {
     this.markdownCodeTokensMap.set(filename, codeTokensMap);
   }
   public compileCode(filename: string, code: string) {
+    code = code.replace(/\r\n/g, '\n');
     const extname = path.extname(filename);
     if (extname === '.md') {
       code = this.changeMarkdownFile(filename, code);
