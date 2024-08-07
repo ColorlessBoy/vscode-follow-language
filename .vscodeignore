@@ -1,5 +1,4 @@
 .git/
-out/
 examples/
 .prettierrc.json
 .vscodeignore
@@ -8,7 +7,6 @@ packages/
 setmm/
 .vscode/**
 .vscode-test/**
-build/**
 .gitignore
 package-lock.json
 pnpm-lock.yaml
