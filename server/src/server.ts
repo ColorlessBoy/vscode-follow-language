@@ -763,7 +763,7 @@ connection.onDefinition((params) => {
   }
 
   for (const [filePath, cNodeMap] of compiler.cNodeMapMap) {
-    const uri = 'file://' + filePath;
+    const uri = URI.file(filePath).toString();
     const document = documents.get(textDocument.uri);
     if (document === undefined) {
       continue;
@@ -931,7 +931,7 @@ connection.onRenameRequest((params) => {
     documentChanges: [],
   };
   compiler.tokenListMap.forEach((tokens, filePath) => {
-    const uri = 'file://' + filePath;
+    const uri = URI.file(filePath).toString();
     const document = documents.get(textDocument.uri);
     if (document === undefined) {
       return;

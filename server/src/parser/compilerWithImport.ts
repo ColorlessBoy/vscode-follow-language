@@ -782,6 +782,7 @@ export class CompilerWithImport {
       return 1;
     });
     const virtuals = [...this.getVirtualOfTermOpCNode2(current), ...this.getVirtualOfTermOpCNode2(target)];
+    // 在argMap 并且在 eq 中的变量进行统一替换
     for (const k of argValues) {
       const value = argMap.get(k);
       const s = eq.find((s) => s.has(k));
@@ -795,11 +796,25 @@ export class CompilerWithImport {
           argMap.set(k, newOpCNode);
         }
       } else if (s) {
+        // 这里有bug，一定走不到，因为 k 一定在argMap中
         const minS = Array.from(s.values()).sort()[0];
         const virtual = virtuals.find((v) => v.funContent === minS);
         if (virtual) {
           for (const newK of s) {
             argMap.set(newK, virtual);
+          }
+        }
+      }
+    }
+    // 没有在argMap，但是在eq中的变量进行替换
+    for (const vars of eq) {
+      const varList = Array.from(vars.values()).sort();
+      const head = varList.at(0);
+      if (head && !argMap.has(head)) {
+        const headToken = virtuals.find((v) => v.funContent === head);
+        if (headToken) {
+          for (let i = 1; i < varList.length; i++) {
+            argMap.set(varList[i], headToken);
           }
         }
       }
