@@ -10,6 +10,10 @@
     "第一章-基本逻辑连接符/08-weak-deduction-theorem.md",
     "第二章-逻辑量词/01-逻辑量词forall和exist.md",
     "第二章-逻辑量词/02-等价符号=.md",
-    "第二章-逻辑量词/03-包含符号in.md"
+    "第二章-逻辑量词/03-包含符号in.md",
+    "第二章-逻辑量词/04-变量替换subs.md",
+    "第二章-逻辑量词/05-ax12.md",
+    "第三章-ZF集合论/01-Extension.md",
+    "第三章-ZF集合论/02-ClassAbstraction.md"
   ]
 }

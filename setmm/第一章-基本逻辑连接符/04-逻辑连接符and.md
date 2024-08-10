@@ -22,6 +22,26 @@ thm and.left(prop p0, prop p1) {
 ```
 
 ```follow
+thm and.lefti(prop p0, prop p1) {
+  |- p0
+  -| and(p0, p1)
+} = {
+  mp(p0, and(p0,p1))
+  and.left(p0, p1)
+}
+```
+
+```follow
+thm and.leftd(prop p0, prop p1, prop p2) {
+  |- imp(p0, p1)
+  -| imp(p0, and(p1, p2))
+} = {
+  syl(p0, p1, and(p1,p2))
+  and.left(p1, p2)
+}
+```
+
+```follow
 thm and.right(prop p0, prop p1) {
   |- imp(and(p0, p1), p1)
 } = {
@@ -29,6 +49,26 @@ thm and.right(prop p0, prop p1) {
   and.def(p0, p1)
   con2i(imp(p0,not(p1)), p1)
   a1(not(p1), p0)
+}
+```
+
+```follow
+thm and.righti(prop p0, prop p1) {
+  |- p1 
+  -| and(p0, p1)
+} = {
+  mp(p1, and(p0,p1))
+  and.right(p0, p1)
+}
+```
+
+```follow
+thm and.rightd(prop p0, prop p1, prop p2) {
+  |- imp(p0, p1) 
+  -| imp(p0, and(p2, p1))
+} = {
+  syl(p0, p1, and(p2,p1))
+  and.right(p2, p1)
 }
 ```
 
@@ -67,6 +107,44 @@ thm and.introd(prop p0, prop p1, prop p2) {
   a2ii(p0, and(p1,p2), p2)
   syl(p0, imp(p2,and(p1,p2)), p1)
   and.intro(p1, p2)
+}
+```
+
+```follow
+thm and.rw3(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, and(p1, p2))
+  -| imp(p0, and(p1, p3))
+  -| imp(p3, p2)
+} = {
+  and.introd(p0, p1, p2)
+  syl(p0, p2, p3)
+  and.rightd(p0, p3, p1)
+  and.leftd(p0, p1, p3)
+}
+```
+
+```follow
+thm and.rw2(prop p0, prop p1, prop p2, prop p3) {
+  |- imp(p0, and(p1, p2))
+  -| imp(p0, and(p3, p2))
+  -| imp(p3, p1)
+} = {
+  and.introd(p0, p1, p2)
+  syl(p0, p1, p3)
+  and.rightd(p0, p2, p3)
+  and.leftd(p0, p3, p2)
+}
+```
+
+```follow
+thm and.rw23(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(p0, and(p1, p2))
+  -| imp(p0, and(p3, p4))
+  -| imp(p3, p1)
+  -| imp(p4, p2)
+} = {
+  and.rw2(p0, p1, p2, p3)
+  and.rw3(p0, p3, p2, p4)
 }
 ```
 
@@ -216,5 +294,19 @@ thm and.2andd(prop p0, prop p1, prop p2, prop p3, prop p4) {
   mpd(p0, imp(and(p1,p2),and(p3,p4)), imp(p2,p4))
   syl(p0, imp(imp(p2,p4),imp(and(p1,p2),and(p3,p4))), imp(p1,p3))
   and.2and(p1, p3, p2, p4)
+}
+```
+
+```follow
+thm and.syl(prop p0, prop p1, prop p2, prop p3, prop p4) {
+  |- imp(and(p0, p1), imp(p2, p3))
+  -| imp(p0, imp(p2, p4))
+  -| imp(p1, imp(p4, p3))
+} = {
+  syld(and(p0,p1), p2, p3, p4)
+  syl(and(p0,p1), imp(p2,p4), p0)
+  and.left(p0, p1)
+  syl(and(p0,p1), imp(p4,p3), p1)
+  and.right(p0, p1)
 }
 ```

@@ -751,3 +751,31 @@ thm iff.con(prop p0, prop p1) {
   con(p0, p1)
 }
 ```
+
+```follow
+thm iff.mp(prop p0, prop p1, prop p2) {
+  |- iff(p0, p1)
+  -| iff(p0, imp(p2, p1))
+  -| p2
+} = {
+  iff.syl(p0, p1, imp(p2,p1))
+  iff.introii(imp(p2,p1), p1)
+  a1(p1, p2)
+  mp(imp(imp(p2,p1),p1), p2)
+  iidd(p2, p1)
+}
+```
+
+```follow
+thm iff.and.mp(prop p0, prop p1, prop p2) {
+  |- iff(p0, p1)
+  -| iff(p0, and(p2, p1))
+  -| p2
+} = {
+  iff.syl(p0, p1, and(p2,p1))
+  iff.introii(and(p2,p1), p1)
+  and.right(p2, p1)
+  mp(imp(p1,and(p2,p1)), p2)
+  and.intro(p2, p1)
+}
+```
