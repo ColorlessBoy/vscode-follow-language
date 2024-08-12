@@ -565,6 +565,22 @@ thm a5(set s0, prop p0) {
 }
 ```
 
+```follow
+thm a5.rw12(set s0, prop p0, prop p1) {
+  |- imp(p0, forall(s0, p0))
+  -| imp(p1, forall(s0, p1))
+  -| iff(p0, p1)
+} = {
+  syl(p0, forall(s0,p0), p1)
+  iff.lefti(p0, p1)
+  syl(p1, forall(s0,p0), forall(s0,p1))
+  iff.righti(forall(s0,p0), forall(s0,p1))
+  mp(iff(forall(s0,p0),forall(s0,p1)), forall(s0,iff(p0,p1)))
+  a4(s0, p0, p1)
+  gen(s0, iff(p0,p1))
+}
+```
+
 ### `a4` + `a5` 
 
 ```follow
@@ -867,8 +883,6 @@ thm a4.diff(set s0, prop p1, prop p2) {
 
 ## 补充定理 
 
-### `exist.imp`
-
 ```follow
 thm exist.imp.1(set s0, prop p1, prop p2) {
   |- imp(imp(exist(s0, p1), exist(s0, p2)), exist(s0, imp(p1, p2)))
@@ -893,8 +907,6 @@ thm exist.imp.2(set s0, prop p1, prop p2) {
 }
 ```
 
-### `exist.or` 
-
 ```follow
 thm exist.or(set s0, prop p1, prop p2) {
   |- imp(or(forall(s0, p1), exist(s0, p2)), exist(s0, or(p1, p2)))
@@ -905,4 +917,94 @@ thm exist.or(set s0, prop p1, prop p2) {
   id(exist(s0,p2))
   forall.2exist(s0, p1)
 }
+```
+
+```follow
+thm exist.and.1(set s0, prop p1, prop p2) {
+  |- iff(forall(s0,imp(p1,not(p2))), forall(s0,not(and(p1,p2))))
+} = {
+  mp(iff(forall(s0,imp(p1,not(p2))),forall(s0,not(and(p1,p2)))), forall(s0,iff(imp(p1,not(p2)),not(and(p1,p2)))))
+  a4(s0, imp(p1,not(p2)), not(and(p1,p2)))
+  gen(s0, iff(imp(p1,not(p2)),not(and(p1,p2))))
+  mp(iff(imp(p1,not(p2)),not(and(p1,p2))), iff(and(p1,p2),not(imp(p1,not(p2)))))
+  iff.con(and(p1,p2), imp(p1,not(p2)))
+  iff.and.def(p1, p2)
+}
+```
+
+```follow
+thm exist.and.2(set s0, prop p1, prop p2) {
+  |- iff(forall(s0,imp(p1,not(p2))), not(exist(s0,and(p1,p2))))
+} = {
+  iff.syl(forall(s0,imp(p1,not(p2))), not(exist(s0,and(p1,p2))), forall(s0,not(and(p1,p2))))
+  exist.def(s0, and(p1,p2))
+  mp(iff(forall(s0,imp(p1,not(p2))),forall(s0,not(and(p1,p2)))), forall(s0,iff(imp(p1,not(p2)),not(and(p1,p2)))))
+  a4(s0, imp(p1,not(p2)), not(and(p1,p2)))
+  gen(s0, iff(imp(p1,not(p2)),not(and(p1,p2))))
+  mp(iff(imp(p1,not(p2)),not(and(p1,p2))), iff(and(p1,p2),not(imp(p1,not(p2)))))
+  iff.con(and(p1,p2), imp(p1,not(p2)))
+  iff.and.def(p1, p2)
+}
+```
+
+### `exist.exist`
+
+```follow
+thm exist.exist.1(set s0, set s1, prop p1) {
+  |- iff(exist(s0, exist(s1, p1)), not(forall(s0, forall(s1, not(p1)))))
+} = {
+  iff.syl(exist(s0,exist(s1,p1)), not(forall(s0,forall(s1,not(p1)))), exist(s0,not(forall(s1,not(p1)))))
+  exist.def(s0, forall(s1,not(p1)))
+  mp(iff(exist(s0,exist(s1,p1)),exist(s0,not(forall(s1,not(p1))))), forall(s0,iff(exist(s1,p1),not(forall(s1,not(p1))))))
+  a4(s0, exist(s1,p1), not(forall(s1,not(p1))))
+  gen(s0, iff(exist(s1,p1),not(forall(s1,not(p1)))))
+  exist.def(s1, p1)
+}
+```
+
+```follow
+thm exist.exist.2(set s0, set s1, prop p1) {
+  |- iff(forall(s0, forall(s1, p1)), not(exist(s0, exist(s1, not(p1)))))
+} = {
+  mp(iff(forall(s0,forall(s1,p1)),not(exist(s0,exist(s1,not(p1))))), iff(exist(s0,exist(s1,not(p1))),not(forall(s0,forall(s1,p1)))))
+  iff.con(exist(s0,exist(s1,not(p1))), forall(s0,forall(s1,p1)))
+  iff.syl(exist(s0,exist(s1,not(p1))), not(forall(s0,forall(s1,p1))), not(forall(s0,forall(s1,not(not(p1))))))
+  exist.exist.1(s0, s1, not(p1))
+  mp(iff(not(forall(s0,forall(s1,not(not(p1))))),not(forall(s0,forall(s1,p1)))), iff(forall(s0,forall(s1,p1)),forall(s0,forall(s1,not(not(p1))))))
+  iff.con(forall(s0,forall(s1,p1)), forall(s0,forall(s1,not(not(p1)))))
+  mp(iff(forall(s0,forall(s1,p1)),forall(s0,forall(s1,not(not(p1))))), forall(s0,iff(forall(s1,p1),forall(s1,not(not(p1))))))
+  a4(s0, forall(s1,p1), forall(s1,not(not(p1))))
+  gen(s0, iff(forall(s1,p1),forall(s1,not(not(p1)))))
+  mp(iff(forall(s1,p1),forall(s1,not(not(p1)))), forall(s1,iff(p1,not(not(p1)))))
+  a4(s1, p1, not(not(p1)))
+  gen(s1, iff(p1,not(not(p1))))
+  iff.notnot(p1)
+}
+```
+
+```follow
+thm exist.exist(set s0, set s1, prop p1) {
+  // 第一组
+  |- iff(exist(s0, exist(s1, p1)), not(forall(s0, forall(s1, not(p1)))))
+  |- iff(not(forall(s0, forall(s1, not(p1)))), exist(s0, exist(s1, p1)))
+  |- imp(exist(s0, exist(s1, p1)), not(forall(s0, forall(s1, not(p1)))))
+  |- imp(not(forall(s0, forall(s1, not(p1)))), exist(s0, exist(s1, p1)))
+
+  // 第二组
+  |- iff(forall(s0, forall(s1, p1)), not(exist(s0, exist(s1, not(p1)))))
+  |- iff(not(exist(s0, exist(s1, not(p1)))), forall(s0, forall(s1, p1)))
+  |- imp(forall(s0, forall(s1, p1)), not(exist(s0, exist(s1, not(p1)))))
+  |- imp(not(exist(s0, exist(s1, not(p1)))), forall(s0, forall(s1, p1)))
+} = {
+  iff.comi(not(forall(s0,forall(s1,not(p1)))), exist(s0,exist(s1,p1)))
+  iff.lefti(exist(s0,exist(s1,p1)), not(forall(s0,forall(s1,not(p1)))))
+  iff.righti(exist(s0,exist(s1,p1)), not(forall(s0,forall(s1,not(p1)))))
+  exist.exist.1(s0, s1, p1)
+
+  iff.comi(not(exist(s0,exist(s1,not(p1)))), forall(s0,forall(s1,p1)))
+  iff.lefti(forall(s0,forall(s1,p1)), not(exist(s0,exist(s1,not(p1)))))
+  iff.righti(forall(s0,forall(s1,p1)), not(exist(s0,exist(s1,not(p1)))))
+  exist.exist.2(s0, s1, p1)
+}
+
 ```

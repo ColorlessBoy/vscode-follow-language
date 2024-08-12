@@ -4,7 +4,7 @@
 逻辑连接符 `not` 是一阶逻辑中第二个基本的符号，他表示`否定`。
 
 ```follow
-term prop not(prop p0) { ¬ p0 }
+term prop not(prop p0) { (¬ p0) }
 ```
 
 ```follow

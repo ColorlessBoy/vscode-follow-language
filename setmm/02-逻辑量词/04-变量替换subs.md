@@ -62,7 +62,7 @@ thm subs.forall(prop p0, set s0, set s1) {
 ## `subs` 和 `imply` 
 
 ```follow
-thm subs.imp(prop p0, prop p1, set s2, set s3) {
+thm subs.2subs.1(prop p0, prop p1, set s2, set s3) {
   |- imp(subs(imp(p0, p1), s2, s3), imp(subs(p0, s2, s3), subs(p1, s2, s3)))
 } = {
   rw123(subs(imp(p0,p1),s2,s3), subs(p0,s2,s3), subs(p1,s2,s3), forall(hs0,imp(eq(c(hs0),c(s3)),forall(s2,imp(eq(c(s2),c(hs0)),imp(p0,p1))))), forall(hs0,imp(eq(c(hs0),c(s3)),forall(s2,imp(eq(c(s2),c(hs0)),p0)))), forall(hs0,imp(eq(c(hs0),c(s3)),forall(s2,imp(eq(c(s2),c(hs0)),p1)))))
@@ -83,34 +83,34 @@ thm subs.imp(prop p0, prop p1, set s2, set s3) {
 ```
 
 ```follow
-thm subs.imp.special(prop p0, prop p1, set s2, set s3) {
+thm subs.2subs.2(prop p0, prop p1, set s2, set s3) {
   |- imp(forall(s2, imp(p0, p1)), imp(subs(p0, s2, s3), subs(p1, s2, s3)))
 } = {
   syl(forall(s2,imp(p0,p1)), imp(subs(p0,s2,s3),subs(p1,s2,s3)), subs(imp(p0,p1),s2,s3))
-  subs.imp(p0, p1, s2, s3)
+  subs.2subs.1(p0, p1, s2, s3)
   subs.forall(imp(p0,p1), s2, s3)
 }
 ```
 
 ```follow
-thm subs.imp.gen(prop p0, prop p1, set s2, set s3) {
+thm subs.2subs.gen(prop p0, prop p1, set s2, set s3) {
   |- imp(subs(p0, s2, s3), subs(p1, s2, s3))
   -| imp(p0, p1)
 } = {
   mp(imp(subs(p0,s2,s3),subs(p1,s2,s3)), forall(s2,imp(p0,p1)))
-  subs.imp.special(p0, p1, s2, s3)
+  subs.2subs.2(p0, p1, s2, s3)
   gen(s2, imp(p0,p1))
 }
 ```
 
 ```follow
-thm subs.impd.gen(prop p0, prop p1, prop p2, set s3, set s4) {
+thm subs.2subs.gend(prop p0, prop p1, prop p2, set s3, set s4) {
   |- imp(p0, imp(subs(p1, s3, s4), subs(p2, s3, s4)))
   -| imp(p0, imp(p1, p2))
   diff (p0, s3)
 } = {
   syl(p0, imp(subs(p1,s3,s4),subs(p2,s3,s4)), forall(s3,imp(p1,p2)))
-  subs.imp.special(p1, p2, s3, s4)
+  subs.2subs.2(p1, p2, s3, s4)
   gend(s3, imp(p1,p2), p0)
 }
 ```
@@ -118,14 +118,14 @@ thm subs.impd.gen(prop p0, prop p1, prop p2, set s3, set s4) {
 ## `subs` 和 `iff` 
 
 ```follow
-thm subs.iff.special(prop p0, prop p1, set s2, set s3) {
+thm subs.iffsubs.1(prop p0, prop p1, set s2, set s3) {
   |- imp(forall(s2, iff(p0, p1)), iff(subs(p0, s2, s3), subs(p1, s2, s3)))
 } = {
   iff.introd(forall(s2,iff(p0,p1)), subs(p0,s2,s3), subs(p1,s2,s3))
   syl(forall(s2,iff(p0,p1)), imp(subs(p0,s2,s3),subs(p1,s2,s3)), forall(s2,imp(p0,p1)))
-  subs.imp.special(p0, p1, s2, s3)
+  subs.2subs.2(p0, p1, s2, s3)
   syl(forall(s2,iff(p0,p1)), imp(subs(p1,s2,s3),subs(p0,s2,s3)), forall(s2,imp(p1,p0)))
-  subs.imp.special(p1, p0, s2, s3)
+  subs.2subs.2(p1, p0, s2, s3)
   a4.1i(s2, iff(p0,p1), imp(p1,p0))
   a4.1i(s2, iff(p0,p1), imp(p0,p1))
   gen(s2, imp(iff(p0,p1),imp(p0,p1)))
@@ -136,24 +136,24 @@ thm subs.iff.special(prop p0, prop p1, set s2, set s3) {
 ```
 
 ```follow
-thm subs.iff.gen(prop p0, prop p1, set s2, set s3) {
+thm subs.iffsubs.gen(prop p0, prop p1, set s2, set s3) {
   |- iff(subs(p0, s2, s3), subs(p1, s2, s3))
   -| iff(p0, p1)
 } = {
   mp(iff(subs(p0,s2,s3),subs(p1,s2,s3)), forall(s2,iff(p0,p1)))
-  subs.iff.special(p0, p1, s2, s3)
+  subs.iffsubs.1(p0, p1, s2, s3)
   gen(s2, iff(p0,p1))
 }
 ```
 
 ```follow
-thm subs.iffd.gen(prop p0, prop p1, prop p2, set s3, set s4) {
+thm subs.iffsubs.gend(prop p0, prop p1, prop p2, set s3, set s4) {
   |- imp(p0, iff(subs(p1, s3, s4), subs(p2, s3, s4)))
   -| imp(p0, iff(p1, p2))
   diff (p0, s3)
 } = {
   syl(p0, iff(subs(p1,s3,s4),subs(p2,s3,s4)), forall(s3,iff(p1,p2)))
-  subs.iff.special(p1, p2, s3, s4)
+  subs.iffsubs.1(p1, p2, s3, s4)
   gend(s3, iff(p1,p2), p0)
 }
 ```
@@ -234,7 +234,7 @@ thm subs.forall.diff(prop p0, set s0, set s1) {
 }
 ```
 
-## `subs.subs` 
+a5.free
 
 ```follow
 thm subs.subs.diff(prop p0, set s0, set s1, set s2) {
@@ -317,7 +317,7 @@ thm subs.special.diff.3(prop p0, set s0, prop p1, set s1, prop p2, set s2) {
   subs.special.diff.1(subs(p0,s0,s1), s2, s1)
   iff.syl(subs(subs(p0,s0,s1),s2,s1), subs(p2,s2,s1), subs(subs(p0,s0,s2),s2,s1))
   subs.subs.diff(p0, s0, s2, s1)
-  subs.iff.gen(subs(p0,s0,s2), p2, s2, s1)
+  subs.iffsubs.gen(subs(p0,s0,s2), p2, s2, s1)
   subs.special.diff.2(p0, s0, p2, s2)
 }
 ```
